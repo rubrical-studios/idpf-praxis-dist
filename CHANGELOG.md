@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.6.3] - 2025-12-07
+
+### Added
+- **Trigger Words section** (#126) - GitHub-Workflow.md now explicitly lists trigger words (bug:, enhancement:, finding:, idea:, proposal:) requiring issue creation before work
+
+### Fixed
+- **Dist repo README** (#127) - Created README-DIST.md for end-users; deploy workflow now uses this instead of development README.md
+- **PREPARE_RELEASE.md Phase 4** (#125) - Updated to reflect automated distribution via GitHub Action
+
+---
+
 ## [2.6.2] - 2025-12-07
 
 ### Added
