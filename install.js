@@ -1234,7 +1234,7 @@ async function main() {
       log('    Prerequisites (one-time setup):');
       log(`      1. Install GitHub CLI: ${colors.cyan('https://cli.github.com/')}`);
       log(`      2. Authenticate: ${colors.cyan('gh auth login')}`);
-      log(`      3. Install gh-pmu extension: ${colors.cyan('gh extension install scooter-indie/gh-pmu')}`);
+      log(`      3. Install gh-pmu extension: ${colors.cyan('gh extension install rubrical-studios/gh-pmu')}`);
       log();
       log('    Project setup (in your target directory):');
       log(`      4. Create GitHub repo if needed: ${colors.cyan('gh repo create')}`);

@@ -20,7 +20,7 @@ Use alias (left side) in commands: `gh pmu move 90 --status in_progress`
 
 ## Prerequisites
 ```bash
-gh extension install scooter-indie/gh-pmu
+gh extension install rubrical-studios/gh-pmu
 ```
 
 ## Critical Rules

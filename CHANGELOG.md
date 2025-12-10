@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.8.0] - 2025-12-09
+
+### Added
+
+#### PRD Templates (8 New)
+- **Framework Gap Analysis PRDs** (#144) - 8 comprehensive PRDs for identified framework gaps:
+  - PRD-Framework-Gap-Analysis-Logging-Observability.md
+  - PRD-Framework-Gap-Analysis-Documentation-Maintenance.md
+  - PRD-Framework-Gap-Analysis-Error-Recovery.md
+  - PRD-Framework-Gap-Analysis-File-Organization.md
+  - PRD-Framework-Gap-Analysis-Multi-Agent.md
+  - PRD-Framework-Gap-Analysis-Performance-Optimization.md
+  - PRD-Framework-Gap-Analysis-State-Persistence.md
+  - PRD-Framework-Gap-Analysis-Team-Collaboration.md
+
+#### Release Process
+- **Slash commands for release preparation** (#146) - Converted release documentation to executable slash commands:
+  - `/prepare-release` - Full release preparation workflow
+  - `/skill-validate` - Skill validation process
+  - `/minimize-files` - Token optimization process
+
+### Changed
+- **LICENSE** - Updated copyright to Rubrical Studios
+- **Repository references** (#145) - Updated all references from previous owner to rubrical-studios
+
+---
+
 ## [2.7.0] - 2025-12-08
 
 ### Added
@@ -363,10 +390,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-[2.4.0]: https://github.com/scooter-indie/process-docs/compare/v2.3.1...v2.4.0
-[2.3.1]: https://github.com/scooter-indie/process-docs/compare/v2.3.0...v2.3.1
-[2.3.0]: https://github.com/scooter-indie/process-docs/compare/v2.2.0...v2.3.0
-[2.2.0]: https://github.com/scooter-indie/process-docs/releases/tag/v2.2.0
-[2.1.0]: https://github.com/scooter-indie/process-docs/releases/tag/v2.1.0
-[2.0.0]: https://github.com/scooter-indie/process-docs/releases/tag/v2.0.0
-[1.0.0]: https://github.com/scooter-indie/process-docs/releases/tag/v1.0.0
+[2.8.0]: https://github.com/rubrical-studios/process-docs/compare/v2.7.0...v2.8.0
+[2.7.0]: https://github.com/rubrical-studios/process-docs/compare/v2.6.3...v2.7.0
+[2.6.3]: https://github.com/rubrical-studios/process-docs/compare/v2.6.2...v2.6.3
+[2.6.2]: https://github.com/rubrical-studios/process-docs/compare/v2.6.0...v2.6.2
+[2.6.0]: https://github.com/rubrical-studios/process-docs/compare/v2.5.0...v2.6.0
+[2.5.0]: https://github.com/rubrical-studios/process-docs/compare/v2.4.0...v2.5.0
+[2.4.0]: https://github.com/rubrical-studios/process-docs/compare/v2.3.1...v2.4.0
+[2.3.1]: https://github.com/rubrical-studios/process-docs/compare/v2.3.0...v2.3.1
+[2.3.0]: https://github.com/rubrical-studios/process-docs/compare/v2.2.0...v2.3.0
+[2.2.0]: https://github.com/rubrical-studios/process-docs/releases/tag/v2.2.0
+[2.1.0]: https://github.com/rubrical-studios/process-docs/releases/tag/v2.1.0
+[2.0.0]: https://github.com/rubrical-studios/process-docs/releases/tag/v2.0.0
+[1.0.0]: https://github.com/rubrical-studios/process-docs/releases/tag/v1.0.0

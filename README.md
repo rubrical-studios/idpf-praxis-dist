@@ -74,7 +74,7 @@ node [frameworkPath]/fetch-updates.js
 
 ## Source Repository
 
-https://github.com/scooter-indie/process-docs
+https://github.com/rubrical-studios/process-docs
 
 ---
 
