@@ -713,7 +713,8 @@ function deployWorkflowHook(projectDir, frameworkPath) {
   const hooksDir = path.join(projectDir, '.claude', 'hooks');
   fs.mkdirSync(hooksDir, { recursive: true });
 
-  const srcHook = path.join(frameworkPath, '.claude', 'hooks', 'workflow-trigger.js');
+  // Look in Templates/hooks/ (bundled location for distribution)
+  const srcHook = path.join(frameworkPath, 'Templates', 'hooks', 'workflow-trigger.js');
   const destHook = path.join(hooksDir, 'workflow-trigger.js');
 
   if (fs.existsSync(srcHook)) {

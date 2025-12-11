@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.9.7] - 2025-12-10
+
+### Fixed
+- **install.js hook source path** (#184) - Moved `workflow-trigger.js` from `.claude/hooks/` to `Templates/hooks/` for proper distribution bundling
+
+---
+
 ## [2.9.6] - 2025-12-10
 
 ### Added
