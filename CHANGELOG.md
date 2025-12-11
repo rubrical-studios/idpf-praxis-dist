@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.9.10] - 2025-12-11
+
+### Added
+- **Manifest-based file cleanup** (#194) - `install.js` now maintains a manifest of expected files and removes orphaned files during updates/migrations
+- **Prompt before bulk updates** (#192) - Installer now shows tracked projects and prompts for confirmation before updating them
+
+---
+
 ## [2.9.9] - 2025-12-11
 
 ### Changed

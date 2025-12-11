@@ -64,6 +64,55 @@ const VIBE_VARIANT_SKILLS = {
   'vibe-embedded': [],
 };
 
+/**
+ * Manifest of installed files for cleanup purposes
+ * Each entry specifies:
+ * - dir: relative directory path from project root
+ * - files: array of expected filenames (functions receive config and return true/false for conditional files)
+ */
+const INSTALLED_FILES_MANIFEST = {
+  // Root directory files
+  root: {
+    dir: '.',
+    files: [
+      'CLAUDE.md',
+      'framework-config.json',
+      // Platform-specific run scripts
+      (config) => process.platform === 'win32' ? 'run_claude.cmd' : null,
+      (config) => process.platform === 'win32' ? 'runp_claude.cmd' : null,
+      (config) => process.platform !== 'win32' ? 'run_claude.sh' : null,
+      (config) => process.platform !== 'win32' ? 'runp_claude.sh' : null,
+    ],
+  },
+  // .claude/rules/ directory
+  rules: {
+    dir: '.claude/rules',
+    files: [
+      '01-anti-hallucination.md',
+      (config) => config?.enableGitHubWorkflow ? '02-github-workflow.md' : null,
+      '03-startup.md',
+    ],
+  },
+  // .claude/commands/ directory
+  commands: {
+    dir: '.claude/commands',
+    files: [
+      (config) => config?.domainSpecialists?.length > 0 ? 'switch-role.md' : null,
+      'add-role.md',
+    ],
+  },
+  // .claude/hooks/ directory
+  hooks: {
+    dir: '.claude/hooks',
+    files: [
+      (config) => config?.enableGitHubWorkflow ? 'workflow-trigger.js' : null,
+    ],
+  },
+  // Note: .claude/skills/ and .claude/settings.local.json are NOT cleaned up
+  // - skills: managed separately per framework
+  // - settings.local.json: may contain user customizations
+};
+
 const PROCESS_FRAMEWORKS = [
   { value: 'IDPF-Structured', title: 'IDPF-Structured', description: 'Test-Driven Development with fixed requirements' },
   { value: 'IDPF-Agile', title: 'IDPF-Agile', description: 'Sprint-based development with user stories' },
@@ -106,6 +155,124 @@ function logCyan(msg) {
 
 function divider() {
   log(colors.cyan('───────────────────────────────────────'));
+}
+
+/**
+ * Resolve expected files from manifest based on config
+ * @param {object} manifestEntry - Entry from INSTALLED_FILES_MANIFEST
+ * @param {object} config - Configuration object with domainSpecialists, enableGitHubWorkflow, etc.
+ * @returns {string[]} Array of expected filenames
+ */
+function resolveManifestFiles(manifestEntry, config) {
+  const expectedFiles = [];
+  for (const item of manifestEntry.files) {
+    if (typeof item === 'function') {
+      const result = item(config);
+      if (result) {
+        expectedFiles.push(result);
+      }
+    } else if (typeof item === 'string') {
+      expectedFiles.push(item);
+    }
+  }
+  return expectedFiles;
+}
+
+/**
+ * Clean up orphaned files that are no longer in the manifest
+ * @param {string} projectDir - Project directory path
+ * @param {object} config - Configuration object with domainSpecialists, enableGitHubWorkflow, etc.
+ * @returns {object} Results: { removed: string[], skipped: string[] }
+ */
+function cleanupOrphanedFiles(projectDir, config) {
+  const results = { removed: [], skipped: [] };
+
+  for (const [key, entry] of Object.entries(INSTALLED_FILES_MANIFEST)) {
+    const dirPath = path.join(projectDir, entry.dir);
+
+    // Skip if directory doesn't exist
+    if (!fs.existsSync(dirPath)) {
+      continue;
+    }
+
+    // Get expected files for this directory
+    const expectedFiles = resolveManifestFiles(entry, config);
+
+    // Get actual files in directory
+    let actualFiles;
+    try {
+      actualFiles = fs.readdirSync(dirPath).filter(f => {
+        const fullPath = path.join(dirPath, f);
+        return fs.statSync(fullPath).isFile();
+      });
+    } catch (err) {
+      // Can't read directory, skip
+      continue;
+    }
+
+    // Find orphaned files (files that exist but are not in expected list)
+    for (const file of actualFiles) {
+      if (!expectedFiles.includes(file)) {
+        const filePath = path.join(dirPath, file);
+
+        // Safety check: only remove known installer-generated file patterns
+        const isInstallerFile = isKnownInstallerFile(file, key);
+
+        if (isInstallerFile) {
+          try {
+            fs.unlinkSync(filePath);
+            results.removed.push(path.relative(projectDir, filePath));
+          } catch (err) {
+            results.skipped.push({
+              file: path.relative(projectDir, filePath),
+              reason: err.message,
+            });
+          }
+        }
+      }
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Check if a file matches known installer-generated patterns
+ * This prevents accidentally deleting user-created files
+ * @param {string} filename - Name of the file
+ * @param {string} manifestKey - Key from INSTALLED_FILES_MANIFEST (root, rules, commands, hooks)
+ * @returns {boolean} True if file matches known patterns
+ */
+function isKnownInstallerFile(filename, manifestKey) {
+  // Define patterns for each manifest category
+  const patterns = {
+    root: [
+      // Only match specific installer files, not arbitrary root files
+      /^CLAUDE\.md$/,
+      /^framework-config\.json$/,
+      /^run_claude\.(cmd|sh)$/,
+      /^runp_claude\.(cmd|sh)$/,
+      /^STARTUP\.md$/,  // Legacy file from pre-2.9.0
+    ],
+    rules: [
+      // Rules files follow numbered prefix pattern or known legacy names
+      /^\d{2}-[\w-]+\.md$/,
+      /^anti-hallucination\.md$/,  // Legacy name
+      /^github-workflow\.md$/,     // Legacy name
+      /^startup\.md$/,             // Legacy name
+    ],
+    commands: [
+      // Command files are markdown
+      /^[\w-]+\.md$/,
+    ],
+    hooks: [
+      // Hook files are JavaScript
+      /^[\w-]+\.js$/,
+    ],
+  };
+
+  const categoryPatterns = patterns[manifestKey] || [];
+  return categoryPatterns.some(pattern => pattern.test(filename));
 }
 
 // ======================================
@@ -238,6 +405,19 @@ function updateTrackedProjects(frameworkPath) {
       for (const migration of applicableMigrations) {
         log(`    ${colors.dim(`  Running: ${migration.description}`)}`);
         migration.migrate(projectPath, frameworkPath, projectConfig);
+      }
+
+      // Clean up orphaned files after migrations
+      const hasGitHubWorkflow = fs.existsSync(path.join(projectPath, '.claude', 'hooks', 'workflow-trigger.js'));
+      const cleanupConfig = {
+        domainSpecialists: projectConfig.projectType?.domainSpecialists || [],
+        enableGitHubWorkflow: hasGitHubWorkflow,
+      };
+      const cleanupResult = cleanupOrphanedFiles(projectPath, cleanupConfig);
+      if (cleanupResult.removed.length > 0) {
+        for (const file of cleanupResult.removed) {
+          log(`    ${colors.dim(`  Removed: ${file}`)}`);
+        }
       }
 
       // Update version in config
@@ -1025,6 +1205,23 @@ function runMigrations(projectDir, frameworkPath) {
     log();
   }
 
+  // Clean up orphaned files after all migrations
+  const hasGitHubWorkflow = fs.existsSync(path.join(projectDir, '.claude', 'hooks', 'workflow-trigger.js'));
+  const cleanupConfig = {
+    domainSpecialists: config.projectType?.domainSpecialists || [],
+    enableGitHubWorkflow: hasGitHubWorkflow,
+  };
+  const cleanupResult = cleanupOrphanedFiles(projectDir, cleanupConfig);
+  if (cleanupResult.removed.length > 0) {
+    divider();
+    log('Cleanup: Remove orphaned files');
+    divider();
+    for (const file of cleanupResult.removed) {
+      logSuccess(`  ✓ Removed: ${file}`);
+    }
+    log();
+  }
+
   // Update installed version
   config.installedVersion = currentVersion;
   config.migratedDate = getCurrentDate();
@@ -1282,15 +1479,34 @@ async function main() {
       log(`  Version:   ${colors.green(version)}`);
       log();
 
-      // Step 1: Update/migrate all tracked projects
+      // Step 1: Check for tracked projects and prompt before updating
       const trackedData = readInstalledProjects(frameworkPath);
       if (trackedData.projects.length > 0) {
-        const results = updateTrackedProjects(frameworkPath);
+        log(`Found ${colors.cyan(trackedData.projects.length)} tracked project(s):`);
+        for (const project of trackedData.projects) {
+          log(`  • ${colors.dim(project.path)}`);
+        }
         log();
-        divider();
-        log(`  Updated: ${colors.green(results.updated)}  Current: ${colors.cyan(results.current)}  Removed: ${colors.yellow(results.removed)}  Failed: ${colors.red(results.failed)}`);
-        divider();
-        log();
+
+        const { updateProjects } = await prompts({
+          type: 'confirm',
+          name: 'updateProjects',
+          message: 'Update/migrate these projects now?',
+          initial: true,
+        }, { onCancel });
+
+        if (updateProjects) {
+          const results = updateTrackedProjects(frameworkPath);
+          log();
+          divider();
+          log(`  Updated: ${colors.green(results.updated)}  Current: ${colors.cyan(results.current)}  Removed: ${colors.yellow(results.removed)}  Failed: ${colors.red(results.failed)}`);
+          divider();
+          log();
+        } else {
+          log();
+          logWarning('Skipped updating tracked projects.');
+          log();
+        }
       }
 
       // Step 2: Ask if user wants to install to another project
@@ -1677,6 +1893,20 @@ async function main() {
       logSuccess('  ✓ .claude/settings.local.json' + (enableGitHubWorkflow ? ' (with hooks)' : ''));
     } else {
       logWarning('  ⊘ .claude/settings.local.json (preserved existing)');
+    }
+
+    // Clean up orphaned files from previous installations
+    const cleanupConfig = {
+      domainSpecialists: selectedDomains,
+      enableGitHubWorkflow: enableGitHubWorkflow,
+    };
+    const cleanupResult = cleanupOrphanedFiles(projectDir, cleanupConfig);
+    if (cleanupResult.removed.length > 0) {
+      log();
+      log(colors.dim('  Cleaning up orphaned files...'));
+      for (const file of cleanupResult.removed) {
+        logSuccess(`    ✓ Removed: ${file}`);
+      }
     }
 
     // Track the installation
