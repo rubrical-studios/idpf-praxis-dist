@@ -27,6 +27,8 @@ gh extension install rubrical-studios/gh-pmu
 ⚠️ **NEVER close issues automatically** - Wait for "Done"
 ⚠️ **NEVER skip STOP checkpoint** - Report and wait
 ⚠️ **Issues stay open** until explicit approval
+⚠️ **NEVER mark Done with unchecked boxes** - All acceptance criteria must be checked
+⚠️ **In Review requires checkbox evaluation** - Check all criteria when moving to In Review
 
 ## Workflows
 
@@ -57,14 +59,13 @@ Same flow as Bug, use `--label "enhancement"`
 **Step 4 (if yes):** Add `--add-label "epic"`, `--remove-label "story"` from parent, add "story" to subs
 
 ### 5. Create-Issues Workflow (PRD)
-**Triggers:** "Create-Issues", "Create-Issues-Agile", "Create-Issues-Structured"
+**Triggers:** "Create-Issues", "Create-Backlog" (Agile preferred), "Create-Issues-Structured"
 **Framework Detection:**
-- `PRD-Agile-*.md` → Agile
+- `PRD-Agile-*.md` → Redirect to `Create-Backlog`
 - `PRD-Structured-*.md` → Structured
-- `backlog/` → Agile
 - Ambiguous → Ask user
 
-**Agile:** Feature Area → Epic → Capabilities → Stories (linked as sub-issues)
+**Agile (via Create-Backlog):** Feature Area → Epic → Capabilities → Stories (linked via `gh pmu sub add`), sets PRD field, updates PRD status
 **Structured:** REQ-XXX → Requirement → Implementation + QA sub-issues (linked)
 
 ### 6. Reopen Workflow

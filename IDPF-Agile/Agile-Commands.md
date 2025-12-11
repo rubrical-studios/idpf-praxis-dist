@@ -2,38 +2,46 @@
 **Module:** Commands (loaded on-demand)
 
 ## Backlog Management
+All commands work against GitHub issues. No local backlog files created.
+**Prerequisites:** `.gh-pmu.yml` configured, `gh pmu` extension installed
+
 | Command | Description |
 |---------|-------------|
-| `Create-Backlog` | Generate product backlog from vision |
-| `Show-Backlog` | Display current backlog |
-| `Add-Story` | Add new story |
-| `Refine-Story [ID]` | Update/clarify story |
-| `Estimate-Story [ID]` | Re-estimate points |
-| `Prioritize-Backlog` | Re-order by priority |
-| `Split-Story [ID]` | Break into smaller stories |
-| `Archive-Story [ID]` | Move to icebox |
+| `Create-Backlog` | Create GitHub epics/stories from PRD |
+| `Show-Backlog` | Display backlog from GitHub project board |
+| `Add-Story` | Create new story with epic auto-detection |
+| `Refine-Story [#ID]` | Update story title/description |
+| `Estimate-Story [#ID]` | Set Estimate field (numeric) |
+| `Prioritize-Backlog` | Update Priority field (P0/P1/P2) |
+| `Split-Story [#ID]` | Break into smaller stories |
+| `Archive-Story [#ID]` | Move to Parking Lot with reason |
 
-## GitHub Issues
+### Create-Backlog Workflow
+1. Identify PRD (prompt if multiple in `PRD/`)
+2. Parse: Feature Areas → Epics, Capabilities → Stories
+3. Create Epic issues: `--label "epic"`
+4. Create Story issues: `--label "story"` with User Story + AC
+5. Link: `gh pmu sub add [epic#] [story#]`
+6. Set PRD field, set status backlog
+7. Update PRD status to "Backlog Created"
+8. Create completion story for PRD status update
+
+### Show-Backlog: Query `gh pmu board` filtered by PRD field
+### Add-Story: Auto-detect epic, confirm, create, link, set backlog
+### Split-Story: Create smaller stories, link to same epic, close original
+### Archive-Story: Set parking_lot status, comment with reason
+
+## Story Workflow
 | Command | Description |
 |---------|-------------|
-| `Create-Issues` | Create from PRD/backlog (auto-detect) |
-| `Create-Issues-Agile` | Explicit Agile creation |
-
-Hierarchy: Epic → Story sub-issues (via `gh pmu sub add`)
-Status sync: Start-Story → in_progress, Story-Complete → in_review, Done → close
-
-## Sprint
-| Command | Description |
-|---------|-------------|
-| `Plan-Sprint` | Select stories for sprint |
-| `Show-Sprint` | Display sprint backlog |
-| `Start-Story [ID]` | Begin story development |
+| `Start-Story [#ID]` | In Progress + assign, display AC, begin TDD |
 | `Story-Status` | Check current story progress |
-| `Story-Complete [ID]` | Mark story done |
-| `Sprint-Progress` | Show burndown |
-| `Sprint-Review` | Review completed sprint |
-| `Sprint-Retro` | Conduct retrospective |
-| `End-Sprint` | Close sprint (Review + Retro) |
+| `Story-Complete [#ID]` | Verify criteria, run tests, done, unassign |
+
+## Sprint Commands (Deferred)
+Sprint tracking deferred - use GitHub project board.
+
+| `Plan-Sprint`, `Show-Sprint`, `Sprint-Progress`, `Sprint-Review`, `Sprint-Retro`, `End-Sprint` | "Sprint tracking deferred" |
 
 ## Development
 | Command | Description |
@@ -49,8 +57,8 @@ Status sync: Start-Story → in_progress, Story-Complete → in_review, Done →
 ## Project
 | Command | Description |
 |---------|-------------|
-| `Project-Status` | Health dashboard |
-| `Velocity-Report` | Velocity trends |
+| `Project-Status` | Deferred - use GitHub board |
+| `Velocity-Report` | Deferred - use GitHub board |
 | `Push-Changes` | Commit and push |
 | `Create-Release` | Tag release |
 | `Project-Complete` | Finalize, create PR |
@@ -58,10 +66,10 @@ Status sync: Start-Story → in_progress, Story-Complete → in_review, Done →
 ## Special Scenarios
 | Command | Description |
 |---------|-------------|
-| `Story-Blocked [ID] [reason]` | Mark blocked |
-| `Story-Growing [ID]` | Flag scope creep |
-| `Emergency-Bug [description]` | Create unplanned fix |
-| `Pivot [direction]` | Change direction |
+| `Story-Blocked [#ID] [reason]` | Add `blocked` label + comment |
+| `Story-Growing [#ID]` | Add `scope-creep` label |
+| `Emergency-Bug [desc]` | Create P0 issue + `emergency` label |
+| `Pivot [direction]` | Review each story: keep/archive/close |
 
 ## Utility
 | Command | Description |

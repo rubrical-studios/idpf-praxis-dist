@@ -141,11 +141,14 @@ function copyDir(src, dest) {
  * Update framework files from temp directory
  */
 function updateFrameworkFiles(frameworkPath) {
-  // Clear framework directory (except git if present)
+  // Files/directories to preserve during update
+  const PRESERVE = ['.git', 'installed-projects.json'];
+
+  // Clear framework directory (except preserved items)
   log(colors.dim('Updating framework files...'));
   const entries = fs.readdirSync(frameworkPath);
   for (const entry of entries) {
-    if (entry === '.git') continue;
+    if (PRESERVE.includes(entry)) continue;
     const entryPath = path.join(frameworkPath, entry);
     fs.rmSync(entryPath, { recursive: true, force: true });
   }

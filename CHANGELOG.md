@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.10.0] - 2025-12-11
+
+### Added
+- **/audit-minimization slash command** (#212) - Audit minimized files for removed Medium+ requirements, integrated with release quality gates
+
+### Changed
+- **IDPF-Agile GitHub-native backlog** (#208) - Updated documentation for GitHub-native issue management with `Create-Backlog` command
+- **Create-Backlog command** (#197) - Now creates GitHub issues directly instead of markdown backlog, with Epic/Story hierarchy
+- **Checkbox enforcement for status transitions** (#211) - Issue status cannot move to "In Review" or "Done" until all acceptance criteria checkboxes are checked
+
+### Fixed
+- **Installer cleanup scope** (#209) - Only cleanup installer-generated commands and hooks, preserving user-created files
+- **fetch-updates.js data preservation** (#195) - Preserve `installed-projects.json` during framework updates
+
+---
+
 ## [2.9.10] - 2025-12-11
 
 ### Added

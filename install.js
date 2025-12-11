@@ -262,12 +262,13 @@ function isKnownInstallerFile(filename, manifestKey) {
       /^startup\.md$/,             // Legacy name
     ],
     commands: [
-      // Command files are markdown
-      /^[\w-]+\.md$/,
+      // Only match installer-generated command files, not user-created ones
+      /^switch-role\.md$/,
+      /^add-role\.md$/,
     ],
     hooks: [
-      // Hook files are JavaScript
-      /^[\w-]+\.js$/,
+      // Only match installer-generated hook files
+      /^workflow-trigger\.js$/,
     ],
   };
 
