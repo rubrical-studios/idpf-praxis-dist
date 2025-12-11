@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.9.5] - 2025-12-10
+
+### Fixed
+- **fetch-updates.js ENOENT error** (#181) - Use system temp directory instead of relative path
+
+---
+
 ## [2.9.4] - 2025-12-10
 
 ### Changed

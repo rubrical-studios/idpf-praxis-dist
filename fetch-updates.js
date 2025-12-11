@@ -21,7 +21,7 @@ const { execSync } = require('child_process');
 // ======================================
 
 const DIST_REPO = 'https://github.com/rubrical-studios/virtual-ai-studio-dist.git';
-const TEMP_DIR = '.framework-update-temp';
+const TEMP_DIR = path.join(require('os').tmpdir(), 'idpf-framework-update');
 
 // ======================================
 //  Console Colors
