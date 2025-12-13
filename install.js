@@ -28,24 +28,29 @@ const colors = {
 // ======================================
 
 const DOMAIN_SPECIALISTS = [
-  'Full-Stack-Developer',
-  'Backend-Specialist',
-  'Frontend-Specialist',
-  'DevOps-Engineer',
-  'Database-Engineer',
-  'API-Integration-Specialist',
-  'Security-Engineer',
-  'Platform-Engineer',
-  'Mobile-Specialist',
-  'Data-Engineer',
-  'QA-Test-Engineer',
-  'Cloud-Solutions-Architect',
-  'SRE-Specialist',
-  'Embedded-Systems-Engineer',
-  'ML-Engineer',
-  'Performance-Engineer',
-  'PRD-Analyst',
   'Accessibility-Specialist',
+  'API-Integration-Specialist',
+  'Backend-Specialist',
+  'Cloud-Solutions-Architect',
+  'Database-Engineer',
+  'Data-Engineer',
+  'Desktop-Application-Developer',
+  'DevOps-Engineer',
+  'Embedded-Systems-Engineer',
+  'Frontend-Specialist',
+  'Full-Stack-Developer',
+  'Game-Developer',
+  'Graphics-Engineer-Specialist',
+  'ML-Engineer',
+  'Mobile-Specialist',
+  'Performance-Engineer',
+  'Platform-Engineer',
+  'PRD-Analyst',
+  'QA-Test-Engineer',
+  'Security-Engineer',
+  'SRE-Specialist',
+  'Systems-Programmer-Specialist',
+  'Technical-Writer-Specialist',
 ];
 
 const FRAMEWORK_SKILLS = {
@@ -127,6 +132,40 @@ const VIBE_VARIANTS = [
   { value: 'vibe-mobile', title: 'Vibe-Mobile', description: 'Mobile applications' },
   { value: 'vibe-game', title: 'Vibe-Game', description: 'Game development' },
   { value: 'vibe-embedded', title: 'Vibe-Embedded', description: 'Embedded systems' },
+];
+
+const TESTING_FRAMEWORKS = [
+  { value: 'IDPF-Testing-Core', title: 'IDPF-Testing-Core', description: 'Foundation testing framework' },
+  { value: 'IDPF-QA-Automation', title: 'IDPF-QA-Automation', description: 'QA automation framework' },
+  { value: 'IDPF-Performance', title: 'IDPF-Performance', description: 'Performance testing framework' },
+  { value: 'IDPF-Security', title: 'IDPF-Security', description: 'Security testing framework' },
+  { value: 'IDPF-Accessibility', title: 'IDPF-Accessibility', description: 'Accessibility testing framework' },
+  { value: 'IDPF-Chaos', title: 'IDPF-Chaos', description: 'Chaos engineering framework' },
+  { value: 'IDPF-Contract-Testing', title: 'IDPF-Contract-Testing', description: 'Contract testing framework' },
+];
+
+const ALL_SKILLS = [
+  'anti-pattern-analysis',
+  'api-versioning',
+  'bdd-writing',
+  'beginner-testing',
+  'ci-cd-pipeline-design',
+  'common-errors',
+  'error-handling-patterns',
+  'extract-prd',
+  'flask-setup',
+  'migration-patterns',
+  'mutation-testing',
+  'postgresql-integration',
+  'property-based-testing',
+  'sinatra-setup',
+  'sqlite-integration',
+  'tdd-failure-recovery',
+  'tdd-green-phase',
+  'tdd-red-phase',
+  'tdd-refactor-phase',
+  'test-writing-patterns',
+  'uml-generation',
 ];
 
 // ======================================
@@ -497,6 +536,235 @@ function extractZip(zipPath, destDir) {
   } catch (err) {
     return false;
   }
+}
+
+// ======================================
+//  GitHub Setup Functions (REQ-001 to REQ-010)
+// ======================================
+
+/**
+ * REQ-001: Check git remote status
+ * Returns: { hasGit: boolean, hasRemote: boolean }
+ */
+function checkGitRemote(projectDir) {
+  const gitDir = path.join(projectDir, '.git');
+
+  // AC-1: Check for .git directory
+  if (!fs.existsSync(gitDir)) {
+    return { hasGit: false, hasRemote: false };
+  }
+
+  // AC-2: Check for remote
+  try {
+    const result = execSync('git remote -v', { cwd: projectDir, stdio: 'pipe' }).toString();
+    // AC-3: Remote exists if output is non-empty
+    return { hasGit: true, hasRemote: result.trim().length > 0 };
+  } catch {
+    return { hasGit: true, hasRemote: false };
+  }
+}
+
+/**
+ * REQ-002: Check GitHub CLI prerequisites
+ * Returns: { ready: boolean, issues: Array<{type, message, remediation}> }
+ */
+function checkGhCliPrerequisites() {
+  const issues = [];
+
+  // AC-1: Check if gh CLI is installed
+  if (!checkCommand('gh')) {
+    issues.push({
+      type: 'not_installed',
+      message: 'GitHub CLI (gh) is not installed',
+      remediation: 'Install from: https://cli.github.com/',
+    });
+    return { ready: false, issues };
+  }
+
+  // AC-2: Check if gh is authenticated
+  try {
+    execSync('gh auth status', { stdio: 'pipe' });
+  } catch (err) {
+    issues.push({
+      type: 'not_authenticated',
+      message: 'GitHub CLI is not authenticated',
+      remediation: 'Run: gh auth login',
+    });
+    return { ready: false, issues };
+  }
+
+  // AC-3 & AC-4: Check scopes
+  try {
+    const scopeOutput = execSync('gh auth status', { stdio: 'pipe' }).toString();
+
+    // Check for repo scope
+    if (!scopeOutput.includes('repo') && !scopeOutput.includes('Logged in')) {
+      // Try to get scopes via API
+      try {
+        execSync('gh api user', { stdio: 'pipe' });
+      } catch {
+        issues.push({
+          type: 'missing_repo_scope',
+          message: 'Missing repo scope',
+          remediation: 'Run: gh auth refresh -s repo,project',
+        });
+      }
+    }
+
+    // Check for project scope by testing project access
+    try {
+      execSync('gh api user', { stdio: 'pipe' });
+    } catch {
+      issues.push({
+        type: 'missing_project_scope',
+        message: 'Missing project scope',
+        remediation: 'Run: gh auth refresh -s repo,project',
+      });
+    }
+  } catch {
+    // If we can't check scopes, assume they're missing
+    issues.push({
+      type: 'scope_check_failed',
+      message: 'Could not verify authentication scopes',
+      remediation: 'Run: gh auth refresh -s repo,project',
+    });
+  }
+
+  return { ready: issues.length === 0, issues };
+}
+
+/**
+ * REQ-005: Create GitHub repository
+ * Returns: { success: boolean, repoUrl?: string, error?: string }
+ */
+function createGitHubRepo(projectDir, repoName, visibility) {
+  try {
+    // Create the repository
+    const visFlag = visibility === 'public' ? '--public' : '--private';
+    const result = execSync(
+      `gh repo create "${repoName}" ${visFlag} --source="${projectDir}" --push`,
+      { cwd: projectDir, stdio: 'pipe' }
+    ).toString();
+
+    // Extract repo URL from output
+    const urlMatch = result.match(/https:\/\/github\.com\/[^\s]+/);
+    const repoUrl = urlMatch ? urlMatch[0] : `https://github.com/${repoName}`;
+
+    return { success: true, repoUrl };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+/**
+ * REQ-006: Copy project board template
+ * Returns: { success: boolean, projectNumber?: number, projectUrl?: string, error?: string }
+ */
+function copyProjectBoard(templateNumber, projectTitle, targetOwner) {
+  try {
+    // Copy project from rubrical-studios
+    const result = execSync(
+      `gh project copy ${templateNumber} --source-owner rubrical-studios --target-owner ${targetOwner} --title "${projectTitle}"`,
+      { stdio: 'pipe' }
+    ).toString();
+
+    // Extract project number from output
+    const numberMatch = result.match(/Project #?(\d+)/i) || result.match(/(\d+)/);
+    const projectNumber = numberMatch ? parseInt(numberMatch[1], 10) : null;
+
+    // Construct project URL
+    const projectUrl = projectNumber
+      ? `https://github.com/users/${targetOwner}/projects/${projectNumber}`
+      : null;
+
+    return { success: true, projectNumber, projectUrl };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+/**
+ * REQ-007: Link project board to repository
+ * Returns: { success: boolean, error?: string }
+ */
+function linkProjectBoard(projectNumber, owner, repoName) {
+  try {
+    execSync(
+      `gh project link ${projectNumber} --owner ${owner} --repo ${owner}/${repoName}`,
+      { stdio: 'pipe' }
+    );
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+/**
+ * REQ-008: Generate .gh-pmu.yml configuration file
+ */
+function generateGhPmuConfig(projectDir, projectName, projectNumber, owner, repoName) {
+  const config = `project:
+    name: ${projectName}
+    number: ${projectNumber}
+    owner: ${owner}
+repositories:
+    - ${owner}/${repoName}
+defaults:
+    priority: p2
+    status: backlog
+    labels:
+        - pm-tracked
+fields:
+    priority:
+        field: Priority
+        values:
+            p0: P0
+            p1: P1
+            p2: P2
+    status:
+        field: Status
+        values:
+            backlog: Backlog
+            done: Done
+            in_progress: In progress
+            in_review: In review
+            ready: Ready
+`;
+
+  fs.writeFileSync(path.join(projectDir, '.gh-pmu.yml'), config);
+  return true;
+}
+
+/**
+ * Get current GitHub username
+ */
+function getGitHubUsername() {
+  try {
+    const result = execSync('gh api user --jq ".login"', { stdio: 'pipe' }).toString().trim();
+    return result;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * REQ-010: Display GitHub setup success information
+ */
+function displayGitHubSetupSuccess(repoUrl, projectUrl) {
+  log();
+  logCyan('╔══════════════════════════════════════╗');
+  logCyan('║     GitHub Setup Complete!           ║');
+  logCyan('╚══════════════════════════════════════╝');
+  log();
+  if (repoUrl) {
+    log(`  ${colors.dim('Repository:')}     ${colors.green(repoUrl)}`);
+  }
+  if (projectUrl) {
+    log(`  ${colors.dim('Project Board:')}  ${colors.green(projectUrl)}`);
+  }
+  log();
+  logSuccess('GitHub integration setup complete!');
+  log();
 }
 
 /**
@@ -1346,9 +1614,10 @@ See \`Templates/Testing-Approach-Selection-Guide.md\` for guidance on:
 // ======================================
 
 async function main() {
-  // Check for --migrate flag
+  // Check for command-line flags
   const args = process.argv.slice(2);
   const migrateMode = args.includes('--migrate');
+  const skipGitHub = args.includes('--skip-github'); // REQ-009: Skip GitHub setup
 
   // Load prompts module, auto-install if missing
   let prompts;
@@ -1914,6 +2183,185 @@ async function main() {
     trackProject(frameworkPath, projectDir, version);
 
     // ======================================
+    //  GitHub Repository & Project Board Setup (REQ-001 to REQ-010)
+    // ======================================
+
+    let githubSetupResult = { repoUrl: null, projectUrl: null, skipped: false };
+
+    // REQ-009: Skip if --skip-github flag is present
+    if (skipGitHub) {
+      log();
+      logWarning('GitHub setup skipped (--skip-github flag)');
+      githubSetupResult.skipped = true;
+    } else {
+      // REQ-001: Check git remote status
+      const gitStatus = checkGitRemote(projectDir);
+
+      // AC-3: Skip silently if remote already exists
+      if (gitStatus.hasRemote) {
+        log();
+        log(colors.dim('Git remote already configured - skipping GitHub setup'));
+        githubSetupResult.skipped = true;
+      } else {
+        // REQ-002: Check GitHub CLI prerequisites
+        const ghPrereqs = checkGhCliPrerequisites();
+
+        if (!ghPrereqs.ready) {
+          // AC-5 & AC-6: Display remediation and skip (not error)
+          log();
+          logWarning('GitHub setup skipped - prerequisites not met:');
+          for (const issue of ghPrereqs.issues) {
+            log(`  ${colors.yellow('⚠')} ${issue.message}`);
+            log(`    ${colors.cyan(issue.remediation)}`);
+          }
+          githubSetupResult.skipped = true;
+        } else {
+          // REQ-003: User Confirmation Prompt
+          log();
+          divider();
+          logCyan('  GitHub Repository Setup');
+          divider();
+          log();
+          log('No git remote detected. Would you like to set up GitHub integration?');
+          log(colors.dim('This will create a GitHub repository and project board for your project.'));
+          log();
+
+          const { setupGitHub } = await prompts({
+            type: 'confirm',
+            name: 'setupGitHub',
+            message: 'Set up GitHub integration?',
+            initial: true,
+          }, { onCancel });
+
+          if (!setupGitHub) {
+            log();
+            logWarning('GitHub setup skipped.');
+            githubSetupResult.skipped = true;
+          } else {
+            // REQ-004: Configuration Prompts
+            const dirName = path.basename(projectDir);
+            const ghUsername = getGitHubUsername();
+
+            const { repoName } = await prompts({
+              type: 'text',
+              name: 'repoName',
+              message: 'Repository name',
+              initial: dirName,
+              validate: (v) => v.trim() ? true : 'Repository name required',
+            }, { onCancel });
+
+            const { visibility } = await prompts({
+              type: 'select',
+              name: 'visibility',
+              message: 'Repository visibility',
+              choices: [
+                { title: 'Private', value: 'private' },
+                { title: 'Public', value: 'public' },
+              ],
+              initial: 0,
+            }, { onCancel });
+
+            const { templateNumber } = await prompts({
+              type: 'number',
+              name: 'templateNumber',
+              message: 'Project template number (from rubrical-studios)',
+              initial: 30,
+            }, { onCancel });
+
+            const { projectTitle } = await prompts({
+              type: 'text',
+              name: 'projectTitle',
+              message: 'Project board title',
+              initial: repoName,
+            }, { onCancel });
+
+            log();
+            log(colors.dim('Creating GitHub resources...'));
+            log();
+
+            // Initialize git if needed
+            if (!gitStatus.hasGit) {
+              try {
+                execSync('git init', { cwd: projectDir, stdio: 'pipe' });
+                logSuccess('  ✓ Initialized git repository');
+              } catch (err) {
+                logError(`  ✗ Failed to initialize git: ${err.message}`);
+              }
+            }
+
+            // Create initial commit if no commits exist
+            try {
+              execSync('git rev-parse HEAD', { cwd: projectDir, stdio: 'pipe' });
+            } catch {
+              // No commits, create initial commit
+              try {
+                execSync('git add -A', { cwd: projectDir, stdio: 'pipe' });
+                execSync('git commit -m "Initial commit - IDPF Framework setup"', { cwd: projectDir, stdio: 'pipe' });
+                logSuccess('  ✓ Created initial commit');
+              } catch (err) {
+                logWarning(`  ⚠ Could not create initial commit: ${err.message}`);
+              }
+            }
+
+            // REQ-005: Create GitHub repository
+            const repoResult = createGitHubRepo(projectDir, repoName, visibility);
+            if (repoResult.success) {
+              logSuccess(`  ✓ Created repository: ${repoResult.repoUrl}`);
+              githubSetupResult.repoUrl = repoResult.repoUrl;
+            } else {
+              logError(`  ✗ Failed to create repository: ${repoResult.error}`);
+            }
+
+            // REQ-006: Copy project board (continue even if repo failed)
+            if (ghUsername) {
+              const projectResult = copyProjectBoard(templateNumber, projectTitle, ghUsername);
+              if (projectResult.success) {
+                logSuccess(`  ✓ Copied project board: ${projectResult.projectUrl || `#${projectResult.projectNumber}`}`);
+                githubSetupResult.projectUrl = projectResult.projectUrl;
+
+                // REQ-007: Link project to repository
+                if (repoResult.success && projectResult.projectNumber) {
+                  const linkResult = linkProjectBoard(projectResult.projectNumber, ghUsername, repoName);
+                  if (linkResult.success) {
+                    logSuccess('  ✓ Linked project board to repository');
+                  } else {
+                    logWarning(`  ⚠ Could not link project: ${linkResult.error}`);
+                  }
+                }
+
+                // REQ-008: Generate .gh-pmu.yml
+                if (projectResult.projectNumber) {
+                  generateGhPmuConfig(projectDir, projectTitle, projectResult.projectNumber, ghUsername, repoName);
+                  logSuccess('  ✓ Generated .gh-pmu.yml');
+
+                  // Commit and push the config
+                  try {
+                    execSync('git add .gh-pmu.yml', { cwd: projectDir, stdio: 'pipe' });
+                    execSync('git commit -m "Add gh-pmu configuration"', { cwd: projectDir, stdio: 'pipe' });
+                    execSync('git push', { cwd: projectDir, stdio: 'pipe' });
+                    logSuccess('  ✓ Committed and pushed .gh-pmu.yml');
+                  } catch (err) {
+                    logWarning(`  ⚠ Could not push config: ${err.message}`);
+                  }
+                }
+              } else {
+                logWarning(`  ⚠ Could not copy project board: ${projectResult.error}`);
+                log(colors.dim('    You can create a project board manually and run: gh pmu init'));
+              }
+            } else {
+              logWarning('  ⚠ Could not determine GitHub username - skipping project board');
+            }
+
+            // REQ-010: Display success
+            if (githubSetupResult.repoUrl || githubSetupResult.projectUrl) {
+              displayGitHubSetupSuccess(githubSetupResult.repoUrl, githubSetupResult.projectUrl);
+            }
+          }
+        }
+      }
+    }
+
+    // ======================================
     //  Installation Complete
     // ======================================
 
@@ -1936,10 +2384,19 @@ async function main() {
       log(`  ${colors.dim('Skills Deployed:')}    ${colors.green(deployedSkills.join(', '))}`);
     }
     log(`  ${colors.dim('GitHub Workflow:')}    ${colors.green('Enabled')}`);
+
+    // Show GitHub setup results if completed
+    if (githubSetupResult.repoUrl) {
+      log(`  ${colors.dim('Repository:')}         ${colors.green(githubSetupResult.repoUrl)}`);
+    }
+    if (githubSetupResult.projectUrl) {
+      log(`  ${colors.dim('Project Board:')}      ${colors.green(githubSetupResult.projectUrl)}`);
+    }
     log();
 
-    if (enableGitHubWorkflow) {
-      logCyan('  GitHub Workflow Setup:');
+    // Show manual setup instructions only if GitHub setup was skipped
+    if (githubSetupResult.skipped && enableGitHubWorkflow) {
+      logCyan('  GitHub Workflow Setup (manual):');
       log();
       log('    Prerequisites (one-time setup):');
       log(`      1. Install GitHub CLI: ${colors.cyan('https://cli.github.com/')}`);
@@ -1951,21 +2408,26 @@ async function main() {
       log(`      5. Create GitHub project board: ${colors.cyan('https://github.com/users/YOUR_USERNAME/projects')}`);
       log(`      6. Initialize gh-pmu: ${colors.cyan('gh pmu init')}`);
       log();
-      log('    Workflow triggers (prefix your messages):');
-      log(`      ${colors.cyan('bug:')} - Create bug issue`);
-      log(`      ${colors.cyan('enhancement:')} - Create enhancement issue`);
-      log(`      ${colors.cyan('finding:')} - Create finding (bug synonym)`);
-      log(`      ${colors.cyan('idea:')} - Create lightweight proposal`);
-      log(`      ${colors.cyan('proposal:')} - Create full proposal`);
-      log();
     }
+
+    log('    Workflow triggers (prefix your messages):');
+    log(`      ${colors.cyan('bug:')} - Create bug issue`);
+    log(`      ${colors.cyan('enhancement:')} - Create enhancement issue`);
+    log(`      ${colors.cyan('finding:')} - Create finding (bug synonym)`);
+    log(`      ${colors.cyan('idea:')} - Create lightweight proposal`);
+    log(`      ${colors.cyan('proposal:')} - Create full proposal`);
+    log();
 
     logCyan('  Next steps:');
     log(`    1. Navigate to: ${colors.cyan(projectDir)}`);
     log('    2. Review the generated CLAUDE.md');
     log('    3. Add project-specific instructions if needed');
-    log('    4. Complete GitHub workflow setup (see above)');
-    log('    5. Start Claude Code CLI in that directory');
+    if (githubSetupResult.skipped) {
+      log('    4. Complete GitHub workflow setup (see above)');
+      log('    5. Start Claude Code CLI in that directory');
+    } else {
+      log('    4. Start Claude Code CLI in that directory');
+    }
     log();
 
     // If running from framework directory, ask about additional deployments

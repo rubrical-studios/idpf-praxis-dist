@@ -5,7 +5,7 @@
 |-----------|-------|----------|
 | Development Frameworks | 4 | IDPF-Structured, IDPF-Agile, IDPF-Vibe (7 variants), IDPF-LTS |
 | Testing Frameworks | 7 | IDPF-Testing-Core + 6 specialized |
-| System Instructions | 18 Domain + 1 Core + 1 Legacy + Vibe Agent | System-Instructions/ |
+| System Instructions | 23 Domain + 1 Core + 1 Legacy + Vibe Agent | System-Instructions/ |
 | Skills | 14 | Skills/ |
 | Assistant Guidelines | 2 | Assistant/ |
 
@@ -76,7 +76,7 @@ VIBE ──► STRUCTURED ──► LTS
 |------|---------|
 | Framework-Development.md | IDPF-PRD, Structured, Agile, Vibe, LTS details |
 | Framework-Testing.md | Testing-Core + 6 specialized frameworks |
-| Framework-System-Instructions.md | Core + 17 Domain Specialists |
+| Framework-System-Instructions.md | Core + 23 Domain Specialists |
 | Framework-Skills.md | All 14 skills with descriptions |
 | Framework-Transitions.md | Transition matrix, diagrams, hybrid usage |
 | Framework-Overview.md | Complete reference (all sections) |

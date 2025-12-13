@@ -6,6 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.11.0] - 2025-12-12
+
+### Added
+- **GitHub repo and project board setup** (#353) - Automated GitHub repository creation, project board copy, and `.gh-pmu.yml` generation in `install.js`
+- **5 new Domain Specialists** (#214, #221, #229, #238, #247) - Desktop-Application-Developer, Game-Developer, Graphics-Engineer-Specialist, Systems-Programmer-Specialist, Technical-Writer-Specialist
+- **Vibe Platform completion** (#389) - Unified 7 Vibe variants (Core, Newbie, Web, Desktop, Mobile, Game, Embedded) with merged framework files
+- **IDPF-Vibe-Embedded framework** (#381) - Embedded systems variant with specialized constraints
+- **Testing framework guides** (#313, #319, #326, #331, #332, #333, #334) - Complete guides for Testing-Core, QA-Automation, Performance, Security, Accessibility, Chaos, Contract-Testing
+- **Requirement management commands** (#354) - Added to IDPF-Structured for requirement tracking
+- **Epic workflow** (#264) - GitHub workflow integration for epic/sub-issue management with proper status transitions
+- **PRD completion workflow** (#213) - Automated moving of completed PRDs to `PRD/Implemented/`
+- **Specialist relationships documentation** (#287, #288, #289, #290) - Cross-referencing between domain specialists
+- **Getting Started User Guide** - New user onboarding documentation
+- **Skill resource files** (#266, #270, #273, #276, #279) - Complete resource directories for TDD and common-errors skills
+
+### Changed
+- **install.js component synchronization** (#353) - Updated to 23 domain specialists, added TESTING_FRAMEWORKS and ALL_SKILLS constants
+- **GitHub Workflow routing** (#265) - Epic detection routing with proper workflow selection
+
+### Fixed
+- **Deferred sprint commands** - Fixed in user guide documentation
+- **GitHub workflow epic detection** (#265) - Proper routing for epic vs non-epic issues
+
+---
+
 ## [2.10.0] - 2025-12-11
 
 ### Added

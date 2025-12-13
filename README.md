@@ -51,9 +51,9 @@ The installer will:
 
 ---
 
-## Domain Specialists (18)
+## Domain Specialists (23)
 
-Full-Stack-Developer, Backend-Specialist, Frontend-Specialist, DevOps-Engineer, Database-Engineer, API-Integration-Specialist, Security-Engineer, Platform-Engineer, Mobile-Specialist, Data-Engineer, QA-Test-Engineer, Cloud-Solutions-Architect, SRE-Specialist, Embedded-Systems-Engineer, ML-Engineer, Performance-Engineer, PRD-Analyst, Accessibility-Specialist
+Accessibility-Specialist, API-Integration-Specialist, Backend-Specialist, Cloud-Solutions-Architect, Database-Engineer, Data-Engineer, Desktop-Application-Developer, DevOps-Engineer, Embedded-Systems-Engineer, Frontend-Specialist, Full-Stack-Developer, Game-Developer, Graphics-Engineer-Specialist, ML-Engineer, Mobile-Specialist, Performance-Engineer, Platform-Engineer, PRD-Analyst, QA-Test-Engineer, Security-Engineer, SRE-Specialist, Systems-Programmer-Specialist, Technical-Writer-Specialist
 
 ---
 

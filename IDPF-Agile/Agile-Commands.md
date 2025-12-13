@@ -36,7 +36,14 @@ All commands work against GitHub issues. No local backlog files created.
 |---------|-------------|
 | `Start-Story [#ID]` | In Progress + assign, display AC, begin TDD |
 | `Story-Status` | Check current story progress |
-| `Story-Complete [#ID]` | Verify criteria, run tests, done, unassign |
+| `Story-Complete [#ID]` | Verify criteria, run tests, done, unassign, check PRD completion |
+
+### Story-Complete PRD Check
+If completing "Update PRD status to Complete" story:
+1. Verify all other PRD stories are Done
+2. Update PRD status to "Complete"
+3. `git mv PRD/PRD-[Name].md PRD/Implemented/PRD-[Name].md`
+4. Report: "PRD complete and archived to PRD/Implemented/"
 
 ## Sprint Commands (Deferred)
 Sprint tracking deferred - use GitHub project board.

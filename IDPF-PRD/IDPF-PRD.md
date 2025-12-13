@@ -7,6 +7,17 @@
 Pre-development phase transforming ideas into implementation-ready requirements through guided elicitation.
 **Output:** PRD documents for IDPF-Structured or IDPF-Agile.
 
+## PRD Lifecycle
+| Status | Location | Description |
+|--------|----------|-------------|
+| Draft | `PRD/` | Being written |
+| Ready | `PRD/` | Phases complete |
+| Backlog Created | `PRD/` | Issues created (Agile) |
+| In Progress | `PRD/` | Development underway |
+| Complete | `PRD/Implemented/` | All requirements done |
+
+**Completion:** When all stories/requirements Done → Update status → `git mv PRD/PRD-[Name].md PRD/Implemented/`
+
 ## Terminology
 - **ASSISTANT**: AI assistant guiding PRD process
 - **User**: Developer/product owner providing requirements
