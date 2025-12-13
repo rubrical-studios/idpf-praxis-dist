@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.11.1] - 2025-12-13
+
+### Fixed
+- **Installer version detection** (#397) - Changed `readFrameworkVersion()` to read from `framework-manifest.json` instead of `Overview/Framework-Overview.md`, fixing version mismatch in distribution deployments
+
+---
+
 ## [2.11.0] - 2025-12-12
 
 ### Added

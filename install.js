@@ -768,15 +768,18 @@ function displayGitHubSetupSuccess(repoUrl, projectUrl) {
 }
 
 /**
- * Read framework version from Overview file
+ * Read framework version from framework-manifest.json (authoritative source)
  */
 function readFrameworkVersion(frameworkPath) {
-  const overviewPath = path.join(frameworkPath, 'Overview', 'Framework-Overview.md');
-  if (fs.existsSync(overviewPath)) {
-    const content = fs.readFileSync(overviewPath, 'utf8');
-    const match = content.match(/\*\*Version:\*\*\s*\*?\*?(\d+\.\d+\.\d+)/);
-    if (match) {
-      return match[1];
+  const manifestPath = path.join(frameworkPath, 'framework-manifest.json');
+  if (fs.existsSync(manifestPath)) {
+    try {
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+      if (manifest.version) {
+        return manifest.version;
+      }
+    } catch {
+      // Fall through to unknown
     }
   }
   return 'unknown';

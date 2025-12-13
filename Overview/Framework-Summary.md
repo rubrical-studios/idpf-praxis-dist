@@ -6,8 +6,8 @@
 | Development Frameworks | 4 | IDPF-Structured, IDPF-Agile, IDPF-Vibe (7 variants), IDPF-LTS |
 | Testing Frameworks | 7 | IDPF-Testing-Core + 6 specialized |
 | System Instructions | 23 Domain + 1 Core + 1 Legacy + Vibe Agent | System-Instructions/ |
-| Skills | 14 | Skills/ |
-| Assistant Guidelines | 2 | Assistant/ |
+| Skills | 21 | Skills/ |
+| Assistant Guidelines | 4 | Assistant/ |
 
 ## Current Versions
 ### Development Frameworks
