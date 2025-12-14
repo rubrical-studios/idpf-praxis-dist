@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.13.0] - 2025-12-13
+
+### Added
+- **Automatic rules sync in /minimize-files** (#417) - Rules directory now automatically synchronized when minimization runs
+- **Minimized GitHub Workflow for framework development** (#417) - Framework development sessions now use token-optimized workflow documentation
+- **Microsprint documentation** (#405-#416) - Complete PRD and implementation for microsprint workflow documentation
+- **Post-release issue closure reminder** (#403) - Added reminder that releasing code does not auto-close issues
+
+### Fixed
+- **Framework transition in bulk updates** (#404) - Fixed framework transition not being offered during bulk project updates
+- **Framework transition when version current** (#404) - Fixed transition not offered when project version matches framework version
+- **Prompts module scope** (#404) - Made prompts module-level for updateTrackedProjects function
+
+---
+
 ## [2.12.0] - 2025-12-13
 
 ### Added

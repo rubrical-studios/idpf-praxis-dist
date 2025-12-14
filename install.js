@@ -10,6 +10,9 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+// Module-level prompts variable (assigned in main() after dependency check)
+let prompts;
+
 // ======================================
 //  Console Colors (no dependencies)
 // ======================================
@@ -437,7 +440,7 @@ function untrackProject(frameworkPath, projectDir) {
  * Update/migrate all tracked projects
  * Returns: { updated: number, current: number, removed: number, failed: number }
  */
-function updateTrackedProjects(frameworkPath) {
+async function updateTrackedProjects(frameworkPath) {
   const data = readInstalledProjects(frameworkPath);
   const currentVersion = readFrameworkVersion(frameworkPath);
   const results = { updated: 0, current: 0, removed: 0, failed: 0 };
@@ -488,6 +491,70 @@ function updateTrackedProjects(frameworkPath) {
     if (compareVersions(installedVersion, currentVersion) >= 0) {
       log(`  ${colors.green('✓')} ${projectPath}`);
       log(`    ${colors.dim(`Already at ${installedVersion}`)}`);
+
+      // Still offer framework transition even when version is current
+      const currentFramework = projectConfig.projectType?.processFramework;
+      if (currentFramework) {
+        const validTargets = getValidTransitionTargets(currentFramework);
+
+        if (validTargets.length > 0) {
+          const { wantChange } = await prompts({
+            type: 'confirm',
+            name: 'wantChange',
+            message: `    Change framework? (Currently: ${currentFramework})`,
+            initial: false,
+          }, { onCancel: () => process.exit(0) });
+
+          if (wantChange) {
+            const { newFramework } = await prompts({
+              type: 'select',
+              name: 'newFramework',
+              message: `    Select new framework`,
+              choices: validTargets,
+            }, { onCancel: () => process.exit(0) });
+
+            if (newFramework && newFramework !== currentFramework) {
+              projectConfig.projectType.processFramework = newFramework;
+              log(`    ${colors.green(`Framework: ${currentFramework} → ${newFramework}`)}`);
+
+              // Regenerate CLAUDE.md with new framework
+              const domainListStr = (projectConfig.projectType.domainSpecialists || []).join(', ');
+              const primarySpecialist = projectConfig.projectType.primarySpecialist;
+              const claudeMdPath = path.join(projectPath, 'CLAUDE.md');
+              let existingProjectInstructions = null;
+              if (fs.existsSync(claudeMdPath)) {
+                const claudeMd = fs.readFileSync(claudeMdPath, 'utf8');
+                const match = claudeMd.match(/## Project-Specific Instructions[\s\S]*$/);
+                if (match) {
+                  existingProjectInstructions = match[0];
+                }
+              }
+              generateClaudeMd(projectPath, frameworkPath, newFramework, domainListStr, primarySpecialist, existingProjectInstructions);
+              log(`    ${colors.dim('  Regenerated CLAUDE.md')}`);
+
+              // Update skills for new framework
+              const skillsDir = path.join(projectPath, '.claude', 'skills');
+              if (fs.existsSync(skillsDir)) {
+                fs.rmSync(skillsDir, { recursive: true, force: true });
+              }
+              fs.mkdirSync(skillsDir, { recursive: true });
+              const skillsToDeploy = FRAMEWORK_SKILLS[newFramework] || [];
+              for (const skill of skillsToDeploy) {
+                const skillZip = path.join(frameworkPath, 'Skills', 'Packaged', `${skill}.zip`);
+                const skillDir = path.join(skillsDir, skill);
+                if (fs.existsSync(skillZip) && extractZip(skillZip, skillDir)) {
+                  log(`    ${colors.dim(`  Deployed: ${skill}`)}`);
+                }
+              }
+
+              // Save config
+              projectConfig.installedDate = new Date().toISOString().split('T')[0];
+              fs.writeFileSync(configPath, JSON.stringify(projectConfig, null, 2));
+            }
+          }
+        }
+      }
+
       results.current++;
       continue;
     }
@@ -497,6 +564,73 @@ function updateTrackedProjects(frameworkPath) {
     log(`    ${colors.dim(`Updating ${installedVersion} → ${currentVersion}`)}`);
 
     try {
+      // Check for framework transition option
+      const currentFramework = projectConfig.projectType?.processFramework;
+      if (currentFramework) {
+        const validTargets = getValidTransitionTargets(currentFramework);
+
+        if (validTargets.length === 0) {
+          // LTS or terminal state
+          if (currentFramework === 'IDPF-LTS') {
+            log(`    ${colors.dim(`Framework: ${currentFramework} (terminal - no transitions)`)}`);
+          }
+        } else {
+          // Ask if user wants to change framework
+          const { wantChange } = await prompts({
+            type: 'confirm',
+            name: 'wantChange',
+            message: `    Change framework? (Currently: ${currentFramework})`,
+            initial: false,
+          }, { onCancel: () => process.exit(0) });
+
+          if (wantChange) {
+            // Show valid targets and let user choose
+            const { newFramework } = await prompts({
+              type: 'select',
+              name: 'newFramework',
+              message: `    Select new framework`,
+              choices: validTargets,
+            }, { onCancel: () => process.exit(0) });
+
+            if (newFramework && newFramework !== currentFramework) {
+              // Update framework in config
+              projectConfig.projectType.processFramework = newFramework;
+              log(`    ${colors.green(`Framework: ${currentFramework} → ${newFramework}`)}`);
+
+              // Regenerate CLAUDE.md with new framework
+              const domainListStr = (projectConfig.projectType.domainSpecialists || []).join(', ');
+              const primarySpecialist = projectConfig.projectType.primarySpecialist;
+              const claudeMdPath = path.join(projectPath, 'CLAUDE.md');
+              let existingProjectInstructions = null;
+              if (fs.existsSync(claudeMdPath)) {
+                const claudeMd = fs.readFileSync(claudeMdPath, 'utf8');
+                const match = claudeMd.match(/## Project-Specific Instructions[\s\S]*$/);
+                if (match) {
+                  existingProjectInstructions = match[0];
+                }
+              }
+              generateClaudeMd(projectPath, frameworkPath, newFramework, domainListStr, primarySpecialist, existingProjectInstructions);
+              log(`    ${colors.dim('  Regenerated CLAUDE.md')}`);
+
+              // Update skills for new framework
+              const skillsDir = path.join(projectPath, '.claude', 'skills');
+              if (fs.existsSync(skillsDir)) {
+                fs.rmSync(skillsDir, { recursive: true, force: true });
+              }
+              fs.mkdirSync(skillsDir, { recursive: true });
+              const skillsToDeploy = FRAMEWORK_SKILLS[newFramework] || [];
+              for (const skill of skillsToDeploy) {
+                const skillZip = path.join(frameworkPath, 'Skills', 'Packaged', `${skill}.zip`);
+                const skillDir = path.join(skillsDir, skill);
+                if (fs.existsSync(skillZip) && extractZip(skillZip, skillDir)) {
+                  log(`    ${colors.dim(`  Deployed: ${skill}`)}`);
+                }
+              }
+            }
+          }
+        }
+      }
+
       // Run migrations
       const applicableMigrations = MIGRATIONS.filter(m =>
         compareVersions(installedVersion, m.version) < 0
@@ -1710,7 +1844,7 @@ async function main() {
   const skipGitHub = args.includes('--skip-github'); // REQ-009: Skip GitHub setup
 
   // Load prompts module, auto-install if missing
-  let prompts;
+  // Assign to module-level prompts variable
   try {
     prompts = require('prompts');
   } catch (err) {
@@ -1759,7 +1893,7 @@ async function main() {
         log(colors.dim('Just run: node install.js'));
         log();
 
-        const results = updateTrackedProjects(cwd);
+        const results = await updateTrackedProjects(cwd);
         log();
         divider();
         log(`  Updated: ${colors.green(results.updated)}  Current: ${colors.cyan(results.current)}  Removed: ${colors.yellow(results.removed)}  Failed: ${colors.red(results.failed)}`);
@@ -1856,7 +1990,7 @@ async function main() {
         }, { onCancel });
 
         if (updateProjects) {
-          const results = updateTrackedProjects(frameworkPath);
+          const results = await updateTrackedProjects(frameworkPath);
           log();
           divider();
           log(`  Updated: ${colors.green(results.updated)}  Current: ${colors.cyan(results.current)}  Removed: ${colors.yellow(results.removed)}  Failed: ${colors.red(results.failed)}`);
