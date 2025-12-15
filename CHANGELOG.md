@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.14.1] - 2025-12-14
+
+### Fixed
+- **install.js not updating .claude/rules/ or skills in existing deployments** (#434) - Update path now always redeploys rules and skills to ensure projects receive latest content
+
+---
+
 ## [2.14.0] - 2025-12-14
 
 ### Added

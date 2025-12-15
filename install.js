@@ -641,8 +641,42 @@ async function updateTrackedProjects(frameworkPath) {
         migration.migrate(projectPath, frameworkPath, projectConfig);
       }
 
-      // Clean up orphaned files after migrations
+      // Redeploy rules (always update to latest)
       const hasGitHubWorkflow = fs.existsSync(path.join(projectPath, '.claude', 'hooks', 'workflow-trigger.js'));
+      const domainListStr = (projectConfig.projectType?.domainSpecialists || []).join(', ');
+      const primarySpecialist = projectConfig.projectType?.primarySpecialist;
+      const currentFrameworkForRules = projectConfig.projectType?.processFramework;
+      const rulesResult = deployRules(projectPath, frameworkPath, currentFrameworkForRules, domainListStr, primarySpecialist, hasGitHubWorkflow);
+      if (rulesResult.antiHallucination) {
+        log(`    ${colors.dim('  Updated: .claude/rules/01-anti-hallucination.md')}`);
+      }
+      if (rulesResult.githubWorkflow) {
+        log(`    ${colors.dim('  Updated: .claude/rules/02-github-workflow.md')}`);
+      }
+      if (rulesResult.startup) {
+        log(`    ${colors.dim('  Updated: .claude/rules/03-startup.md')}`);
+      }
+
+      // Redeploy skills (always update to latest)
+      const skillsDir = path.join(projectPath, '.claude', 'skills');
+      const frameworkForSkills = projectConfig.projectType?.processFramework;
+      if (frameworkForSkills) {
+        // Clear and redeploy skills
+        if (fs.existsSync(skillsDir)) {
+          fs.rmSync(skillsDir, { recursive: true, force: true });
+        }
+        fs.mkdirSync(skillsDir, { recursive: true });
+        const skillsToDeploy = FRAMEWORK_SKILLS[frameworkForSkills] || [];
+        for (const skill of skillsToDeploy) {
+          const skillZip = path.join(frameworkPath, 'Skills', 'Packaged', `${skill}.zip`);
+          const skillDir = path.join(skillsDir, skill);
+          if (fs.existsSync(skillZip) && extractZip(skillZip, skillDir)) {
+            log(`    ${colors.dim(`  Updated: ${skill}`)}`);
+          }
+        }
+      }
+
+      // Clean up orphaned files after migrations
       const cleanupConfig = {
         domainSpecialists: projectConfig.projectType?.domainSpecialists || [],
         enableGitHubWorkflow: hasGitHubWorkflow,
