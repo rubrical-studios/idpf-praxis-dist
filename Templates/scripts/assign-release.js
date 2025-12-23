@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// **Version:** 2.15.2
 /**
  * assign-release.js
  *
@@ -16,20 +17,34 @@
  * Flags:
  *   --all         Assign all unassigned backlog issues
  *   --check-epic  Force epic detection for single issues (slower)
- *   --refresh     Force refresh of cached release list
+ *   --timing      Show timing information for performance debugging
  *
- * Performance: Single issue assignment skips epic check (~500ms faster)
+ * Performance notes:
+ *   - gh pmu commands use local caching in .gh-pmu.yml (~50ms when cached)
+ *   - Parallel sub-issue count fetching
+ *   - Single issue assignment skips epic check (~500ms faster)
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const { exec, execSync } = require('child_process');
+const { promisify } = require('util');
 
-// Cache file for release list (avoids repeated API calls)
-const CACHE_FILE = path.join(process.cwd(), '.claude', 'scripts', '.release-cache.json');
-const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const execAsync = promisify(exec);
 
-function exec(cmd) {
+// Timing helper
+let showTiming = false;
+const timers = {};
+
+function startTimer(name) {
+    if (showTiming) timers[name] = Date.now();
+}
+
+function endTimer(name) {
+    if (showTiming && timers[name]) {
+        console.log(`  ⏱ ${name}: ${Date.now() - timers[name]}ms`);
+    }
+}
+
+function execSyncSafe(cmd) {
     try {
         return execSync(cmd, { encoding: 'utf-8' }).trim();
     } catch (e) {
@@ -37,15 +52,22 @@ function exec(cmd) {
     }
 }
 
+async function execAsyncSafe(cmd) {
+    try {
+        const { stdout } = await execAsync(cmd, { encoding: 'utf-8' });
+        return stdout.trim();
+    } catch (e) {
+        return null;
+    }
+}
+
 /**
  * Get the last version from git tags
- * Returns { major, minor, patch } or null
  */
 function getLastVersion() {
     try {
-        const tag = exec('git describe --tags --abbrev=0 2>/dev/null');
+        const tag = execSyncSafe('git describe --tags --abbrev=0 2>/dev/null');
         if (tag) {
-            // Parse vX.Y.Z or X.Y.Z
             const match = tag.match(/v?(\d+)\.(\d+)\.(\d+)/);
             if (match) {
                 return {
@@ -63,9 +85,9 @@ function getLastVersion() {
 /**
  * Get issue labels for a given issue number
  */
-function getIssueLabels(issueNumber) {
+async function getIssueLabels(issueNumber) {
     try {
-        const result = exec(`gh issue view ${issueNumber} --json labels -q ".labels[].name"`);
+        const result = await execAsyncSafe(`gh issue view ${issueNumber} --json labels -q ".labels[].name"`);
         return result ? result.split('\n').filter(l => l.trim()) : [];
     } catch {}
     return [];
@@ -73,14 +95,12 @@ function getIssueLabels(issueNumber) {
 
 /**
  * Generate branch name suggestions based on context
- * Returns array of { branch, description, recommended }
  */
 function generateBranchSuggestions(lastVersion, userInput, labels) {
     const suggestions = [];
     const hasBugLabel = labels.some(l => l.toLowerCase() === 'bug' || l.toLowerCase() === 'hotfix');
     const hasFeatureLabel = labels.some(l => ['enhancement', 'feature', 'epic', 'story'].includes(l.toLowerCase()));
 
-    // Parse user input for version hints
     let userVersionHint = null;
     if (userInput) {
         const match = userInput.match(/v?(\d+)\.(\d+)(?:\.(\d+))?/);
@@ -94,7 +114,6 @@ function generateBranchSuggestions(lastVersion, userInput, labels) {
     }
 
     if (lastVersion) {
-        // Suggest next patch version
         const nextPatch = `v${lastVersion.major}.${lastVersion.minor}.${lastVersion.patch + 1}`;
         suggestions.push({
             branch: `patch/${nextPatch}`,
@@ -102,7 +121,6 @@ function generateBranchSuggestions(lastVersion, userInput, labels) {
             recommended: hasBugLabel && !hasFeatureLabel
         });
 
-        // Suggest next minor version
         const nextMinor = `v${lastVersion.major}.${lastVersion.minor + 1}.0`;
         suggestions.push({
             branch: `release/${nextMinor}`,
@@ -110,7 +128,6 @@ function generateBranchSuggestions(lastVersion, userInput, labels) {
             recommended: hasFeatureLabel && !hasBugLabel
         });
 
-        // Suggest next major version (only if significant)
         const nextMajor = `v${lastVersion.major + 1}.0.0`;
         suggestions.push({
             branch: `release/${nextMajor}`,
@@ -118,32 +135,19 @@ function generateBranchSuggestions(lastVersion, userInput, labels) {
         });
     }
 
-    // If user provided input, add their suggestion
     if (userInput && !userInput.startsWith('release/') && !userInput.startsWith('patch/')) {
         const cleanName = userInput.replace(/^v/, '').replace(/[^a-zA-Z0-9.-]/g, '-');
         if (hasBugLabel) {
-            suggestions.push({
-                branch: `patch/${cleanName}`,
-                description: `Your input with patch prefix`
-            });
+            suggestions.push({ branch: `patch/${cleanName}`, description: `Your input with patch prefix` });
         } else {
-            suggestions.push({
-                branch: `release/${cleanName}`,
-                description: `Your input with release prefix`
-            });
+            suggestions.push({ branch: `release/${cleanName}`, description: `Your input with release prefix` });
         }
     }
 
-    // If user provided a full branch name, add it
     if (userInput && (userInput.startsWith('release/') || userInput.startsWith('patch/'))) {
-        suggestions.unshift({
-            branch: userInput,
-            description: `Your specified branch`,
-            recommended: true
-        });
+        suggestions.unshift({ branch: userInput, description: `Your specified branch`, recommended: true });
     }
 
-    // Mark first as recommended if none marked yet
     if (suggestions.length > 0 && !suggestions.some(s => s.recommended)) {
         suggestions[0].recommended = true;
     }
@@ -151,35 +155,14 @@ function generateBranchSuggestions(lastVersion, userInput, labels) {
     return suggestions;
 }
 
-function getCachedReleases(forceRefresh = false) {
-    if (forceRefresh) return null;
-
+/**
+ * Get sub-issue count - async version for parallel fetching
+ */
+async function getSubIssueCountAsync(issueNumber) {
     try {
-        if (fs.existsSync(CACHE_FILE)) {
-            const cache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
-            if (Date.now() - cache.timestamp < CACHE_TTL_MS) {
-                return cache.releases;
-            }
-        }
-    } catch {}
-    return null;
-}
-
-function cacheReleases(releases) {
-    try {
-        fs.writeFileSync(CACHE_FILE, JSON.stringify({
-            timestamp: Date.now(),
-            releases
-        }));
-    } catch {}
-}
-
-function getSubIssueCount(issueNumber) {
-    try {
-        const result = exec(`gh pmu sub list ${issueNumber} --json`);
+        const result = await execAsyncSafe(`gh pmu sub list ${issueNumber} --json`);
         if (result) {
             const data = JSON.parse(result);
-            // sub list returns { children: [...] } or similar
             if (data.children) return data.children.length;
             if (Array.isArray(data)) return data.length;
         }
@@ -189,65 +172,61 @@ function getSubIssueCount(issueNumber) {
     }
 }
 
-function getOpenReleases(forceRefresh = false) {
-    // Try cache first
-    const cached = getCachedReleases(forceRefresh);
-    if (cached) return cached;
-
+/**
+ * Get open releases (gh pmu handles caching internally)
+ */
+async function getOpenReleases() {
+    startTimer('getOpenReleases');
     try {
-        const result = exec('gh pmu release list');
+        const result = await execAsyncSafe('gh pmu release list');
         if (result) {
-            // Parse table output: VERSION, CODENAME, TRACKER, STATUS
-            // Skip header lines (first 2 lines: header + separator)
             const lines = result.split('\n').slice(2);
             const releases = [];
             for (const line of lines) {
                 if (!line.trim()) continue;
-                // Split by whitespace, handling variable spacing
                 const parts = line.trim().split(/\s+/);
                 if (parts.length >= 4) {
                     const version = parts[0];
-                    const status = parts[parts.length - 1]; // STATUS is last column
-                    // Filter for Active releases only
+                    const status = parts[parts.length - 1];
                     if (status === 'Active') {
                         releases.push({ version, name: version });
                     }
                 }
             }
-            // Cache for next time
-            cacheReleases(releases);
+            endTimer('getOpenReleases');
             return releases;
         }
-    } catch {
-        // Release list might not be available
-    }
+    } catch {}
+    endTimer('getOpenReleases');
     return [];
 }
 
-function getBacklogIssues() {
+/**
+ * Get backlog issues (gh pmu handles caching internally)
+ */
+async function getBacklogIssues() {
+    startTimer('getBacklogIssues');
     try {
-        const result = exec('gh pmu list --status backlog --json');
+        const result = await execAsyncSafe('gh pmu list --status backlog --json');
         if (result) {
             const data = JSON.parse(result);
             const items = data.items || data || [];
-            // Filter to only issues without release assignment
-            return items.filter(i => !i.fieldValues?.Release);
+            const filtered = items.filter(i => !i.fieldValues?.Release);
+            endTimer('getBacklogIssues');
+            return filtered;
         }
     } catch {
         console.error('Error fetching backlog issues');
     }
+    endTimer('getBacklogIssues');
     return [];
 }
 
-function assignToRelease(issueNumber, release) {
+async function assignToRelease(issueNumber, release) {
     try {
-        // gh pmu move doesn't support --release yet, use workaround
-        // For now, output what should be done
         console.log(`  → Assigning #${issueNumber} to ${release}`);
-        // Try gh pmu if it supports release assignment
-        const result = exec(`gh pmu move ${issueNumber} --release "${release}" 2>&1`);
+        const result = await execAsyncSafe(`gh pmu move ${issueNumber} --release "${release}" 2>&1`);
         if (result && result.includes('unknown flag')) {
-            // Fallback: note that gh pmu doesn't support --release yet
             console.log(`    (Note: gh pmu --release not yet supported, manual assignment needed)`);
             return false;
         }
@@ -257,32 +236,31 @@ function assignToRelease(issueNumber, release) {
     }
 }
 
-function main() {
+async function main() {
     const args = process.argv.slice(2);
 
     // Parse args
     const assignAll = args.includes('--all');
     const checkEpic = args.includes('--check-epic');
-    const forceRefresh = args.includes('--refresh');
+    showTiming = args.includes('--timing');
+
     let release = args.find(a => a.startsWith('release/') || a.startsWith('patch/') || a.startsWith('hotfix/'));
     let issueNumbers = args.filter(a => a.match(/^#?\d+$/)).map(a => parseInt(a.replace('#', ''), 10));
-    // Capture any other args that might be user input (version hints like "v2.15-fixes")
     const userInput = args.find(a => !a.startsWith('-') && !a.startsWith('release/') && !a.startsWith('patch/') && !a.startsWith('hotfix/') && !a.match(/^#?\d+$/));
 
     console.log('=== Assign-Release ===\n');
+    startTimer('total');
 
-    // Step 1: Get releases (use cache unless --refresh)
-    const releases = getOpenReleases(forceRefresh);
+    // Step 1: Get releases (gh pmu handles caching internally)
+    const releases = await getOpenReleases();
 
     if (!release) {
         if (releases.length === 0) {
-            // No open releases - output structured suggestions for Claude to parse
             console.log('NO_RELEASE_FOUND');
             console.log('');
 
-            // Gather context for suggestions
             const lastVersion = getLastVersion();
-            const labels = issueNumbers.length > 0 ? getIssueLabels(issueNumbers[0]) : [];
+            const labels = issueNumbers.length > 0 ? await getIssueLabels(issueNumbers[0]) : [];
 
             console.log(`CONTEXT:`);
             console.log(`  Last version: ${lastVersion ? lastVersion.raw : '(none)'}`);
@@ -295,7 +273,6 @@ function main() {
             }
             console.log('');
 
-            // Generate and output suggestions
             const suggestions = generateBranchSuggestions(lastVersion, userInput, labels);
 
             if (suggestions.length > 0) {
@@ -313,6 +290,7 @@ function main() {
             console.log('');
             console.log('ACTION_REQUIRED: Use AskUserQuestion to let user select a branch, then run:');
             console.log('  gh pmu release start --branch "<selected-branch>"');
+            endTimer('total');
             return;
         }
 
@@ -324,15 +302,17 @@ function main() {
         console.log('\nUsage: /assign-release <release> [#issue...] [--all]');
         console.log('Example: /assign-release release/v2.0.0 #123 #124');
         console.log('Example: /assign-release release/v2.0.0 --all\n');
+        endTimer('total');
         return;
     }
 
     // Step 2: Get issues to assign
     if (issueNumbers.length === 0) {
-        const backlog = getBacklogIssues();
+        const backlog = await getBacklogIssues();
 
         if (backlog.length === 0) {
             console.log('No unassigned backlog issues found.');
+            endTimer('total');
             return;
         }
 
@@ -351,11 +331,16 @@ function main() {
 
             console.log(`Unassigned backlog issues (${backlog.length} total):\n`);
 
+            // Fetch sub-issue counts in parallel for epics
             if (epics.length > 0) {
                 console.log('── Epics ──');
-                epics.forEach(i => {
-                    const subCount = getSubIssueCount(i.number);
-                    console.log(`  #${i.number} - ${i.title} (${subCount} sub-issues)`);
+                startTimer('epicSubCounts');
+                const subCounts = await Promise.all(
+                    epics.map(i => getSubIssueCountAsync(i.number))
+                );
+                endTimer('epicSubCounts');
+                epics.forEach((i, idx) => {
+                    console.log(`  #${i.number} - ${i.title} (${subCounts[idx]} sub-issues)`);
                 });
             }
 
@@ -382,6 +367,7 @@ function main() {
             console.log('\n---');
             console.log(`To assign specific issues: /assign-release ${release} #N #M ...`);
             console.log(`To assign all: /assign-release ${release} --all`);
+            endTimer('total');
             return;
         }
     }
@@ -397,43 +383,86 @@ function main() {
     let epicCount = 0;
     let subIssueCount = 0;
 
-    // Performance: Skip epic check for single issues unless --check-epic is passed
-    // This saves ~500ms per issue by avoiding the gh issue view API call
     const shouldCheckEpic = checkEpic || issueNumbers.length > 1 || assignAll;
 
     console.log(`Assigning to ${release}:\n`);
 
-    for (const num of issueNumbers) {
-        let isEpic = false;
+    // For parallel assignment (when multiple issues)
+    if (issueNumbers.length > 3) {
+        startTimer('parallelAssign');
+        // Batch assignments in groups of 5 for parallelization
+        const batchSize = 5;
+        for (let i = 0; i < issueNumbers.length; i += batchSize) {
+            const batch = issueNumbers.slice(i, i + batchSize);
+            const results = await Promise.all(
+                batch.map(async (num) => {
+                    let isEpic = false;
+                    if (shouldCheckEpic) {
+                        const labels = await getIssueLabels(num);
+                        isEpic = labels.includes('epic');
+                    }
 
-        // Only check for epic if needed (multiple issues, --all, or --check-epic)
-        if (shouldCheckEpic) {
-            const labelsResult = exec(`gh issue view ${num} --json labels -q ".labels[].name"`);
-            const labels = labelsResult || '';
-            isEpic = labels.includes('epic');
-        }
-
-        if (isEpic) {
-            epicCount++;
-            // Get and assign sub-issues
-            const subResult = exec(`gh pmu sub list ${num} --json`);
-            if (subResult) {
-                try {
-                    const subData = JSON.parse(subResult);
-                    const children = subData.children || [];
-                    for (const sub of children) {
-                        const subNum = sub.number || sub;
-                        if (assignToRelease(subNum, release)) {
-                            subIssueCount++;
-                            totalAssigned++;
+                    let subAssigned = 0;
+                    if (isEpic) {
+                        const subResult = await execAsyncSafe(`gh pmu sub list ${num} --json`);
+                        if (subResult) {
+                            try {
+                                const subData = JSON.parse(subResult);
+                                const children = subData.children || [];
+                                const subResults = await Promise.all(
+                                    children.map(sub => assignToRelease(sub.number || sub, release))
+                                );
+                                subAssigned = subResults.filter(Boolean).length;
+                            } catch {}
                         }
                     }
-                } catch {}
+
+                    const assigned = await assignToRelease(num, release);
+                    return { num, isEpic, assigned, subAssigned };
+                })
+            );
+
+            for (const r of results) {
+                if (r.assigned) totalAssigned++;
+                if (r.isEpic) {
+                    epicCount++;
+                    subIssueCount += r.subAssigned;
+                    totalAssigned += r.subAssigned;
+                }
             }
         }
+        endTimer('parallelAssign');
+    } else {
+        // Sequential for small batches (simpler output)
+        for (const num of issueNumbers) {
+            let isEpic = false;
 
-        if (assignToRelease(num, release)) {
-            totalAssigned++;
+            if (shouldCheckEpic) {
+                const labels = await getIssueLabels(num);
+                isEpic = labels.includes('epic');
+            }
+
+            if (isEpic) {
+                epicCount++;
+                const subResult = await execAsyncSafe(`gh pmu sub list ${num} --json`);
+                if (subResult) {
+                    try {
+                        const subData = JSON.parse(subResult);
+                        const children = subData.children || [];
+                        for (const sub of children) {
+                            const subNum = sub.number || sub;
+                            if (await assignToRelease(subNum, release)) {
+                                subIssueCount++;
+                                totalAssigned++;
+                            }
+                        }
+                    } catch {}
+                }
+            }
+
+            if (await assignToRelease(num, release)) {
+                totalAssigned++;
+            }
         }
     }
 
@@ -444,6 +473,7 @@ function main() {
     if (!shouldCheckEpic && issueNumbers.length === 1) {
         console.log(`  (epic check skipped for single issue - use --check-epic if needed)`);
     }
+    endTimer('total');
 }
 
-main();
+main().catch(console.error);

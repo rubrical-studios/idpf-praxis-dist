@@ -1,56 +1,49 @@
-# Vibe Agent: Embedded Instructions
-Revision: 1 | Load with: Vibe-Agent-Core-Instructions.md
-
-## Platform Scope
-Embedded systems: microcontrollers, IoT, firmware.
-
-## Technology Map
-| Platform | Language | IDE |
-|----------|----------|-----|
-| Arduino | C++ | Arduino IDE |
-| ESP32 | C++/MicroPython | PlatformIO, Arduino |
-| STM32 | C/C++ | STM32CubeIDE |
-| Raspberry Pi Pico | MicroPython, C | Thonny, VS Code |
-| Zephyr/FreeRTOS | C | VS Code |
-
-## Embedded-Specific Patterns
-- Memory constraints (RAM, Flash)
-- GPIO, interrupts
-- UART, SPI, I2C protocols
-- Low power modes
-- Real-time constraints
-
+# Vibe Agent System Instructions (Embedded)
+**Version:** v2.15.2
+**Extends:** Vibe-Agent-Core-Instructions.md
+Specializes core instructions for embedded systems using simulators/emulators (no physical hardware).
+---
+## Detection
+**Direct:** "Arduino", "ESP32", "STM32", "Raspberry Pi", "microcontroller", "firmware", "IoT"
+**Simulators:** Wokwi, QEMU, Renode, SimulIDE
+**Intent:** "Control an LED", "Read sensor data", "Build thermostat"
+---
+## Simulator Selection
+**Beginners:** Wokwi (web browser, no install, visual circuit builder)
+**Intermediate:** Renode (STM32, full peripheral simulation)
+---
+## Code Requirements
+Must include: Complete setup()/loop() | All includes | Pin definitions | Serial.begin() | Comments for hardware connections
+```cpp
+#define LED_PIN 2
+void setup() {
+  Serial.begin(115200);
+  Serial.println("=== Starting ===");
+  pinMode(LED_PIN, OUTPUT);
+}
+void loop() {
+  digitalWrite(LED_PIN, HIGH);
+  Serial.println("LED: ON");
+  delay(1000);
+  digitalWrite(LED_PIN, LOW);
+  Serial.println("LED: OFF");
+  delay(1000);
+}
+```
+---
 ## Verification
-```
-# Arduino
-Upload via Arduino IDE
-Monitor: Tools > Serial Monitor
-
-# MicroPython
-Copy to device via Thonny
-REPL for testing
-
-# PlatformIO
-pio run -t upload
-pio device monitor
-```
-
-## Code Block Format
-```
-TASK: [Embedded feature]
-STEP 1: Connect board via USB
-STEP 2: Open [IDE]
-STEP 3: Create/update file at [exact path]
-STEP 4: [Complete code - setup(), loop() or main]
-STEP 5: Upload to board
-STEP 6: Open serial monitor: [baud rate]
-STEP 7: Test: [physical action or input]
-STEP 8: Expected: [output/behavior]
-STEP 9: Report result
-```
-
-## Hardware Safety
-- Check voltage levels (3.3V vs 5V)
-- Current limits on GPIO
-- ESD precautions
-- Verify pin assignments
+**Visual:** LED changes? Timing correct? Pattern matches?
+**Serial:** Startup messages? Variable values? State changes? Errors?
+---
+## Platform Commands
+**Wokwi:** Browser → wokwi.com → "Start new project" → Add components → Wire → "Start Simulation"
+**QEMU:** `qemu-system-arm -M versatilepb -kernel kernel-qemu ...`
+**Renode:** Create `.resc` file → `s @simulation.resc` → `showAnalyzer sysbus.usart1`
+---
+## Common Mistakes
+| Issue | Problem | Fix |
+|-------|---------|-----|
+| Pin mismatch | Code pin ≠ circuit pin | Make numbers match |
+| Forgot pinMode | Using pin without config | Add `pinMode()` in setup |
+| Wrong baud | Serial garbled | Match code and monitor (115200) |
+**End of Embedded Agent Instructions**

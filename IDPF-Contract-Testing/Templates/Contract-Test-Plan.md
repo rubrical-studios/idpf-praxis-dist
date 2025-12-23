@@ -1,102 +1,284 @@
-# Contract Test Plan: [Service/API]
-**Version:** 1.0 | **Date:** YYYY-MM-DD | **Author:** [Name] | **Status:** Draft
+# Contract Test Plan: [Service/API Name]
+**Version:** v2.15.2
+
+**Date:** YYYY-MM-DD
+**Author:** [Name]
+**Status:** Draft | In Review | Approved
+
+---
 
 ## 1. Overview
-**Purpose:** [Goals]
+
+### 1.1 Purpose
+[What API contracts are being validated?]
+
+### 1.2 Service Information
 | Role | Service | Repository | Team |
 |------|---------|------------|------|
-| Provider | | | |
-| Consumer | | | |
+| Provider | [Service name] | [Link] | [Team] |
+| Consumer | [Service name] | [Link] | [Team] |
+| Consumer | [Service name] | [Link] | [Team] |
 
-**API Docs:** OpenAPI spec, Documentation
+### 1.3 API Documentation
+- **OpenAPI Spec:** [Link]
+- **API Documentation:** [Link]
+
+---
 
 ## 2. Contract Scope
-### Endpoints Under Contract
+
+### 2.1 Endpoints Under Contract
 | Endpoint | Method | Consumer(s) | Priority |
 |----------|--------|-------------|----------|
 | /api/orders | GET | order-ui, reporting | High |
 | /api/orders | POST | order-ui | High |
+| /api/orders/{id} | GET | order-ui, shipping | High |
+| /api/orders/{id}/status | PATCH | shipping | Medium |
 
-### Out of Scope
+### 2.2 Out of Scope
 - Internal/admin endpoints
-- Deprecated endpoints
+- Deprecated endpoints (v1)
+- [Other exclusions]
 
-## 3. Approach
-**Tool:** Pact / Spring Cloud Contract
-**Strategy:** [ ] Consumer-driven [ ] Bi-directional [ ] Provider-driven
+---
 
-### Provider States
-| State | Description | Setup |
-|-------|-------------|-------|
-| `order exists` | Order with ID exists | Seed DB |
-| `no orders` | Empty list | Clear DB |
+## 3. Contract Testing Approach
+
+### 3.1 Tool Selection
+| Component | Tool | Version |
+|-----------|------|---------|
+| Contract Framework | Pact | 12.x |
+| Broker | Pactflow / Pact Broker | [Version] |
+| Consumer Language | [TypeScript/Java/etc.] | |
+| Provider Language | [TypeScript/Java/etc.] | |
+
+### 3.2 Testing Strategy
+- [ ] Consumer-driven contracts
+- [ ] Bi-directional contracts (OpenAPI + Pact)
+- [ ] Provider-driven contracts
+
+### 3.3 Provider States
+| State Name | Description | Setup Required |
+|------------|-------------|----------------|
+| `order exists` | Order with ID exists | Seed database |
+| `no orders` | Empty order list | Clear database |
+| `order is pending` | Order in pending status | Seed specific state |
+
+---
 
 ## 4. Consumer Tests
-### Consumer: [Name]
-| Interaction | Request | Expected |
-|-------------|---------|----------|
-| Get order | GET /api/orders/123 | 200 + order |
-| Create order | POST /api/orders | 201 |
-| Not found | GET /api/orders/999 | 404 |
+
+### 4.1 Consumer: [Consumer Name]
+
+#### Interactions
+| Interaction | Request | Expected Response |
+|-------------|---------|-------------------|
+| Get order by ID | GET /api/orders/123 | 200 + order object |
+| Create order | POST /api/orders | 201 + created order |
+| Order not found | GET /api/orders/999 | 404 |
+
+#### Consumer Test Example
+```typescript
+describe('Order API Contract', () => {
+  describe('GET /api/orders/:id', () => {
+    it('returns order when it exists', async () => {
+      await provider.addInteraction({
+        state: 'order exists',
+        uponReceiving: 'a request for an order',
+        withRequest: {
+          method: 'GET',
+          path: '/api/orders/123',
+        },
+        willRespondWith: {
+          status: 200,
+          body: like({
+            id: '123',
+            status: string('pending'),
+            items: eachLike({ productId: string(), quantity: integer() }),
+          }),
+        },
+      });
+
+      const order = await orderClient.getOrder('123');
+      expect(order.id).toBe('123');
+    });
+  });
+});
+```
+
+---
 
 ## 5. Provider Verification
+
+### 5.1 Provider State Handlers
 ```typescript
 const stateHandlers = {
-  'order exists': async () => { await db.seed(testOrder); },
+  'order exists': async () => {
+    await database.seed({ orders: [testOrder] });
+  },
+  'no orders': async () => {
+    await database.clear('orders');
+  },
 };
 ```
 
+### 5.2 Verification Configuration
 | Setting | Value |
 |---------|-------|
-| Base URL | http://localhost:3000 |
+| Provider Base URL | http://localhost:3000 |
 | Publish Results | Yes |
-| Version | Git SHA |
+| Provider Version | Git SHA |
+| Consumer Version Selectors | deployedOrReleased |
 
-## 6. Broker
+---
+
+## 6. Broker Configuration
+
+### 6.1 Broker Details
 | Setting | Value |
 |---------|-------|
-| URL | |
-| Auth | API Token |
-| Webhooks | PR checks |
+| Broker URL | [URL] |
+| Authentication | [API Token / Basic Auth] |
+| Webhooks | [Configured for PR checks] |
 
-## 7. CI/CD
-### Consumer
-```yaml
-- run: npm run test:contract
-- run: npm run pact:publish
-- run: npm run pact:can-i-deploy
+### 6.2 Can-I-Deploy Configuration
+```bash
+# Consumer deployment check
+pact-broker can-i-deploy \
+  --pacticipant order-ui \
+  --version $GIT_SHA \
+  --to-environment production
+
+# Provider deployment check
+pact-broker can-i-deploy \
+  --pacticipant order-service \
+  --version $GIT_SHA \
+  --to-environment production
 ```
 
-### Provider
+---
+
+## 7. CI/CD Integration
+
+### 7.1 Consumer Pipeline
 ```yaml
-- run: npm run pact:verify
-- run: npm run pact:can-i-deploy
+steps:
+  - name: Run contract tests
+    run: npm run test:contract
+
+  - name: Publish contracts
+    run: npm run pact:publish
+    env:
+      PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+
+  - name: Can-I-Deploy
+    run: npm run pact:can-i-deploy
 ```
 
-## 8. Versioning
-**Approach:** Git SHA / Semantic
-**Breaking Changes:** Consumer publishes → Provider fails → Coordinate → Implement → Deploy
+### 7.2 Provider Pipeline
+```yaml
+steps:
+  - name: Verify contracts
+    run: npm run pact:verify
+    env:
+      PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
-## 9. Metrics
+  - name: Can-I-Deploy
+    run: npm run pact:can-i-deploy
+```
+
+### 7.3 Webhook Triggers
+| Event | Trigger | Action |
+|-------|---------|--------|
+| Contract published | Consumer CI | Trigger provider verification |
+| Verification complete | Provider CI | Update broker status |
+
+---
+
+## 8. Versioning Strategy
+
+### 8.1 Contract Versioning
+| Approach | Description |
+|----------|-------------|
+| Git SHA | Version = commit hash |
+| Semantic | Version = semver |
+| Branch-based | Include branch in version |
+
+### 8.2 Breaking Change Process
+1. Consumer publishes new contract with breaking change
+2. Provider verification fails
+3. Teams coordinate on change
+4. Provider implements change
+5. Provider verification passes
+6. Both services deploy
+
+### 8.3 Pending Pacts (WIP)
+- New contracts marked as "pending"
+- Provider not blocked by pending pacts
+- Provider verification runs but doesn't fail build
+- Once verified, pact becomes "supported"
+
+---
+
+## 9. Metrics & Reporting
+
+### 9.1 Key Metrics
 | Metric | Target |
 |--------|--------|
-| Contract coverage | 100% public endpoints |
-| Verification pass | 100% |
-| MTTF broken contract | <24h |
+| Contract coverage | 100% of public endpoints |
+| Verification pass rate | 100% |
+| Mean time to fix broken contract | < 24 hours |
+| Can-I-Deploy success rate | > 99% |
 
-## 10. Responsibilities
+### 9.2 Dashboards
+- Pact Broker dashboard: [Link]
+- Contract coverage report: [Link]
+
+---
+
+## 10. Risks & Mitigations
+
+| Risk | Likelihood | Impact | Mitigation |
+|------|------------|--------|------------|
+| Provider state complexity | Medium | Medium | Document states clearly |
+| Flaky provider verification | Low | High | Stable test environment |
+| Contract drift | Medium | High | Regular sync meetings |
+| Broker unavailability | Low | High | Retry logic, fallback |
+
+---
+
+## 11. Team Responsibilities
+
 ### Consumer Team
-- [ ] Write consumer tests
-- [ ] Publish contracts
+- [ ] Write consumer contract tests
+- [ ] Publish contracts to broker
+- [ ] Maintain consumer test suite
 - [ ] Coordinate breaking changes
 
 ### Provider Team
-- [ ] Implement state handlers
-- [ ] Run verification
-- [ ] Fix failures
+- [ ] Implement provider state handlers
+- [ ] Run provider verification
+- [ ] Fix verification failures
+- [ ] Communicate API changes
 
-## 11. Approval
-| Role | Name | Approved |
-|------|------|----------|
-| Consumer Lead | | [ ] |
-| Provider Lead | | [ ] |
+---
+
+## 12. Approval
+
+| Role | Name | Date | Signature |
+|------|------|------|-----------|
+| Consumer Lead | | | [ ] Approved |
+| Provider Lead | | | [ ] Approved |
+| Platform Lead | | | [ ] Approved |
+
+---
+
+## Revision History
+
+| Version | Date | Author | Changes |
+|---------|------|--------|---------|
+| 1.0 | YYYY-MM-DD | [Name] | Initial draft |
+
+---
+
+**End of Test Plan**

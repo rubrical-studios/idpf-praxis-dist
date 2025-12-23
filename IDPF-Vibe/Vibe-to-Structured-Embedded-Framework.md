@@ -1,89 +1,52 @@
-# Vibe-to-Structured Development Framework (Embedded)
-**Revision:** 1
+# Vibe-to-Structured Framework (Embedded)
+**Version:** v2.15.2
 **Type:** Embedded Systems Specialization
-**Extends:** Vibe-to-Structured-Core-Framework.md (Rev 2)
+**Extends:** Vibe-to-Structured-Core-Framework.md
 
-## Purpose
-Specializes Core Framework for embedded development using simulators/emulators. Focus on development without physical hardware.
+---
 
-**Adds:** Simulator/emulator setup, virtual hardware testing, embedded workflows, toolchains, hardware abstraction
+## Platform Coverage
+Simulator-based development for:
+- Arduino (AVR)
+- ESP32, ESP8266 (WiFi/BLE)
+- Raspberry Pi Pico
+- STM32
 
-**Evolution Options:** IDPF-Structured or IDPF-Agile (choice at Evolution Point)
+## Simulators
+| Simulator | Platforms |
+|-----------|-----------|
+| Wokwi | Arduino, ESP32, Pico |
+| SimAVR | AVR microcontrollers |
+| QEMU | ARM, Pico |
+| Proteus | Various MCUs |
 
-## Embedded Platform Coverage
-**Microcontrollers:**
-- **Arduino (AVR/ARM):** Wokwi, SimulIDE - C++, Arduino framework
-- **ESP32/ESP8266:** Wokwi (web) - C++, MicroPython
-- **STM32 (ARM Cortex-M):** Renode, QEMU - C, C++, Rust
-- **ARM Cortex-M Generic:** QEMU, Renode
+## Initialization Questions
+- Target microcontroller?
+- Sensor/peripheral needs?
+- Simulator available?
+- Communication requirements?
 
-**Embedded Linux:**
-- **Raspberry Pi:** QEMU - Python, C, C++
-- **BeagleBone:** QEMU
-
-**RTOS:**
-- **FreeRTOS:** QEMU, native ports
-- **Zephyr RTOS:** QEMU, Renode
-
-## Session Initialization
-After Core Framework Steps 1-4, add Embedded-Specific Questions:
-- Target platform? (Arduino/ESP32/STM32/Raspberry Pi/Other)
-- Simulator? (Wokwi/QEMU/Renode/SimulIDE)
-- Project type? (Sensor reading/Control/IoT/etc.)
-- Programming language?
-
-## Wokwi (Web-Based)
-Supports: Arduino, ESP32, Raspberry Pi Pico
-1. Go to wokwi.com
-2. Create new project, select board
-3. Write code in editor
-4. Click Play to simulate
-
-## QEMU Setup
-```bash
-# Install QEMU
-# Linux: apt install qemu-system-arm
-# macOS: brew install qemu
-# Windows: Download from qemu.org
-
-# Run ARM Cortex-M simulation
-qemu-system-arm -machine lm3s6965evb -kernel firmware.elf
-```
-
-## Renode Setup
-```bash
-# Download from renode.io
-# Run simulation
-renode platform.resc
-```
+## Vibe Patterns
+1. **Breadboard-First:** Single component → Two interacting → Add communication → System behavior
+2. **Verbose Serial:** Over-communicate state via Serial for debugging
+3. **Isolation Testing:** Test one peripheral at a time
+4. **Simulator Validation:** Verify in simulator before hardware
 
 ## Verification Pattern
 ```
-STEP 6: Start simulator with firmware
-STEP 7: Observe simulated hardware behavior
-STEP 8: Test inputs (buttons, sensors)
-STEP 9: Verify outputs (LEDs, serial)
-STEP 10: Report simulation results
+STEP 6: Compile for target
+STEP 7: Run in simulator
+STEP 8: Check serial output
+STEP 9: Verify peripheral behavior
+STEP 10: Report results
 ```
 
-## Hardware Abstraction
-```c
-// Abstract hardware for portability
-#ifdef SIMULATION
-  #define LED_ON() sim_led_on()
-#else
-  #define LED_ON() gpio_set(LED_PIN)
-#endif
-```
-
-## Best Practices
-**Vibe:** Start with simulator, simple blinking LED first, abstract hardware early
-**Evolution:** Document hardware requirements, plan HAL, define interfaces
-**Structured:** Test on simulator, add unit tests, prepare for real hardware
-
-## When to Use
-**Use for:** IoT devices, microcontrollers, embedded Linux, RTOS
-**Other frameworks:** Desktop apps → Desktop, Web → Web, Mobile → Mobile
+## Embedded Best Practices
+- Start in simulator, validate on hardware later
+- Use verbose serial debugging during vibe
+- Test edge cases: power cycling, timing, interrupts
+- Document pin assignments and connections
 
 ---
+
 **End of Embedded Framework**

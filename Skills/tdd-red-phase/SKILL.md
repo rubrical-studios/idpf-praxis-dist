@@ -1,72 +1,40 @@
 ---
 name: tdd-red-phase
-version: 1.0.0
-description: Guide through RED phase - writing failing tests and verifying failures
+version: v2.15.2
+description: Guide experienced developers through RED phase of TDD cycle - writing failing tests
 ---
+
 # TDD RED Phase
+
 ## When to Use
-- Starting new feature implementation
-- "First-Step" command (IDPF-Structured)
-- "Start-Story [ID]" command (IDPF-Agile)
-- Beginning TDD iteration
+- Starting implementation of new feature
+- "First-Step" command in IDPF-Structured
+- "Start-Story [ID]" command in IDPF-Agile
+- Beginning new TDD iteration
 
 ## RED Phase Goal
 **Write a test that fails for the right reason.**
-**Correct failure:** Feature doesn't exist, behavior not implemented
+
+**Correct failure:** Test fails because feature doesn't exist yet
 **Incorrect failure:** Syntax error, missing imports, test passes unexpectedly
 
 ## Workflow
-### Step 1: Identify Testable Behavior
-One test per behavior, one behavior per test.
-```
-✓ "Function returns sum of two numbers"
-✓ "GET /users returns 200 status"
-✗ "User management works" (too broad)
-```
+1. **Identify Testable Behavior:** One test per behavior
+2. **Write Failing Test:** ARRANGE → ACT → ASSERT
+3. **Execute Test:** Verify it FAILS with expected message
+4. **Report:** Did test fail as expected?
 
-### Step 2: Write Failing Test
-**Test structure (AAA):**
-1. ARRANGE: Set up preconditions
-2. ACT: Execute behavior
-3. ASSERT: Verify outcome
-
-**Single Code Block Format:**
+## Output Format
 ```
 TASK: [description]
-STEP 1: Create/open test file
-STEP 2: Add imports
-STEP 3: Write complete test function
-STEP 4: Save file
-STEP 5: Run test command
-STEP 6: Verify test FAILS with expected message
-STEP 7: Report: Did test fail as expected?
+STEP 1: [Create/open test file]
+STEP 2: [Add imports]
+STEP 3: [Write complete test]
+STEP 4: [Save file]
+STEP 5: [Run test command]
+STEP 6: [Verify FAILS with expected message]
+STEP 7: [Report results]
 ```
 
-### Step 3: Execute and Verify
-- [ ] Test executed without syntax errors
-- [ ] Test failed (not passed)
-- [ ] Failure indicates missing implementation
-- [ ] Failure message is clear
-
-### Step 4: Analyze
-**Fails as expected:** RED complete → "Done-Next-Step" → GREEN phase
-**Passes unexpectedly:** Test is invalid → Revise test
-**Errors instead of fails:** Fix test code → Retry
-
-## Best Practices
-- Write minimal tests (one assertion)
-- Use clear test names: `test_[feature]_[scenario]_[expected]`
-- Write descriptive assertions with failure messages
-
-## Anti-Patterns
-❌ Writing implementation first
-❌ Skipping failure verification
-❌ Tolerating test errors ("fix in GREEN")
-
-## Integration
-**IDPF-Structured:** User: "First-Step" → RED phase test → Verify failure → "Done-Next-Step"
-**IDPF-Agile:** User: "Start-Story [ID]" → Break into behaviors → RED phase for first
-
-## Flows To
-- `tdd-green-phase` - Next phase after RED success
-- `tdd-failure-recovery` - Handle unexpected results
+## Next Step
+After test fails correctly → User says "Done-Next-Step" → Invoke tdd-green-phase

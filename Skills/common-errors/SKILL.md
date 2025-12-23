@@ -1,57 +1,48 @@
 ---
-name: common-errors
-version: 1.0.0
-description: Troubleshooting common development issues for beginners
+name: common-beginner-coding-errors
+version: v2.15.2
+description: Diagnose and solve common beginner programming mistakes in Flask or Sinatra
 ---
-# Common Errors
+
+# Common Beginner Coding Errors
+
 ## When to Use
-- Beginner encounters error message
-- Debugging common issues
-- Troubleshooting setup problems
+- Beginner reports an error message
+- Code isn't working as expected
+- User asks "Why isn't this working?"
 
-## Flask Errors
-| Error | Cause | Fix |
-|-------|-------|-----|
-| ModuleNotFoundError: flask | Flask not installed | `pip install flask` |
-| Address already in use | Port 5000 busy | Change port or kill process |
-| TemplateNotFound | Wrong path | Check templates/ folder |
-| 404 Not Found | Wrong route | Check @app.route() |
-| 500 Internal Error | Code bug | Check terminal for traceback |
+## Common Errors
 
-## Sinatra Errors
-| Error | Cause | Fix |
-|-------|-------|-----|
-| LoadError: sinatra | Not installed | `bundle install` |
-| Address in use | Port 4567 busy | `set :port, 4568` |
-| Errno::ENOENT | Missing file | Check file path |
-| NoMethodError | Typo or missing method | Check spelling |
+### Changes Don't Appear
+**Causes:** File not saved, server not restarted, browser cache
+**Fix:**
+1. Check for unsaved indicator (● or *) → Ctrl+S
+2. Restart server (Sinatra doesn't auto-reload)
+3. Hard refresh: Ctrl+Shift+R
 
-## General Programming Errors
-| Error | Cause | Fix |
-|-------|-------|-----|
-| SyntaxError | Typo in code | Check brackets, quotes |
-| NameError | Undefined variable | Define before use |
-| TypeError | Wrong type operation | Check types |
-| IndentationError (Python) | Bad spacing | Fix indentation |
-| KeyError | Missing dict key | Check key exists |
+### Template Not Found
+**Flask:** `TemplateNotFound: index.html`
+**Fix:** Templates must be in `templates/` folder
 
-## Database Errors (SQLite)
-| Error | Cause | Fix |
-|-------|-------|-----|
-| no such table | Table not created | Run CREATE TABLE |
-| database locked | Concurrent access | Close other connections |
-| UNIQUE constraint | Duplicate value | Check unique columns |
+**Sinatra:** `Errno::ENOENT`
+**Fix:** Templates must be in `views/` folder
 
-## Debugging Steps
-1. **Read the error message** - It tells you what's wrong
-2. **Find the line number** - Where the error occurred
-3. **Check recent changes** - What did you just change?
-4. **Print statements** - Add `print()` to see values
-5. **Search the error** - Copy error message to search engine
+### Indentation Errors (Python)
+**Error:** `IndentationError: expected an indented block`
+**Fix:** Use consistent 4 spaces, no tabs
 
-## When to Ask for Help
-Include:
-- Full error message
-- Relevant code
-- What you tried
-- What you expected vs what happened
+### NameError: name 'X' is not defined
+**Causes:** Typo in variable name, variable not created yet, import missing
+**Fix:** Check spelling, ensure variable is defined before use
+
+### ModuleNotFoundError
+**Error:** `ModuleNotFoundError: No module named 'flask'`
+**Fix:** `pip install flask` (or gem install for Ruby)
+
+### Port Already in Use
+**Error:** `Address already in use`
+**Fix:** Another server is running. Stop it with Ctrl+C or use different port
+
+### Syntax Error
+**Causes:** Missing colon, unmatched brackets, wrong quotes
+**Fix:** Check line indicated in error, look for missing `:`, `(`, `{`

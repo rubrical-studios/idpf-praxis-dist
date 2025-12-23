@@ -1,35 +1,37 @@
 ---
-name: sinatra-setup
-version: 1.0.0
-description: Ruby Sinatra environment setup for beginners
+name: sinatra-setup-for-beginners
+version: v2.15.2
+description: Set up Ruby Sinatra development environment for beginners
 ---
-# Sinatra Setup
+
+# Sinatra Setup for Beginners
+
 ## When to Use
-- New Sinatra project setup
-- Vibe-Newbie framework
-- Beginner Ruby web development
+- User wants to build Sinatra web application
+- User needs Ruby/Sinatra environment setup
+- User asks "How do I set up Sinatra?"
 
 ## Setup Steps
-### 1. Create Project Directory
+
+### 1. Verify Ruby
 ```bash
-mkdir my-sinatra-app
-cd my-sinatra-app
+ruby --version  # Should show Ruby 2.7+
 ```
 
-### 2. Initialize Bundler
+### 2. Create Project
 ```bash
-bundle init
+mkdir [project-name]
+cd [project-name]
 ```
 
-### 3. Add Sinatra to Gemfile
-Edit `Gemfile`:
+### 3. Create Gemfile
 ```ruby
 source 'https://rubygems.org'
 gem 'sinatra'
-gem 'rackup'
+gem 'sinatra-contrib'  # For reloader
 ```
 
-### 4. Install Dependencies
+### 4. Install Gems
 ```bash
 bundle install
 ```
@@ -37,29 +39,23 @@ bundle install
 ### 5. Create app.rb
 ```ruby
 require 'sinatra'
+require 'sinatra/reloader' if development?
 
 get '/' do
   'Hello, World!'
 end
 ```
 
-### 6. Run the App
+### 6. Run App
 ```bash
 ruby app.rb
 ```
+Open http://localhost:4567
 
-### 7. Verify
-Open browser: http://localhost:4567
-Should see: "Hello, World!"
+## Troubleshooting
+- Ruby not found: Install from rubyinstaller.org (Windows) or rbenv
+- Bundler not found: `gem install bundler`
+- Port in use: Use different port `ruby app.rb -p 4568`
 
-## Common Issues
-| Issue | Solution |
-|-------|----------|
-| "sinatra not found" | Run `bundle install` |
-| Port in use | Change: `set :port, 4568` |
-| LoadError | Check Gemfile has sinatra |
-
-## Next Steps
-- Add routes: `get '/users' do ... end`
-- Add views: `erb :index`
-- Add database: See `sqlite-integration` skill
+## Note
+Sinatra doesn't auto-reload by default. Use sinatra-reloader gem or restart server after changes.

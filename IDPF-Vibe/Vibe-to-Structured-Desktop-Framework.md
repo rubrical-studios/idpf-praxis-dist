@@ -1,64 +1,65 @@
-# Vibe-to-Structured Development Framework (Desktop)
-**Revision:** 2
+# Vibe-to-Structured Framework (Desktop)
+**Version:** v2.15.2
 **Type:** Desktop Application Specialization
-**Extends:** Vibe-to-Structured-Core-Framework.md (Rev 2)
+**Extends:** Vibe-to-Structured-Core-Framework.md
 
-## Purpose
-Specializes Core Framework for desktop development. Read with Core Framework.
+---
 
-**Adds:** Platform-specific commands/paths, desktop environment setup, OS-specific tooling, desktop UI patterns, file system operations
+## Platform Coverage
+- Windows, macOS, Linux desktop applications
+- CLI tools, GUI applications, system utilities
+- Cross-platform: Electron, Tauri, Qt
 
-**Evolution Options:** IDPF-Structured or IDPF-Agile (choice at Evolution Point)
-
-## Desktop Platform Coverage
-**Platforms:** Windows, macOS, Linux, Cross-platform
-**App Types:** CLI tools, GUI apps (WinForms/WPF/WinUI, AppKit/SwiftUI, GTK/Qt), System utilities, File processors, Cross-platform (Electron, Tauri, .NET MAUI)
-
-## Session Initialization
-After Core Framework Steps 1-4, add Desktop-Specific Questions:
-- Primary target platform? (Windows/macOS/Linux/Cross-platform)
+## Initialization Questions
+- Primary target platform?
 - Application type? (CLI/GUI/System utility)
-- User environment? (OS developing on)
+- User environment?
 - Language preference?
 
-## Windows Development
-**Paths:** Use backslashes `E:\Projects\my-app\src\main.py`
-**Env vars:** `%USERPROFILE%`, `%APPDATA%`, `%TEMP%`
-**Scripts:** Use .cmd or .bat
-**Run:** `python main.py` or `ruby main.rb` or double-click .exe
+## Platform-Specific Commands
 
-## macOS Development
-**Paths:** Use forward slashes `/Users/username/Projects/my-app`
-**Env vars:** `$HOME`, `~/Library/Application Support`
-**Scripts:** Use .sh with `chmod +x`
-**Run:** `python3 main.py` or `./app.command`
+### Windows
+- Paths: `E:\Projects\my-app\src\main.py`
+- Scripts: `.cmd` or `.bat` (NOT `.ps1`)
+- Test: `python src\main.py`
 
-## Linux Development
-**Paths:** Use forward slashes `/home/username/projects/my-app`
-**Env vars:** `$HOME`, `$XDG_CONFIG_HOME`
-**Scripts:** Use .sh with `chmod +x`
-**Run:** `python3 main.py` or `./main`
+### macOS
+- Paths: `/Users/username/Projects/my-app/`
+- Scripts: `.sh` bash scripts
+- Test: `python3 src/main.py`
+
+### Linux
+- Paths: `/home/username/projects/my-app/`
+- Scripts: `.sh` bash scripts
+- XDG directory specifications
+
+## Desktop Frameworks
+| Framework | Best For |
+|-----------|----------|
+| Electron | Web tech, large apps |
+| Tauri | Rust + Web, small bundle |
+| Qt | Native look, comprehensive |
+| tkinter | Python, quick prototypes |
+
+## Vibe Patterns
+1. **Window-First:** Create visible window immediately
+2. **Single-File:** Keep everything in one file during exploration
+3. **Rapid Feedback:** < 30 seconds per iteration cycle
+4. **Platform-Aware:** Quick platform detection for tweaks
 
 ## Verification Pattern
 ```
-STEP 6: Run application: [platform-specific command]
-STEP 7: Verify output: [expected behavior]
-STEP 8: Check for errors in terminal
+STEP 6: Run application
+STEP 7: Test window/CLI behavior
+STEP 8: Test interaction
 STEP 9: Report results
 ```
 
-## GUI Development
-**Python:** Tkinter (built-in), PyQt, wxPython
-**Cross-platform:** Electron (JS), Tauri (Rust), Flutter
-
-## Best Practices
-**Vibe:** Start CLI first, add GUI later, test on one platform, keep it simple
-**Evolution:** Document platform support, plan distribution, consider packaging
-**Structured:** Add cross-platform tests, handle paths properly, test on all targets
-
-## When to Use
-**Use for:** Desktop apps, CLI tools, system utilities, file processors
-**Other frameworks:** Web apps → Web, Mobile → Mobile, Games → Game
+## Packaging
+- Windows: PyInstaller → .exe, NSIS installer
+- macOS: py2app → .app, DMG
+- Linux: AppImage, .deb
 
 ---
+
 **End of Desktop Framework**

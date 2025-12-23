@@ -1,89 +1,116 @@
 # Framework Skills Reference
-**Version:** 1.0.0
-## Overview
+**Version:** v2.15.2
+
+---
+
+## Skills Overview
+
 **Location:** `Skills/`
-**Total:** 14 (6 TDD/BDD, 1 PRD, 2 Code Quality, 2 Beginner Setup, 3 Beginner Support)
-**Packaging:** SKILL.md + resources/ + LICENSE.txt
-**Format:** Claude Code copy/paste blocks (NOT manual instructions)
+**Total:** 21 skills
+
+### Skill Characteristics
+- Packaged as SKILL.md + resources/ + LICENSE.txt
+- Provide Claude Code instruction blocks
+- Include verification checklists
+
+---
 
 ## TDD Skills (Experienced Developers)
-### tdd-red-phase (1.0.0)
-**Function:** Guide through RED phase - writing failing tests
-**Coverage:** Test structure (AAA), assertions, failure verification, Claude Code format
-**When:** Starting feature, "First-Step" or "Start-Story" commands
 
-### tdd-green-phase (1.0.0)
-**Function:** Guide through GREEN phase - minimal implementation
-**Coverage:** YAGNI, implementation strategies, regression checking
-**When:** After RED phase test verified failing
+| Skill | Function | When Used |
+|-------|----------|-----------|
+| tdd-red-phase | Write failing tests, verify failures | "First-Step", "Start-Story" |
+| tdd-green-phase | Minimal implementation to pass | After RED phase |
+| tdd-refactor-phase | Code improvement, green tests | After GREEN phase |
+| tdd-failure-recovery | Diagnostics, rollback | Unexpected test behavior |
+| test-writing-patterns | AAA, Given-When-Then, test doubles | Test structure guidance |
+| bdd-writing | Gherkin, feature files, step definitions | Executable specifications |
 
-### tdd-refactor-phase (1.0.0)
-**Function:** Guide through REFACTOR phase - improve code, maintain green
-**Coverage:** Refactoring analysis, rollback procedures, when to skip
-**When:** After GREEN phase success
-
-### tdd-failure-recovery (1.0.0)
-**Function:** Handle unexpected test behaviors, recovery
-**Coverage:** Failure diagnostics, recovery steps, rollback, test isolation
-**When:** Test behaves unexpectedly, "Rollback-Previous-Step"
-
-### test-writing-patterns (1.0.0) [Standalone]
-**Function:** Test structure, patterns, assertions, test doubles
-**Coverage:** AAA, Given-When-Then, mock/stub/fake/spy, framework-agnostic
-**When:** Need guidance on test structure or test doubles
-
-### bdd-writing (1.0.0) [Standalone]
-**Function:** BDD specification writing with Gherkin
-**Coverage:** Feature files, scenarios, Given-When-Then, step definitions, scenario outlines
-**Tools:** Cucumber, pytest-bdd, SpecFlow, Behave, RSpec
-**When:** Writing acceptance criteria as executable specs
+---
 
 ## PRD Skills
-### extract-prd (1.1.0)
-**Function:** Extract PRD worksheets from existing codebases
-**Coverage:** Test parsing (pytest, Jest, JUnit, RSpec), NFR detection, architecture inference
-**When:** Reverse-PRD workflow, documenting legacy code
-**Output:** PRD/PRD-[ProjectName].md
+
+**extract-prd (v1.1.0)**
+- Extract PRD worksheets from existing codebases
+- Coverage: Test parsing, NFR detection, architecture inference
+- Used by: IDPF-PRD Reverse-PRD commands
+
+---
 
 ## Code Quality Skills
-### anti-pattern-analysis (1.0.0)
-**Function:** Systematic detection of anti-patterns
-**Coverage:** Design/OOP, code smells, architecture, database, testing, security patterns
-**When:** Code reviews, refactoring planning, technical debt assessment
 
-### uml-generation (1.0.0)
-**Function:** Generate UML diagrams from source code (PlantUML)
-**Coverage:** Class, sequence, component, activity diagrams
-**When:** Code analysis, architecture documentation, reverse-engineering
+| Skill | Function |
+|-------|----------|
+| anti-pattern-analysis | Detect anti-patterns, code smells, technical debt |
+| uml-generation | Generate PlantUML diagrams from code |
+
+---
 
 ## Beginner Setup Skills
-### flask-setup (1.0.0)
-**Function:** Python Flask environment setup
-**Coverage:** Virtual env, dependencies, verification
 
-### sinatra-setup (1.0.0)
-**Function:** Ruby Sinatra environment setup
-**Coverage:** Bundler, Gemfile, dependencies, verification
+| Skill | Function |
+|-------|----------|
+| flask-setup | Python Flask environment setup |
+| sinatra-setup | Ruby Sinatra environment setup |
+
+---
 
 ## Beginner Support Skills
-### common-errors (1.0.0)
-**Function:** Troubleshooting common development issues
-**Coverage:** Flask errors, Sinatra errors, general programming errors
 
-### sqlite-integration (1.0.0)
-**Function:** Database integration guidance
-**Coverage:** Database setup, basic queries, schema creation
+| Skill | Function |
+|-------|----------|
+| common-errors | Troubleshooting Flask, Sinatra, general errors |
+| sqlite-integration | Database setup, basic queries |
+| beginner-testing | Testing introduction, simple TDD |
 
-### beginner-testing (1.0.0)
-**Function:** Testing introduction and TDD education
-**Coverage:** Test writing basics, assertions, simple TDD cycle
+---
+
+## Database Skills
+
+| Skill | Function |
+|-------|----------|
+| postgresql-integration | Connection pooling, query patterns |
+| migration-patterns | Schema versioning, rollback, zero-downtime |
+
+---
+
+## Advanced Testing Skills
+
+| Skill | Function |
+|-------|----------|
+| property-based-testing | Hypothesis (Python), fast-check (JS) |
+| mutation-testing | mutmut, Stryker, PIT |
+
+---
+
+## Architecture Skills
+
+| Skill | Function |
+|-------|----------|
+| api-versioning | URL/header versioning, deprecation |
+| error-handling-patterns | Error hierarchy, API errors, logging |
+
+---
+
+## DevOps Skills
+
+**ci-cd-pipeline-design**
+- Pipeline architecture, stage design, security
+- Platforms: GitHub Actions, GitLab CI, Jenkins
+
+---
 
 ## Framework-Skill Dependencies
+
 | Framework | Required Skills |
 |-----------|----------------|
-| IDPF-Structured | tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns |
-| IDPF-Agile | tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns |
-| IDPF-LTS | tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns |
+| IDPF-Structured | tdd-red/green/refactor-phase, tdd-failure-recovery, test-writing-patterns |
+| IDPF-Agile | tdd-red/green/refactor-phase, tdd-failure-recovery, test-writing-patterns |
+| IDPF-LTS | tdd-red/green/refactor-phase, tdd-failure-recovery, test-writing-patterns |
 | IDPF-Vibe (newbie) | flask-setup, sinatra-setup, common-errors, sqlite-integration, beginner-testing |
 
 **Standalone:** anti-pattern-analysis, bdd-writing, extract-prd, uml-generation
+
+---
+
+**End of Framework Skills Reference**

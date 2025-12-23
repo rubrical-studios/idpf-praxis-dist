@@ -1,45 +1,56 @@
 ---
-name: flask-setup
-version: 1.0.0
-description: Python Flask environment setup for beginners
+name: flask-setup-for-beginners
+version: v2.15.2
+description: Set up Python Flask development environment for beginners
 ---
-# Flask Setup
-## When to Use
-- New Flask project setup
-- Vibe-Newbie framework
-- Beginner Python web development
 
-## Setup Steps
-### 1. Create Project Directory
-```bash
-mkdir my-flask-app
-cd my-flask-app
+# Flask Setup for Beginners
+
+## When to Use
+- User wants to build Flask web application
+- User needs Flask environment setup
+- User asks "How do I set up Flask?"
+
+## Output Format
+All instructions as Claude Code copy/paste blocks:
+```
+TASK: Set up Flask project
+STEP 1: Copy entire block
+STEP 2: Open Claude Code
+STEP 3: Paste and execute
+STEP 4: Report results
 ```
 
-### 2. Create Virtual Environment
+## Setup Steps
+
+### 1. Create Project
+```bash
+mkdir [project-name]
+cd [project-name]
+```
+
+### 2. Verify Python
+```bash
+python --version  # Should show Python 3.x
+```
+
+### 3. Create Virtual Environment
 ```bash
 python -m venv venv
 ```
 
-### 3. Activate Virtual Environment
-**Windows:**
-```bash
-venv\Scripts\activate
-```
-**macOS/Linux:**
-```bash
-source venv/bin/activate
-```
+### 4. Activate Virtual Environment
+**Windows:** `venv\Scripts\activate`
+**macOS/Linux:** `source venv/bin/activate`
 
-### 4. Install Flask
+### 5. Install Flask
 ```bash
 pip install flask
 ```
 
-### 5. Create app.py
+### 6. Create app.py
 ```python
 from flask import Flask
-
 app = Flask(__name__)
 
 @app.route('/')
@@ -50,23 +61,13 @@ if __name__ == '__main__':
     app.run(debug=True)
 ```
 
-### 6. Run the App
+### 7. Run App
 ```bash
 python app.py
 ```
+Open http://localhost:5000
 
-### 7. Verify
-Open browser: http://localhost:5000
-Should see: "Hello, World!"
-
-## Common Issues
-| Issue | Solution |
-|-------|----------|
-| "flask not found" | Activate venv first |
-| Port in use | Change port: `app.run(port=5001)` |
-| Import error | Check venv activated |
-
-## Next Steps
-- Add routes: `@app.route('/users')`
-- Add templates: `render_template('index.html')`
-- Add database: See `sqlite-integration` skill
+## Troubleshooting
+- Python not found: Check installation, PATH
+- pip not found: Use `python -m pip`
+- Module not found: Activate virtual environment first

@@ -1,108 +1,60 @@
 ---
 name: bdd-writing
-version: 1.0.0
-description: BDD specifications using Gherkin syntax, feature files, step definitions
+version: v2.15.2
+description: Write Gherkin feature files and step definitions for BDD
 ---
-# BDD Writing
+
+# BDD Writing Skill
+
 ## When to Use
-- Writing acceptance criteria as executable specs
-- Creating feature files
-- Defining step definitions
-- BDD + TDD integration questions
+- Writing executable specifications
+- Creating Gherkin feature files
+- Implementing step definitions
+- ATDD/BDD workflow
 
 ## Gherkin Syntax
-| Keyword | Purpose |
-|---------|---------|
-| Feature | Groups scenarios |
-| Scenario | Single test case |
-| Given | Preconditions |
-| When | Action |
-| Then | Expected outcome |
-| And/But | Continue previous |
-| Background | Shared setup |
-| Scenario Outline + Examples | Parameterized |
-
-## Feature File Structure
 ```gherkin
 Feature: User Authentication
-  As a user I want to log in So that I can access my account
-
-  Background:
-    Given the login page is displayed
+  As a registered user
+  I want to log into my account
+  So that I can access my data
 
   Scenario: Successful login
-    Given a user "alice" exists with password "secret"
-    When the user enters credentials "alice" and "secret"
-    And clicks login
-    Then the user sees the dashboard
+    Given I am on the login page
+    When I enter valid credentials
+    And I click the login button
+    Then I should see the dashboard
+
+  Scenario: Invalid password
+    Given I am on the login page
+    When I enter wrong password
+    Then I should see an error message
 ```
 
-## Scenario Outline (Data-Driven)
-```gherkin
-Scenario Outline: Login validation
-  When user logs in with "<user>" and "<pass>"
-  Then result is "<outcome>"
+## Keywords
+| Keyword | Purpose |
+|---------|---------|
+| Feature | High-level description |
+| Scenario | Specific test case |
+| Given | Precondition/context |
+| When | Action/trigger |
+| Then | Expected outcome |
+| And/But | Additional steps |
 
-  Examples:
-    | user  | pass   | outcome |
-    | alice | secret | success |
-    | alice | wrong  | failure |
-```
-
-## Step Definitions
-### Python (pytest-bdd)
+## Step Definition Pattern (Python/Behave)
 ```python
-@given(parsers.parse('a user "{name}" exists'))
-def create_user(name):
-    User.create(name=name)
+@given('I am on the login page')
+def step_login_page(context):
+    context.browser.get('/login')
 
-@when('the user clicks login')
-def click_login(page):
-    page.click_login()
-
-@then('the user sees the dashboard')
-def verify_dashboard(page):
-    assert page.url == '/dashboard'
-```
-
-### JavaScript (Cucumber.js)
-```javascript
-Given('a user {string} exists', async (name) => {
-  await createUser(name);
-});
+@when('I enter valid credentials')
+def step_enter_credentials(context):
+    context.browser.fill('username', 'test@example.com')
+    context.browser.fill('password', 'password123')
 ```
 
 ## Best Practices
-| Do | Don't |
-|----|-------|
-| One behavior per scenario | Multiple behaviors |
-| Business language | Technical jargon |
-| 3-7 steps per scenario | 10+ steps |
-| Independent scenarios | Dependencies between scenarios |
-| Focus on behavior | Focus on UI mechanics |
-
-## BDD + TDD Double Loop
-```
-OUTER: BDD (Acceptance)
-  1. Write failing scenario
-  INNER: TDD (Unit)
-    2. RED - failing unit test
-    3. GREEN - minimal code
-    4. REFACTOR
-  5. Scenario passes
-  6. Next scenario
-```
-
-## Tool Selection
-| Tool | Language |
-|------|----------|
-| Cucumber | JS, Java, Ruby |
-| pytest-bdd | Python |
-| SpecFlow | C#/.NET |
-| Behave | Python |
-
-## Anti-Patterns
-❌ UI-focused steps ("click button with id...")
-❌ Too many steps (>10)
-❌ Coupled steps using variables
-❌ Inconsistent terminology
+- Write in business language
+- One behavior per scenario
+- Keep steps reusable
+- Avoid technical details in feature files

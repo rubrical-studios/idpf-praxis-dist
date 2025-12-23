@@ -1,46 +1,45 @@
 # Agile-Driven Development Framework - Transitions
-**Module:** Transitions (loaded on-demand)
-
-## When to Use Each Framework
-**Agile:** Evolving requirements, iterative delivery, prioritize by value, medium-large projects, track velocity
-**Structured:** Fixed requirements, small scope, single feature, no sprint overhead needed
-**Vibe:** Unclear requirements, exploration needed, prototyping first
-
-## Agile → Structured
-**When:** Scope narrows, solo developer, sprint overhead outweighs benefits, requirements stable, no velocity tracking needed
-
-**How:**
-1. Complete sprint (Review + Retro)
-2. Commit all done stories
-3. Move incomplete to backlog
-4. Convert stories to PRD
-5. Begin with "First-Step"
-
-**Carries forward:** Code, tests, TDD, git history, architecture, acceptance criteria
-**Changes:** Stories → PRD, Sprints → linear tasks, Velocity → progress only
-
-## Agile → LTS
-**When:** Production maintenance, active dev complete, only bugs/patches, backlog frozen, stability paramount
-
-**How:**
-1. Complete/close final sprint
-2. Final Sprint-Review
-3. Archive backlog/history
-4. Full tests 100% passing
-5. Create docs (README, CHANGELOG, API)
-6. Tag version
-7. Begin "LTS-Triage"
-8. Set EOL date
-
-**Carries forward:** Code, tests, docs, git history, TDD for fixes
-**Changes:** Stories → bug reports, Sprints → triage, Development → maintenance, Features → fixes only
-
-## Invalid Transitions
-**Never:** Agile → Vibe (defeats purpose)
-
-## Integration Options
-**Agile + Vibe:** Vibe explore → Create Backlog → Agile formalize
-**Existing Projects:** Audit → Create Backlog (features + debt) → Sprint Planning → Incremental enhancement
+**Version:** v2.15.2
+**Module:** Transitions
 
 ---
+
+## When to Use Agile
+- Evolving requirements, iterative delivery
+- Need prioritization based on value
+- Medium to large projects
+- Track velocity and predictability
+
+## When NOT to Use Agile
+- Fixed, well-defined requirements → Structured
+- Small project, clear scope → Structured
+- Unclear requirements, exploration → Vibe
+
+## Agile → Structured
+**When:** Scope narrows, solo developer, sprint overhead outweighs benefits
+**How:**
+1. Complete current sprint
+2. Convert remaining stories → PRD
+3. Begin Structured with "First-Step"
+
+**Carries forward:** Code, tests, TDD, Git history, architecture
+**Changes:** Stories → PRD, Sprints → Linear, Remove backlog overhead
+
+## Agile → LTS
+**When:** Production maintenance only, backlog frozen
+**How:**
+1. Close final sprint
+2. Archive backlog/history
+3. Full test suite passing
+4. Tag final version
+5. Begin with "LTS-Triage"
+
+**Carries forward:** Code, tests, TDD, Git history
+**Changes:** Stories → Bug reports, Sprint → LTS triage, Features → Fixes only
+
+## Invalid
+**Never:** Agile → Vibe (defeats structured development)
+
+---
+
 **End of Transitions Module**

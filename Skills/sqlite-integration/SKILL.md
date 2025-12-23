@@ -1,113 +1,77 @@
 ---
 name: sqlite-integration
-version: 1.0.0
-description: Database integration with SQLite for beginners
+version: v2.15.2
+description: Add SQLite database storage with teaching examples
 ---
+
 # SQLite Integration
+
 ## When to Use
-- Adding database to Flask/Sinatra app
-- Learning SQL basics
-- Simple data persistence
+- User needs to store data persistently
+- User asks about databases
+- Evolution Point - ready to add data storage
+- Simple local database needed
 
-## Why SQLite?
-- No server required (file-based)
-- Built into Python and Ruby
-- Great for learning and small projects
+## Why SQLite for Beginners
+- No server setup required
+- Just a file
+- Built into Python (sqlite3)
+- Easy to learn SQL
 
-## Python/Flask Integration
-### Setup
+## Flask Setup
 ```python
 import sqlite3
 
 def get_db():
-    conn = sqlite3.connect('app.db')
-    conn.row_factory = sqlite3.Row
-    return conn
-```
+    db = sqlite3.connect('app.db')
+    db.row_factory = sqlite3.Row
+    return db
 
-### Create Table
-```python
 def init_db():
     db = get_db()
     db.execute('''
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS todos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL
+            text TEXT NOT NULL,
+            done INTEGER DEFAULT 0
         )
     ''')
     db.commit()
-    db.close()
 ```
 
-### Basic Operations
+## Basic SQL Operations
+
+### Create
+```sql
+INSERT INTO todos (text) VALUES ('Buy milk');
+```
+
+### Read
+```sql
+SELECT * FROM todos WHERE done = 0;
+```
+
+### Update
+```sql
+UPDATE todos SET done = 1 WHERE id = 1;
+```
+
+### Delete
+```sql
+DELETE FROM todos WHERE id = 1;
+```
+
+## Python Example
 ```python
 # Insert
-db.execute('INSERT INTO users (name, email) VALUES (?, ?)',
-           ('Alice', 'alice@example.com'))
+db.execute('INSERT INTO todos (text) VALUES (?)', ['New task'])
 db.commit()
 
 # Query
-users = db.execute('SELECT * FROM users').fetchall()
-
-# Query one
-user = db.execute('SELECT * FROM users WHERE id = ?', (1,)).fetchone()
-
-# Update
-db.execute('UPDATE users SET name = ? WHERE id = ?', ('Bob', 1))
-db.commit()
-
-# Delete
-db.execute('DELETE FROM users WHERE id = ?', (1,))
-db.commit()
+todos = db.execute('SELECT * FROM todos').fetchall()
 ```
 
-## Ruby/Sinatra Integration
-### Setup
-```ruby
-require 'sqlite3'
-
-def get_db
-  SQLite3::Database.new('app.db')
-end
-```
-
-### Create Table
-```ruby
-db = get_db
-db.execute <<-SQL
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL
-  );
-SQL
-```
-
-### Basic Operations
-```ruby
-# Insert
-db.execute('INSERT INTO users (name, email) VALUES (?, ?)',
-           ['Alice', 'alice@example.com'])
-
-# Query
-users = db.execute('SELECT * FROM users')
-
-# Query one
-user = db.execute('SELECT * FROM users WHERE id = ?', [1]).first
-```
-
-## SQL Basics
-| Operation | SQL |
-|-----------|-----|
-| Create | INSERT INTO table (cols) VALUES (vals) |
-| Read | SELECT * FROM table WHERE condition |
-| Update | UPDATE table SET col = val WHERE condition |
-| Delete | DELETE FROM table WHERE condition |
-
-## Common Issues
-| Issue | Fix |
-|-------|-----|
-| No such table | Run CREATE TABLE first |
-| UNIQUE constraint | Check for duplicates |
-| Database locked | Close other connections |
+## Best Practices
+- Use parameterized queries (?) to prevent SQL injection
+- Close connections when done
+- Use try/finally or context managers

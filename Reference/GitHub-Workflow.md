@@ -1,6 +1,8 @@
 # GitHub Workflow Integration
-**Version:** 1.7
-**Source:** Reference/GitHub-Workflow.md
+**Version:** v2.15.2
+
+---
+
 **MUST READ:** At session startup and after compaction.
 
 ## Project Configuration
@@ -181,9 +183,9 @@ If yes: `gh issue edit [parent] --add-label "epic"`, add "story" to sub-issues
 **STOP:** Report and wait for "Done"
 **Step 4:** `gh pmu move [epic] --status done --recursive --yes`
 
-### 5. Create-Issues (PRD)
-- `PRD-Agile-*.md` → Use `Create-Backlog` (IDPF-Agile/Agile-Commands.md)
-- `PRD-Structured-*.md` → Create REQ issues with Implementation + QA sub-issues
+### 5. PRD to Issues
+- **Agile:** `Create-Backlog` → Epics + Stories (see IDPF-Agile/Agile-Commands.md)
+- **Structured:** `Create-Requirements` → REQ issues with Implementation + QA sub-issues
 
 ### 6. Reopen Workflow
 `gh issue reopen [#]` → `gh pmu move [#] --status ready`
@@ -251,6 +253,7 @@ gh pmu intake --apply "status:backlog,priority:p2"
 ## Shell Limitations
 **Heredocs with backticks fail.** Use `--body-file` with temp file instead.
 **Command substitution fails.** Run commands separately, use literal values.
+**Use relative paths for temp files.** Always use `.tmp-*` not absolute paths (e.g., `E:\...`). Windows backslashes get stripped by shell escaping.
 **Clean up temp files.** Delete temp files immediately after use (e.g., `rm .tmp-issue-*.md`).
 
 ## CI/CD Rate Limiting

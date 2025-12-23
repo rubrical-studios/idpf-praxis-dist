@@ -1,46 +1,49 @@
 # Session Startup Instructions
-**Version:** 2.11
+**Version:** v2.15.2
 
-## Rules Auto-Loading (v2.9+)
-Essential rules auto-load from `.claude/rules/`:
-| Rule File | Content | Source |
-|-----------|---------|--------|
-| 01-anti-hallucination.md | Framework quality rules | Assistant/ |
-| 02-github-workflow.md | GitHub integration | Reference/ |
-| 03-session-startup.md | Startup procedure | Generated |
-**Benefits:** No explicit reads, compact-resilient, ~47% token reduction
+---
+
+## Rules Auto-Loading
+Rules in `.claude/rules/` load automatically:
+- `01-anti-hallucination.md` - Framework development rules
+- `02-github-workflow.md` - GitHub issue management
+- `03-session-startup.md` - Startup procedure
+
+No explicit file reads required at startup. Rules persist after compaction.
 
 ## Startup Sequence
-### 1. Acknowledge Date
-State date from environment and proceed.
+
+### 1. Acknowledge the Date
+State date from environment. User can correct if needed.
 
 ### 2. Read Framework Summary
-```
-Overview/Framework-Summary.md
-```
-Provides: versions, counts, selection matrix, skills registry, on-demand references.
+Load `Overview/Framework-Summary.md` for context (versions, counts, matrix).
 
 ### 3. Confirm Initialization
-Report: Date, Framework version, Skill count, Specialists count, GitHub Workflow status.
-Ask user what to work on.
+Report: Date, Framework version, Skill count, Specialists count, GitHub Workflow activation.
+Ask user what they would like to work on.
 
 ### 4. Check Open Releases
 ```bash
 gh pmu release list
 ```
-Display releases or prompt to create one if none exist.
+If no releases: `gh pmu release start --version "X.Y.Z"`
 
 ## Post-Compact Behavior
-**No re-reading required.** Rules auto-reload after compaction.
+Rules auto-reload. No re-reading required.
 
 ## On-Demand Documentation
+
 | When Working On | Load File |
 |-----------------|-----------|
-| IDPF frameworks | Overview/Framework-Development.md |
-| Testing frameworks | Overview/Framework-Testing.md |
-| System Instructions | Overview/Framework-System-Instructions.md |
-| Skills | Overview/Framework-Skills.md |
-| Framework transitions | Overview/Framework-Transitions.md |
-| Complete reference | Overview/Framework-Overview.md |
-| Skill creation rules | Assistant/Anti-Hallucination-Rules-for-Skill-Creation.md |
-| PRD work | Assistant/Anti-Hallucination-Rules-for-PRD-Work.md |
+| IDPF frameworks | `Overview/Framework-Development.md` |
+| Testing frameworks | `Overview/Framework-Testing.md` |
+| System Instructions | `Overview/Framework-System-Instructions.md` |
+| Skills | `Overview/Framework-Skills.md` |
+| Transitions | `Overview/Framework-Transitions.md` |
+| Complete reference | `Overview/Framework-Overview.md` |
+| Skill creation | `Assistant/Anti-Hallucination-Rules-for-Skill-Creation.md` |
+| PRD work | `Assistant/Anti-Hallucination-Rules-for-PRD-Work.md` |
+
+---
+**End of Session Startup Instructions**

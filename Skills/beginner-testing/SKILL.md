@@ -1,116 +1,50 @@
 ---
 name: beginner-testing
-version: 1.0.0
-description: Testing introduction and simple TDD for beginners
+version: v2.15.2
+description: Introduce test-driven development to beginners with simple examples
 ---
-# Beginner Testing
+
+# Beginner Testing Introduction
+
 ## When to Use
-- Learning to write tests
-- Introduction to TDD
-- Vibe-Newbie framework
+- User has working Vibe app ready for Structured Phase
+- User mentions "testing" or asks "how to test"
+- Evolution Point reached ("Ready-to-Structure")
+- User asks "How do I know if my code works?"
 
-## Why Test?
-- Catch bugs early
-- Confidence when changing code
-- Documentation of expected behavior
-- Professional practice
+## Prerequisites
+- Working Flask or Sinatra app with 3-4 features
+- Understanding of routes and functions
+- Code that works but no tests yet
 
-## Simple Test Structure
-**Arrange → Act → Assert**
+## What is Testing?
+Writing code that checks if your code works.
+- Without tests: Make change → Click around → Hope nothing broke
+- With tests: Make change → Run tests → Know immediately if something broke
+
+## TDD Cycle: RED → GREEN → REFACTOR
+1. **RED:** Write a test that fails (feature doesn't exist yet)
+2. **GREEN:** Write just enough code to pass
+3. **REFACTOR:** Clean up while tests still pass
+
+## Types of Tests
+- **Unit tests:** Test one function
+- **Integration tests:** Test functions working together
+- **Route tests:** Test web endpoints
+
+## First Test Pattern
+
+**Flask (pytest):**
 ```python
-def test_add():
-    # Arrange - set up
-    a = 2
-    b = 3
-
-    # Act - do the thing
-    result = add(a, b)
-
-    # Assert - check result
-    assert result == 5
+def test_homepage_returns_200(client):
+    response = client.get('/')
+    assert response.status_code == 200
 ```
 
-## Python Testing (pytest)
-### Setup
-```bash
-pip install pytest
-```
-
-### Write a Test
-Create `test_math.py`:
-```python
-def add(a, b):
-    return a + b
-
-def test_add_positive_numbers():
-    assert add(2, 3) == 5
-
-def test_add_negative_numbers():
-    assert add(-1, -1) == -2
-
-def test_add_zero():
-    assert add(5, 0) == 5
-```
-
-### Run Tests
-```bash
-pytest
-```
-
-## Ruby Testing (Minitest)
-### Write a Test
-Create `test_math.rb`:
+**Sinatra (minitest):**
 ```ruby
-require 'minitest/autorun'
-
-def add(a, b)
-  a + b
-end
-
-class TestMath < Minitest::Test
-  def test_add_positive_numbers
-    assert_equal 5, add(2, 3)
-  end
+def test_homepage_returns_200
+  get '/'
+  assert last_response.ok?
 end
 ```
-
-### Run Tests
-```bash
-ruby test_math.rb
-```
-
-## Simple TDD Cycle
-```
-1. RED: Write a failing test
-2. GREEN: Write minimum code to pass
-3. REFACTOR: Clean up code
-4. Repeat
-```
-
-### Example
-```python
-# Step 1: RED - test fails (function doesn't exist)
-def test_greet():
-    assert greet("Alice") == "Hello, Alice!"
-
-# Step 2: GREEN - minimal code
-def greet(name):
-    return f"Hello, {name}!"
-
-# Step 3: REFACTOR - (already clean)
-```
-
-## Assertions
-| Python | Ruby | Meaning |
-|--------|------|---------|
-| assert x == y | assert_equal(y, x) | Equal |
-| assert x != y | refute_equal(y, x) | Not equal |
-| assert x | assert x | Truthy |
-| assert x is None | assert_nil(x) | None/nil |
-
-## Tips for Beginners
-1. Start with simple functions
-2. One test per behavior
-3. Run tests often
-4. Clear test names
-5. Don't worry about perfect coverage yet

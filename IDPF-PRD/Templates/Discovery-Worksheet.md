@@ -1,61 +1,203 @@
 # Discovery Worksheet
-**Project:** _________ **Date:** _________
+**Version:** v2.15.2
+
+**Project Name:** _______________________
+**Date:** _______________________
+**Facilitator:** _______________________
+
+---
 
 ## 1. Domain Analysis
-**Industry:** [ ] E-commerce [ ] Healthcare [ ] Finance [ ] SaaS [ ] Education [ ] IoT [ ] Mobile [ ] Government [ ] Other: _____
 
-**Regulations:** [ ] HIPAA [ ] PCI-DSS [ ] GDPR [ ] SOC 2 [ ] SOX [ ] WCAG [ ] FERPA [ ] FedRAMP [ ] None [ ] Other: _____
+### Industry/Vertical
 
-**Competitors:** 1. _____ 2. _____ 3. _____
-**Differentiation:** _____
+**Primary Industry:**
+- [ ] E-commerce / Retail
+- [ ] Healthcare / Medical
+- [ ] Finance / Banking
+- [ ] SaaS / B2B Software
+- [ ] Education / EdTech
+- [ ] IoT / Hardware
+- [ ] Mobile / Consumer App
+- [ ] Government / Public Sector
+- [ ] Other: _______________________
+
+**Industry Notes:**
+```
+[Describe specific industry context, terminology, or considerations]
+```
+
+### Regulatory Requirements
+
+**Applicable Regulations:**
+- [ ] HIPAA (Healthcare)
+- [ ] PCI-DSS (Payment Card)
+- [ ] GDPR (EU Data Privacy)
+- [ ] SOC 2 (Service Organization)
+- [ ] SOX (Financial Reporting)
+- [ ] WCAG (Accessibility)
+- [ ] FERPA (Education)
+- [ ] FedRAMP (Government)
+- [ ] Other: _______________________
+- [ ] None identified
+
+**Regulatory Notes:**
+```
+[Describe specific compliance requirements or considerations]
+```
+
+### Competitive Landscape
+
+**Similar Products/Competitors:**
+1. _______________________
+2. _______________________
+3. _______________________
+
+**Differentiation:**
+```
+[What makes this product different from competitors?]
+```
+
+### Domain Terminology
 
 | Term | Definition |
 |------|------------|
 | | |
+| | |
+| | |
 
-## 2. Stakeholders
-**Primary Users:**
+---
+
+## 2. Stakeholder Mapping
+
+### Primary Stakeholders (End Users)
+
 | Role | Description | Key Needs |
 |------|-------------|-----------|
 | | | |
+| | | |
+| | | |
 
-**Business Stakeholders:**
-| Role | Name | Authority |
-|------|------|-----------|
-| Sponsor | | |
+### Secondary Stakeholders
+
+| Role | Description | Key Needs |
+|------|-------------|-----------|
+| | | |
+| | | |
+
+### Business Stakeholders
+
+| Role | Name/Team | Authority Level |
+|------|-----------|-----------------|
+| Executive Sponsor | | |
 | Product Owner | | |
-| Tech Lead | | |
+| Technical Lead | | |
+| QA Lead | | |
 
-**RACI:** (R=Responsible, A=Accountable, C=Consulted, I=Informed)
-| Decision | R | A | C | I |
-|----------|---|---|---|---|
-| Requirements | | | | |
-| Technical | | | | |
+### RACI Matrix (Key Decisions)
+
+| Decision Area | Responsible | Accountable | Consulted | Informed |
+|---------------|-------------|-------------|-----------|----------|
+| Requirements Approval | | | | |
+| Technical Decisions | | | | |
+| Budget Decisions | | | | |
+| Timeline Decisions | | | | |
+
+---
 
 ## 3. Vision & Goals
-**Problem:** _____
-**Current State:** _____
-**Vision:** "We are building [product] for [audience] to [solve problem] by [approach]"
 
-| Metric | Target | Measurement |
-|--------|--------|-------------|
+### Problem Statement
+
+**The Problem:**
+```
+[What problem does this product solve? Who has this problem?]
+```
+
+**Current State:**
+```
+[How is this problem currently addressed? What are the pain points?]
+```
+
+### Vision Statement
+
+**One-Sentence Vision:**
+```
+[Complete: "We are building [product] for [audience] to [solve problem] by [approach]]
+```
+
+### Success Metrics (KPIs)
+
+| Metric | Target | Measurement Method |
+|--------|--------|-------------------|
+| | | |
+| | | |
 | | | |
 
-**6-Month Success:** _____
-**1-Year Success:** _____
+### Success Criteria
 
-**In Scope:** [ ] _____ [ ] _____
-**Out of Scope:** [ ] _____ [ ] _____
+**6-Month Success:**
+```
+[What does success look like in 6 months?]
+```
 
-## 4. Summary
-**Key Findings:** 1. _____ 2. _____ 3. _____
+**1-Year Success:**
+```
+[What does success look like in 1 year?]
+```
 
-| Open Question | Owner | Due |
-|---------------|-------|-----|
+### Project Scope
+
+**In Scope:**
+- [ ] _______________________
+- [ ] _______________________
+- [ ] _______________________
+
+**Out of Scope:**
+- [ ] _______________________
+- [ ] _______________________
+- [ ] _______________________
+
+---
+
+## 4. Discovery Summary
+
+### Key Findings
+
+1. _______________________
+2. _______________________
+3. _______________________
+
+### Open Questions
+
+| Question | Owner | Due Date |
+|----------|-------|----------|
 | | | |
+| | | |
+
+### Assumptions
 
 | Assumption | Risk if Wrong |
 |------------|---------------|
 | | |
+| | |
 
-**Ready for Elicitation:** [ ] Yes [ ] No
+---
+
+## Phase Completion
+
+- [ ] Domain analysis complete
+- [ ] All stakeholders identified
+- [ ] Vision statement defined
+- [ ] Success metrics established
+- [ ] Scope boundaries clear
+- [ ] Open questions documented
+
+**Ready for Elicitation Phase:** [ ] Yes [ ] No
+
+**Facilitator Signature:** _______________________
+**Date:** _______________________
+
+---
+
+*Template from IDPF-PRD Framework*

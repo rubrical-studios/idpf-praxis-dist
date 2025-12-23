@@ -1,91 +1,52 @@
+# UML Generation Skill
+
 ---
 name: uml-generation
-version: 1.0.0
-description: Generate UML diagrams from source code (PlantUML)
+version: v2.15.2
+description: Generate UML diagrams from source code using PlantUML
 ---
-# UML Generation
-## When to Use
-- Code analysis, architecture documentation
-- Reverse-engineering existing systems
-- Communication with stakeholders
 
-## Diagram Types
-### Class Diagram
+## When to Invoke
+- Code analysis requiring visual documentation
+- Architecture review and documentation
+- Reverse-engineering existing codebases
+- Understanding class hierarchies
+- Documenting API call flows
+
+## Supported Diagram Types
+| Diagram | Use Case | Priority |
+|---------|----------|----------|
+| Class Diagram | Code structure, inheritance | High |
+| Sequence Diagram | Method call flows, API interactions | High |
+| Component Diagram | Architecture, dependencies | Medium |
+| Activity Diagram | Workflow logic | Medium |
+| State Diagram | State machines | Low |
+
+## What Gets Extracted
+
+**Class Diagrams:** Classes, interfaces, inheritance, associations, visibility, methods, properties
+**Sequence Diagrams:** Method call chains, request/response, async operations
+**Component Diagrams:** Module structure, dependencies, interfaces
+
+## Output Format
+1. PlantUML source (copyable)
+2. Rendering URL (plantuml.com)
+3. Brief description
+
+## Example Output
 ```plantuml
 @startuml
 class User {
-  -id: int
-  -name: string
-  +getName(): string
+  +id: int
+  +name: string
+  +getOrders(): List<Order>
 }
 class Order {
-  -items: List<Item>
+  +id: int
+  +total: decimal
 }
-User "1" -- "*" Order
+User "1" --> "*" Order
 @enduml
 ```
 
-### Sequence Diagram
-```plantuml
-@startuml
-Client -> API: POST /orders
-API -> DB: save(order)
-DB --> API: order_id
-API --> Client: 201 Created
-@enduml
-```
-
-### Component Diagram
-```plantuml
-@startuml
-[Frontend] --> [API]
-[API] --> [Database]
-[API] --> [Cache]
-@enduml
-```
-
-### Activity Diagram
-```plantuml
-@startuml
-start
-:Receive request;
-if (Authenticated?) then (yes)
-  :Process request;
-else (no)
-  :Return 401;
-endif
-stop
-@enduml
-```
-
-## PlantUML Syntax Reference
-### Relationships
-| Symbol | Meaning |
-|--------|---------|
-| `-->` | Dependency |
-| `--` | Association |
-| `o--` | Aggregation |
-| `*--` | Composition |
-| `<|--` | Inheritance |
-| `..|>` | Implementation |
-
-### Visibility
-| Symbol | Meaning |
-|--------|---------|
-| `+` | Public |
-| `-` | Private |
-| `#` | Protected |
-| `~` | Package |
-
-## Workflow
-1. Analyze source code structure
-2. Identify key classes/components
-3. Map relationships
-4. Generate PlantUML syntax
-5. Render diagram
-
-## Output
-Provide complete PlantUML code that can be rendered at:
-- plantuml.com
-- VS Code PlantUML extension
-- Local PlantUML installation
+Render: `http://www.plantuml.com/plantuml/png/[encoded]`

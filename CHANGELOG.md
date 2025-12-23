@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.15.2] - 2025-12-23
+
+### Changed
+- **Simplified /assign-release script** (#498) - Removed redundant script-level caching layer since gh-pmu CLI now handles caching internally. Simpler architecture with single source of truth for cache.
+
+### Fixed
+- **Windows temp file path documentation** (#497) - Added relative path warning to Shell Limitations section in GitHub Workflow rules. Windows absolute paths with backslashes get stripped by shell escaping.
+- **Standardized version headers with v2.15.2 token** (#495) - Ensures deployed files receive correct version injection.
+
+---
+
 ## [2.15.1] - 2025-12-22
 
 ### Added

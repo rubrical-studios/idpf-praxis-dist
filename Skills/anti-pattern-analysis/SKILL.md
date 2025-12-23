@@ -1,73 +1,48 @@
+# Anti-Pattern Analysis Skill
+
 ---
 name: anti-pattern-analysis
-version: 1.0.0
-description: Systematic detection of anti-patterns in code
+version: v2.15.2
+description: Systematic detection of anti-patterns with actionable refactoring guidance
 ---
-# Anti-Pattern Analysis
-## When to Use
-- Code reviews, refactoring planning
+
+## When to Invoke
+- Code review sessions
+- Refactoring planning
 - Technical debt assessment
-- Quality improvement initiatives
+- Architecture review
+- Reverse-PRD extraction
 
 ## Anti-Pattern Categories
+
 ### Design/OOP Anti-Patterns
-| Pattern | Problem | Solution |
-|---------|---------|----------|
-| God Class | Class does too much | Split into focused classes |
-| Anemic Domain | No behavior in domain objects | Move logic to domain |
-| Spaghetti Code | Tangled, hard to follow | Structure with patterns |
-| Golden Hammer | Same solution everywhere | Choose appropriate tools |
+| Pattern | Description | Severity |
+|---------|-------------|----------|
+| God Object | Class with too many responsibilities | High |
+| Singleton Abuse | Overuse creating global state | Medium |
+| Anemic Domain Model | Data classes with no behavior | Medium |
+| Circular Dependency | Classes depending on each other | High |
 
 ### Code Smells
-| Smell | Indicator | Fix |
-|-------|-----------|-----|
-| Long Method | >20 lines | Extract methods |
-| Long Parameter List | >3 params | Use object |
-| Duplicate Code | Copy-paste | DRY - extract |
-| Magic Numbers | Unexplained values | Named constants |
-| Dead Code | Unused code | Remove |
+| Pattern | Description | Severity |
+|---------|-------------|----------|
+| Long Method | Methods exceeding 20-30 lines | Medium |
+| Deep Nesting | More than 3 levels | Medium |
+| Magic Numbers | Unexplained literal values | Low |
+| Feature Envy | Method uses another class's data excessively | Medium |
+| Shotgun Surgery | One change requires many edits | High |
 
 ### Architecture Anti-Patterns
-| Pattern | Problem | Solution |
-|---------|---------|----------|
-| Big Ball of Mud | No structure | Define boundaries |
-| Circular Dependencies | A→B→A | Dependency inversion |
-| Tight Coupling | Components intertwined | Loose coupling, interfaces |
-
-### Database Anti-Patterns
-| Pattern | Problem | Solution |
-|---------|---------|----------|
-| N+1 Queries | Loop queries | Eager loading |
-| God Table | One table everything | Normalize |
-| Missing Indexes | Slow queries | Add indexes |
+| Pattern | Description | Severity |
+|---------|-------------|----------|
+| Big Ball of Mud | No discernible architecture | Critical |
+| Distributed Monolith | Microservices with tight coupling | High |
+| Lava Flow | Dead code nobody removes | Medium |
+| Copy-Paste Programming | Duplicated code blocks | High |
 
 ### Testing Anti-Patterns
-| Pattern | Problem | Solution |
-|---------|---------|----------|
-| Flaky Tests | Random failures | Isolate, deterministic data |
-| Test Interdependence | Order matters | Independent tests |
-| Slow Tests | Long feedback | Parallelize, mock |
-
-### Security Anti-Patterns
-| Pattern | Problem | Solution |
-|---------|---------|----------|
-| Hardcoded Secrets | Credentials in code | Environment variables |
-| SQL Injection | Concatenated queries | Parameterized queries |
-| Missing Validation | Trusting input | Validate all input |
-
-## Analysis Workflow
-1. Identify category (design, code, arch, db, test, security)
-2. Locate specific instances
-3. Assess severity and impact
-4. Recommend specific fix
-5. Prioritize by effort/benefit
-
-## Output Format
-```
-## Anti-Pattern: [Name]
-**Category:** [Type]
-**Location:** [File:line]
-**Severity:** Critical | High | Medium | Low
-**Impact:** [Description]
-**Recommendation:** [Specific fix]
-```
+| Pattern | Description | Severity |
+|---------|-------------|----------|
+| Ice Cream Cone | More E2E than unit tests | High |
+| Hidden Dependencies | Tests rely on external state | Medium |
+| Test Interdependence | Tests depend on each other | High |

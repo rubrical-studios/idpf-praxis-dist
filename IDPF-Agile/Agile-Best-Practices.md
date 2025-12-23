@@ -1,31 +1,31 @@
 # Agile-Driven Development Framework - Best Practices
-**Module:** Best Practices (loaded on-demand)
+**Version:** v2.15.2
+**Module:** Best Practices
+
+---
 
 ## Story Writing
-**DO:** "As a... I want... So that...", focus on user value, small stories (1-3 days), clear acceptance criteria, estimate relatively
+**DO:** "As a...I want...So that...", small stories (1-3 days), clear acceptance criteria, relative estimates
 **DON'T:** Technical tasks as stories, large stories, skip criteria, estimate in hours
 
 ## Sprint Planning
-**DO:** Cohesive sprint goal, consider dependencies, sustainable velocity, mix features + tech debt, leave buffer
-**DON'T:** Overpack points, unrelated stories, ignore tech debt, skip estimation
+**DO:** Cohesive sprint goal, consider dependencies, sustainable velocity, include tech debt, buffer for issues
+**DON'T:** Overcommit, unrelated stories, ignore debt, skip estimation
 
 ## Development
-**DO:** TDD rigorously, commit frequently with story refs, update status, ask for help when blocked, refactor continuously
-**DON'T:** Skip tests, multiple stories simultaneously, accumulate tech debt, ignore failing tests
+**DO:** Follow TDD (RED-GREEN-REFACTOR), commit frequently, update status, ask when blocked
+**DON'T:** Skip tests, work multiple stories, accumulate debt, ignore failures
 
-## Review & Retrospective
-**DO:** Celebrate completed, be honest, actionable improvements, adjust process, track velocity
+## Review & Retro
+**DO:** Celebrate, be honest, actionable improvements, track velocity
 **DON'T:** Skip retros, blame individuals, repeat mistakes, ignore data
 
 ## Special Scenarios
-
-**Story Blocked:** "Story-Blocked [ID] [reason]" → document, resolve/move/replace, update backlog
-
-**Scope Creep:** "Story-Growing [ID]" → analyze, split/re-estimate/defer, learn for future
-
-**Emergency Bug:** "Emergency-Bug [description]" → create story, add to sprint, TDD fix, document
-
-**Scope Change:** "Pivot [direction]" → update backlog, re-prioritize, resume
+- **Story-Blocked:** Add `blocked` label + reason
+- **Story-Growing:** Add `scope-creep` label, split if needed
+- **Emergency-Bug:** Create P0 issue with `emergency` label
+- **Pivot:** Review each story (keep/archive/close)
 
 ---
+
 **End of Best Practices Module**

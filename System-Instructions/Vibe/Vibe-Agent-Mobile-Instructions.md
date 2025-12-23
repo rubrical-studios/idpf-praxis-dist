@@ -1,57 +1,54 @@
-# Vibe Agent: Mobile Instructions
-Revision: 3 | Load with: Vibe-Agent-Core-Instructions.md
-
-## Platform Scope
-Mobile apps: iOS, Android, cross-platform.
-
-## Technology Map
-| Platform | Options |
+# Vibe Agent System Instructions (Mobile)
+**Version:** v2.15.2
+**Extends:** Vibe-Agent-Core-Instructions.md
+Specializes core instructions for iOS and Android development.
+---
+## Detection
+**Direct:** "mobile app", "iOS app", "Android app", "simulator", "emulator"
+**Frameworks:** Swift→iOS | Kotlin/Java→Android | React Native/Flutter→Cross-platform
+---
+## Running Apps
+| Platform | Command |
 |----------|---------|
-| iOS | Swift/SwiftUI, UIKit |
-| Android | Kotlin, Jetpack Compose |
-| Cross-platform | React Native, Flutter |
-
-## Project Structure
-**iOS:** Xcode project, `.swift`, Info.plist
-**Android:** Gradle, `MainActivity.kt`, AndroidManifest.xml
-**React Native:** `package.json`, `App.js`, ios/, android/
-**Flutter:** `pubspec.yaml`, lib/main.dart
-
-## Verification Commands
+| iOS (Xcode) | Cmd+R |
+| Android (Studio) | Shift+F10 |
+| React Native iOS | `npm run ios` |
+| React Native Android | `npm run android` |
+| Flutter | `flutter run` |
+## Hot Reload
+| Platform | Method |
+|----------|--------|
+| React Native | Press 'r' in Metro |
+| Flutter | Press 'r' in terminal |
+---
+## Platform-Specific
+**iOS (Xcode):**
 ```
-# iOS Simulator
+STEP 6: Select "iPhone 15 Pro" simulator → Cmd+R
+STEP 7: Wait 30-60 seconds
+STEP 8: Verify: UI renders, can interact, no Xcode console errors
+```
+**Android (Studio):**
+```
+STEP 6: Select "Pixel 7 API 33" → Shift+F10
+STEP 7: Wait 1-2 minutes for Gradle
+STEP 8: Verify: UI renders, can interact, no Logcat errors
+```
+---
+## Touch Targets
+**Minimum sizes:** iOS=44x44 points | Android=48x48 dp
+---
+## Common Errors
+**iOS Simulator stuck:**
+```
+killall -9 Simulator
 open -a Simulator
-xcrun simctl boot "iPhone 15"
-# or Xcode: Product > Run
-
-# Android Emulator
-emulator -avd Pixel_6
-./gradlew installDebug
-
-# React Native
-npx react-native run-ios
-npx react-native run-android
-
-# Flutter
-flutter run
+xcrun simctl erase "iPhone 15 Pro"  # if still stuck
 ```
-
-## Mobile-Specific Patterns
-- Platform APIs (camera, location, storage)
-- Permissions handling
-- Navigation patterns
-- State management (Provider, Redux, Bloc)
-- Offline-first
-
-## Code Block Format
+**Android Emulator stuck:**
 ```
-TASK: [Mobile task]
-STEP 1: Open project in [IDE]
-STEP 2: Create/update file at [exact path]
-STEP 3: [Complete code]
-STEP 4: Save file
-STEP 5: Build and run: [command or IDE action]
-STEP 6: Test on [simulator/device]: [action]
-STEP 7: Expected: [what to see]
-STEP 8: Report result
+adb devices
+adb kill-server && adb start-server
+emulator -avd Pixel_7_API_33
 ```
+**End of Mobile Agent Instructions**

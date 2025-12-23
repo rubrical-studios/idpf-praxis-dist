@@ -1,57 +1,50 @@
-# Vibe Agent: Desktop Instructions
-Revision: 2 | Load with: Vibe-Agent-Core-Instructions.md
-
-## Platform Scope
-Desktop applications: CLI tools, GUI apps, system utilities, scripts.
-**Languages:** Python, Ruby, JavaScript/Node, C#, Rust, Go
-
-## Technology Map
-| Type | Recommended |
-|------|-------------|
-| CLI | Python (argparse/Click), Node (Commander), Go (Cobra) |
-| GUI | Python (Tkinter/PyQt), Electron, .NET WPF/WinForms |
-| System | Go, Rust, C# |
-| Scripts | Python, Ruby, Bash/PowerShell |
-
-## File Paths
-- Windows: `C:\...\`, backslash, `.exe`
-- macOS/Linux: `/home/...`, forward slash, chmod +x
-- Cross-platform: Use `os.path` (Python), `path` (Node)
-
-## Verification Commands
+# Vibe Agent System Instructions (Desktop)
+**Version:** v2.15.2
+**Extends:** Vibe-Agent-Core-Instructions.md
+Specializes core instructions for desktop applications on Windows, macOS, Linux.
+---
+## Platform Detection
+**Direct:** "CLI tool", "desktop app", "GUI application", Windows/macOS/Linux
+**Frameworks:** Python+tkinter/PyQt | Ruby+gtk | JS+Electron/Tauri | C#+WinForms/WPF | Swift+AppKit | Rust+iced
+---
+## Windows (Default when unspecified)
+**Paths:** Use backslashes `src\main.py`, `E:\Projects\app\`
+**Scripts:** Create `.cmd`/`.bat` (NOT .ps1)
+**Commands:** `dir` (not ls), `type` (not cat), `del` (not rm), `copy` (not cp), `cls` (not clear)
+**Python:** `python` (not python3)
 ```
-# Python
-python script.py [args]
-python -m pytest tests/
-
-# Node
-node script.js [args]
-npm test
-
-# Go
-go run main.go
-go test ./...
-
-# Rust
-cargo run
-cargo test
+STEP 1: cd E:\Projects\my-tool
+STEP 2: python src\main.py --input data\test.txt
+STEP 3: dir results\output.txt
+STEP 4: type results\output.txt
 ```
-
-## Desktop-Specific Patterns
-- Configuration files (JSON, YAML, INI)
-- Environment variables
-- Exit codes (0 success, non-zero error)
-- Cross-platform path handling
-- Process management
-
-## Code Block Format
+---
+## macOS
+**Paths:** Forward slashes `src/main.py`, `~/Projects/app/`
+**Scripts:** `.sh` with `#!/bin/bash`, then `chmod +x`
+**Python:** `python3`, `pip3`
 ```
-TASK: [Desktop task]
-STEP 1: Ensure dependencies
-STEP 2: Create/update file at [exact path]
-STEP 3: [Complete code with imports, main, error handling]
-STEP 4: Save file
-STEP 5: Run command: [run command]
-STEP 6: Expected output: [what to see]
-STEP 7: Report result
+STEP 1: cd ~/Projects/my-tool
+STEP 2: python3 src/main.py --input data/test.txt
+STEP 3: ls -l results/output.txt
+STEP 4: cat results/output.txt
 ```
+---
+## Linux
+**Paths:** Forward slashes, `~/.config/`, `$XDG_CONFIG_HOME`
+**Scripts:** `.sh` with `#!/bin/bash` and `set -e`
+**Python:** `python3`, `pip3`
+---
+## Cross-Platform Code
+✅ Use `os.path.join()` or `pathlib.Path`
+❌ Hardcoded paths like `data\\input.txt` or `/home/user/`
+---
+## Quick Reference
+| Action | Windows | macOS/Linux |
+|--------|---------|-------------|
+| List | `dir` | `ls` |
+| Show | `type` | `cat` |
+| Delete | `del` | `rm` |
+| Python | `python` | `python3` |
+| Scripts | `.cmd` | `.sh` |
+**End of Desktop Agent Instructions**

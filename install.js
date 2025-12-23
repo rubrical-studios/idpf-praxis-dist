@@ -1,3 +1,4 @@
+// **Version:** 2.15.2
 #!/usr/bin/env node
 /**
  * IDPF Framework Installer
@@ -697,6 +698,20 @@ async function updateTrackedProjects(frameworkPath) {
       }
       if (rulesResult.startup) {
         log(`    ${colors.dim('  Updated: .claude/rules/03-startup.md')}`);
+      }
+
+      // Redeploy hooks and commands (always update to latest)
+      if (hasGitHubWorkflow) {
+        if (deployWorkflowHook(projectPath, frameworkPath)) {
+          log(`    ${colors.dim('  Updated: .claude/hooks/workflow-trigger.js')}`);
+        }
+        const workflowDeployed = deployWorkflowCommands(projectPath, frameworkPath);
+        for (const cmd of workflowDeployed.commands) {
+          log(`    ${colors.dim(`  Updated: .claude/commands/${cmd}.md`)}`);
+        }
+        for (const script of workflowDeployed.scripts) {
+          log(`    ${colors.dim(`  Updated: .claude/scripts/${script}.js`)}`);
+        }
       }
 
       // Redeploy skills (always update to latest)

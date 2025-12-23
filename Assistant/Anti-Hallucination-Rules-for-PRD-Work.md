@@ -1,94 +1,103 @@
 # Anti-Hallucination Rules for PRD Work
-## Core Principle
-**Stakeholder truth over invention. Traceability over assumption. Validation over completion.**
-Fabricated requirements build the wrong product.
+**Version:** v2.15.2
+
+---
+
+**Core Principle:** Stakeholder truth over helpful invention. Traceability over assumption. Validation over completion.
 
 ## Information Source Hierarchy
-1. **Stakeholder statements** (absolute authority)
-2. **Existing artifacts** (code, tests, APIs)
-3. **Domain standards** (regulations, compliance)
-4. **Logical inference** (flag as inference, validate)
+1. **Stakeholder statements** (absolute authority) - Direct quotes, feedback, meeting notes
+2. **Existing artifacts** - Codebase, test files, API docs, schemas
+3. **Domain standards** - HIPAA, PCI-DSS, GDPR, best practices
+4. **Logical inference** (with explicit caveats) - Flag, validate, don't state as fact
 
-## Absolute "Never Do" Rules
-**NEVER Invent:**
-- Requirements not stated by stakeholders
-- User stories without evidence
-- Acceptance criteria beyond testable/traceable
-- NFRs without code evidence or stakeholder input
-- Priority levels without confirmation
-- Personas without research
+## Absolute Rules
 
-**NEVER Assume:**
-- What stakeholders "probably meant"
-- Requirements are complete without asking
-- Priority because it "seems important"
-- Technical feasibility without verification
+### NEVER Invent:
+- ❌ Requirements not stated by stakeholders
+- ❌ User stories without evidence
+- ❌ NFRs without code evidence or stakeholder input
+- ❌ Priority levels without stakeholder confirmation
+- ❌ Technical constraints not verified with team
+
+### NEVER Assume:
+- ❌ What stakeholders "probably meant"
+- ❌ Requirements are complete without asking
+- ❌ Priority because it "seems important"
+- ❌ NFR targets without discussion
 
 ## Requirement Source Attribution
-Every requirement MUST have:
+
+**Every requirement MUST have a source:**
+```markdown
+REQ-001: User can reset password via email
+Source: Stakeholder interview 2025-01-15, Sarah Chen
 ```
-REQ-001: [Description]
-Source: [Type] - [Reference]
-Confidence: High | Medium | Low
-Status: [ ] Confirmed [ ] Pending Validation
-```
+
+| Source Type | Confidence | Action |
+|-------------|------------|--------|
+| Direct stakeholder quote | High | Document verbatim |
+| Written feedback | High | Reference document |
+| Inferred from code/tests | Medium | Flag, confirm |
+| Assistant suggestion | Low | Flag, require validation |
 
 ## Scope Rules
 - **In-Scope:** Only explicitly requested features
-- **Out-of-Scope:** Document what's excluded
-- **Scope Creep:** Flag when tempted to add features "users will expect"
+- **Out-of-Scope:** Document when stakeholders exclude items
+- **Scope Creep:** Flag additions with "This wasn't discussed. Should I add [X]?"
 
 ## Priority Rules
-**NEVER assign without stakeholder input.**
-```
-❌ REQ-001: User login [Must Have] ← You decided
-✅ REQ-001: User login [Priority: TBD] ← Awaiting stakeholder
-```
-
-MoSCoW requires explicit stakeholder language:
-- Must Have: "required", "must", "critical"
-- Should Have: "important", "should", "want"
-- Could Have: "nice to have", "if possible"
+- Never assign priority without stakeholder input
+- MoSCoW requires explicit stakeholder words ("required"→Must, "want"→Should, "nice to have"→Could)
 
 ## NFR Rules
-**Code-Inferred:** Flag as "Inferred from code - confirm"
-**Stakeholder-Stated:** Quote exactly, don't change numbers
-**Never Invent:** Uptime, response time targets without discussion
+
+**Code-Inferred (extract-prd):**
+```markdown
+NFR-SEC-001: Password hashing required
+Source: Code pattern - bcrypt in auth.py:45
+Status: [Inferred - confirm with stakeholders]
+```
+
+**Never invent NFR targets.** Ask: "Uptime requirement not discussed. What availability target?"
 
 ## Acceptance Criteria
-Derive ONLY from stated requirements:
-```
-❌ Requirement: Register with email → AC: Welcome email sent within 5 min
-✅ Requirement: Register with email → AC: Account created with valid email
-```
+- Derive only from stated requirements
+- Flag implied AC: `[Derived] - confirm this AC`
+- Every AC must be verifiable, specific, traceable
 
 ## extract-prd Rules
+
 | Extraction | Minimum Evidence |
 |------------|------------------|
-| Feature exists | Test file + assertions |
+| Feature exists | Test file + passing assertions |
 | NFR implemented | Code pattern in multiple locations |
-| API endpoint | Route + handler |
+| API endpoint | Route definition + handler |
+
+**Never over-state evidence:** "Found login (3 tests). Registration not found—confirm if needed."
 
 ## Elicitation Rules
-**Record, Don't Interpret:**
-```
-❌ "They want better performance" → "System must be fast"
-✅ "Reports take too long" → Follow-up: What's acceptable time?
-```
-
-**Clarify Ambiguity:**
-- "Fast" → What response time?
-- "Secure" → What specific requirements?
-- "Scalable" → How many users?
+- Record verbatim, don't interpret
+- Clarify "fast"/"secure"/"easy to use" immediately
+- Don't fill gaps silently—ask about error handling, etc.
 
 ## Self-Checking
+
+**PRD Checklist:**
 - [ ] Every requirement has documented source
-- [ ] No requirements invented
-- [ ] Priorities assigned by stakeholders
-- [ ] NFR targets from stakeholders or code
-- [ ] Acceptance criteria from stated requirements only
+- [ ] All priorities assigned by stakeholders
+- [ ] NFR targets from stakeholders or code evidence
+- [ ] Scope boundaries explicitly defined
 - [ ] Assumptions flagged for validation
 
+**extract-prd Checklist:**
+- [ ] All features traced to code/test evidence
+- [ ] Confidence levels accurate
+- [ ] Gaps in coverage noted
+- [ ] Output marked as draft
+
 ## Final Reminder
-**Invented requirements build the wrong product.**
-When tempted to add requirements: Stop → Source → Flag → Validate
+**Invented requirements build the wrong product.** Stop → Source → Flag → Validate.
+
+---
+**End of Anti-Hallucination Rules for PRD Work**

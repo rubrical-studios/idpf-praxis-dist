@@ -1,175 +1,182 @@
 # Framework Testing Reference
-**Version:** 1.0.0
+**Version:** v2.15.2
+
+---
+
 ## IDPF-Testing-Core Framework
-**Location:** `IDPF-Testing-Core/IDPF-Testing-Core.md` | **Revision:** 1 | **Type:** Foundational Testing Framework
-### Purpose
-Common architecture, terminology, workflows for testing-focused development. Foundation that specialized frameworks extend.
-**Principle:** "Test automation is software development. Same tools, skills, practices."
+
+**Location:** `IDPF-Testing-Core/IDPF-Testing-Core.md`
+**Version:** v2.15.2
+**Type:** Foundational Testing Framework
+
+**Core Principle:** "Test automation is software development."
+
 ### Architecture
+
 ```
 IDPF-Testing-Core (foundation)
-├── IDPF-QA-Automation (Selenium, Playwright, Cypress, Appium)
-├── IDPF-Performance (k6, JMeter, Gatling, Locust)
-├── IDPF-Security (OWASP ZAP, Burp Suite, SAST/DAST)
-├── IDPF-Accessibility (axe, Lighthouse, Pa11y)
-├── IDPF-Chaos (Chaos Monkey, Gremlin, LitmusChaos)
-└── IDPF-Contract-Testing (Pact, Spring Cloud Contract)
+    ├── IDPF-QA-Automation      (Selenium, Playwright, Cypress, Appium)
+    ├── IDPF-Performance        (k6, JMeter, Gatling, Locust)
+    ├── IDPF-Security           (OWASP ZAP, Burp Suite, SAST/DAST)
+    ├── IDPF-Accessibility      (axe, Lighthouse, Pa11y)
+    ├── IDPF-Chaos              (Chaos Monkey, Gremlin, LitmusChaos)
+    └── IDPF-Contract-Testing   (Pact, Spring Cloud Contract)
 ```
+
 ### Embedded vs Separate Repository
-**Embedded (No IDPF-Testing):** TDD, ATDD, BDD - Application repo with IDPF-Structured/Agile
-**Separate (Uses IDPF-Testing):**
-| Type | Framework | Rationale |
-|------|-----------|-----------|
+
+| Testing Type | Framework | Rationale |
+|--------------|-----------|-----------|
+| TDD/ATDD/BDD | Embedded in app repo | Part of application development |
 | QA Automation | IDPF-QA-Automation | Independent codebase |
 | Performance | IDPF-Performance | Specialized tooling |
-| Security | IDPF-Security | Compliance, vuln tracking |
+| Security | IDPF-Security | Compliance, vulnerability tracking |
 | Chaos | IDPF-Chaos | Separate from deployment |
-| Contract | IDPF-Contract-Testing | Cross-repo coordination |
+| Contract Testing | IDPF-Contract-Testing | Cross-repo coordination |
 | Accessibility | IDPF-Accessibility | Flexible: Embedded OR Separate |
-### Workflow Phases
-PLAN → DESIGN → DEVELOP → EXECUTE → REPORT
-### Commands
-**Planning:** Test-Plan-Start, Test-Plan-Review, Coverage-Check
-**Development:** Test-Dev-Start, Run-Tests, Generate-Report
+
+### Workflow: PLAN → DESIGN → DEVELOP → EXECUTE → REPORT
+
+---
 
 ## IDPF-QA-Automation Framework
-**Revision:** 1 | **Extends:** IDPF-Testing-Core | **Type:** UI & E2E Test Automation
+
+**Extends:** IDPF-Testing-Core
+**Type:** UI & End-to-End Test Automation
+
 ### Test Types
+
 | Type | Scope | Time |
 |------|-------|------|
 | Smoke | Critical paths | < 5 min |
 | Regression | Full coverage | 30-60 min |
-| Cross-Browser | Compatibility | Varies |
-| Mobile | Native/hybrid | Varies |
-| Visual | UI appearance | 10-30 min |
 | E2E | User journeys | 15-45 min |
-### Tools
-**Web:** Selenium (enterprise), Playwright (modern), Cypress (JS), WebDriverIO
-**Mobile:** Appium (cross-platform), XCUITest (iOS), Espresso (Android), Detox (RN)
-### Page Object Model
-- One page object per page/screen
-- Encapsulates locators
-- Exposes meaningful actions
-- Tests don't access locators directly
+
+### Tool Ecosystem
+
+**Web:** Selenium, Playwright, Cypress, WebDriverIO
+**Mobile:** Appium, XCUITest, Espresso, Detox
+
 ### Selector Priority
-1. data-testid 2. ID 3. Name 4. ARIA 5. CSS Class
+1. data-testid → 2. ID → 3. Name → 4. ARIA → 5. CSS Class
+
+---
 
 ## IDPF-Performance Framework
-**Revision:** 1 | **Extends:** IDPF-Testing-Core | **Type:** Performance Testing
+
+**Extends:** IDPF-Testing-Core
+**Type:** Performance Testing
+
 ### Test Types
-| Type | Purpose | Duration | Pattern |
-|------|---------|----------|---------|
-| Load | Expected load | 15-60 min | Steady |
-| Stress | Breaking point | Until failure | Ramping |
-| Endurance | Memory leaks | 4-24 hours | Steady |
-| Spike | Traffic bursts | 15-30 min | Spikes |
-| Capacity | Max throughput | Varies | Incremental |
+
+| Type | Purpose | Load Pattern |
+|------|---------|--------------|
+| Load | Expected load | Steady state |
+| Stress | Breaking point | Ramping up |
+| Endurance | Memory leaks | 4-24 hours |
+| Spike | Traffic bursts | Sudden spikes |
+
 ### Tools
-| Tool | Language | Best For |
-|------|----------|----------|
-| k6 | JavaScript | Modern APIs, CI/CD |
-| JMeter | Java/XML | Enterprise, GUI |
-| Gatling | Scala/Java | High throughput |
-| Locust | Python | Python teams |
-| Artillery | JavaScript | Serverless |
+k6 (JS), JMeter (Java), Gatling (Scala), Locust (Python)
+
 ### Key Metrics
-| Metric | Good Value |
-|--------|------------|
-| p95 Response | < 500ms |
-| p99 Response | < 1000ms |
-| Error Rate | < 0.1% |
-| Apdex | > 0.9 |
+- Response Time p95 < 500ms, p99 < 1000ms
+- Error Rate < 0.1%
+- Apdex > 0.9
+
+---
 
 ## IDPF-Security Framework
-**Revision:** 1 | **Extends:** IDPF-Testing-Core | **Type:** Security Testing
+
+**Extends:** IDPF-Testing-Core
+**Type:** Security Testing
+
 ### Testing Types
+
 | Type | When | Tools |
 |------|------|-------|
 | SAST | Dev/CI | SonarQube, Semgrep, CodeQL |
 | SCA | Dev/CI | Snyk, Dependabot |
 | DAST | Staging | OWASP ZAP, Burp Suite |
-| IAST | Testing | Contrast Security |
-| Secret Scanning | Dev/CI | GitLeaks, TruffleHog |
+| Secret Scan | Dev/CI | GitLeaks, TruffleHog |
+
+### OWASP Top 10 Coverage
+A01-A10: Broken Access Control, Cryptographic Failures, Injection, Insecure Design, Misconfiguration, Vulnerable Components, Auth Failures, Data Integrity, Logging Failures, SSRF
+
 ### Vulnerability SLAs
-| Severity | CVSS | SLA |
-|----------|------|-----|
-| Critical | 9.0-10.0 | 24h |
-| High | 7.0-8.9 | 7d |
-| Medium | 4.0-6.9 | 30d |
-| Low | 0.1-3.9 | 90d |
-### CI/CD Gates
-| Stage | Type | Gate |
-|-------|------|------|
-| Commit | SAST | No critical/high |
-| Commit | Secret | No secrets |
-| PR | SCA | No critical vulns |
-| Pre-Deploy | DAST | No critical |
+Critical (9.0-10.0): 24h | High (7.0-8.9): 7d | Medium (4.0-6.9): 30d | Low: 90d
+
+---
 
 ## IDPF-Accessibility Framework
-**Revision:** 1 | **Extends:** IDPF-Testing-Core | **Type:** Accessibility Testing
-### Repository Type: Flexible
-**Embedded:** Automated a11y checks in CI (tests/a11y/)
-**Separate:** Comprehensive audits, manual testing
+
+**Extends:** IDPF-Testing-Core
+**Type:** Accessibility Testing (Flexible: Embedded OR Separate)
+
 ### Testing Types
+
 | Type | Automation | Coverage |
 |------|------------|----------|
 | Automated Scans | Full | ~30-40% |
 | Keyboard | Partial | Focus management |
 | Screen Reader | Manual | Content |
-| Color Contrast | Full | Visual |
-| Cognitive | Manual | Readability |
+
 ### WCAG Levels
-| Level | Requirement |
-|-------|-------------|
-| A | Must meet |
-| AA | Typically required (legal) |
-| AAA | Aspirational |
+- A: Minimum (must meet)
+- AA: Standard (legal requirement)
+- AAA: Enhanced (aspirational)
+
 **Target:** WCAG 2.1 Level AA
+
 ### Tools
-**Scanning:** axe-core (CI), Lighthouse, Pa11y, WAVE
-**AT:** NVDA, JAWS, VoiceOver, TalkBack
+**Automated:** axe-core, Lighthouse, Pa11y
+**Assistive:** NVDA (Windows), JAWS, VoiceOver (macOS/iOS), TalkBack (Android)
+
+---
 
 ## IDPF-Chaos Framework
-**Revision:** 1 | **Extends:** IDPF-Testing-Core | **Type:** Chaos Engineering
-### Principles
-1. Build Hypothesis 2. Real-World Events 3. Run in Production (safely) 4. Automate 5. Minimize Blast Radius
-### Fault Types
-| Category | Faults | Tools |
-|----------|--------|-------|
-| Infrastructure | Instance termination, AZ failure | Chaos Monkey, Gremlin, AWS FIS |
-| Network | Latency, packet loss | tc, Toxiproxy |
-| Application | Memory, CPU, disk | stress-ng, Gremlin |
-| Dependency | Service unavailable | Toxiproxy |
-| State | Database failure | Custom, Gremlin |
+
+**Extends:** IDPF-Testing-Core
+**Type:** Chaos Engineering
+
+### Fault Injection Types
+
+| Category | Examples |
+|----------|----------|
+| Infrastructure | Instance termination, AZ failure |
+| Network | Latency, packet loss, DNS failure |
+| Application | Memory pressure, CPU stress |
+| Dependency | Service unavailable |
+| State | Database failure, cache eviction |
+
 ### Tools
-| Tool | Platform | Best For |
-|------|----------|----------|
-| Chaos Monkey | AWS | Instance termination |
-| Gremlin | Multi-cloud | Enterprise |
-| LitmusChaos | K8s | K8s native |
-| Chaos Mesh | K8s | K8s native |
-| AWS FIS | AWS | AWS infra |
-| Toxiproxy | Any | Network sim |
+Chaos Monkey (AWS), Gremlin (Enterprise), LitmusChaos (K8s), Chaos Mesh (K8s), Toxiproxy (Network)
+
 ### Workflow
-Hypothesis → Observability → Design → Approval → Execute → Analyze → Fix/Expand
+Hypothesis → Observability → Design → Approval → Execute → Analyze → Fix
+
+---
 
 ## IDPF-Contract-Testing Framework
-**Revision:** 1 | **Extends:** IDPF-Testing-Core | **Type:** API Contract Testing
+
+**Extends:** IDPF-Testing-Core
+**Type:** API Contract Testing
+
 ### Flow
-Consumer → Generate Contract → Publish to Broker → Provider Fetches → Verify → Can-I-Deploy → Deploy
+```
+Consumer → Generate Contract → Broker → Provider Verifies → Can-I-Deploy → Deploy
+```
+
 ### Tools
-| Tool | Language | Best For |
-|------|----------|----------|
-| Pact | Multi | Most scenarios |
-| Spring Cloud Contract | Java | Spring |
-| Specmatic | Any | OpenAPI-based |
-| Dredd | Any | API Blueprint |
+Pact (multi-lang), Spring Cloud Contract (Java), Specmatic (OpenAPI)
+
 ### Key Concepts
-| Concept | Description |
-|---------|-------------|
-| Consumer | Calls an API |
-| Provider | Exposes an API |
-| Contract | Request/response agreement |
-| Broker | Central repository |
-| Can-I-Deploy | Deployment safety check |
-| Provider State | Precondition setup |
+- Consumer: Service calling API
+- Provider: Service exposing API
+- Contract: Request/response agreement
+- Broker: Central repository
+- Can-I-Deploy: Safety check
+
+---
+
+**End of Framework Testing Reference**
