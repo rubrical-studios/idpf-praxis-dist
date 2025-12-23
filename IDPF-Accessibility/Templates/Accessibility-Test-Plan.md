@@ -1,5 +1,5 @@
 # Accessibility Test Plan: [Application/Feature Name]
-**Version:** v2.15.2
+**Version:** v2.15.3
 
 **Date:** YYYY-MM-DD
 **Author:** [Name]

@@ -1,6 +1,6 @@
 # Framework Overview
 
-**Version:** v2.15.2
+**Version:** v2.15.3
 
 ---
 
@@ -10,7 +10,7 @@ System Instructions define WHO; Frameworks define WHAT process; Skills provide c
 ---
 
 ## IDPF-PRD (Pre-Development)
-**Version:** v2.15.2 | **Type:** Requirements Engineering
+**Version:** v2.15.3 | **Type:** Requirements Engineering
 
 **Forward Path:** Discovery → Elicitation → Specification → Generation
 **Reverse Path:** Analyze → Extract → Refine → Generate
@@ -22,7 +22,7 @@ System Instructions define WHO; Frameworks define WHAT process; Skills provide c
 ---
 
 ## IDPF-Structured
-**Version:** v2.15.2 | **Type:** TDD with Fixed Requirements
+**Version:** v2.15.3 | **Type:** TDD with Fixed Requirements
 
 **Workflow:** Session Init → TDD Iterations (RED-GREEN-REFACTOR) → Completion
 
@@ -35,7 +35,7 @@ System Instructions define WHO; Frameworks define WHAT process; Skills provide c
 ---
 
 ## IDPF-Agile
-**Version:** v2.15.2 | **Type:** Sprint-Based Development
+**Version:** v2.15.3 | **Type:** Sprint-Based Development
 
 **Workflow:** Backlog Creation → Sprint Planning → Story Dev (TDD) → Review → Retro
 
@@ -57,7 +57,7 @@ System Instructions define WHO; Frameworks define WHAT process; Skills provide c
 ---
 
 ## IDPF-LTS
-**Version:** v2.15.2 | **Type:** Production Maintenance (Terminal)
+**Version:** v2.15.3 | **Type:** Production Maintenance (Terminal)
 
 **Allowed:** Critical bugs, security patches, doc fixes
 **Forbidden:** New features, refactoring, non-security upgrades

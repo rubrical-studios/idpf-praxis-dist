@@ -1,5 +1,5 @@
 # NFR Detection Guide
-**Version:** v2.15.2
+**Version:** v2.15.3
 
 **Purpose:** Patterns for inferring Non-Functional Requirements from code
 

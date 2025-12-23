@@ -1,6 +1,6 @@
 ---
 name: postgresql-integration
-version: v2.15.2
+version: v2.15.3
 description: PostgreSQL connection pooling and query patterns
 ---
 

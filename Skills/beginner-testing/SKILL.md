@@ -1,6 +1,6 @@
 ---
 name: beginner-testing
-version: v2.15.2
+version: v2.15.3
 description: Introduce test-driven development to beginners with simple examples
 ---
 

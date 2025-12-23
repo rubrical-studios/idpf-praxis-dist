@@ -1,6 +1,6 @@
 ---
 name: sqlite-integration
-version: v2.15.2
+version: v2.15.3
 description: Add SQLite database storage with teaching examples
 ---
 

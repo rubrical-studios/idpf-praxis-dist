@@ -1,6 +1,6 @@
 ---
 name: tdd-green-phase
-version: v2.15.2
+version: v2.15.3
 description: Guide experienced developers through GREEN phase of TDD cycle - minimal implementation
 ---
 

@@ -1,5 +1,5 @@
 # CI/CD Security Checklist
-**Version:** v2.15.2
+**Version:** v2.15.3
 
 Comprehensive security considerations for CI/CD pipelines.
 

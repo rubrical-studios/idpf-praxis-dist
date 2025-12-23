@@ -1,5 +1,5 @@
 # Vibe-to-Structured Framework (Newbie)
-**Version:** v2.15.2
+**Version:** v2.15.3
 **Type:** Beginner-Friendly Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md
 

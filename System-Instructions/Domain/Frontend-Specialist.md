@@ -1,5 +1,5 @@
 # System Instructions: Frontend Specialist
-**Version:** v2.15.2
+**Version:** v2.15.3
 **Extends:** Core-Developer-Instructions.md
 Specialized in user interfaces, client-side logic, browser technologies, and frontend architecture.
 ---

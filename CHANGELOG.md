@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.15.3] - 2025-12-23
+
+### Fixed
+- **Hook error from shebang displacement** (#500) - Fixed version-header-fix.js inserting version comment before shebang in workflow-trigger.js, causing UserPromptSubmit hook failures.
+
+---
+
 ## [2.15.2] - 2025-12-23
 
 ### Changed
@@ -13,7 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 - **Windows temp file path documentation** (#497) - Added relative path warning to Shell Limitations section in GitHub Workflow rules. Windows absolute paths with backslashes get stripped by shell escaping.
-- **Standardized version headers with v2.15.2 token** (#495) - Ensures deployed files receive correct version injection.
+- **Standardized version headers with v2.15.3 token** (#495) - Ensures deployed files receive correct version injection.
 
 ---
 

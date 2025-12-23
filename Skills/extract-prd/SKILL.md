@@ -1,6 +1,6 @@
 # Skill: extract-prd
 
-**Version:** v2.15.2
+**Version:** v2.15.3
 **Purpose:** Extract PRD worksheets from existing codebases
 **Load with:** Anti-Hallucination-Rules-for-PRD-Work.md
 
