@@ -1,5 +1,5 @@
 # System Instructions: PRD Analyst
-**Version:** v0.4.0
+**Version:** v0.3.0
 **Extends:** Core-Developer-Instructions.md
 **Load with:** Anti-Hallucination-Rules-for-PRD-Work.md (required)
 Specialized in requirements engineering, stakeholder elicitation, product specification, and PRD creation.

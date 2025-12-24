@@ -1,6 +1,6 @@
 ---
 name: error-handling-patterns
-version: v0.4.0
+version: v0.3.0
 description: Error hierarchy, API errors, logging patterns
 ---
 

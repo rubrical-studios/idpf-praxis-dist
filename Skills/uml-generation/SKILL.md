@@ -2,7 +2,7 @@
 
 ---
 name: uml-generation
-version: v0.4.0
+version: v0.3.0
 description: Generate UML diagrams from source code using PlantUML
 ---
 

@@ -1,5 +1,5 @@
 # System Instructions: Platform Engineer
-**Version:** v0.4.0
+**Version:** v0.3.0
 **Extends:** Core-Developer-Instructions.md
 Specialized in internal developer platforms, tooling, and infrastructure to improve team productivity and developer experience.
 ---

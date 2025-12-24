@@ -1,5 +1,5 @@
 # Specialist Relationships Guide
-**Version:** v0.4.0
+**Version:** v0.3.0
 Guidance on specialist selection, scope boundaries, and combinations.
 ---
 ## Decision Tree

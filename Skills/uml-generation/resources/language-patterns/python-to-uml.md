@@ -1,5 +1,5 @@
 # Python to UML Patterns
-**Version:** v0.4.0
+**Version:** v0.3.0
 
 Guide for extracting UML diagrams from Python source code.
 
