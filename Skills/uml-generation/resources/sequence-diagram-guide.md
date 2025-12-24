@@ -1,5 +1,5 @@
 # Sequence Diagram Guide
-**Version:** v0.9.0
+**Version:** v0.8.0
 
 PlantUML syntax reference for generating sequence diagrams from source code.
 

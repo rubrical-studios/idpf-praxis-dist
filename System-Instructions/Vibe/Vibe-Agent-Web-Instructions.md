@@ -1,5 +1,5 @@
 # Vibe Agent System Instructions (Web)
-**Version:** v0.9.0
+**Version:** v0.8.0
 **Extends:** Vibe-Agent-Core-Instructions.md
 Specializes for web application development (frontend, backend, full-stack).
 ---

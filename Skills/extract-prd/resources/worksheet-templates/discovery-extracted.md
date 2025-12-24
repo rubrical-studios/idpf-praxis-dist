@@ -1,5 +1,5 @@
 # Discovery Worksheet - [Project Name]
-**Version:** v0.9.0
+**Version:** v0.8.0
 
 **Extracted:** [Date]
 **Method:** PRD Extraction (extract-prd Skill v1.0)

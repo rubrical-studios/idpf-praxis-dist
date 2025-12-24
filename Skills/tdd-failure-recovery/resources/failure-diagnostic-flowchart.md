@@ -1,5 +1,5 @@
 # TDD Failure Diagnostic Flowchart
-**Version:** v0.9.0
+**Version:** v0.8.0
 
 Quick decision tree for diagnosing and recovering from unexpected test behaviors.
 

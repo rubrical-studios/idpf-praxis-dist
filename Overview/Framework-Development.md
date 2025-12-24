@@ -1,12 +1,12 @@
 # Framework Development Reference
-**Version:** v0.9.0
+**Version:** v0.8.0
 
 ---
 
 ## IDPF-PRD Framework (Pre-Development)
 
 **Location:** `IDPF-PRD/IDPF-PRD.md`
-**Version:** v0.9.0
+**Version:** v0.8.0
 **Type:** Requirements Engineering & PRD Generation
 
 ### Forward Path (New Projects)
@@ -35,7 +35,7 @@ Analyze → Extract → Refine → Generate
 ## IDPF-Structured Framework
 
 **Location:** `IDPF-Structured/Interactive Development Process Framework.md`
-**Version:** v0.9.0
+**Version:** v0.8.0
 **Type:** TDD with Fixed Requirements
 
 ### Workflow
@@ -61,7 +61,7 @@ tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-w
 ## IDPF-Agile Framework
 
 **Location:** `IDPF-Agile/`
-**Version:** v0.9.0
+**Version:** v0.8.0
 **Type:** Sprint-Based Development
 
 ### Workflow
@@ -115,7 +115,7 @@ Skills: flask-setup, sinatra-setup, common-errors, sqlite-integration, beginner-
 ## IDPF-LTS Framework
 
 **Location:** `IDPF-LTS/Long-Term-Support-Framework.md`
-**Version:** v0.9.0
+**Version:** v0.8.0
 **Type:** Production Maintenance
 
 ### Core Tenets

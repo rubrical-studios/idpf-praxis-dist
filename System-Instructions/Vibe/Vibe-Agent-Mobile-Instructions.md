@@ -1,5 +1,5 @@
 # Vibe Agent System Instructions (Mobile)
-**Version:** v0.9.0
+**Version:** v0.8.0
 **Extends:** Vibe-Agent-Core-Instructions.md
 Specializes core instructions for iOS and Android development.
 ---

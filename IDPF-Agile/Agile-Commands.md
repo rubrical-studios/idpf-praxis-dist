@@ -1,5 +1,5 @@
 # Agile Commands
-**Version:** v0.9.0
+**Version:** v0.8.0
 **Source:** IDPF-Agile/Agile-Commands.md
 
 ## Backlog Commands

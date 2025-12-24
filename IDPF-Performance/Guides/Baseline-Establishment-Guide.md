@@ -1,5 +1,5 @@
 # Baseline Establishment Guide
-**Version:** v0.9.0
+**Version:** v0.8.0
 
 **Framework:** IDPF-Performance
 

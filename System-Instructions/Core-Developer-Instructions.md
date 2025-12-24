@@ -1,5 +1,5 @@
 # System Instructions: Core Developer
-**Version:** v0.9.0
+**Version:** v0.8.0
 **Architecture:** Core + Domain pattern (load this + domain specialist)
 ---
 ## Core Identity

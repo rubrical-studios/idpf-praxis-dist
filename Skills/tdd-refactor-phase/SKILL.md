@@ -1,6 +1,6 @@
 ---
 name: tdd-refactor-phase
-version: v0.9.0
+version: v0.8.0
 description: Guide through REFACTOR phase of TDD cycle - improving code while tests pass
 ---
 

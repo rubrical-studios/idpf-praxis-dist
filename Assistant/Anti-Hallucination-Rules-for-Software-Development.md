@@ -1,5 +1,5 @@
 # Anti-Hallucination Rules for Software Development
-**Version:** v0.9.0
+**Version:** v0.8.0
 
 ---
 
