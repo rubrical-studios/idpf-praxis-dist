@@ -1,6 +1,6 @@
 # IDPF-Performance Framework
 
-**Version:** v0.2.0
+**Version:** v0.5.0
 **Extends:** IDPF-Testing-Core
 
 ---

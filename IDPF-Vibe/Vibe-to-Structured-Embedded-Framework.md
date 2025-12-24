@@ -1,5 +1,5 @@
 # Vibe-to-Structured Framework (Embedded)
-**Version:** v0.2.0
+**Version:** v0.5.0
 **Type:** Embedded Systems Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md
 

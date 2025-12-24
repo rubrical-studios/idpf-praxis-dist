@@ -1,5 +1,5 @@
 # Class Diagram Guide
-**Version:** v0.2.0
+**Version:** v0.5.0
 
 PlantUML syntax reference for generating class diagrams from source code.
 

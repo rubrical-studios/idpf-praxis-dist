@@ -1,5 +1,5 @@
 # Pipeline Architecture Patterns
-**Version:** v0.2.0
+**Version:** v0.5.0
 
 Detailed guide to CI/CD pipeline architecture patterns.
 

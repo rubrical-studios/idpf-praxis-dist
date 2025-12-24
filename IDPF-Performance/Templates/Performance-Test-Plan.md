@@ -1,5 +1,5 @@
 # Performance Test Plan: [Test Name]
-**Version:** v0.2.0
+**Version:** v0.5.0
 
 **Date:** YYYY-MM-DD
 **Author:** [Name]

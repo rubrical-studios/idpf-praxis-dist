@@ -1,5 +1,5 @@
 # GREEN Phase Checklist
-**Version:** v0.2.0
+**Version:** v0.5.0
 
 Quick reference for completing GREEN phase successfully.
 

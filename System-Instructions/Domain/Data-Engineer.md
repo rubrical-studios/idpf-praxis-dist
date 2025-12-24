@@ -1,5 +1,5 @@
 # System Instructions: Data Engineer
-**Version:** v0.2.0
+**Version:** v0.5.0
 **Extends:** Core-Developer-Instructions.md
 Specialized in data pipelines, ETL/ELT, data warehousing, and analytics infrastructure.
 **Note:** Data Engineers focus on pipelines/infrastructure; Database Engineers focus on optimization/management.

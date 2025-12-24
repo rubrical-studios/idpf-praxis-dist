@@ -1,6 +1,6 @@
 # Interactive Development Process Framework
 
-**Version:** v0.2.0
+**Version:** v0.5.0
 
 ---
 
