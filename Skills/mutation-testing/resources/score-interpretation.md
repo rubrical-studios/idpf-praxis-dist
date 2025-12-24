@@ -1,5 +1,5 @@
 # Mutation Score Interpretation
-**Version:** v0.14.0
+**Version:** v0.13.0
 
 Understanding mutation testing results and improving scores.
 

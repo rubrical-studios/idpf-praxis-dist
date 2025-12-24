@@ -1,6 +1,6 @@
 ---
 name: migration-patterns
-version: v0.14.0
+version: v0.13.0
 description: Schema versioning, rollback strategies, zero-downtime migrations
 ---
 

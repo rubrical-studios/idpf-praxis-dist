@@ -1,5 +1,5 @@
 # System Instructions: Game Developer
-**Version:** v0.14.0
+**Version:** v0.13.0
 **Extends:** Core-Developer-Instructions.md
 Specialized in Unity, Unreal Engine, Godot, game architecture patterns, and optimization techniques.
 ---

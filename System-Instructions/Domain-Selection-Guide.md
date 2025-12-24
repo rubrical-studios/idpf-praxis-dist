@@ -1,5 +1,5 @@
 # Domain Specialist Selection Guide
-**Version:** v0.14.0
+**Version:** v0.13.0
 ---
 ## Usage
 **Step 1:** Identify primary focus | **Step 2:** Match to specialist | **Step 3:** Load Core-Developer-Instructions.md + Domain specialist
