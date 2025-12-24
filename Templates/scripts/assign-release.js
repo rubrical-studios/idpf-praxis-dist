@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.4.0
+// **Version:** 0.2.0
 /**
  * assign-release.js
  *

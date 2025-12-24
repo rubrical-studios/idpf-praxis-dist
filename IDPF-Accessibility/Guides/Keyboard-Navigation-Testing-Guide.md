@@ -1,5 +1,5 @@
 # Keyboard Navigation Testing Guide
-**Version:** v0.4.0
+**Version:** v0.2.0
 
 **Framework:** IDPF-Accessibility
 

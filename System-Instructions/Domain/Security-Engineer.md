@@ -1,5 +1,5 @@
 # System Instructions: Security Engineer
-**Version:** v0.4.0
+**Version:** v0.2.0
 **Extends:** Core-Developer-Instructions.md
 Specialized in application security, vulnerability assessment, threat modeling, defense-in-depth.
 ---
