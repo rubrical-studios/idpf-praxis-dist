@@ -1,5 +1,5 @@
 # PRD Extraction Guide
-**Version:** v0.10.0
+**Version:** v0.15.0
 
 **Purpose:** Step-by-step guide for extracting a PRD from existing code
 **Audience:** Developers documenting legacy or undocumented projects

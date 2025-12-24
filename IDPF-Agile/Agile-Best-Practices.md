@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Best Practices
-**Version:** v0.10.0
+**Version:** v0.15.0
 **Module:** Best Practices
 
 ---

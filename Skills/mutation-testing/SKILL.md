@@ -1,6 +1,6 @@
 ---
 name: mutation-testing
-version: v0.10.0
+version: v0.15.0
 description: Mutation testing with mutmut, Stryker, PIT
 ---
 

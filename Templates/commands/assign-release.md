@@ -37,13 +37,13 @@ Script output:
 ```
 NO_RELEASE_FOUND
 SUGGESTIONS:
-1|patch/v2.15.1|Next patch version (bug fixes only) (recommended)
-2|release/v2.16.0|Next minor version (new features)
+1|patch/v0.15.1|Next patch version (bug fixes only) (recommended)
+2|release/v0.16.0|Next minor version (new features)
 ```
 
 Claude should:
-1. Use AskUserQuestion with options: "patch/v2.15.1 (Recommended)", "release/v2.16.0"
-2. User selects → run `gh pmu release start --branch "patch/v2.15.1"`
+1. Use AskUserQuestion with options: "patch/v0.15.1 (Recommended)", "release/v0.16.0"
+2. User selects → run `gh pmu release start --branch "patch/v0.15.1"`
 3. Re-run original command to complete assignment
 
 ## Normal Output
