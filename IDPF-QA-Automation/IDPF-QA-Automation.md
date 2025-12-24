@@ -1,6 +1,6 @@
 # IDPF-QA-Automation Framework
 
-**Version:** v0.5.0
+**Version:** v0.10.0
 **Extends:** IDPF-Testing-Core
 
 ---

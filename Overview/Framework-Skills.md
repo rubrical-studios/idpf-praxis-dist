@@ -1,5 +1,5 @@
 # Framework Skills Reference
-**Version:** v0.5.0
+**Version:** v0.10.0
 
 ---
 

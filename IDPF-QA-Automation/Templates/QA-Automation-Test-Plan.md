@@ -1,5 +1,5 @@
 # QA Automation Test Plan: [Suite Name]
-**Version:** v0.5.0
+**Version:** v0.10.0
 
 **Date:** YYYY-MM-DD
 **Author:** [Name]

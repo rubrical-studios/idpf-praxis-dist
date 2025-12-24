@@ -1,5 +1,5 @@
 # NFR Catalog
-**Version:** v0.5.0
+**Version:** v0.10.0
 
 **Purpose:** Comprehensive catalog of Non-Functional Requirements organized by category.
 

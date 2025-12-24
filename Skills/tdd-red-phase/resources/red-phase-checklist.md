@@ -1,5 +1,5 @@
 # RED Phase Checklist
-**Version:** v0.5.0
+**Version:** v0.10.0
 
 Quick reference for completing RED phase successfully.
 
