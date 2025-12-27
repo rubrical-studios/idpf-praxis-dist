@@ -1,5 +1,5 @@
 ---
-version: v0.15.3
+version: v0.15.4
 description: Close release with GitHub Release and cleanup
 argument-hint: [--skip-release-page]
 ---
@@ -58,12 +58,22 @@ If any issues not Done, warn user and confirm before proceeding.
 
 ### Step 4: Create GitHub Release
 
+**Note:** Release artifacts (`Releases/$TRACK/$VERSION/release-notes.md`) should already exist from `/prepare-release`. Use them for the release page.
+
 Unless `--skip-release-page` is specified:
 
 ```bash
-gh release create "$VERSION" \
-  --title "Release $VERSION" \
-  --generate-notes
+# If release-notes.md exists, use it
+if [ -f "Releases/$TRACK/$VERSION/release-notes.md" ]; then
+  gh release create "$VERSION" \
+    --title "Release $VERSION" \
+    --notes-file "Releases/$TRACK/$VERSION/release-notes.md"
+else
+  # Fallback to auto-generated notes
+  gh release create "$VERSION" \
+    --title "Release $VERSION" \
+    --generate-notes
+fi
 ```
 
 ### Step 5: Close Tracker Issue

@@ -462,7 +462,7 @@ function generateStartupRules(frameworkPath, processFramework, domainListStr, pr
 
   return `# Session Startup
 
-**Version:** ${version || '0.15.3'}
+**Version:** ${version || '0.15.4'}
 **Framework:** ${processFramework}
 **Specialists:** ${domainListStr || 'None'}
 **Primary Specialist:** ${primarySpecialist || 'None'}

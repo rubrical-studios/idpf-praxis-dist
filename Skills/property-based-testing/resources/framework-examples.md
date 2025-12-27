@@ -1,5 +1,5 @@
 # Framework Examples
-**Version:** v0.15.3
+**Version:** v0.15.4
 
 Concrete examples for popular property-based testing frameworks.
 

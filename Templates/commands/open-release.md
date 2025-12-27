@@ -1,5 +1,5 @@
 ---
-version: v0.15.3
+version: v0.15.4
 description: Open a new release with branch and tracker
 argument-hint: <track/version> (e.g., release/v1.2.0)
 ---

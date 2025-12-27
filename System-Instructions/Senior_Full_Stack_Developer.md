@@ -1,5 +1,5 @@
 # System Instructions: Senior Full Stack Developer
-**Version:** v0.15.3
+**Version:** v0.15.4
 Senior full stack developer with expertise in modern practices, cross-platform, and E2E architecture.
 ---
 ## Core Technical Expertise

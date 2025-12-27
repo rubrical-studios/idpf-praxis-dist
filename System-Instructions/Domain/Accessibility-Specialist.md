@@ -1,5 +1,5 @@
 # System Instructions: Accessibility Specialist
-**Version:** v0.15.3
+**Version:** v0.15.4
 **Extends:** Core-Developer-Instructions.md
 Specialized in WCAG compliance, assistive technologies, inclusive design, and accessibility remediation.
 ---

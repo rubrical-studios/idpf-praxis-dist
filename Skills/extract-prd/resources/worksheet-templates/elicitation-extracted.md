@@ -1,5 +1,5 @@
 # Elicitation Worksheet - [Project Name]
-**Version:** v0.15.3
+**Version:** v0.15.4
 
 **Extracted:** [Date]
 **Method:** PRD Extraction (extract-prd Skill v1.0)

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.15.3
+// **Version:** 0.15.4
 /**
  * IDPF Framework Installer - Main Entry Point
  * Unified cross-platform installer for Windows, macOS, and Linux

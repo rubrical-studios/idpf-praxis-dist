@@ -1,5 +1,5 @@
 # Schema Versioning Strategies
-**Version:** v0.15.3
+**Version:** v0.15.4
 
 Detailed comparison of migration versioning approaches.
 

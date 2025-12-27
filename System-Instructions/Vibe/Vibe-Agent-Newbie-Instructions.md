@@ -1,5 +1,5 @@
 # Vibe Agent System Instructions (Newbie)
-**Version:** v0.15.3
+**Version:** v0.15.4
 **Extends:** Vibe-Agent-Core-Instructions.md
 Specializes for beginners. Focus: clear explanations, patience, building confidence.
 ---

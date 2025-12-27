@@ -1,5 +1,5 @@
 # SQL Basics for Beginners
-**Version:** v0.15.3
+**Version:** v0.15.4
 
 ## What is SQL?
 

@@ -1,5 +1,5 @@
 ---
-version: v0.15.3
+version: v0.15.4
 description: Prepare release with PR, merge to main, and tag
 argument-hint: [version] (e.g., v1.2.0)
 ---
@@ -44,22 +44,38 @@ Validate, create PR to main, merge, and tag for deployment.
 
 ## Phase 2: Git Preparation
 
-1. Commit version updates:
+1. **Generate release artifacts:**
+   ```bash
+   # Determine track from branch (release/v1.2.0 → track=release)
+   BRANCH=$(git branch --show-current)
+   TRACK=$(echo $BRANCH | cut -d'/' -f1)
+   VERSION=$(echo $BRANCH | cut -d'/' -f2)
+
+   # Create release directory
+   mkdir -p "Releases/$TRACK/$VERSION"
+   ```
+
+   Create `Releases/$TRACK/$VERSION/release-notes.md` with:
+   - Summary from CHANGELOG.md
+   - Issues closed in this release
+   - Upgrade notes (if any)
+
+2. Commit version updates and artifacts:
    ```bash
    git add -A
    git commit -m "chore: prepare release $VERSION"
    ```
 
-2. Create PR from release branch to main:
+3. Create PR from release branch to main:
    ```bash
    gh pr create --base main --head $(git branch --show-current) \
      --title "Release $VERSION" \
      --body "## Release $VERSION\n\nSee CHANGELOG.md for details."
    ```
 
-3. **ASK USER:** Approve and merge PR (or wait for CI)
+4. **ASK USER:** Approve and merge PR (or wait for CI)
 
-4. After PR merged, switch to main and pull:
+5. After PR merged, switch to main and pull:
    ```bash
    git checkout main
    git pull origin main

@@ -1,6 +1,6 @@
 # IDPF-Security Framework
 
-**Version:** v0.15.3
+**Version:** v0.15.4
 **Extends:** IDPF-Testing-Core
 
 ---

@@ -1,6 +1,6 @@
 ---
 name: postgresql-integration
-version: v0.15.3
+version: v0.15.4
 description: PostgreSQL connection pooling and query patterns
 ---
 

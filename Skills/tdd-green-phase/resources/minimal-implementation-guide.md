@@ -1,5 +1,5 @@
 # Minimal Implementation Guide
-**Version:** v0.15.3
+**Version:** v0.15.4
 
 Guidance for writing just enough code to pass tests in the GREEN phase of TDD.
 

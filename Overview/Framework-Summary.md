@@ -1,5 +1,5 @@
 # Framework Summary
-**Version:** v0.15.3
+**Version:** v0.15.4
 
 ---
 
@@ -43,27 +43,27 @@
 
 | Skill | Version | Category |
 |-------|---------|----------|
-| tdd-red-phase | v0.15.3 | TDD |
-| tdd-green-phase | v0.15.3 | TDD |
-| tdd-refactor-phase | v0.15.3 | TDD |
-| tdd-failure-recovery | v0.15.3 | TDD |
-| test-writing-patterns | v0.15.3 | TDD |
-| bdd-writing | v0.15.3 | BDD |
-| extract-prd | v0.15.3 | PRD |
-| anti-pattern-analysis | v0.15.3 | Code Quality |
-| uml-generation | v0.15.3 | Code Quality |
-| flask-setup | v0.15.3 | Beginner Setup |
-| sinatra-setup | v0.15.3 | Beginner Setup |
-| common-errors | v0.15.3 | Beginner Support |
-| sqlite-integration | v0.15.3 | Beginner Support |
-| beginner-testing | v0.15.3 | Beginner Support |
-| postgresql-integration | v0.15.3 | Database |
-| migration-patterns | v0.15.3 | Database |
-| property-based-testing | v0.15.3 | Advanced Testing |
-| mutation-testing | v0.15.3 | Advanced Testing |
-| api-versioning | v0.15.3 | Architecture |
-| error-handling-patterns | v0.15.3 | Architecture |
-| ci-cd-pipeline-design | v0.15.3 | DevOps |
+| tdd-red-phase | v0.15.4 | TDD |
+| tdd-green-phase | v0.15.4 | TDD |
+| tdd-refactor-phase | v0.15.4 | TDD |
+| tdd-failure-recovery | v0.15.4 | TDD |
+| test-writing-patterns | v0.15.4 | TDD |
+| bdd-writing | v0.15.4 | BDD |
+| extract-prd | v0.15.4 | PRD |
+| anti-pattern-analysis | v0.15.4 | Code Quality |
+| uml-generation | v0.15.4 | Code Quality |
+| flask-setup | v0.15.4 | Beginner Setup |
+| sinatra-setup | v0.15.4 | Beginner Setup |
+| common-errors | v0.15.4 | Beginner Support |
+| sqlite-integration | v0.15.4 | Beginner Support |
+| beginner-testing | v0.15.4 | Beginner Support |
+| postgresql-integration | v0.15.4 | Database |
+| migration-patterns | v0.15.4 | Database |
+| property-based-testing | v0.15.4 | Advanced Testing |
+| mutation-testing | v0.15.4 | Advanced Testing |
+| api-versioning | v0.15.4 | Architecture |
+| error-handling-patterns | v0.15.4 | Architecture |
+| ci-cd-pipeline-design | v0.15.4 | DevOps |
 
 ## Framework Selection Matrix
 
