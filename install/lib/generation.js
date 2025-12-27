@@ -5,7 +5,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const { DOMAIN_SPECIALISTS } = require('./constants');
 const { getCurrentDate } = require('./detection');
 
 /**
@@ -223,108 +222,72 @@ User says: \`/switch-role\` or "switch to frontend" or "I need backend help now"
 
 /**
  * Generate add-role command file
+ * Uses directory discovery instead of embedded lists to reduce token consumption
  */
 function generateAddRole(projectDir, frameworkPath, domainList) {
-  // Build list of ALL available specialists
-  const allSpecialists = DOMAIN_SPECIALISTS;
-  const numberedList = allSpecialists.map((d, i) => `${i + 1}. ${d}`).join('\n');
+  const content = `---
+argument-hint: [specialist-name] (optional)
+---
 
-  // Build file paths for all specialists
-  const filePaths = allSpecialists.map(d =>
-    `- ${d}: \`${frameworkPath}/System-Instructions/Domain/${d}.md\``
-  ).join('\n');
+# Add Domain Specialist Role
 
-  const content = `# Add Domain Specialist Role
+Add a new domain specialist to your project.
 
-Add a new domain specialist to your project that wasn't selected during installation.
+## Arguments
 
-## All Available Specialists
+| Argument | Required | Description |
+|----------|----------|-------------|
+| \`$ARGUMENTS\` | No | Specialist name for direct add (e.g., \`Security-Engineer\`) |
 
-${numberedList}
+## Workflow
 
-## Currently Installed
+### Step 1: Read Configuration
 
-Read \`framework-config.json\` to see which specialists are already in your \`domainSpecialists\` array.
+Read \`framework-config.json\` to get \`frameworkPath\` and \`domainSpecialists\` array.
 
-## Instructions
+### Step 2: Discover Available Specialists
 
-When invoked:
-
-### Step 1: Read Current Configuration
-
-Read \`framework-config.json\` to get:
-- \`frameworkPath\` - path to framework files
-- \`domainSpecialists\` - currently installed specialists
-- \`primarySpecialist\` - current default role
-
-### Step 2: Display Available Roles
-
-Show specialists NOT already in \`domainSpecialists\`:
-
-\`\`\`
-Currently installed: [list from domainSpecialists]
-
-Available to add:
-[numbered list of specialists NOT in domainSpecialists]
-
-Select a role to add (number):
+List all specialists from the framework:
+\`\`\`bash
+ls "\${frameworkPath}/System-Instructions/Domain/"
 \`\`\`
 
-If all specialists are already installed, inform the user and suggest \`/switch-role\` instead.
+Filter out those already in \`domainSpecialists\`.
 
-### Step 3: Update Configuration
+### Step 3: Handle Selection
+
+**If \`$ARGUMENTS\` provided:**
+- Validate it exists in Domain/ directory
+- If valid, skip to Step 4
+- If invalid, show error with available options
+
+**If no argument:**
+- Display numbered list of available specialists (not yet installed)
+- Ask user to select
+
+### Step 4: Update Configuration
 
 Edit \`framework-config.json\`:
-1. Add the new specialist to the \`domainSpecialists\` array
-2. Ask if user wants to set it as \`primarySpecialist\`
+1. Add specialist to \`domainSpecialists\` array
+2. Ask if user wants to set as \`primarySpecialist\`
 
-**Example edit:**
-\`\`\`json
-// Before
-"domainSpecialists": ["Backend-Specialist", "Frontend-Specialist"],
+### Step 5: Load and Confirm
 
-// After
-"domainSpecialists": ["Backend-Specialist", "Frontend-Specialist", "Security-Engineer"],
+Read \`\${frameworkPath}/System-Instructions/Domain/\${specialist}.md\`
+
+Report:
 \`\`\`
-
-### Step 4: Load New Specialist Instructions
-
-Read the new specialist's instruction file:
-
-${filePaths}
-
-### Step 5: Confirm Addition
-
-**Response format:**
-\`\`\`
-✓ Added Security-Engineer to project
-
-Updated framework-config.json:
-  • domainSpecialists: [..., Security-Engineer]
-  • primarySpecialist: [unchanged or new value]
-
-Loading Security-Engineer...
-
-✓ Now operating as: Security-Engineer
-  Focus areas: [from specialist file]
+✓ Added [Specialist] to project
+✓ Now operating as: [Specialist]
 
 Use /switch-role to change between installed specialists.
 \`\`\`
 
-## File Paths
-
-${filePaths}
-
 ## Usage
 
-User says: \`/add-role\` or "add security specialist" or "I need to add DevOps"
-
-## Natural Language Triggers
-
-- "add [role]"
-- "install [role]"
-- "I need [role] capabilities"
-- "add a new specialist"
+- \`/add-role\` - Browse and select from available specialists
+- \`/add-role Security-Engineer\` - Directly add Security-Engineer
+- "add DevOps" - Natural language trigger
 `;
 
   const commandsDir = path.join(projectDir, '.claude', 'commands');
@@ -499,7 +462,7 @@ function generateStartupRules(frameworkPath, processFramework, domainListStr, pr
 
   return `# Session Startup
 
-**Version:** ${version || '0.15.2'}
+**Version:** ${version || '0.15.3'}
 **Framework:** ${processFramework}
 **Specialists:** ${domainListStr || 'None'}
 **Primary Specialist:** ${primarySpecialist || 'None'}

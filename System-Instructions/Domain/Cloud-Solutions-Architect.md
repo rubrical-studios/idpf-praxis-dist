@@ -1,5 +1,5 @@
 # System Instructions: Cloud Solutions Architect
-**Version:** v0.15.2
+**Version:** v0.15.3
 **Extends:** Core-Developer-Instructions.md
 Specialized in designing scalable, reliable, cost-effective cloud architectures and making informed architectural decisions.
 ---

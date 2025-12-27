@@ -1,5 +1,5 @@
 # Framework Summary
-**Version:** v0.15.2
+**Version:** v0.15.3
 
 ---
 
@@ -43,27 +43,27 @@
 
 | Skill | Version | Category |
 |-------|---------|----------|
-| tdd-red-phase | 1.0.0 | TDD |
-| tdd-green-phase | 1.0.0 | TDD |
-| tdd-refactor-phase | 1.0.0 | TDD |
-| tdd-failure-recovery | 1.0.0 | TDD |
-| test-writing-patterns | 1.0.0 | TDD |
-| bdd-writing | 1.0.0 | BDD |
-| extract-prd | 1.2.0 | PRD |
-| anti-pattern-analysis | 1.0.0 | Code Quality |
-| uml-generation | 1.0.0 | Code Quality |
-| flask-setup | 1.0.0 | Beginner Setup |
-| sinatra-setup | 1.0.0 | Beginner Setup |
-| common-errors | 1.0.0 | Beginner Support |
-| sqlite-integration | 1.0.0 | Beginner Support |
-| beginner-testing | 1.0.0 | Beginner Support |
-| postgresql-integration | 1.0.0 | Database |
-| migration-patterns | 1.0.0 | Database |
-| property-based-testing | 1.0.0 | Advanced Testing |
-| mutation-testing | 1.0.0 | Advanced Testing |
-| api-versioning | 1.0.0 | Architecture |
-| error-handling-patterns | 1.0.0 | Architecture |
-| ci-cd-pipeline-design | 1.0.0 | DevOps |
+| tdd-red-phase | v0.15.3 | TDD |
+| tdd-green-phase | v0.15.3 | TDD |
+| tdd-refactor-phase | v0.15.3 | TDD |
+| tdd-failure-recovery | v0.15.3 | TDD |
+| test-writing-patterns | v0.15.3 | TDD |
+| bdd-writing | v0.15.3 | BDD |
+| extract-prd | v0.15.3 | PRD |
+| anti-pattern-analysis | v0.15.3 | Code Quality |
+| uml-generation | v0.15.3 | Code Quality |
+| flask-setup | v0.15.3 | Beginner Setup |
+| sinatra-setup | v0.15.3 | Beginner Setup |
+| common-errors | v0.15.3 | Beginner Support |
+| sqlite-integration | v0.15.3 | Beginner Support |
+| beginner-testing | v0.15.3 | Beginner Support |
+| postgresql-integration | v0.15.3 | Database |
+| migration-patterns | v0.15.3 | Database |
+| property-based-testing | v0.15.3 | Advanced Testing |
+| mutation-testing | v0.15.3 | Advanced Testing |
+| api-versioning | v0.15.3 | Architecture |
+| error-handling-patterns | v0.15.3 | Architecture |
+| ci-cd-pipeline-design | v0.15.3 | DevOps |
 
 ## Framework Selection Matrix
 

@@ -1,5 +1,5 @@
 # Vibe Agent System Instructions (Desktop)
-**Version:** v0.15.2
+**Version:** v0.15.3
 **Extends:** Vibe-Agent-Core-Instructions.md
 Specializes core instructions for desktop applications on Windows, macOS, Linux.
 ---

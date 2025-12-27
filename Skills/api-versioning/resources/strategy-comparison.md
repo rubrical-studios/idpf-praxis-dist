@@ -1,5 +1,5 @@
 # API Versioning Strategy Comparison
-**Version:** v0.15.2
+**Version:** v0.15.3
 
 Detailed analysis of versioning strategies to help choose the right approach.
 

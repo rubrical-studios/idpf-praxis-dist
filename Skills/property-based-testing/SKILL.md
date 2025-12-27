@@ -1,6 +1,6 @@
 ---
 name: property-based-testing
-version: v0.15.2
+version: v0.15.3
 description: Property-based testing with Hypothesis (Python) and fast-check (JS)
 ---
 

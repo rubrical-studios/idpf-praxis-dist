@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.15.2
+// **Version:** 0.15.3
 /**
  * IDPF Framework Installer - Main Entry Point
  * Unified cross-platform installer for Windows, macOS, and Linux
@@ -92,6 +92,7 @@ async function main() {
   const args = process.argv.slice(2);
   const migrateMode = args.includes('--migrate');
   const skipGitHub = args.includes('--skip-github'); // REQ-009: Skip GitHub setup
+  const forceInstall = args.includes('--force'); // Allow install on non-main branches
 
   // Load prompts module, auto-install if missing
   try {
@@ -366,6 +367,23 @@ async function main() {
         }
       }
       log();
+    }
+
+    // Check target project branch (only if git repo exists)
+    const hasGitRepo = fs.existsSync(path.join(projectDir, '.git'));
+    if (hasGitRepo && !forceInstall) {
+      try {
+        const currentBranch = execSync('git branch --show-current', { cwd: projectDir, encoding: 'utf8' }).trim();
+        if (currentBranch && currentBranch !== 'main' && currentBranch !== 'master') {
+          logError(`Target project is on branch '${currentBranch}', not main/master.`);
+          logWarning('Framework installation should typically happen on the main branch.');
+          logWarning('Use --force to install anyway.');
+          process.exit(1);
+        }
+      } catch (err) {
+        // Git command failed - possibly detached HEAD or other edge case
+        // Continue with installation rather than blocking
+      }
     }
 
     // Check for existing installation
@@ -643,6 +661,9 @@ async function main() {
     }
     if (rulesResult.startup) {
       logSuccess('  ✓ .claude/rules/03-startup.md');
+    }
+    if (rulesResult.windowsShell) {
+      logSuccess('  ✓ .claude/rules/05-windows-shell.md (Windows only)');
     }
 
     // switch-role command (only if domain specialists selected)

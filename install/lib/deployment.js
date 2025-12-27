@@ -14,7 +14,7 @@ function deployRules(projectDir, frameworkPath, processFramework, domainListStr,
   const rulesDir = path.join(projectDir, '.claude', 'rules');
   fs.mkdirSync(rulesDir, { recursive: true });
 
-  const results = { antiHallucination: false, githubWorkflow: false, startup: false };
+  const results = { antiHallucination: false, githubWorkflow: false, startup: false, windowsShell: false };
 
   // Copy anti-hallucination rules (always)
   const ahSrc = path.join(frameworkPath, 'Assistant', 'Anti-Hallucination-Rules-for-Software-Development.md');
@@ -50,6 +50,22 @@ function deployRules(projectDir, frameworkPath, processFramework, domainListStr,
   const startupContent = generateStartupRules(frameworkPath, processFramework, domainListStr, primarySpecialist, version);
   fs.writeFileSync(path.join(rulesDir, '03-startup.md'), startupContent);
   results.startup = true;
+
+  // Copy Windows shell safety rules (Windows only)
+  if (process.platform === 'win32') {
+    const wsSrc = path.join(frameworkPath, 'Reference', 'Windows-Shell-Safety.md');
+    const wsDest = path.join(rulesDir, '05-windows-shell.md');
+    if (fs.existsSync(wsSrc)) {
+      // Read source and add Source reference after Version line
+      const wsContent = fs.readFileSync(wsSrc, 'utf8');
+      const wsWithSource = wsContent.replace(
+        /(\*\*Version:\*\* .+)/,
+        '$1\n**Source:** Reference/Windows-Shell-Safety.md'
+      );
+      fs.writeFileSync(wsDest, wsWithSource);
+      results.windowsShell = true;
+    }
+  }
 
   return results;
 }

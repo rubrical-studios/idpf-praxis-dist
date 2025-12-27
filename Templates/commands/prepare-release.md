@@ -1,4 +1,5 @@
 ---
+version: v0.15.3
 description: Prepare release with PR, merge to main, and tag
 argument-hint: [version] (e.g., v1.2.0)
 ---

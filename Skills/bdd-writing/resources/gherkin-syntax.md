@@ -1,5 +1,5 @@
 # Gherkin Syntax Reference
-**Version:** v0.15.2
+**Version:** v0.15.3
 
 Complete reference for Gherkin syntax used in BDD feature files.
 

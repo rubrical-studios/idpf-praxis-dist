@@ -1,5 +1,5 @@
 # PostgreSQL Common Errors
-**Version:** v0.15.2
+**Version:** v0.15.3
 
 Troubleshooting guide for frequently encountered PostgreSQL errors.
 

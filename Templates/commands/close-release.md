@@ -1,4 +1,5 @@
 ---
+version: v0.15.3
 description: Close release with GitHub Release and cleanup
 argument-hint: [--skip-release-page]
 ---

@@ -1,0 +1,101 @@
+# Windows Shell Safety for Claude Code
+
+**Version:** v0.15.3
+**Source:** Reference/Windows-Shell-Safety.md
+
+---
+
+**MUST READ:** Auto-loaded on Windows at session startup.
+
+## Shell Environment
+Claude Code uses Git Bash on Windows. Most Unix commands work, but these patterns fail.
+
+## Heredocs with Backticks
+**NEVER use backticks inside heredocs.**
+```bash
+# BAD - fails on Windows
+git commit -m "$(cat <<'EOF'
+Fix bug in `calculateTotal` function
+EOF
+)"
+
+# GOOD - use Write tool to create temp file
+git commit -F .tmp-msg.txt
+rm .tmp-msg.txt
+```
+
+## Command Substitution in Arguments
+**Avoid `$(...)` in tool arguments.**
+```bash
+# BAD - unreliable
+gh issue create --body "$(cat README.md)"
+
+# GOOD - use --body-file flag
+gh issue create --body-file README.md
+```
+
+## Path Handling
+**Use forward slashes. Quote paths with spaces.**
+```bash
+# BAD - backslashes stripped
+cd C:\Users\Name\My Projects
+
+# GOOD
+cd "C:/Users/Name/My Projects"
+cd "$USERPROFILE/My Projects"
+```
+
+## Temp File Best Practices
+1. **Use relative paths** for temp files (`.tmp-*`) - absolute paths get backslashes stripped
+2. **Use Write tool** instead of `cat`, `echo >`, or heredocs
+3. **Clean up** immediately after use
+```bash
+# Pattern: Write tool creates file, Bash uses it
+gh issue create --body-file .tmp-body.md
+rm .tmp-body.md
+```
+
+## Quoting Rules
+**Prefer double quotes. Escape special characters.**
+```bash
+# GOOD
+echo "$HOME"
+echo "The file is \`important\`"
+```
+
+## JSON in Commands
+**Use temp files for JSON payloads.**
+```bash
+# GOOD - Write tool creates JSON file
+gh api graphql --input .tmp-query.json
+rm .tmp-query.json
+```
+
+## Environment Variables
+**Use Unix-style syntax in Git Bash.**
+```bash
+# BAD - Windows cmd style
+echo %USERPROFILE%
+
+# GOOD - Unix style
+echo "$USERPROFILE"
+export MY_VAR=value
+```
+
+## Quick Reference
+| Pattern | Windows Safe? | Alternative |
+|---------|:-------------:|-------------|
+| `$(command)` in args | Unreliable | Write tool + temp file |
+| Heredoc with backticks | No | Write tool + temp file |
+| Single quotes | Mostly | Prefer double quotes |
+| Backslash paths | No | Forward slashes |
+| Absolute paths in Bash args | No | Relative paths (`.tmp-*`) |
+| `--body "..."` multi-line | Unreliable | `--body-file` |
+| JSON inline | No | `--input` or temp file |
+| Pipes `\|` | Yes | - |
+| Redirection `>` `>>` | Yes | - |
+| `$VAR` expansion | Yes | - |
+
+---
+
+**End of Windows Shell Safety**
