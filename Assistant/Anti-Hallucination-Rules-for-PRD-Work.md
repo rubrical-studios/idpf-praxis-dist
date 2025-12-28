@@ -1,5 +1,5 @@
 # Anti-Hallucination Rules for PRD Work
-**Version:** v0.15.4
+**Version:** v0.16.0
 
 ---
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.15.4
+// **Version:** 0.16.0
 /**
  * IDPF Framework Installer - Main Entry Point
  * Unified cross-platform installer for Windows, macOS, and Linux
@@ -43,6 +43,7 @@ const {
   trackProject,
   checkPrerequisites,
   extractZip,
+  checkGitCleanState,
   checkGitRemote,
   checkGhCliPrerequisites,
   createGitHubRepo,
@@ -391,6 +392,25 @@ async function main() {
 
     let processFramework = '';
     let vibeVariant = '';
+
+    // REQ-001 (PRD #559): Verify clean git state before upgrade
+    if (lockedFramework) {
+      const gitState = checkGitCleanState(projectDir);
+      if (!gitState.isClean) {
+        logError(`ERROR: ${gitState.error}`);
+        logError('');
+        logError('Upgrade requires a clean git working directory.');
+        logError('This ensures you can rollback via: git checkout .');
+        if (gitState.commitHash) {
+          log(colors.dim(`  Current commit: ${gitState.commitHash.substring(0, 7)}`));
+        }
+        process.exit(1);
+      }
+      // Store commit hash for potential rollback reference
+      if (gitState.commitHash) {
+        log(colors.dim(`  Pre-upgrade commit: ${gitState.commitHash.substring(0, 7)}`));
+      }
+    }
 
     if (lockedFramework) {
       logWarning('Detected existing installation');

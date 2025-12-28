@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// **Version:** 0.15.4
 /**
  * transfer-issue.js
  *

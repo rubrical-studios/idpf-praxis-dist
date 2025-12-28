@@ -1,6 +1,6 @@
 ---
 name: flask-setup-for-beginners
-version: v0.15.4
+version: v0.16.0
 description: Set up Python Flask development environment for beginners
 ---
 

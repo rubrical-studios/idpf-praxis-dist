@@ -8,6 +8,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.16.0] - 2025-12-28
+
+### Added
+- **Extensible Commands Installer** (#559) - Complete system for preserving user extensions during framework upgrades:
+  - `install/lib/extensibility.js` - Extension block parsing, restoration, rogue edit detection, frontmatter merging, deprecation handling (REQ-002-006, REQ-010, NFR-003)
+  - `install/lib/checksums.js` - SHA256 checksum computation for modification detection (NFR-002)
+  - `install/lib/config.js` - Config management, manifest parsing, project type detection, schema migration (REQ-011, REQ-013-015)
+  - Enhanced `install/lib/deployment.js` - Directory structure creation, framework script deployment with checksum tracking (REQ-007-009)
+  - Enhanced `install/lib/detection.js` - Git clean state verification before upgrades (REQ-001)
+  - Enhanced `install/lib/ui.js` - UpgradeError class with rollback instructions (NFR-001)
+- **PRD for Extensible Commands Installer** (#559) - Comprehensive requirements document with 15 requirements and 3 NFRs
+- **Templates for extensible commands** - Populated `Templates/` directory with framework scripts, shared utilities, and hooks
+
+### Changed
+- **Proposal consolidation** - Split extensibility proposal into Framework and Installer documents for clearer separation of concerns
+- **Archive management** - Added archive notices to superseded proposals (Base-Template, original Extensible-User-Commands)
+
+---
+
 ## [0.15.4] - 2025-12-26
 
 ### Fixed

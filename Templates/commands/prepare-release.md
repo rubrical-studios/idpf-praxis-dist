@@ -1,139 +1,244 @@
 ---
-version: v0.15.4
+version: v0.16.0
 description: Prepare release with PR, merge to main, and tag
-argument-hint: [version] (e.g., v1.2.0)
+argument-hint: [version] [--skip-coverage] [--dry-run] [--help]
 ---
 
-# Prepare Release
+<!-- EXTENSIBLE: vv0.16.0 -->
+# /prepare-release
 
 Validate, create PR to main, merge, and tag for deployment.
 
-## Pre-Checks
+## Available Extension Points
 
-1. **Verify on release branch:**
-   ```bash
-   git branch --show-current
-   ```
-   Must be on a release branch (e.g., `release/v1.2.0`), not `main`.
-
-2. **Check for open sprints in this release:**
-   ```bash
-   gh pmu microsprint current
-   ```
-   If sprints are open, close them first:
-   ```bash
-   gh pmu microsprint close
-   ```
-
-3. **Check for incomplete issues in release:**
-   ```bash
-   gh pmu release current --json issues | jq '.[] | select(.status != "done")'
-   ```
-   If incomplete issues exist, prompt user:
-   - Transfer to next release
-   - Return to backlog
-   - Block release (cannot close with open issues)
-
-## Phase 1: Version Updates
-
-1. Determine version from `$ARGUMENTS` or prompt user
-2. Update version files:
-   - `package.json` / `Cargo.toml` / etc. (project-specific)
-   - `CHANGELOG.md` — add new version section
-3. **ASK USER:** Confirm version updates
-
-## Phase 2: Git Preparation
-
-1. **Generate release artifacts:**
-   ```bash
-   # Determine track from branch (release/v1.2.0 → track=release)
-   BRANCH=$(git branch --show-current)
-   TRACK=$(echo $BRANCH | cut -d'/' -f1)
-   VERSION=$(echo $BRANCH | cut -d'/' -f2)
-
-   # Create release directory
-   mkdir -p "Releases/$TRACK/$VERSION"
-   ```
-
-   Create `Releases/$TRACK/$VERSION/release-notes.md` with:
-   - Summary from CHANGELOG.md
-   - Issues closed in this release
-   - Upgrade notes (if any)
-
-2. Commit version updates and artifacts:
-   ```bash
-   git add -A
-   git commit -m "chore: prepare release $VERSION"
-   ```
-
-3. Create PR from release branch to main:
-   ```bash
-   gh pr create --base main --head $(git branch --show-current) \
-     --title "Release $VERSION" \
-     --body "## Release $VERSION\n\nSee CHANGELOG.md for details."
-   ```
-
-4. **ASK USER:** Approve and merge PR (or wait for CI)
-
-5. After PR merged, switch to main and pull:
-   ```bash
-   git checkout main
-   git pull origin main
-   ```
-
-## Phase 3: Tag on Main
-
-1. Create tag on main:
-   ```bash
-   git tag -a $VERSION -m "Release $VERSION"
-   git push origin $VERSION
-   ```
-
-2. **ASK USER:** Confirm tag pushed (triggers deployment if CI configured)
-
-## Phase 4: Verification
-
-1. Verify tag exists:
-   ```bash
-   git tag -l "$VERSION"
-   ```
-
-2. Verify deployment (if applicable):
-   - Check CI/CD pipeline status
-   - Verify deployed version
-
-## Next Step
-
-After deployment is verified, run `/close-release` to:
-- Create GitHub Release page
-- Close gh-pmu tracker issue
-- Delete release branch
-
-## Post-Release Reminder
-
-**Releasing code does NOT close related issues.**
-Issues included in this release still require explicit user approval ("Done") to close.
-Do NOT auto-close issues just because they shipped.
+| Point | Location | Purpose |
+|-------|----------|---------|
+| `post-analysis` | After Phase 1 | Commit analysis, version recommendation |
+| `pre-validation` | Before Phase 2 | Setup, fixtures, containers |
+| `post-validation` | After Phase 2 | Coverage gates, build verification |
+| `post-prepare` | After Phase 3 | Documentation updates |
+| `pre-tag` | Before Phase 4 tagging | Final gate, sign-off |
+| `post-tag` | After Phase 4 | Release monitoring, asset verification |
 
 ---
 
-## Release Lifecycle
+## Arguments
 
+| Argument | Description |
+|----------|-------------|
+| `[version]` | Version to release (e.g., v1.2.0) |
+| `--skip-coverage` | Skip coverage gate |
+| `--dry-run` | Preview without changes |
+| `--help` | Show extension points |
+
+---
+
+## Pre-Checks
+
+### Verify Config
+
+```bash
+node .claude/scripts/open-release/verify-config.js
 ```
-/open-release v1.2.0
-    └── Creates branch + tracker
-         │
-         ▼
-    [Work on release branch]
-         │
-         ▼
-/prepare-release v1.2.0     ◄── YOU ARE HERE
-    └── PR → merge → tag → deploy
-         │
-         ▼
-/close-release
-    └── GitHub Release → cleanup
+
+**If the script returns `success: false`, STOP and report the error.**
+
+### Verify on Release Branch
+
+```bash
+git branch --show-current
 ```
+
+### Check for Open Sprints
+
+```bash
+gh pmu microsprint current
+```
+
+Close open sprints before proceeding.
+
+### Check for Incomplete Issues
+
+```bash
+gh pmu release current --json issues | jq '.[] | select(.status != "done")'
+```
+
+---
+
+## Phase 1: Analysis (Framework-Provided)
+
+### Step 1.1: Analyze Changes
+
+```bash
+git log $(git describe --tags --abbrev=0)..HEAD --oneline
+```
+
+<!-- USER-EXTENSION-START: post-analysis -->
+### Analyze Commits
+
+```bash
+node .claude/scripts/framework/analyze-commits.js
+```
+
+The script outputs JSON with commit analysis:
+- `lastTag`: Previous version
+- `commits`: Array of parsed commits
+- `summary`: Counts by type (features, fixes, etc.)
+
+### Recommend Version
+
+```bash
+node .claude/scripts/framework/recommend-version.js
+```
+
+Uses the commit analysis to recommend a version bump.
+<!-- USER-EXTENSION-END: post-analysis -->
+
+**ASK USER:** Confirm version before proceeding.
+
+---
+
+## Phase 2: Validation (Framework-Provided)
+
+<!-- USER-EXTENSION-START: pre-validation -->
+<!-- Setup: start containers, pull fixtures, prepare environment -->
+<!-- USER-EXTENSION-END: pre-validation -->
+
+### Step 2.1: Run Tests
+
+```bash
+go test ./...
+```
+
+<!-- USER-EXTENSION-START: post-validation -->
+### Coverage Gate
+
+**If `--skip-coverage` was passed, skip this section.**
+
+```bash
+node .claude/scripts/prepare-release/coverage.js
+```
+
+The script outputs JSON: `{"success": true/false, "message": "...", "data": {"coverage": 87.5}}`
+
+**If `success` is false, STOP and report the error.**
+
+Coverage metrics include total percentage and threshold comparison.
+<!-- USER-EXTENSION-END: post-validation -->
+
+**ASK USER:** Confirm validation passed.
+
+---
+
+## Phase 3: Prepare (Framework-Provided)
+
+### Step 3.1: Update CHANGELOG.md
+
+Follow Keep a Changelog format.
+
+### Step 3.2: Commit Preparation
+
+```bash
+git add CHANGELOG.md README.md docs/
+git commit -m "chore: prepare release $VERSION"
+git push
+```
+
+<!-- USER-EXTENSION-START: post-prepare -->
+### Wait for CI
+
+```bash
+node .claude/scripts/framework/wait-for-ci.js
+```
+
+The script polls CI status every 60 seconds (5-minute timeout).
+
+**If CI fails, STOP and report the error.**
+<!-- USER-EXTENSION-END: post-prepare -->
+
+**CRITICAL:** Do not proceed until CI passes.
+
+---
+
+## Phase 4: Git Operations (Framework-Provided)
+
+### Step 4.1: Create PR to Main
+
+```bash
+gh pr create --base main --head $(git branch --show-current) \
+  --title "Release $VERSION"
+```
+
+### Step 4.2: Merge PR
+
+**ASK USER:** Approve and merge.
+
+```bash
+gh pr merge --merge
+git checkout main
+git pull origin main
+```
+
+<!-- USER-EXTENSION-START: pre-tag -->
+<!-- Final gate before tagging - add sign-off checks here -->
+<!-- USER-EXTENSION-END: pre-tag -->
+
+### Step 4.3: Tag and Push
+
+**ASK USER:** Confirm ready to tag.
+
+```bash
+git tag -a $VERSION -m "Release $VERSION"
+git push origin $VERSION
+```
+
+<!-- USER-EXTENSION-START: post-tag -->
+### Monitor Release Workflow
+
+```bash
+node .claude/scripts/close-release/monitor-release.js
+```
+
+The script monitors the tag-triggered workflow and verifies all platform binaries are uploaded:
+- darwin-amd64, darwin-arm64
+- linux-amd64, linux-arm64
+- windows-amd64.exe, windows-arm64.exe
+- checksums.txt
+
+**If assets are missing after timeout, report warning but continue.**
+
+### Update Release Notes
+
+```bash
+node .claude/scripts/framework/update-release-notes.js
+```
+
+Updates GitHub Release with formatted notes from CHANGELOG.
+<!-- USER-EXTENSION-END: post-tag -->
+
+---
+
+## Summary Checklist
+
+**Before tagging:**
+- [ ] Config file clean
+- [ ] Commits analyzed
+- [ ] Coverage gate passed (or `--skip-coverage`)
+- [ ] Version confirmed
+- [ ] CI passing
+- [ ] CHANGELOG updated
+- [ ] PR merged
+
+**After tagging:**
+- [ ] All CI jobs completed
+- [ ] Release assets uploaded
+- [ ] Release notes updated
+
+---
+
+## Next Step
+
+After deployment verified, run `/close-release`.
 
 ---
 

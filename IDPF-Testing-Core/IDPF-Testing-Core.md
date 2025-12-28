@@ -1,6 +1,6 @@
 # IDPF-Testing-Core Framework
 
-**Version:** v0.15.4
+**Version:** v0.16.0
 
 ---
 

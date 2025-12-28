@@ -1,5 +1,5 @@
 # Framework Transitions Reference
-**Version:** v0.15.4
+**Version:** v0.16.0
 
 ---
 

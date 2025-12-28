@@ -122,6 +122,47 @@ function extractZip(zipPath, destDir) {
 }
 
 /**
+ * REQ-001 (Extensibility PRD #559): Check git working directory state
+ * Verifies clean state before upgrade to enable rollback via `git checkout .`
+ * Returns: { isClean: boolean, commitHash: string|null, error: string|null }
+ */
+function checkGitCleanState(projectDir) {
+  const gitDir = path.join(projectDir, '.git');
+
+  // Not a git repo - skip check (fresh install case)
+  if (!fs.existsSync(gitDir)) {
+    return { isClean: true, commitHash: null, error: null };
+  }
+
+  try {
+    // AC-1 & AC-2: Check for uncommitted changes
+    const status = execSync('git status --porcelain', { cwd: projectDir, stdio: 'pipe' }).toString();
+    const isClean = status.trim().length === 0;
+
+    // AC-3: Get current commit hash for rollback reference
+    let commitHash = null;
+    try {
+      commitHash = execSync('git rev-parse HEAD', { cwd: projectDir, stdio: 'pipe' }).toString().trim();
+    } catch {
+      // No commits yet - that's fine
+    }
+
+    if (!isClean) {
+      return {
+        isClean: false,
+        commitHash,
+        error: 'Commit or stash changes before upgrade'
+      };
+    }
+
+    return { isClean: true, commitHash, error: null };
+  } catch (err) {
+    // Git command failed - treat as clean to allow install to proceed
+    return { isClean: true, commitHash: null, error: null };
+  }
+}
+
+/**
  * REQ-001: Check git remote status
  * Returns: { hasGit: boolean, hasRemote: boolean }
  */
@@ -413,6 +454,7 @@ module.exports = {
   checkCommand,
   checkPrerequisites,
   extractZip,
+  checkGitCleanState,
   checkGitRemote,
   checkGhCliPrerequisites,
   createGitHubRepo,
