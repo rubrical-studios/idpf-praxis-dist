@@ -25,6 +25,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Proposal consolidation** - Split extensibility proposal into Framework and Installer documents for clearer separation of concerns
 - **Archive management** - Added archive notices to superseded proposals (Base-Template, original Extensible-User-Commands)
 
+### Fixed
+- **Script paths in command templates** (#579) - Updated 7 command templates to use correct `.claude/scripts/shared/` paths after extensibility reorganization
+
 ---
 
 ## [0.15.4] - 2025-12-26

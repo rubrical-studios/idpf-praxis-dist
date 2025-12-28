@@ -9,7 +9,7 @@ Run a retrospective for the current sprint.
 Run the sprint-retro script:
 
 ```bash
-node .claude/scripts/sprint-retro.js "$ARGUMENTS"
+node .claude/scripts/shared/sprint-retro.js "$ARGUMENTS"
 ```
 
 Guide the user through the retrospective.

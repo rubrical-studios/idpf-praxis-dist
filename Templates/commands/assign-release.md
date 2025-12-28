@@ -9,7 +9,7 @@ Assign issues to a release.
 Run the assign-release script:
 
 ```bash
-node .claude/scripts/assign-release.js "$ARGUMENTS"
+node .claude/scripts/shared/assign-release.js "$ARGUMENTS"
 ```
 
 ## Handling "NO_RELEASE_FOUND" Output
