@@ -1,5 +1,6 @@
 # IDPF-Chaos Framework
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** IDPF-Chaos/IDPF-Chaos.md
 **Extends:** IDPF-Testing-Core
 **Framework-Debug:** True
 
@@ -85,7 +86,7 @@ Then: [expected behavior]
 
 ## Experiment Workflow
 ```
-Define Hypothesis → Set Up Observability → Design Experiment → Get Approval → Run Experiment → Analyze Results → [Expand Scope / Fix System]
+Define Hypothesis -> Set Up Observability -> Design Experiment -> Get Approval -> Run Experiment -> Analyze Results -> [Expand Scope / Fix System]
 ```
 
 ---

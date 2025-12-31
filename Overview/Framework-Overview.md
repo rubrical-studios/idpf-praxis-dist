@@ -1,5 +1,6 @@
 # Framework Overview
-**Version:** 0.17.1
+**Version:** v0.19.0
+**Source:** Overview/Framework-Overview.md
 **Purpose:** Comprehensive reference for AI assistants and framework development
 
 ---
@@ -19,18 +20,7 @@
 **Reverse Path:** Analyze → Extract → Refine → Generate
 
 **Commands:** PRD-Start, PRD-Status, PRD-Next, Generate-PRD, Reverse-PRD-Start
-**Handoff:** PRD → Structured (REQ-IDs) | PRD → Agile (Epics/Stories) | Skip → Vibe
-
----
-
-## IDPF-Structured
-**Location:** `IDPF-Structured/Interactive Development Process Framework.md`
-**Type:** TDD with Fixed Requirements
-
-**Workflow:** Session Init → TDD Iterations (RED-GREEN-REFACTOR) → Completion
-**Commands:** Done-Next-Step, Rollback-Previous-Step, Push-Changes, Final-Commit-Create-PR, Double-Check
-
-**When to Use:** Fixed requirements, small-medium projects, solo/small team, TDD without sprint overhead
+**Handoff:** PRD → Agile (Epics/Stories) | Skip → Vibe
 
 ---
 
@@ -46,27 +36,15 @@
 ---
 
 ## IDPF-Vibe
-**Location:** `IDPF-Vibe/` | **Core Rev:** 4.0 | **Type:** Exploratory → Structured Evolution
+**Location:** `IDPF-Vibe/` | **Core Rev:** 4.0 | **Type:** Exploratory → Agile Evolution
 
 **Platforms:** Desktop, Mobile, Web, Game, Embedded, Newbie (7 variants)
 
 **Phase 1 (Vibe):** Exploratory, no formal requirements
-**Phase 2 (Evolution):** Ready-to-Structure → Choose Structured or Agile
-**Phase 3 (Structured):** TDD with chosen framework
+**Phase 2 (Evolution):** Ready-to-Structure → Evolve to Agile
+**Phase 3 (Agile):** TDD with IDPF-Agile framework
 
 **Commands:** Vibe-Start, Try-This, That-Works, Run-It, Ready-to-Structure
-
----
-
-## IDPF-LTS
-**Location:** `IDPF-LTS/Long-Term-Support-Framework.md`
-**Type:** Production Maintenance (Terminal State)
-
-**Principles:** Stability First, Minimal Change, No New Features, Backwards Compatibility
-**Allowed:** Critical bugs, security patches, documentation fixes
-**Forbidden:** New features, refactoring, dependency upgrades, breaking changes
-
-**Workflow:** Triage → Impact Assessment → Fix (TDD) → Regression Prevention → Release
 
 ---
 
@@ -82,7 +60,7 @@ IDPF-Testing-Core (foundation)
 └── IDPF-Contract-Testing (Pact, Spring Cloud Contract)
 ```
 
-**Separate repos** use Testing frameworks; **Embedded tests** use Structured/Agile
+**Separate repos** use Testing frameworks; **Embedded tests** use Agile
 
 ---
 
@@ -118,20 +96,14 @@ IDPF-Testing-Core (foundation)
 
 **Valid:**
 ```
-VIBE ──► STRUCTURED ──► LTS
-  │          ↑↓
-  └────► AGILE ────────► LTS
+VIBE ──► AGILE (Terminal)
 ```
 
-**Invalid:** Structured/Agile → Vibe, LTS → Any
+**Invalid:** Agile → Vibe
 
 | From | To | When |
 |------|----|------|
-| Vibe | Structured | Fixed scope, solo/small team |
-| Vibe | Agile | Large feature set, sprints needed |
-| Structured | Agile | Scope expanded, iterative delivery |
-| Agile | Structured | Scope narrowed, sprint overhead not justified |
-| Structured/Agile | LTS | Production ready, maintenance mode |
+| Vibe | Agile | Exploration complete, requirements understood |
 
 ---
 
@@ -139,11 +111,9 @@ VIBE ──► STRUCTURED ──► LTS
 
 | Project Type | Framework | Evolution |
 |--------------|-----------|-----------|
-| Fixed requirements | IDPF-Structured | → LTS |
-| Evolving requirements | IDPF-Agile | → LTS |
-| Exploration needed | IDPF-Vibe | → Structured/Agile |
-| Production maintenance | IDPF-LTS | Terminal |
-| Separate test repo | IDPF-Testing-Core | Use Structured/Agile |
+| Defined requirements | IDPF-Agile | Terminal |
+| Exploration needed | IDPF-Vibe | → Agile |
+| Separate test repo | IDPF-Testing-Core | Use Agile |
 
 ---
 

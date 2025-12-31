@@ -1,5 +1,5 @@
 # System Instructions: Desktop Application Developer
-**Version:** v0.18.0
+**Version:** v0.19.0
 Extends: Core-Developer-Instructions.md
 
 ---

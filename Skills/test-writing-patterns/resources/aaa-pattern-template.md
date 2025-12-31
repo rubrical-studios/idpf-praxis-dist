@@ -1,5 +1,5 @@
 # AAA Pattern Template
-**Version:** v0.18.0
+**Version:** 0.19.0
 
 Template and examples for the Arrange-Act-Assert test structure pattern.
 

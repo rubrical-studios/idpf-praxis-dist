@@ -12,10 +12,8 @@ const { getCurrentDate } = require('./detection');
  */
 function getCoreFrameworkFileName(processFramework) {
   const mapping = {
-    'IDPF-Structured': 'Interactive Development Process Framework.md',
     'IDPF-Agile': 'Agile-Core.md',
-    'IDPF-Vibe': 'Vibe-to-Structured Framework.md',
-    'IDPF-LTS': 'Long-Term Support Framework.md',
+    'IDPF-Vibe': 'Vibe-Core.md',
   };
   return mapping[processFramework] || 'README.md';
 }
@@ -54,8 +52,8 @@ function generateFrameworkConfig(projectDir, frameworkPath, version, processFram
  * Generate CLAUDE.md file
  * @param {string} projectDir - Target project directory
  * @param {string} frameworkPath - Path to framework installation
- * @param {string} processFramework - Selected process framework (IDPF-Structured, etc.)
- * @param {string} domainSpecialist - Selected domain specialist (v0.18.0+: singular)
+ * @param {string} processFramework - Selected process framework (IDPF-Agile, IDPF-Vibe)
+ * @param {string} domainSpecialist - Selected domain specialist (v0.19.0+: singular)
  * @param {string} _unused - Deprecated parameter (kept for API compatibility)
  * @param {string} projectInstructions - Existing project instructions to preserve
  */
@@ -245,10 +243,8 @@ This directory contains Product Requirements Documents for your project.
 1. Choose a PRD template based on your framework:
 
    **${processFramework}:**
-${processFramework === 'IDPF-Structured' ? '   - `PRD-Structured.md` - Requirements-driven input' : ''}
 ${processFramework === 'IDPF-Agile' ? '   - `PRD-Agile-Lightweight.md` - Epic/Story input' : ''}
 ${processFramework === 'IDPF-Vibe' ? '   - Start with exploration, formalize later' : ''}
-${processFramework === 'IDPF-LTS' ? '   - Bug reports and maintenance requests' : ''}
 
 2. Rename to \`PRD-[YourProjectName].md\`
 
@@ -269,7 +265,7 @@ See \`Templates/Testing-Approach-Selection-Guide.md\` for guidance on:
  * Generate startup rules content for user projects
  * @param {string} frameworkPath - Path to framework installation
  * @param {string} processFramework - Selected process framework
- * @param {string} domainSpecialist - Selected domain specialist (v0.18.0+: singular)
+ * @param {string} domainSpecialist - Selected domain specialist (v0.19.0+: singular)
  * @param {string} _unused - Deprecated parameter (kept for API compatibility)
  * @param {string} version - Framework version
  */
@@ -284,7 +280,7 @@ function generateStartupRules(frameworkPath, processFramework, domainSpecialist,
 
   return `# Session Startup
 
-**Version:** ${version || '0.18.0'}
+**Version:** ${version || '0.19.0'}
 **Framework:** ${processFramework}
 **Domain Specialist:** ${domainSpecialist || 'None'}
 
@@ -317,8 +313,8 @@ module.exports = {
   getCoreFrameworkFileName,
   // generateFrameworkConfig removed in v0.16.1 - use createOrUpdateConfig from config.js
   generateClaudeMd,
-  // generateSwitchRole removed in v0.18.0 - single specialist model
-  // generateAddRole removed in v0.18.0 - single specialist model
+  // generateSwitchRole removed in v0.19.0 - single specialist model
+  // generateAddRole removed in v0.19.0 - single specialist model
   generateGhPmuConfig,
   generateSettingsLocal,
   generatePrdReadme,

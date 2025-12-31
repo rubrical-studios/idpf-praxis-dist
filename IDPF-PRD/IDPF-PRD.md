@@ -1,5 +1,6 @@
 # IDPF-PRD Framework
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** IDPF-PRD/IDPF-PRD.md
 **Framework-Debug:** True
 **Load with:** Anti-Hallucination-Rules-for-PRD-Work.md
 
@@ -7,7 +8,7 @@
 
 ## Overview
 IDPF-PRD transforms ideas into implementation-ready requirements through guided AI-assisted elicitation.
-**Purpose:** Generate PRD documents for IDPF-Structured or IDPF-Agile.
+**Purpose:** Generate PRD documents for IDPF-Agile development.
 
 ---
 
@@ -22,10 +23,10 @@ IDPF-PRD transforms ideas into implementation-ready requirements through guided 
 
 ## Workflow Phases
 ```
-Phase 1: Discovery → Domain Analysis, Stakeholder Mapping, Vision & Goals
-Phase 2: Elicitation → Functional Reqs, Non-Functional Reqs, Constraints & Risks
-Phase 3: Specification → Requirement Detailing, Acceptance Criteria, Testing Approach
-Phase 4: Generation → Template Selection, PRD Assembly, Framework Handoff
+Phase 1: Discovery -> Domain Analysis, Stakeholder Mapping, Vision & Goals
+Phase 2: Elicitation -> Functional Reqs, Non-Functional Reqs, Constraints & Risks
+Phase 3: Specification -> Requirement Detailing, Acceptance Criteria, Testing Approach
+Phase 4: Generation -> Template Selection, PRD Assembly, Framework Handoff
 ```
 
 ---
@@ -105,17 +106,15 @@ REQ-XXX: [Title]
 ## Phase 4: Generation
 
 ### Template Selection
-**Framework declared:**
+**Auto-Selection:**
 | Framework | Template |
 |-----------|----------|
-| IDPF-Structured | PRD-Structured-Moderate |
 | IDPF-Agile | PRD-Agile-Lightweight |
 
-**No framework:** Use decision tree (fixed→Comprehensive, lean→Moderate, iterative→Agile)
+**Decision tree:** Regulated/enterprise -> Comprehensive, Standard -> Agile-Lightweight, Exploratory -> Skip PRD, use IDPF-Vibe
 
 ### Framework Handoff
-**To Structured:** REQ-IDs, acceptance criteria, NFRs, constraints → TDD with REQ-001
-**To Agile:** Features→Epics, Capabilities→Stories, Success→AC, NFRs→DoD → Backlog creation
+**To IDPF-Agile:** Features -> Epics, Capabilities -> Stories, Success -> AC, NFRs -> DoD, then Backlog creation
 
 **Output:** PRD-[ProjectName].md
 
@@ -156,6 +155,7 @@ REQ-XXX: [Title]
 |--------|----------|-------------|
 | Draft | PRD/ | Being written |
 | Ready | PRD/ | Ready for development |
+| Backlog Created | PRD/ | Issues created from PRD |
 | In Progress | PRD/ | Development underway |
 | Complete | PRD/Implemented/ | All requirements done |
 
@@ -187,15 +187,15 @@ REQ-XXX: [Title]
 
 ### When to Use
 - Legacy codebase without documentation
-- Pre-LTS baseline documentation
 - Compliance/audit requirement generation
+- Onboarding to existing project
 
 ### Workflow
 ```
-R1: Analyze → Structure Scan, Tech Stack, Architecture
-R2: Extract → Test Parsing, API Extraction, NFR Detection
-R3: Refine → User Validation, Context Addition, Priority
-R4: Generate → Standard IDPF-PRD Generation
+R1: Analyze -> Structure Scan, Tech Stack, Architecture
+R2: Extract -> Test Parsing, API Extraction, NFR Detection
+R3: Refine -> User Validation, Context Addition, Priority
+R4: Generate -> Standard IDPF-PRD Generation
 ```
 
 ### Commands
@@ -213,9 +213,8 @@ R4: Generate → Standard IDPF-PRD Generation
 
 ## Framework Transitions
 
-**PRD → IDPF-Structured:** Fixed requirements, formal process
-**PRD → IDPF-Agile:** Evolving requirements, iterative development
-**PRD → Skip (IDPF-Vibe):** Exploratory, unknown scope
+**PRD -> IDPF-Agile:** Requirements defined, ready for development
+**PRD -> Skip (IDPF-Vibe):** Exploratory, unknown scope
 
 ---
 

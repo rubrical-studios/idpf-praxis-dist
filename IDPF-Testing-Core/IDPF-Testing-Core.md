@@ -1,5 +1,6 @@
 # IDPF-Testing-Core Framework
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** IDPF-Testing-Core/IDPF-Testing-Core.md
 **Framework-Debug:** True
 
 ---
@@ -36,12 +37,12 @@ IDPF-Testing-Core
 
 ## Embedded vs Separate Repository
 
-### Embedded (Uses IDPF-Structured/Agile)
+### Embedded (Uses IDPF-Agile)
 | Type | Location | Governance |
 |------|----------|------------|
-| TDD | App repo | IDPF-Structured/Agile |
-| ATDD | App repo | IDPF-Structured/Agile + Specs |
-| BDD | App repo | IDPF-Structured/Agile + Specs |
+| TDD | App repo | IDPF-Agile |
+| ATDD | App repo | IDPF-Agile + Specs |
+| BDD | App repo | IDPF-Agile + Specs |
 
 ### Separate (Uses IDPF-Testing)
 | Type | Framework | Rationale |
@@ -57,13 +58,7 @@ IDPF-Testing-Core
 
 ## Test Development Methodology
 
-Use IDPF-Structured or IDPF-Agile for test repos:
-| Factor | Structured | Agile |
-|--------|------------|-------|
-| Scope | Fixed test cases | Evolving coverage |
-| Team | Solo/small | Larger with sprints |
-| App maturity | Stable | Active development |
-| Delivery | Milestone-based | Sprint-based |
+Test repositories use IDPF-Agile for test development.
 
 ### TDD for Test Code
 Applies to: Test utilities, Page objects, API clients, Test data generators, Framework infrastructure
@@ -140,7 +135,7 @@ Stored in `<test-repo>/PRD/TestPlans/`
 | Run-Tests | Execute suite |
 | Generate-Report | Create results report |
 
-Standard IDPF commands also apply.
+Standard IDPF-Agile commands also apply.
 
 ---
 

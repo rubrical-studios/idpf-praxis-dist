@@ -1,5 +1,6 @@
 # Vibe-to-Structured Development Framework (Desktop)
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** IDPF-Vibe/Vibe-to-Structured-Desktop-Framework.md
 **Type:** Desktop Application Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md
 
@@ -7,7 +8,7 @@
 
 ## Purpose
 Specializes Core Framework for Windows, macOS, Linux desktop applications.
-**Evolution Options:** IDPF-Structured or IDPF-Agile
+**Evolution Target:** IDPF-Agile
 
 ---
 
@@ -129,7 +130,7 @@ npm create tauri-app@latest my-app
 - Document platform requirements
 - Plan packaging per platform
 
-### Structured Phase
+### Agile Phase
 - Platform-specific tests
 - Create installers
 

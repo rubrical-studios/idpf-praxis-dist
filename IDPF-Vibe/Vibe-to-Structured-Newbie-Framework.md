@@ -1,5 +1,6 @@
 # Vibe-to-Structured Development Framework (Newbie)
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** IDPF-Vibe/Vibe-to-Structured-Newbie-Framework.md
 **Type:** Beginner-Friendly Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md
 
@@ -7,7 +8,7 @@
 
 ## Purpose
 Specializes Core Framework for developers new to programming. Emphasizes learning, clear explanations, and gradual skill building.
-**Evolution Options:** IDPF-Structured or IDPF-Agile
+**Evolution Target:** IDPF-Agile
 
 ---
 

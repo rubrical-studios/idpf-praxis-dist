@@ -1,5 +1,6 @@
 # Vibe-to-Structured Development Framework (Mobile)
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** IDPF-Vibe/Vibe-to-Structured-Mobile-Framework.md
 **Type:** Mobile Application Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md
 
@@ -7,7 +8,7 @@
 
 ## Purpose
 Specializes Core Framework for iOS, Android, cross-platform mobile development.
-**Evolution Options:** IDPF-Structured or IDPF-Agile
+**Evolution Target:** IDPF-Agile
 
 ---
 

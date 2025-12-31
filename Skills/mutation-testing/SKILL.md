@@ -5,7 +5,7 @@ license: Complete terms in LICENSE.txt
 ---
 
 # Mutation Testing
-**Version:** v0.18.0
+**Version:** v0.19.0
 
 ## When to Use
 - Assessing test suite quality beyond coverage

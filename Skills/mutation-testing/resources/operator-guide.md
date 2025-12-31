@@ -1,5 +1,5 @@
 # Mutation Operator Guide
-**Version:** v0.18.0
+**Version:** 0.19.0
 
 Comprehensive reference for mutation operators across languages.
 

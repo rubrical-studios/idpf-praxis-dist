@@ -1,5 +1,5 @@
 # Test Structure Patterns
-**Version:** v0.18.0
+**Version:** 0.19.0
 
 Patterns for organizing and structuring tests in the RED phase of TDD.
 

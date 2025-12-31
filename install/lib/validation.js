@@ -9,7 +9,7 @@ const { VALID_TRANSITIONS, PROCESS_FRAMEWORKS, INSTALLED_FILES_MANIFEST } = requ
 
 /**
  * Check if a framework transition is valid
- * @param {string} from - Source framework (e.g., 'IDPF-Structured')
+ * @param {string} from - Source framework (e.g., 'IDPF-Vibe')
  * @param {string} to - Target framework (e.g., 'IDPF-Agile')
  * @returns {boolean} True if transition is valid
  */
@@ -37,11 +37,11 @@ function getValidTransitionTargets(from) {
  * @returns {string} Explanation of why transition is invalid
  */
 function getTransitionBlockReason(from, to) {
-  if (from === 'IDPF-LTS') {
-    return 'LTS is a terminal state. No transitions are allowed from LTS. For new development, start a new project with a different framework.';
+  if (from === 'IDPF-Agile') {
+    return 'Agile is a terminal state. No transitions are allowed from Agile. For new development, start a new project with a different framework.';
   }
-  if (to === 'IDPF-Vibe' && (from === 'IDPF-Structured' || from === 'IDPF-Agile')) {
-    return 'Transition to Vibe from Structured/Agile is not allowed. Quality standards should never decrease.';
+  if (to === 'IDPF-Vibe' && from === 'IDPF-Agile') {
+    return 'Transition to Vibe from Agile is not allowed. Quality standards should never decrease.';
   }
   if (from === to) {
     return 'Already using this framework.';

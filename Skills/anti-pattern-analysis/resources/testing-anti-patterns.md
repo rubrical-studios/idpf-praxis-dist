@@ -1,5 +1,5 @@
 # Testing Anti-Patterns
-**Version:** v0.18.0
+**Version:** 0.19.0
 
 Issues in test code that reduce test effectiveness and maintainability.
 

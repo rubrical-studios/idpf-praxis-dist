@@ -1,5 +1,6 @@
 # Vibe-to-Structured Development Framework (Game)
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** IDPF-Vibe/Vibe-to-Structured-Game-Framework.md
 **Type:** Game Development Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md
 
@@ -7,7 +8,7 @@
 
 ## Purpose
 Specializes Core Framework for game development with Godot, Unity, Unreal, browser games.
-**Evolution Options:** IDPF-Structured or IDPF-Agile
+**Evolution Target:** IDPF-Agile
 
 ---
 

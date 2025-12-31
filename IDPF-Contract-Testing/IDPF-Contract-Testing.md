@@ -1,5 +1,6 @@
 # IDPF-Contract-Testing Framework
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** IDPF-Contract-Testing/IDPF-Contract-Testing.md
 **Extends:** IDPF-Testing-Core
 
 ---
@@ -26,9 +27,9 @@ Validates consumers and providers agree on interface contracts.
 
 ## Contract Testing Flow
 ```
-Consumer: Write tests → Generate Contract → Publish to Broker
-Provider: Fetch Contracts → Setup States → Verify → Publish Results
-Both: Can-I-Deploy check → Deploy
+Consumer: Write tests -> Generate Contract -> Publish to Broker
+Provider: Fetch Contracts -> Setup States -> Verify -> Publish Results
+Both: Can-I-Deploy check -> Deploy
 ```
 
 ---

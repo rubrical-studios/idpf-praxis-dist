@@ -1,5 +1,5 @@
 # Backward Compatibility Guide
-**Version:** v0.18.0
+**Version:** 0.19.0
 
 Patterns and practices for maintaining backward compatibility in APIs.
 

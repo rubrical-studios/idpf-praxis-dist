@@ -1,5 +1,6 @@
 # Framework Development Reference
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** Overview/Framework-Development.md
 **Purpose:** Detailed reference for IDPF development frameworks
 
 ---
@@ -10,7 +11,6 @@
 **Auto-Template Selection:**
 | Framework | Template |
 |-----------|----------|
-| IDPF-Structured | PRD-Structured-Moderate |
 | IDPF-Agile | PRD-Agile-Lightweight |
 
 **Forward Path:** Discovery → Elicitation → Specification → Generation
@@ -20,36 +20,7 @@
 - Forward: PRD-Start, PRD-Status, PRD-Next, Generate-PRD, Export-PRD
 - Reverse: Reverse-PRD-Start, Reverse-PRD-Analyze, Reverse-PRD-Extract
 
-**Handoff:** PRD → Structured (REQ-IDs) | PRD → Agile (Epics/Stories) | Skip → Vibe
-
----
-
-## IDPF-Structured
-**Location:** `IDPF-Structured/Interactive Development Process Framework.md`
-**Type:** TDD with Fixed Requirements
-
-**Terminology:**
-- ASSISTANT: Claude AI in chat
-- Claude Code: Execution tool
-- User: Human bridging both
-
-**Workflow:** Session Init → TDD Iterations → Completion
-
-**TDD Cycle:**
-- RED: Write failing test, verify failure
-- GREEN: Minimal implementation to pass
-- REFACTOR: Improve while green
-
-**Critical Requirements:**
-- Single code block format (numbered STEP)
-- Complete, runnable code (no placeholders)
-- Exact file paths and verification
-
-**Commands:** Done-Next-Step, Rollback-Previous-Step, Push-Changes, Final-Commit-Create-PR, Double-Check, Create-Requirements
-
-**TDD Skills:** tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns
-
-**When to Use:** Fixed requirements, clear scope, solo/small team
+**Handoff:** PRD → Agile (Epics/Stories) | Skip → Vibe
 
 ---
 
@@ -95,10 +66,9 @@ Story Points: [n] | Priority: [H/M/L] | Status: [...]
 - Commands: Vibe-Start, Try-This, Show-Me, That-Works, Undo-That, Run-It
 
 **Phase 2 (Evolution):** User says "Ready-to-Structure"
-- Option 1 → Structured: Fixed scope, generates PRD
-- Option 2 → Agile: Large feature set, generates backlog
+- Evolves to IDPF-Agile: Generates as-built Product Backlog
 
-**Phase 3 (Structured):** TDD with chosen framework
+**Phase 3 (Agile):** TDD with IDPF-Agile framework
 
 **Platform Coverage:**
 | Platform | Technologies |
@@ -112,37 +82,15 @@ Story Points: [n] | Priority: [H/M/L] | Status: [...]
 
 ---
 
-## IDPF-LTS
-**Location:** `IDPF-LTS/Long-Term-Support-Framework.md`
-**Type:** Production Maintenance (Terminal)
+## Framework Transition Flow
 
-**Core Tenets:**
-1. Stability First
-2. Minimal Change
-3. No New Features
-4. Backwards Compatibility
-5. Comprehensive Testing
-6. Risk Assessment
-7. Clear Documentation
+```
+IDPF-Vibe → IDPF-Agile (terminal)
+```
 
-**Allowed:** Critical bugs, security patches, documentation fixes
-**Forbidden:** New features, refactoring, dependency upgrades, breaking changes
-
-**Five-Phase Workflow:**
-1. Triage: Classify severity (P0-P4), determine eligibility
-2. Impact Assessment: Reproduce, root cause, risk evaluation
-3. Fix Development: TDD (RED-GREEN), minimal fix
-4. Regression Prevention: Full test suite, validation
-5. Documentation & Release: CHANGELOG, notes, patch version
-
-**Severity:**
-- P0: Data loss, security, system failure
-- P1: Core broken, no workaround
-- P2: Significant impact, workaround exists
-- P3: Minor impact
-- P4: Trivial
-
-**Commands:** LTS-Triage, LTS-Investigate, LTS-Fix, LTS-Regression-Check, LTS-Hotfix, LTS-Release
+**Transition Path:**
+- **IDPF-Vibe** (exploratory) evolves to **IDPF-Agile** (structured)
+- **IDPF-Agile** is terminal - projects remain in Agile through completion
 
 ---
 

@@ -8,6 +8,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.19.0] - 2025-12-31
+
+### Removed
+- **IDPF-Structured framework** (#634) - Removed structured/waterfall development framework. Users should transition to IDPF-Agile for sprint-based development.
+- **IDPF-LTS framework** (#634) - Removed Long-Term Support framework. Patch release workflow now supported under IDPF-Agile.
+
+### Changed
+- **Framework Transitions Simplified** (#634) - Transition model now VIBE → AGILE only:
+  - IDPF-Agile becomes terminal state (no transitions out)
+  - Patch releases supported within IDPF-Agile workflow
+- **Default Framework** (#634) - Installer default changed from IDPF-Structured to IDPF-Agile
+- **Framework Count** - Reduced from 12 to 10 frameworks (2 IDPF process + 8 testing)
+
+### Added
+- **Guided PRD Proposal** - New proposal for guided PRD creation workflow
+- **Project Charter Proposal** - New proposal for project charter integration
+
+---
+
 ## [0.18.0] - 2025-12-30
 
 ### Changed
@@ -33,7 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [v0.18.0] - 2025-12-29
+## [v0.19.0] - 2025-12-29
 
 ### Breaking Changes
 - **Single-Specialist Model** (#588) - Users now select ONE Base Expert at install time instead of multiple specialists:

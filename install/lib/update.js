@@ -98,7 +98,7 @@ async function updateTrackedProjects(frameworkPath, prompts) {
               projectConfig.projectType.processFramework = newFramework;
               log(`    ${colors.green(`Framework: ${currentFramework} → ${newFramework}`)}`);
 
-              // Regenerate CLAUDE.md with new framework (v0.18.0+: singular domainSpecialist)
+              // Regenerate CLAUDE.md with new framework (v0.19.0+: singular domainSpecialist)
               const domainSpecialist = projectConfig.projectType.domainSpecialist ||
                                         projectConfig.projectType.primarySpecialist ||
                                         (projectConfig.projectType.domainSpecialists || [])[0] ||
@@ -169,8 +169,8 @@ async function updateTrackedProjects(frameworkPath, prompts) {
         const validTargets = getValidTransitionTargets(currentFramework);
 
         if (validTargets.length === 0) {
-          // LTS or terminal state
-          if (currentFramework === 'IDPF-LTS') {
+          // Agile is terminal state
+          if (currentFramework === 'IDPF-Agile') {
             log(`    ${colors.dim(`Framework: ${currentFramework} (terminal - no transitions)`)}`);
           }
         } else {
@@ -196,7 +196,7 @@ async function updateTrackedProjects(frameworkPath, prompts) {
               projectConfig.projectType.processFramework = newFramework;
               log(`    ${colors.green(`Framework: ${currentFramework} → ${newFramework}`)}`);
 
-              // Regenerate CLAUDE.md with new framework (v0.18.0+: singular domainSpecialist)
+              // Regenerate CLAUDE.md with new framework (v0.19.0+: singular domainSpecialist)
               const domainSpecialist = projectConfig.projectType.domainSpecialist ||
                                         projectConfig.projectType.primarySpecialist ||
                                         (projectConfig.projectType.domainSpecialists || [])[0] ||
@@ -252,7 +252,7 @@ async function updateTrackedProjects(frameworkPath, prompts) {
         migration.migrate(projectPath, frameworkPath, projectConfig);
       }
 
-      // Redeploy rules (always update to latest) - v0.18.0+: singular domainSpecialist
+      // Redeploy rules (always update to latest) - v0.19.0+: singular domainSpecialist
       const hasGitHubWorkflow = fs.existsSync(path.join(projectPath, '.claude', 'hooks', 'workflow-trigger.js'));
       const domainSpecialist = projectConfig.projectType?.domainSpecialist ||
                                projectConfig.projectType?.primarySpecialist ||
@@ -303,7 +303,7 @@ async function updateTrackedProjects(frameworkPath, prompts) {
         }
       }
 
-      // Clean up orphaned files after migrations (v0.18.0+: singular domainSpecialist)
+      // Clean up orphaned files after migrations (v0.19.0+: singular domainSpecialist)
       const cleanupConfig = {
         domainSpecialist: projectConfig.projectType?.domainSpecialist ||
                           projectConfig.projectType?.primarySpecialist ||

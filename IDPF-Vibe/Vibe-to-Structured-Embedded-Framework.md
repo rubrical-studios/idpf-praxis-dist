@@ -1,5 +1,6 @@
 # Vibe-to-Structured Development Framework (Embedded)
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** IDPF-Vibe/Vibe-to-Structured-Embedded-Framework.md
 **Type:** Embedded Systems Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md
 
@@ -7,7 +8,7 @@
 
 ## Purpose
 Specializes Core Framework for embedded systems using simulators/emulators without physical hardware.
-**Evolution Options:** IDPF-Structured or IDPF-Agile
+**Evolution Target:** IDPF-Agile
 
 ---
 
@@ -145,8 +146,12 @@ void IRAM_ATTR buttonISR() { buttonPressed = true; }
 
 ## Transition Triggers
 
-**To IDPF-Structured:** Fixed sensors, known timing requirements, safety-critical
-**To IDPF-Agile:** Multiple deployment targets, evolving features, OTA updates planned
+**To IDPF-Agile:**
+- Multiple deployment targets
+- Evolving feature requirements
+- Team collaboration needed
+- OTA update capability planned
+- IoT platform integration
 
 **Checklist before transition:**
 - [ ] All sensors tested in simulation

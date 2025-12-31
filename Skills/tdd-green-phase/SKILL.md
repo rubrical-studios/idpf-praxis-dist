@@ -5,7 +5,8 @@ license: Complete terms in LICENSE.txt
 ---
 
 # TDD GREEN Phase
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** Skills/tdd-green-phase/SKILL.md
 
 Guide through GREEN phase: implementing minimum code to make failing test pass.
 

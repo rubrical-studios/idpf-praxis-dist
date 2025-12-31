@@ -1,5 +1,5 @@
 # Template Selection Guide
-**Version:** v0.18.0
+**Version:** 0.19.0
 
 **Purpose:** Help select the appropriate PRD template based on project characteristics.
 
@@ -9,9 +9,8 @@
 
 | Template | Best For | Formality | Typical Projects |
 |----------|----------|-----------|------------------|
-| **PRD-Structured-Comprehensive** | Large, formal projects | High | Enterprise, regulated |
-| **PRD-Structured-Moderate** | Standard projects | Medium | Most development |
-| **PRD-Agile-Lightweight** | Iterative projects | Low | Startups, rapid delivery |
+| **PRD-Agile-Comprehensive** | Large, formal projects | High | Enterprise, regulated |
+| **PRD-Agile-Lightweight** | Standard and iterative projects | Low-Medium | Most development, startups |
 
 ---
 
@@ -21,13 +20,13 @@
 Start Here
     │
     ▼
-Are requirements well-defined and stable?
+Are requirements well-defined?
     │
     ├─ YES ──► Is this a regulated/enterprise project?
     │              │
-    │              ├─ YES ──► PRD-Structured-Comprehensive
+    │              ├─ YES ──► PRD-Agile-Comprehensive
     │              │
-    │              └─ NO ───► PRD-Structured-Moderate
+    │              └─ NO ───► PRD-Agile-Lightweight
     │
     └─ NO ───► Is there uncertainty about scope?
                    │
@@ -41,10 +40,9 @@ Are requirements well-defined and stable?
 
 ## Template Comparison
 
-### PRD-Structured-Comprehensive
+### PRD-Agile-Comprehensive
 
 **Use When:**
-- Requirements are fixed and well-understood
 - Regulatory compliance is required
 - Multiple stakeholders need sign-off
 - Project is large (6+ months)
@@ -54,7 +52,7 @@ Are requirements well-defined and stable?
 **Contains:**
 - Executive summary
 - Complete stakeholder analysis
-- Detailed functional requirements (REQ-IDs)
+- Detailed functional requirements
 - Comprehensive NFR specifications
 - Full constraint and risk analysis
 - Detailed acceptance criteria
@@ -63,27 +61,6 @@ Are requirements well-defined and stable?
 - Version history
 
 **Typical Size:** 20-50+ pages
-
-### PRD-Structured-Moderate
-
-**Use When:**
-- Requirements are reasonably stable
-- Standard development project
-- Internal stakeholders primarily
-- Medium project size (1-6 months)
-- Documentation needed but not excessive
-- Solo developer or small team
-
-**Contains:**
-- Overview and goals
-- Key stakeholders
-- Core functional requirements
-- Essential NFRs
-- Major constraints
-- Acceptance criteria
-- Testing approach
-
-**Typical Size:** 5-15 pages
 
 ### PRD-Agile-Lightweight
 
@@ -122,58 +99,55 @@ Rate each factor (1-5) to help determine template:
 | Risk tolerance | High | Low | ___ |
 
 **Scoring:**
-- 7-15: PRD-Agile-Lightweight
-- 16-25: PRD-Structured-Moderate
-- 26-35: PRD-Structured-Comprehensive
+- 7-20: PRD-Agile-Lightweight
+- 21-35: PRD-Agile-Comprehensive
 
 ---
 
 ## Template Contents Comparison
 
-| Section | Comprehensive | Moderate | Lightweight |
-|---------|---------------|----------|-------------|
-| Executive Summary | ✅ Detailed | ✅ Brief | ❌ |
-| Stakeholder Analysis | ✅ Full RACI | ✅ Key roles | ✅ Brief |
-| Functional Requirements | ✅ REQ-IDs | ✅ REQ-IDs | ✅ Features/Stories |
-| NFRs | ✅ Comprehensive | ✅ Key NFRs | ✅ High-level |
-| Constraints | ✅ Full analysis | ✅ Major only | ✅ Key only |
-| Risks | ✅ Risk register | ✅ Major risks | ❌ |
-| Acceptance Criteria | ✅ Per requirement | ✅ Per requirement | ✅ Per story |
-| Traceability | ✅ Full matrix | ❌ | ❌ |
-| Approvals | ✅ Formal sign-off | ✅ Simple | ❌ |
-| Version Control | ✅ Detailed | ✅ Basic | ✅ Basic |
+| Section | Comprehensive | Lightweight |
+|---------|---------------|-------------|
+| Executive Summary | ✅ Detailed | ❌ |
+| Stakeholder Analysis | ✅ Full RACI | ✅ Brief |
+| Functional Requirements | ✅ Features/Stories | ✅ Features/Stories |
+| NFRs | ✅ Comprehensive | ✅ High-level |
+| Constraints | ✅ Full analysis | ✅ Key only |
+| Risks | ✅ Risk register | ❌ |
+| Acceptance Criteria | ✅ Per story | ✅ Per story |
+| Traceability | ✅ Full matrix | ❌ |
+| Approvals | ✅ Formal sign-off | ❌ |
+| Version Control | ✅ Detailed | ✅ Basic |
 
 ---
 
 ## Framework Compatibility
 
-| Template | Primary Framework | Can Also Use |
-|----------|-------------------|--------------|
-| Comprehensive | IDPF-Structured | IDPF-Agile (with backlog conversion) |
-| Moderate | IDPF-Structured | IDPF-Agile (with backlog conversion) |
-| Lightweight | IDPF-Agile | IDPF-Structured (with formalization) |
+| Template | Target Framework |
+|----------|------------------|
+| Comprehensive | IDPF-Agile |
+| Lightweight | IDPF-Agile |
 
 ---
 
-## Conversion Notes
+## Template Usage Notes
 
-### Comprehensive/Moderate → Agile
+### Comprehensive Template
 
-If starting with Structured template but moving to Agile:
-1. Group requirements into Epics (feature areas)
-2. Convert REQ-IDs to User Stories
-3. Move acceptance criteria to story level
-4. Create Product Backlog from requirements
-5. Prioritize for Sprint 0 planning
+Best for projects requiring formal documentation:
+1. Full stakeholder analysis with RACI
+2. Detailed NFRs with specific targets
+3. Comprehensive constraint analysis
+4. Full traceability matrix
+5. Formal approval section
 
-### Lightweight → Structured
+### Lightweight Template
 
-If starting with Agile template but need more formality:
-1. Assign REQ-IDs to features/stories
-2. Expand NFRs with specific targets
-3. Add constraint analysis
-4. Create traceability matrix
-5. Add formal approval section
+Best for most development projects:
+1. Focus on features and user stories
+2. High-level NFRs
+3. Key constraints only
+4. Quick to create and iterate
 
 ---
 
@@ -187,12 +161,6 @@ If starting with Agile template but need more formality:
 - Proof of concept needed first
 - Learning a new technology
 - Personal project with no requirements
-
-**Use IDPF-LTS when:**
-- Maintaining existing system
-- Bug fixes only
-- No new features planned
-- System in maintenance mode
 
 ### When to Start Lightweight and Grow
 

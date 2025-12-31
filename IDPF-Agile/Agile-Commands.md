@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Commands
-**Version:** v0.18.0
+**Version:** v0.19.0
 **Module:** Commands (loaded on-demand)
 
 ---

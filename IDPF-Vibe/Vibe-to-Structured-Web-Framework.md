@@ -1,5 +1,6 @@
 # Vibe-to-Structured Development Framework (Web)
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** IDPF-Vibe/Vibe-to-Structured-Web-Framework.md
 **Type:** Web Application Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md
 
@@ -7,7 +8,7 @@
 
 ## Purpose
 Specializes Core Framework for web development: frontend, backend, full-stack.
-**Evolution Options:** IDPF-Structured or IDPF-Agile
+**Evolution Target:** IDPF-Agile
 
 ---
 
@@ -133,7 +134,7 @@ FCP < 1.5s, TTI < 3s, Lighthouse > 90
 ### Evolution Point
 Document API endpoints, define schema, plan auth, set performance budgets
 
-### Structured Phase
+### Agile Phase
 Add tests, optimize bundles, proper error handling, loading states, accessibility
 
 ---

@@ -5,7 +5,8 @@ license: Complete terms in LICENSE.txt
 ---
 
 # BDD Writing
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** Skills/bdd-writing/SKILL.md
 
 Guidance for writing Behavior-Driven Development specifications using Gherkin syntax.
 

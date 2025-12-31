@@ -5,7 +5,8 @@ license: Complete terms in LICENSE.txt
 ---
 
 # TDD REFACTOR Phase
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** Skills/tdd-refactor-phase/SKILL.md
 
 Guide through REFACTOR phase: improving code quality while keeping tests green.
 

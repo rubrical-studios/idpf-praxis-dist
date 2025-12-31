@@ -1,5 +1,6 @@
 # Skill: extract-prd
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** Skills/extract-prd/SKILL.md
 
 **Purpose:** Extract PRD worksheets from existing codebases
 **Audience:** Developers documenting legacy/undocumented projects
@@ -11,7 +12,6 @@
 - Legacy codebase without documentation
 - Project built without upfront requirements
 - Onboarding to existing project
-- Pre-LTS baseline documentation
 - Compliance/audit requirement generation
 
 ## Skill Commands

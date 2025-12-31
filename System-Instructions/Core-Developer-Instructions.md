@@ -1,5 +1,6 @@
 # System Instructions: Core Developer
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** System-Instructions/Core-Developer-Instructions.md
 **Purpose:** Foundation competencies for all domain specialists
 
 ---
@@ -76,7 +77,7 @@ Backend, Frontend, Full-Stack, Mobile, Desktop-App, Game, Embedded, Systems-Prog
 ---
 
 ## Framework Integration
-Works with IDPF-Structured, IDPF-Agile, Vibe-to-Structured
+Works with IDPF-Agile, IDPF-Vibe
 
 ---
 

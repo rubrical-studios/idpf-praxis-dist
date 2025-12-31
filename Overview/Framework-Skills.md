@@ -1,5 +1,6 @@
 # Framework Skills Reference
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** Overview/Framework-Skills.md
 **Purpose:** Reference for all Skills
 
 ---
@@ -102,9 +103,7 @@
 
 | Framework | Required Skills |
 |-----------|----------------|
-| IDPF-Structured | tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns |
 | IDPF-Agile | tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns |
-| IDPF-LTS | tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns |
 | IDPF-Vibe (Newbie) | flask-setup, sinatra-setup, common-errors, sqlite-integration, beginner-testing |
 
 **Standalone:** anti-pattern-analysis, bdd-writing, extract-prd, uml-generation

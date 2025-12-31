@@ -5,13 +5,13 @@ license: Complete terms in LICENSE.txt
 ---
 
 # TDD RED Phase
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** Skills/tdd-red-phase/SKILL.md
 
 Guide through RED phase: writing failing tests and verifying expected failures.
 
 ## When to Use
 - Starting new feature implementation
-- User issues "First-Step" (IDPF-Structured)
 - User issues "Start-Story [ID]" (IDPF-Agile)
 - Beginning new TDD iteration
 
@@ -48,9 +48,9 @@ STEP 7: Report: Did test fail as expected?
 - [ ] Failure message indicates missing implementation
 
 **Step 4: Analyze**
-- Fails as expected → "Done-Next-Step" → GREEN phase
-- Passes unexpectedly → Revise test
-- Errors instead of fails → Fix test code
+- Fails as expected -> "Done-Next-Step" -> GREEN phase
+- Passes unexpectedly -> Revise test
+- Errors instead of fails -> Fix test code
 
 ## Best Practices
 - Write minimal tests (single assertion)

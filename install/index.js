@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.18.0
+// **Version:** 0.19.0
 /**
  * IDPF Framework Installer - Main Entry Point
  * Unified cross-platform installer for Windows, macOS, and Linux
@@ -58,8 +58,8 @@ const {
 
 const {
   generateClaudeMd,
-  // generateSwitchRole removed in v0.18.0 - single specialist model
-  // generateAddRole removed in v0.18.0 - single specialist model
+  // generateSwitchRole removed in v0.19.0 - single specialist model
+  // generateAddRole removed in v0.19.0 - single specialist model
   generateGhPmuConfig,
   generateSettingsLocal,
   generatePrdReadme,
@@ -439,7 +439,7 @@ async function main() {
       const validTargets = getValidTransitionTargets(lockedFramework);
 
       if (validTargets.length === 0) {
-        // LTS or other terminal state
+        // Agile is terminal state
         logWarning(getTransitionBlockReason(lockedFramework, null));
         log();
         processFramework = lockedFramework;
@@ -563,10 +563,10 @@ async function main() {
     divider();
     log();
 
-    // framework-config.json (using new v0.18.0+ schema - single specialist)
+    // framework-config.json (using new v0.19.0+ schema - single specialist)
     createOrUpdateConfig(projectDir, manifest, {
       processFramework,
-      domainSpecialist,  // v0.18.0: singular string instead of array
+      domainSpecialist,  // v0.19.0: singular string instead of array
       frameworkPath,
     });
     logSuccess('  ✓ framework-config.json');
@@ -613,7 +613,7 @@ async function main() {
     }
 
     // PRD directory
-    if (['IDPF-Structured', 'IDPF-Agile'].includes(processFramework)) {
+    if (processFramework === 'IDPF-Agile') {
       generatePrdReadme(projectDir, processFramework);
       logSuccess('  ✓ PRD/README.md');
 
@@ -621,16 +621,9 @@ async function main() {
       const templatesDir = path.join(frameworkPath, 'Templates');
       const prdDir = path.join(projectDir, 'PRD');
 
-      if (processFramework === 'IDPF-Structured') {
-        const src = path.join(templatesDir, 'PRD-Structured.md');
-        if (fs.existsSync(src)) {
-          fs.copyFileSync(src, path.join(prdDir, 'PRD-Structured.md'));
-        }
-      } else if (processFramework === 'IDPF-Agile') {
-        const src = path.join(templatesDir, 'PRD-Agile-Lightweight.md');
-        if (fs.existsSync(src)) {
-          fs.copyFileSync(src, path.join(prdDir, 'PRD-Agile-Lightweight.md'));
-        }
+      const src = path.join(templatesDir, 'PRD-Agile-Lightweight.md');
+      if (fs.existsSync(src)) {
+        fs.copyFileSync(src, path.join(prdDir, 'PRD-Agile-Lightweight.md'));
       }
     }
 
@@ -653,7 +646,7 @@ async function main() {
       logSuccess('  ✓ .claude/rules/05-windows-shell.md (Windows only)');
     }
 
-    // switch-role and add-role commands removed in v0.18.0 - single specialist model
+    // switch-role and add-role commands removed in v0.19.0 - single specialist model
     // prepare-release/prepare-beta moved to deployWorkflowCommands in v0.17.1
 
     // Deploy core commands (always available, not tied to GitHub workflow)
@@ -732,7 +725,7 @@ async function main() {
 
     // Clean up orphaned files from previous installations
     const cleanupConfig = {
-      domainSpecialist,  // v0.18.0: singular
+      domainSpecialist,  // v0.19.0: singular
       enableGitHubWorkflow: enableGitHubWorkflow,
     };
     const cleanupResult = cleanupOrphanedFiles(projectDir, cleanupConfig);

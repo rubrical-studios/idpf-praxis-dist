@@ -5,7 +5,7 @@ license: Complete terms in LICENSE.txt
 ---
 
 # TDD Failure Recovery
-**Version:** v0.18.0
+**Version:** v0.19.0
 
 Guide through diagnosing and recovering from unexpected test behaviors.
 

@@ -1,7 +1,7 @@
 # Vibe-to-Structured Development Framework (Core)
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** IDPF-Vibe/Vibe-to-Structured-Core-Framework.md
 **Type:** Core Framework (Platform-Agnostic)
-**Framework-Debug:** True
 
 ---
 
@@ -30,7 +30,7 @@ Core framework for Vibe-to-Structured methodology. Platform-agnostic.
 3. **User**: Human developer
 4. **Vibe Phase**: Exploratory development without formal requirements
 5. **Structured Phase**: TDD development with requirements
-6. **Evolution Point**: Transition from Vibe to Structured
+6. **Evolution Point**: Transition from Vibe to Agile
 
 ---
 
@@ -44,7 +44,7 @@ Core framework for Vibe-to-Structured methodology. Platform-agnostic.
 
 ## Three-Phase Workflow
 ```
-VIBE PHASE → EVOLUTION POINT → STRUCTURED PHASE
+VIBE PHASE → EVOLUTION POINT → AGILE PHASE
 ```
 
 ---
@@ -90,41 +90,37 @@ VIBE PHASE → EVOLUTION POINT → STRUCTURED PHASE
 - User issues "Ready-to-Structure"
 - ASSISTANT detects maturity (3-5 features, stable architecture)
 
-### Evolution Options
-
-**Structured (IDPF-Structured):**
-- Fixed scope, solo developer
-- Generates: PRD document
-
-**Agile (IDPF-Agile):**
-- Large feature set, prioritization needed
+### Evolution Target: IDPF-Agile
+All Vibe projects evolve to **IDPF-Agile**:
+- Iterative sprints with user stories
+- Prioritization and backlog management
 - Generates: Product Backlog with Stories/Epics
 
 ### Process
 1. Pause development
 2. Analyze existing code
-3. Generate requirements/backlog
+3. Generate Product Backlog
 4. Propose test strategy
 5. Present evolution plan
 6. Refine with user
-7. Save document
-8. Instruct session transition
+7. Save backlog document
+8. Begin Sprint Planning
 
 ---
 
-## Phase 3: STRUCTURED PHASE
+## Phase 3: AGILE PHASE
 
 ### Transition
 1. Switch to TDD Mode (RED-GREEN-REFACTOR)
 2. Add tests for existing code
 3. Continue development with rigor
-4. Maintain requirements
+4. Maintain backlog
 
 ### Commands
-All IDPF-Structured commands apply:
-- List-Commands, Done-Next-Step, Rollback-Previous-Step
-- Push-Changes, Update-Requirements, Double-Check
-- Final-Commit-Create-PR, Roadblock-Stop
+All IDPF-Agile commands apply:
+- Create-Backlog, Plan-Sprint, Start-Story, Story-Complete
+- Done-Next-Step, Rollback-Previous-Step, Run-Tests
+- Push-Changes, Sprint-Retro, Velocity-Report
 
 ---
 
@@ -157,7 +153,7 @@ STEP 8: [Report results]
 - Be honest about what exists vs needed
 - Plan for quality
 
-### Structured Phase
+### Agile Phase
 - TDD rigorously
 - Test existing code
 - Refactor freely with safety net
@@ -168,7 +164,7 @@ STEP 8: [Report results]
 ## When to Use
 
 **Use Vibe-to-Structured:** Unclear requirements, exploring technology, prototyping, learning
-**Use IDPF-Structured directly:** Clear requirements, existing codebase, mature project
+**Use IDPF-Agile directly:** Clear requirements, existing codebase, mature project
 **Don't use:** Safety-critical systems, production without staging, fixed-scope projects
 
 ---

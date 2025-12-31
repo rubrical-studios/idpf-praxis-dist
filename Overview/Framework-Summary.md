@@ -1,5 +1,6 @@
 # Framework Summary
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** Overview/Framework-Summary.md
 **Purpose:** Compact startup reference for framework developers
 
 ---
@@ -8,7 +9,7 @@
 
 | Component | Count | Location |
 |-----------|-------|----------|
-| Development Frameworks | 4 | IDPF-Structured, IDPF-Agile, IDPF-Vibe (7 variants), IDPF-LTS |
+| Development Frameworks | 2 | IDPF-Agile, IDPF-Vibe (7 variants) |
 | Testing Frameworks | 7 | IDPF-Testing-Core + 6 specialized |
 | Domain Specialists | 23 | 12 Base + 10 Pack + 1 PRD |
 | Core Instructions | 2 | Core-Developer-Instructions + Domain-Selection-Guide |
@@ -23,10 +24,8 @@
 | Framework | Rev | Type |
 |-----------|-----|------|
 | IDPF-PRD | 3 | Requirements Engineering |
-| IDPF-Structured | 9 | TDD with Fixed Requirements |
 | IDPF-Agile | 3 | Sprint-Based Development |
-| IDPF-Vibe (Core) | 4.0 | Exploratory → Structured |
-| IDPF-LTS | 1 | Production Maintenance |
+| IDPF-Vibe (Core) | 4.0 | Exploratory → Agile |
 
 ### Testing Frameworks
 | Framework | Rev | Extends |
@@ -59,11 +58,9 @@
 
 | Project Type | Start | Evolution |
 |--------------|-------|-----------|
-| Fixed requirements | IDPF-Structured | → LTS |
-| Evolving requirements | IDPF-Agile | → LTS |
-| Exploration needed | IDPF-Vibe | → Structured/Agile |
-| Production maintenance | IDPF-LTS | Terminal |
-| Separate test repo | IDPF-Testing-Core | Use Structured/Agile |
+| Evolving requirements | IDPF-Agile | Terminal |
+| Exploration needed | IDPF-Vibe | → Agile |
+| Separate test repo | IDPF-Testing-Core | Use Agile |
 
 ---
 
@@ -79,12 +76,10 @@
 ## Valid Transitions
 
 ```
-VIBE ──► STRUCTURED ──► LTS
-  │          ↑↓
-  └────► AGILE ────────► LTS
+VIBE ──► AGILE (Terminal)
 ```
 
-**Invalid:** Structured/Agile → Vibe, LTS → Any
+**Invalid:** Agile → Vibe (quality standards should never decrease)
 
 ---
 
@@ -92,11 +87,11 @@ VIBE ──► STRUCTURED ──► LTS
 
 | File | Content |
 |------|---------|
-| Framework-Development.md | IDPF details |
-| Framework-Testing.md | Testing frameworks |
-| Framework-System-Instructions.md | Core + Specialists |
-| Framework-Skills.md | All skills |
-| Framework-Transitions.md | Transition matrix |
+| Framework-Development.md | IDPF-PRD, Agile, Vibe details |
+| Framework-Testing.md | Testing-Core + 6 specialized frameworks |
+| Framework-System-Instructions.md | Core + 23 Domain Specialists |
+| Framework-Skills.md | All 21 skills |
+| Framework-Transitions.md | Transition matrix, hybrid usage |
 | Framework-Overview.md | Complete reference |
 
 ---

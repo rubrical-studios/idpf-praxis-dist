@@ -53,10 +53,8 @@ const DOMAIN_SPECIALISTS = [
 ];
 
 const FRAMEWORK_SKILLS = {
-  'IDPF-Structured': ['tdd-red-phase', 'tdd-green-phase', 'tdd-refactor-phase', 'tdd-failure-recovery', 'test-writing-patterns'],
   'IDPF-Agile': ['tdd-red-phase', 'tdd-green-phase', 'tdd-refactor-phase', 'tdd-failure-recovery', 'test-writing-patterns'],
   'IDPF-Vibe': [],
-  'IDPF-LTS': ['tdd-red-phase', 'tdd-green-phase', 'tdd-refactor-phase', 'tdd-failure-recovery', 'test-writing-patterns'],
 };
 
 const VIBE_VARIANT_SKILLS = {
@@ -97,8 +95,8 @@ const INSTALLED_FILES_MANIFEST = {
   commands: {
     dir: '.claude/commands',
     files: [
-      // switch-role.md removed in v0.18.0 - single specialist model
-      // add-role.md removed in v0.18.0 - single specialist model
+      // switch-role.md removed in v0.19.0 - single specialist model
+      // add-role.md removed in v0.19.0 - single specialist model
       'change-domain-expert.md',  // Core command (always deployed)
       (config) => config?.enableGitHubWorkflow ? 'assign-release.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'switch-release.md' : null,
@@ -134,10 +132,8 @@ const INSTALLED_FILES_MANIFEST = {
 };
 
 const PROCESS_FRAMEWORKS = [
-  { value: 'IDPF-Structured', title: 'IDPF-Structured', description: 'Test-Driven Development with fixed requirements' },
   { value: 'IDPF-Agile', title: 'IDPF-Agile', description: 'Sprint-based development with user stories' },
   { value: 'IDPF-Vibe', title: 'IDPF-Vibe', description: 'Exploratory development with evolution paths' },
-  { value: 'IDPF-LTS', title: 'IDPF-LTS', description: 'Long-Term Support maintenance mode' },
 ];
 
 const VIBE_VARIANTS = [
@@ -163,10 +159,8 @@ const TESTING_FRAMEWORKS = [
  * Valid framework transitions per Framework-Transitions.md
  */
 const VALID_TRANSITIONS = {
-  'IDPF-Vibe': ['IDPF-Structured', 'IDPF-Agile'],
-  'IDPF-Structured': ['IDPF-Agile', 'IDPF-LTS'],
-  'IDPF-Agile': ['IDPF-Structured', 'IDPF-LTS'],
-  'IDPF-LTS': [],
+  'IDPF-Vibe': ['IDPF-Agile'],
+  'IDPF-Agile': [],  // Terminal state
 };
 
 const ALL_SKILLS = [

@@ -1,4 +1,4 @@
-// **Version:** 0.18.0
+// **Version:** 0.19.0
 /**
  * lib/gh.js - GitHub CLI wrapper
  *

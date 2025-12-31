@@ -1,5 +1,6 @@
 # IDPF-Security Framework
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** IDPF-Security/IDPF-Security.md
 **Extends:** IDPF-Testing-Core
 **Framework-Debug:** True
 
@@ -83,7 +84,7 @@ Framework for security testing: SAST, DAST, penetration testing, vulnerability m
 | Low | 0.1-3.9 | 90 days |
 
 ### Workflow
-Discovery → Triage → Assignment → Remediation → Verification → Closure
+Discovery -> Triage -> Assignment -> Remediation -> Verification -> Closure
 
 ---
 

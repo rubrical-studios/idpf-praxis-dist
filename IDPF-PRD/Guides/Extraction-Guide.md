@@ -1,5 +1,5 @@
 # PRD Extraction Guide
-**Version:** v0.18.0
+**Version:** 0.19.0
 
 **Purpose:** Step-by-step guide for extracting a PRD from existing code
 **Audience:** Developers documenting legacy or undocumented projects
@@ -12,9 +12,8 @@ PRD Extraction reverse-engineers requirements documentation from working code. U
 
 - Legacy project documentation
 - Team onboarding
-- Pre-LTS baseline
 - Compliance requirements
-- Transitioning to structured development
+- Transitioning to agile development
 
 ---
 
@@ -158,12 +157,11 @@ Evidence:
 **Command:** `Generate-PRD`
 
 **Process:**
-1. Select template (Structured or Agile)
+1. Select template (Comprehensive or Lightweight)
 2. ASSISTANT assembles validated content
 3. Outputs `PRD-[ProjectName].md`
 
 **PRD is ready for:**
-- IDPF-Structured (with REQ-IDs)
 - IDPF-Agile (with User Stories)
 
 ---
@@ -342,17 +340,17 @@ ASSISTANT: Confirmed. Feature 2/15...
 User: Generate-PRD
 
 ASSISTANT:
-Template: Structured (fixed requirements)
+Template: Agile-Lightweight
 
 Generating PRD...
 
 PRD-ECommerceAPI.md created with:
-- 15 requirements (REQ-001 through REQ-015)
+- 15 features as user stories
 - 11 NFRs documented
 - Acceptance criteria from tests
 - Testing approach: TDD
 
-Ready for IDPF-Structured development.
+Ready for IDPF-Agile development.
 ```
 
 ---

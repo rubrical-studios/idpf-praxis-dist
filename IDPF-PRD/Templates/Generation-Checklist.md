@@ -1,5 +1,5 @@
 # Generation Checklist
-**Version:** v0.18.0
+**Version:** 0.19.0
 
 **Project Name:** _______________________
 **Date:** _______________________
@@ -38,14 +38,14 @@
 ### Project Characteristics
 
 **Requirements Stability:**
-- [ ] Fixed and well-defined → Structured template
-- [ ] Expected to evolve → Agile template
-- [ ] Unknown/exploratory → Consider IDPF-Vibe first
+- [ ] Well-defined requirements -> Agile template
+- [ ] Expected to evolve -> Agile template with iterative refinement
+- [ ] Unknown/exploratory -> Consider IDPF-Vibe first
 
 **Process Formality:**
-- [ ] Formal, compliance-driven → Comprehensive template
-- [ ] Standard development → Moderate template
-- [ ] Lightweight, iterative → Agile template
+- [ ] Formal, compliance-driven -> Agile-Comprehensive template
+- [ ] Standard development -> Agile-Lightweight template
+- [ ] Lightweight, iterative -> Agile-Lightweight template
 
 **Team Size:**
 - [ ] Solo/small team → Any template
@@ -53,8 +53,7 @@
 
 ### Selected Template
 
-- [ ] PRD-Structured-Comprehensive.md
-- [ ] PRD-Structured-Moderate.md
+- [ ] PRD-Agile-Comprehensive.md
 - [ ] PRD-Agile-Lightweight.md
 
 **Template Location:** `PRD/Templates/[selected-template].md`
@@ -110,12 +109,6 @@
 
 ## Framework Handoff Preparation
 
-### For IDPF-Structured
-- [ ] All requirements have REQ-IDs
-- [ ] First requirement identified (REQ-001)
-- [ ] Acceptance criteria in testable format
-- [ ] TDD cycle can begin immediately
-
 ### For IDPF-Agile
 - [ ] Features mapped to potential Epics
 - [ ] Capabilities mapped to potential Stories
@@ -149,20 +142,17 @@
 
 ### Next Steps
 1. [ ] Copy PRD to project's PRD/ directory
-2. [ ] Select development framework (Structured/Agile)
-3. [ ] Begin development phase
+2. [ ] Begin IDPF-Agile development phase
 
 ---
 
 ## Handoff Statement
 
 **This PRD is ready for:**
-- [ ] IDPF-Structured development (fixed requirements, TDD)
 - [ ] IDPF-Agile development (iterative, sprint-based)
 
 **Starting Point:**
-- Structured: Begin TDD with REQ-___
-- Agile: Create backlog, begin Sprint 0
+- Create backlog from PRD, begin Sprint 0
 
 **Facilitator Signature:** _______________________
 **Date:** _______________________

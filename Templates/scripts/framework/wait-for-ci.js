@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.18.0
+// **Version:** 0.19.0
 /**
  * @framework-script {{VERSION}}
  * @description Poll GitHub Actions workflow status with timeout

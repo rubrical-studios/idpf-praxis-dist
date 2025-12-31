@@ -1,17 +1,16 @@
 # Framework Transitions Reference
-**Version:** v0.18.0
+**Version:** v0.19.0
+**Source:** Overview/Framework-Transitions.md
 **Purpose:** Transition rules, diagrams, hybrid usage
 
 ---
 
 ## Transition Diagram
 ```
-VIBE ──► STRUCTURED ──► LTS
-  │          ↑↓
-  └────► AGILE ────────► LTS
+VIBE ──► AGILE (Terminal)
 ```
 
-**Invalid:** Structured/Agile → Vibe, LTS → Any
+**Invalid:** Agile → Vibe
 
 ---
 
@@ -19,12 +18,7 @@ VIBE ──► STRUCTURED ──► LTS
 
 | From | To | When |
 |------|----|------|
-| Vibe | Structured | Fixed scope, solo/small team |
-| Vibe | Agile | Large feature set, need sprints |
-| Structured | Agile | Scope expanded, iterative delivery |
-| Agile | Structured | Scope narrowed, sprint overhead not justified |
-| Structured | LTS | Production ready, maintenance mode |
-| Agile | LTS | Final sprint, backlog frozen |
+| Vibe | Agile | Exploration complete, requirements understood |
 
 ---
 
@@ -37,18 +31,17 @@ VIBE ──► STRUCTURED ──► LTS
 - Dependencies
 
 **Changes:**
-- Documentation format
-- Workflow structure
-- Planning granularity
-- Progress tracking
+- Documentation format (informal → User Stories)
+- Workflow structure (conversational → Sprints)
+- Planning granularity (ad-hoc → Stories/Epics)
+- Progress tracking (informal → Velocity)
 
 **Best Practices:**
 1. Complete current work
 2. All tests green
 3. Commit WIP
 4. Create transition docs
-5. Archive old artifacts
-6. Generate new artifacts
+5. Generate new artifacts (backlog)
 
 ---
 
@@ -56,47 +49,39 @@ VIBE ──► STRUCTURED ──► LTS
 
 | Invalid | Rationale |
 |---------|-----------|
-| Structured → Vibe | Defeats structured discipline |
-| Agile → Vibe | Abandons testing discipline |
-| LTS → Any | Terminal state |
-
-**If new development needed from LTS:**
-- Start new project (Vibe/Structured/Agile)
-- Maintain LTS in parallel
-- Plan migration path
-- Archive LTS at EOL
+| Agile → Vibe | Defeats structured discipline, abandons testing |
 
 ---
 
-## Specific Transitions
+## Vibe → Agile
 
-**Structured → Agile:**
-- Requirements → User Stories
-- Linear → Sprints
+**Preserves:** Code, tests, Git history
+
+**Changes:**
+- Informal dev → User Stories
+- Ad-hoc → Sprints
 - Add velocity tracking
+- Formalize requirements as epics/stories
 
-**Structured → LTS:**
-- New features forbidden
-- Requirements → Bug triage
-- Active dev → Maintenance
+**Steps:**
+1. Document discovered requirements
+2. Create initial backlog with epics
+3. Break epics into stories
+4. Plan first sprint
+5. Continue with TDD discipline
 
-**Agile → Structured:**
-- User Stories → Requirements
-- Sprints → Linear
-- Remove backlog overhead
-
-**Agile → LTS:**
-- Stories → Bug reports
-- Sprint Planning → LTS triage
+### Agile as Terminal State
+- No transitions FROM Agile
+- Projects continue until completion
+- New projects can start with Vibe or directly with Agile
 
 ---
 
 ## Hybrid Usage
 
 **Valid Scenarios:**
-- Backend (Structured) + Frontend (Agile)
-- Core Platform (LTS) + Extensions (Agile)
-- Production v2.x (LTS) + v3.x (Vibe/Agile)
+- New feature exploration (Vibe) + Main product (Agile)
+- Product A in development (Agile) + Product B exploring (Vibe)
 
 **Guidelines:**
 - Document framework per concern
@@ -110,11 +95,9 @@ VIBE ──► STRUCTURED ──► LTS
 
 | Project Type | Framework | Evolution |
 |--------------|-----------|-----------|
-| Fixed requirements | Structured | → LTS |
-| Evolving requirements | Agile | → LTS |
-| Exploration needed | Vibe | → Structured/Agile |
-| Production maintenance | LTS | Terminal |
-| Separate test repo | Testing-Core | Use Structured/Agile |
+| Evolving requirements | Agile | Terminal |
+| Exploration needed | Vibe | → Agile |
+| Separate test repo | Testing-Core | Use Agile |
 
 ---
 
