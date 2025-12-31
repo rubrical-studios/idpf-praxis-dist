@@ -1,5 +1,5 @@
 # Framework System Instructions Reference
-**Version:** v0.19.0
+**Version:** v0.19.1
 **Source:** Overview/Framework-System-Instructions.md
 **Purpose:** Reference for System Instructions
 

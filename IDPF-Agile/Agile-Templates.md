@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Templates
-**Version:** v0.19.0
+**Version:** v0.19.1
 **Module:** Templates (loaded on-demand)
 
 ---

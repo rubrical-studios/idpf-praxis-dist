@@ -1,5 +1,5 @@
 # Skill: extract-prd
-**Version:** v0.19.0
+**Version:** v0.19.1
 **Source:** Skills/extract-prd/SKILL.md
 
 **Purpose:** Extract PRD worksheets from existing codebases

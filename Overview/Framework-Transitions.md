@@ -1,5 +1,5 @@
 # Framework Transitions Reference
-**Version:** v0.19.0
+**Version:** v0.19.1
 **Source:** Overview/Framework-Transitions.md
 **Purpose:** Transition rules, diagrams, hybrid usage
 

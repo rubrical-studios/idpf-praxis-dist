@@ -1,5 +1,5 @@
 # Framework Summary
-**Version:** v0.19.0
+**Version:** v0.19.1
 **Source:** Overview/Framework-Summary.md
 **Purpose:** Compact startup reference for framework developers
 

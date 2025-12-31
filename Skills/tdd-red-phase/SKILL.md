@@ -5,7 +5,7 @@ license: Complete terms in LICENSE.txt
 ---
 
 # TDD RED Phase
-**Version:** v0.19.0
+**Version:** 0.19.0
 **Source:** Skills/tdd-red-phase/SKILL.md
 
 Guide through RED phase: writing failing tests and verifying expected failures.
@@ -48,9 +48,9 @@ STEP 7: Report: Did test fail as expected?
 - [ ] Failure message indicates missing implementation
 
 **Step 4: Analyze**
-- Fails as expected -> "Done-Next-Step" -> GREEN phase
-- Passes unexpectedly -> Revise test
-- Errors instead of fails -> Fix test code
+- Fails as expected → Proceed autonomously to GREEN phase
+- Passes unexpectedly → Revise test
+- Errors instead of fails → Fix test code
 
 ## Best Practices
 - Write minimal tests (single assertion)
@@ -66,7 +66,7 @@ STEP 7: Report: Did test fail as expected?
 - [ ] Test complete and syntactically correct
 - [ ] Test FAILS (not passes, not errors)
 - [ ] Failure message clearly indicates missing implementation
-- [ ] User reported via "Done-Next-Step"
+- [ ] Ready to proceed to GREEN phase
 
 ---
 

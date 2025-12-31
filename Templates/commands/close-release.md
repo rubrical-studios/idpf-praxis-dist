@@ -4,7 +4,7 @@ description: Close release with GitHub Release and cleanup
 argument-hint: [--skip-release-page]
 ---
 
-<!-- EXTENSIBLE: vv0.19.0 -->
+<!-- EXTENSIBLE: vv0.19.1 -->
 # /close-release
 
 Closes a release by creating GitHub Release page and cleaning up.

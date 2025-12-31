@@ -1,5 +1,5 @@
 # System Instructions: API & Integration Specialist
-**Version:** v0.19.0
+**Version:** v0.19.1
 Extends: Core-Developer-Instructions.md
 
 ---

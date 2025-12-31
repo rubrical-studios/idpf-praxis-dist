@@ -5,14 +5,14 @@ license: Complete terms in LICENSE.txt
 ---
 
 # TDD GREEN Phase
-**Version:** v0.19.0
+**Version:** 0.19.0
 **Source:** Skills/tdd-green-phase/SKILL.md
 
 Guide through GREEN phase: implementing minimum code to make failing test pass.
 
 ## When to Use
 - RED phase test verified as failing
-- User responds "Done-Next-Step" after RED phase
+- Proceeding autonomously after RED phase
 - Moving from RED to GREEN in TDD cycle
 
 ## Objective
@@ -51,7 +51,7 @@ STEP 8: Report: Did test pass?
 - [ ] Implementation is minimal
 
 **Step 5: Analyze**
-- Passes → "Done-Next-Step" → REFACTOR phase
+- Passes → Proceed autonomously to REFACTOR phase
 - Still fails → Revise implementation
 - Other tests fail → Fix regressions first
 
@@ -75,7 +75,7 @@ STEP 8: Report: Did test pass?
 - [ ] Target test now PASSES
 - [ ] Implementation is minimal
 - [ ] No regressions (full suite green)
-- [ ] User reported via "Done-Next-Step"
+- [ ] Ready to proceed to REFACTOR phase
 
 ---
 

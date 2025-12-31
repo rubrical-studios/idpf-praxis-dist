@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Transitions
-**Version:** v0.19.0
+**Version:** 0.19.0
 **Module:** Transitions (loaded on-demand)
 
 ---
@@ -34,7 +34,7 @@
 **When:** Production reached, maintenance mode, critical fixes only, backlog frozen
 **How:**
 1. Complete/close current sprint
-2. Final Sprint-Review
+2. Final /sprint-retro
 3. Archive backlog and history
 4. 100% test suite passing
 5. Full documentation

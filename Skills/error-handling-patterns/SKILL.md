@@ -5,7 +5,7 @@ license: Complete terms in LICENSE.txt
 ---
 
 # Error Handling Patterns
-**Version:** v0.19.0
+**Version:** v0.19.1
 
 ## When to Use
 - Designing error strategy for new project

@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Core
-**Version:** v0.19.0
+**Version:** 0.19.0
 **Module:** Core (loaded at session startup)
 
 ---
@@ -38,9 +38,8 @@ Product Backlog Creation → Sprint Planning → Story Development (TDD) → Spr
 ### Development Commands
 | Command | Description |
 |---------|-------------|
-| Done-Next-Step | TDD iteration successful, proceed |
-| Rollback-Previous-Step | Undo last iteration |
 | Run-Tests | Execute full test suite |
+| Show-Coverage | Display test coverage report |
 
 ### GitHub Integration
 - All backlog commands work against GitHub issues
@@ -52,20 +51,22 @@ Product Backlog Creation → Sprint Planning → Story Development (TDD) → Spr
 
 ## TDD Cycle (RED-GREEN-REFACTOR)
 
+TDD phases execute **autonomously** within each story. No user interaction between phases. Only checkpoints: **In Review** (after implementation) and **Done** (user approval).
+
 ### RED Phase
 1. Write failing test
 2. Verify FAIL
-3. "Done-Next-Step"
+3. Proceed to GREEN
 
 ### GREEN Phase
 1. Write minimal implementation
 2. Verify PASS
-3. "Done-Next-Step"
+3. Proceed to REFACTOR
 
 ### REFACTOR Phase
 1. Analyze for refactoring
 2. Refactor keeping tests passing
-3. "Done-Next-Step"
+3. Continue with next behavior or Story-Complete
 
 **Skills:** tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery
 

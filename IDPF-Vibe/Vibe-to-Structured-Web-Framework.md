@@ -1,5 +1,5 @@
 # Vibe-to-Structured Development Framework (Web)
-**Version:** v0.19.0
+**Version:** v0.19.1
 **Source:** IDPF-Vibe/Vibe-to-Structured-Web-Framework.md
 **Type:** Web Application Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md

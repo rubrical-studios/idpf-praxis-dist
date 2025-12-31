@@ -1,5 +1,5 @@
 # Framework Skills Reference
-**Version:** v0.19.0
+**Version:** 0.19.1
 **Source:** Overview/Framework-Skills.md
 **Purpose:** Reference for all Skills
 
@@ -18,7 +18,7 @@
 | tdd-red-phase | Write failing tests, verify failure | First-Step, Start-Story |
 | tdd-green-phase | Minimal implementation to pass | After RED verified |
 | tdd-refactor-phase | Improve code, maintain green | After GREEN success |
-| tdd-failure-recovery | Handle unexpected behaviors, rollback | Test misbehaves |
+| tdd-failure-recovery | Handle unexpected behaviors, rollback | Test misbehaves, need rollback |
 | test-writing-patterns | AAA pattern, test doubles, assertions | Test structure guidance |
 
 ---

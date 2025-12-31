@@ -1,6 +1,6 @@
 # Agile-Driven Development Framework - Commands
-**Version:** v0.19.0
-**Module:** Commands (loaded on-demand)
+**Version:** 0.19.0
+**Source:** IDPF-Agile/Agile-Commands.md
 
 ---
 
@@ -75,11 +75,10 @@
 
 | Command | Description |
 |---------|-------------|
-| Done-Next-Step | TDD iteration successful |
-| Rollback-Previous-Step | Undo last iteration |
 | Run-Tests | Execute full test suite |
 | Show-Coverage | Display coverage report |
-| Refactor-Now | Dedicated refactoring |
+
+**TDD Execution Model:** TDD phases (RED → GREEN → REFACTOR) execute **autonomously** within each story. No user interaction between phases. Only checkpoints: **In Review** (after implementation) and **Done** (user approval).
 
 **TDD Skills:** tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns
 
@@ -116,9 +115,7 @@ Open-Release → [Work on release branch] → Prepare-Release → Close-Release
 | Command | Description |
 |---------|-------------|
 | List-Commands | Show all with descriptions |
-| List-Cmds | Show all without descriptions |
 | Help [command] | Detailed command help |
-| Review-Last | Review accuracy |
 
 ---
 

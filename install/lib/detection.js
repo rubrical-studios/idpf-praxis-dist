@@ -381,7 +381,7 @@ function readFrameworkVersion(frameworkPath) {
 
 /**
  * Parse existing CLAUDE.md for locked framework, domain specialist, and project instructions
- * v0.19.0+: Returns singular domainSpecialist (string) instead of existingDomains (array)
+ * v0.19.1+: Returns singular domainSpecialist (string) instead of existingDomains (array)
  */
 function parseExistingInstallation(projectDir) {
   const claudeMdPath = path.join(projectDir, 'CLAUDE.md');
@@ -399,7 +399,7 @@ function parseExistingInstallation(projectDir) {
     lockedFramework = frameworkMatch[1];
   }
 
-  // Extract existing domain specialist (v0.19.0+: singular)
+  // Extract existing domain specialist (v0.19.1+: singular)
   // Try new format first, fall back to old format
   let domainSpecialist = null;
   const specialistMatch = content.match(/\*\*Domain Specialist:\*\*\s*(.+)/);

@@ -177,7 +177,7 @@ function deployFrameworkScripts(projectDir, frameworkPath) {
 
 /**
  * Deploy rules to .claude/rules/ directory
- * v0.19.0+: domainSpecialist is singular string (primarySpecialist removed)
+ * v0.19.1+: domainSpecialist is singular string (primarySpecialist removed)
  */
 function deployRules(projectDir, frameworkPath, processFramework, domainSpecialist, _unused, enableGitHubWorkflow, version) {
   const rulesDir = path.join(projectDir, '.claude', 'rules');

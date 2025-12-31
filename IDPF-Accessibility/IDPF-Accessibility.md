@@ -1,5 +1,5 @@
 # IDPF-Accessibility Framework
-**Version:** v0.19.0
+**Version:** v0.19.1
 **Extends:** IDPF-Testing-Core
 
 ---

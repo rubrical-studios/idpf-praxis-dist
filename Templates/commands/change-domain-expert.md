@@ -12,7 +12,7 @@ Change the active domain specialist for this project.
 
 ## Prerequisites
 
-- Framework vv0.19.0+ installed
+- Framework vv0.19.1+ installed
 - `framework-config.json` exists in project root
 
 ---

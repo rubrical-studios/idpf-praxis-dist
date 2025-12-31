@@ -5,7 +5,7 @@ license: Complete terms in LICENSE.txt
 ---
 
 # Sinatra Setup for Beginners
-**Version:** v0.19.0
+**Version:** v0.19.1
 
 ## When to Use
 - User wants Sinatra web application

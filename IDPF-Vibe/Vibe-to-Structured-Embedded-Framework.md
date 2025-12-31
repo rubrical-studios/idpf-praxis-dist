@@ -1,5 +1,5 @@
 # Vibe-to-Structured Development Framework (Embedded)
-**Version:** v0.19.0
+**Version:** v0.19.1
 **Source:** IDPF-Vibe/Vibe-to-Structured-Embedded-Framework.md
 **Type:** Embedded Systems Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md

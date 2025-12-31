@@ -95,8 +95,8 @@ const INSTALLED_FILES_MANIFEST = {
   commands: {
     dir: '.claude/commands',
     files: [
-      // switch-role.md removed in v0.19.0 - single specialist model
-      // add-role.md removed in v0.19.0 - single specialist model
+      // switch-role.md removed in v0.19.1 - single specialist model
+      // add-role.md removed in v0.19.1 - single specialist model
       'change-domain-expert.md',  // Core command (always deployed)
       (config) => config?.enableGitHubWorkflow ? 'assign-release.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'switch-release.md' : null,

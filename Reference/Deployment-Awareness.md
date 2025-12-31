@@ -1,5 +1,5 @@
 # Deployment Awareness
-**Version:** v0.19.0
+**Version:** v0.19.1
 **Purpose:** Document deployment chain from dev to distribution
 
 ---

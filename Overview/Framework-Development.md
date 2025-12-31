@@ -1,5 +1,5 @@
 # Framework Development Reference
-**Version:** v0.19.0
+**Version:** 0.19.1
 **Source:** Overview/Framework-Development.md
 **Purpose:** Detailed reference for IDPF development frameworks
 
@@ -45,8 +45,8 @@ Story Points: [n] | Priority: [H/M/L] | Status: [...]
 
 **Commands:**
 - Backlog: Create-Backlog, Add-Story, Refine-Story, Split-Story
-- Sprint: Plan-Sprint, Start-Story, Story-Complete, Sprint-Retro
-- Dev: Done-Next-Step, Rollback-Previous-Step, Run-Tests
+- Sprint: Plan-Sprint, Start-Story, Story-Complete, Sprint-Status, Sprint-Retro
+- Dev: Run-Tests, Show-Coverage (TDD phases execute autonomously)
 - Release: Open-Release, Prepare-Release, Close-Release
 
 **When to Use:** Evolving requirements, iterative delivery, velocity tracking

@@ -4,7 +4,7 @@ description: Systematic detection of anti-patterns during code review with actio
 ---
 
 # Anti-Pattern Analysis Skill
-**Version:** v0.19.0
+**Version:** v0.19.1
 
 ## Purpose
 Structured guidance for identifying anti-patterns across languages, architectures, and testing. Supports code reviews, refactoring planning, technical debt assessment, and reverse-PRD workflows.

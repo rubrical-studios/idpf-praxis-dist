@@ -8,6 +8,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.19.1] - 2025-12-31
+
+### Removed
+- **Obsolete TDD Commands** (#639) - Removed 10 commands that don't fit Claude Code's agentic workflow:
+  - Development: `Done-Next-Step`, `Rollback-Previous-Step`, `Refactor-Now`
+  - Utility: `List-Cmds`, `Review-Last`
+  - Project: `Velocity-Report`, `Project-Complete`, `Push-Changes` (entire section removed)
+  - Stale: `Sprint-Review` (merged into `Sprint-Retro`), `Sprint-Progress` (merged into `Sprint-Status`)
+
+### Changed
+- **TDD Execution Model** (#639) - TDD phases (RED → GREEN → REFACTOR) now execute **autonomously** within each story. No user interaction required between phases. Only workflow checkpoints are at story completion (In Review, Done).
+
+### Fixed
+- **Stale Command References** (#639) - Removed obsolete `Sprint-Review` and `Sprint-Progress` references from overview and guide files (already merged per Release-and-Sprint-Workflow proposal)
+
+---
+
 ## [0.19.0] - 2025-12-31
 
 ### Removed
@@ -52,7 +69,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [v0.19.0] - 2025-12-29
+## [v0.19.1] - 2025-12-29
 
 ### Breaking Changes
 - **Single-Specialist Model** (#588) - Users now select ONE Base Expert at install time instead of multiple specialists:

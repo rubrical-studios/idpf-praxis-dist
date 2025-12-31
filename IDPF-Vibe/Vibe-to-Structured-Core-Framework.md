@@ -1,5 +1,5 @@
 # Vibe-to-Structured Development Framework (Core)
-**Version:** v0.19.0
+**Version:** 0.19.0
 **Source:** IDPF-Vibe/Vibe-to-Structured-Core-Framework.md
 **Type:** Core Framework (Platform-Agnostic)
 
@@ -119,8 +119,9 @@ All Vibe projects evolve to **IDPF-Agile**:
 ### Commands
 All IDPF-Agile commands apply:
 - Create-Backlog, Plan-Sprint, Start-Story, Story-Complete
-- Done-Next-Step, Rollback-Previous-Step, Run-Tests
-- Push-Changes, Sprint-Retro, Velocity-Report
+- Run-Tests, Show-Coverage, Sprint-Retro, End-Sprint
+
+**TDD Execution Model:** TDD phases (RED → GREEN → REFACTOR) execute **autonomously** within each story. No user interaction between phases.
 
 ---
 

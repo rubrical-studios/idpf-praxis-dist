@@ -5,7 +5,7 @@ license: Complete terms in LICENSE.txt
 ---
 
 # TDD Failure Recovery
-**Version:** v0.19.0
+**Version:** 0.19.0
 
 Guide through diagnosing and recovering from unexpected test behaviors.
 
@@ -13,7 +13,7 @@ Guide through diagnosing and recovering from unexpected test behaviors.
 - RED phase test passes unexpectedly
 - GREEN phase test still fails
 - REFACTOR phase breaks tests
-- User issues "Rollback-Previous-Step"
+- Need to rollback to previous working state
 
 ## Failure Scenarios
 
@@ -27,7 +27,7 @@ Guide through diagnosing and recovering from unexpected test behaviors.
 2. Check for existing implementation (delete if found)
 3. Review test logic (correct assertion?)
 4. Revise test → Re-run → Verify fails
-5. "Done-Next-Step" → GREEN phase
+5. Proceed autonomously to GREEN phase
 
 ### Scenario 2: GREEN Phase Test Fails
 **Expected:** Pass | **Actual:** Fails
@@ -40,7 +40,7 @@ Guide through diagnosing and recovering from unexpected test behaviors.
 3. Fix syntax/logic errors
 4. Revise implementation → Re-run
 5. Run full suite (no regressions)
-6. "Done-Next-Step" → REFACTOR phase
+6. Proceed autonomously to REFACTOR phase
 
 ### Scenario 3: REFACTOR Breaks Tests
 **Expected:** Stay green | **Actual:** Fails
@@ -52,10 +52,10 @@ Guide through diagnosing and recovering from unexpected test behaviors.
    - Skip refactoring
    - Try smaller refactoring
    - Fix brittle test (if over-coupled)
-4. "Done-Next-Step" → Next feature
+4. Continue with next behavior or Story-Complete
 
-### Scenario 4: Rollback Command
-User issues "Rollback-Previous-Step"
+### Scenario 4: Rollback Required
+When rollback to previous working state is needed.
 
 **Procedure (Single Code Block):**
 ```

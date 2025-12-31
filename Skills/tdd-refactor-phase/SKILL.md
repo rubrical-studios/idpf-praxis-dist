@@ -5,14 +5,14 @@ license: Complete terms in LICENSE.txt
 ---
 
 # TDD REFACTOR Phase
-**Version:** v0.19.0
+**Version:** 0.19.0
 **Source:** Skills/tdd-refactor-phase/SKILL.md
 
 Guide through REFACTOR phase: improving code quality while keeping tests green.
 
 ## When to Use
 - GREEN phase complete with passing test
-- User responds "Done-Next-Step" after GREEN phase
+- Proceeding autonomously after GREEN phase
 - Code works but could be improved
 
 ## Objectives
@@ -51,8 +51,8 @@ STEP 8: Report: All tests green?
 - **If any fail → ROLLBACK immediately**
 
 **Step 5: Complete**
-- Refactoring applied + tests green → "Done-Next-Step"
-- Refactoring skipped → "Done-Next-Step"
+- Refactoring applied + tests green → Continue with next behavior or Story-Complete
+- Refactoring skipped → Continue with next behavior or Story-Complete
 
 ## Best Practices
 1. Refactor in small steps (test after each)
@@ -83,7 +83,7 @@ STEP 8: Report: All tests green?
 - [ ] ASSISTANT evaluated suggestions
 - [ ] If applied: All tests PASS
 - [ ] If skipped: Valid reason documented
-- [ ] User reported via "Done-Next-Step"
+- [ ] Ready to continue with next behavior or Story-Complete
 
 ---
 

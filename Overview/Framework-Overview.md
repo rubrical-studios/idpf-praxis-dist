@@ -1,5 +1,5 @@
 # Framework Overview
-**Version:** v0.19.0
+**Version:** 0.19.1
 **Source:** Overview/Framework-Overview.md
 **Purpose:** Comprehensive reference for AI assistants and framework development
 
@@ -29,7 +29,7 @@
 **Type:** Sprint-Based Development
 
 **Workflow:** Backlog Creation → Sprint Planning → Story Development (TDD) → Review → Retrospective
-**Commands:** Create-Backlog, Plan-Sprint, Start-Story, Story-Complete, Sprint-Retro, Velocity-Report
+**Commands:** Create-Backlog, Plan-Sprint, Start-Story, Story-Complete, Sprint-Status, Sprint-Retro
 
 **When to Use:** Evolving requirements, iterative delivery, feature prioritization, velocity tracking
 
