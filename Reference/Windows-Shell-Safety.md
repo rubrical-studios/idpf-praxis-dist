@@ -1,5 +1,7 @@
 # Windows Shell Safety for Claude Code
-**Version:** 0.17.0
+
+**Version:** 0.20.1
+**Source:** Reference/Windows-Shell-Safety.md
 
 ---
 
@@ -41,6 +43,18 @@ gh pmu create --title "Bug: ..." -F .tmp-body.md --status backlog
 gh pmu view 123 --body-file    # Creates tmp/issue-123.md
 gh issue edit 123 --body-file tmp/issue-123.md
 rm tmp/issue-123.md
+```
+
+### Stdin/Stdout Options
+`--body-stdout` and `--body-stdin` are **Windows-safe** piping alternatives:
+```bash
+# Both work reliably on Windows
+gh pmu view 123 --body-stdout > issue-body.md
+cat issue-body.md | gh pmu edit 123 --body-stdin
+
+# File-based approach (also works)
+gh pmu view 123 --body-file
+gh pmu edit 123 -F tmp/issue-123.md
 ```
 
 ## Path Handling
@@ -100,6 +114,7 @@ export MY_VAR=value
 | Backslash paths | No | Forward slashes |
 | Absolute paths in Bash args | No | Relative paths (`.tmp-*`) |
 | `--body "..."` multi-line | Unreliable | `--body-file` |
+| `--body-stdout` / `--body-stdin` | Yes | - |
 | JSON inline | No | `--input` or temp file |
 | Pipes `\|` | Yes | - |
 | Redirection `>` `>>` | Yes | - |

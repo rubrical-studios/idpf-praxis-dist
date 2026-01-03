@@ -10,10 +10,10 @@ const { computeFileHash, writeManifest, readManifest, isFileModified } = require
 const { readFrameworkVersion } = require('./detection');
 
 /**
- * Copy file with 0.20.1 placeholder replacement
+ * Copy file with 0.20.2 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.20.1 with
+ * @param {string} version - Version string to replace 0.20.2 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
