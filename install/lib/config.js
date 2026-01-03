@@ -40,6 +40,21 @@ function parseManifest(frameworkPath) {
       return { success: false, error: 'Framework manifest missing required "version" field' };
     }
 
+    // Handle 0.20.1 placeholder - read actual version from root manifest
+    if (manifest.version === '0.20.1') {
+      const rootManifestPath = path.join(frameworkPath, 'framework-manifest.json');
+      if (fs.existsSync(rootManifestPath)) {
+        try {
+          const rootManifest = JSON.parse(fs.readFileSync(rootManifestPath, 'utf8'));
+          if (rootManifest.version) {
+            manifest.version = rootManifest.version;
+          }
+        } catch (e) {
+          // Fall through - keep 0.20.1 if root manifest can't be read
+        }
+      }
+    }
+
     // AC-3: Validate scripts categories exist
     if (!manifest.scripts) {
       return { success: false, error: 'Framework manifest missing required "scripts" field' };
@@ -212,7 +227,7 @@ function writeConfig(projectDir, config) {
  * @param {string} options.processFramework - Process framework (IDPF-*)
  * @param {string} options.language - Project language
  * @param {string} options.description - Project description
- * @param {string} options.domainSpecialist - Domain specialist (v0.20.0+: singular string)
+ * @param {string} options.domainSpecialist - Domain specialist (v0.17.0+: singular string)
  * @param {string} options.frameworkPath - Path to framework source
  * @returns {object} Updated config
  */
@@ -236,7 +251,7 @@ function createOrUpdateConfig(projectDir, manifest, options = {}) {
   const userScripts = discoverUserScripts(projectDir);
 
   // AC-7: projectType (preserve existing or use options/defaults)
-  // v0.20.0+: domainSpecialist is singular string, primarySpecialist removed
+  // v0.17.0+: domainSpecialist is singular string, primarySpecialist removed
   let projectType;
   if (existingConfig?.projectType) {
     // Preserve existing projectType, but allow overrides
@@ -317,7 +332,7 @@ function migrateConfigSchema(projectDir, oldConfig, manifest) {
   const frameworkVersion = manifest.version;  // Use new version, not old
 
   // AC-3: Migrate domainSpecialists (array) to domainSpecialist (singular)
-  // v0.20.0+: Use primarySpecialist, or first element, or default
+  // v0.17.0+: Use primarySpecialist, or first element, or default
   let domainSpecialist = 'Full-Stack-Developer';
   if (oldConfig.projectType?.domainSpecialist) {
     // Already migrated to singular

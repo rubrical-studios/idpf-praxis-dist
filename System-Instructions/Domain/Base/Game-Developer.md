@@ -1,5 +1,5 @@
 # System Instructions: Game Developer
-**Version:** v0.20.0
+**Version:** 0.17.0
 Extends: Core-Developer-Instructions.md
 
 ---

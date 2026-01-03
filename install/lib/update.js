@@ -98,7 +98,7 @@ async function updateTrackedProjects(frameworkPath, prompts) {
               projectConfig.projectType.processFramework = newFramework;
               log(`    ${colors.green(`Framework: ${currentFramework} → ${newFramework}`)}`);
 
-              // Regenerate CLAUDE.md with new framework (v0.20.0+: singular domainSpecialist)
+              // Regenerate CLAUDE.md with new framework (v0.17.0+: singular domainSpecialist)
               const domainSpecialist = projectConfig.projectType.domainSpecialist ||
                                         projectConfig.projectType.primarySpecialist ||
                                         (projectConfig.projectType.domainSpecialists || [])[0] ||
@@ -196,7 +196,7 @@ async function updateTrackedProjects(frameworkPath, prompts) {
               projectConfig.projectType.processFramework = newFramework;
               log(`    ${colors.green(`Framework: ${currentFramework} → ${newFramework}`)}`);
 
-              // Regenerate CLAUDE.md with new framework (v0.20.0+: singular domainSpecialist)
+              // Regenerate CLAUDE.md with new framework (v0.17.0+: singular domainSpecialist)
               const domainSpecialist = projectConfig.projectType.domainSpecialist ||
                                         projectConfig.projectType.primarySpecialist ||
                                         (projectConfig.projectType.domainSpecialists || [])[0] ||
@@ -252,7 +252,7 @@ async function updateTrackedProjects(frameworkPath, prompts) {
         migration.migrate(projectPath, frameworkPath, projectConfig);
       }
 
-      // Redeploy rules (always update to latest) - v0.20.0+: singular domainSpecialist
+      // Redeploy rules (always update to latest) - v0.17.0+: singular domainSpecialist
       const hasGitHubWorkflow = fs.existsSync(path.join(projectPath, '.claude', 'hooks', 'workflow-trigger.js'));
       const domainSpecialist = projectConfig.projectType?.domainSpecialist ||
                                projectConfig.projectType?.primarySpecialist ||
@@ -303,7 +303,7 @@ async function updateTrackedProjects(frameworkPath, prompts) {
         }
       }
 
-      // Clean up orphaned files after migrations (v0.20.0+: singular domainSpecialist)
+      // Clean up orphaned files after migrations (v0.17.0+: singular domainSpecialist)
       const cleanupConfig = {
         domainSpecialist: projectConfig.projectType?.domainSpecialist ||
                           projectConfig.projectType?.primarySpecialist ||

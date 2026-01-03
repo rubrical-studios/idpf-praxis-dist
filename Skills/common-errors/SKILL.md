@@ -5,7 +5,7 @@ license: Complete terms in LICENSE.txt
 ---
 
 # Common Beginner Coding Errors
-**Version:** v0.20.0
+**Version:** 0.17.0
 
 ## When to Use
 - Beginner reports error message

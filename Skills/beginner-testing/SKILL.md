@@ -5,7 +5,7 @@ license: Complete terms in LICENSE.txt
 ---
 
 # Beginner Testing Introduction
-**Version:** v0.20.0
+**Version:** 0.17.0
 
 ## When to Use
 - User's Vibe app ready to transition to Structured

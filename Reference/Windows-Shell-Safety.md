@@ -1,5 +1,5 @@
 # Windows Shell Safety for Claude Code
-**Version:** v0.20.0
+**Version:** 0.17.0
 
 ---
 

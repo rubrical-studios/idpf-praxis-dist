@@ -1,5 +1,5 @@
 # Framework Overview
-**Version:** 0.19.1
+**Version:** 0.20.1
 **Source:** Overview/Framework-Overview.md
 **Purpose:** Comprehensive reference for AI assistants and framework development
 
@@ -75,13 +75,13 @@ IDPF-Testing-Core (foundation)
 
 ---
 
-## Skills (21 Total)
+## Skills (22 Total)
 
 | Category | Skills |
 |----------|--------|
 | TDD | tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns |
 | BDD | bdd-writing |
-| PRD | extract-prd |
+| PRD | extract-prd, promote-to-prd |
 | Code Quality | anti-pattern-analysis, uml-generation |
 | Beginner Setup | flask-setup, sinatra-setup |
 | Beginner Support | common-errors, sqlite-integration, beginner-testing |

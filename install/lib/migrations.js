@@ -47,7 +47,7 @@ const MIGRATIONS = [
       const hasGitHubWorkflow = fs.existsSync(path.join(projectDir, '.claude', 'hooks', 'workflow-trigger.js'));
       const version = readFrameworkVersion(frameworkPath);
 
-      // Create .claude/rules/ with new structure (v0.20.0+: singular domainSpecialist)
+      // Create .claude/rules/ with new structure (v0.17.0+: singular domainSpecialist)
       const domainSpecialist = config.projectType.domainSpecialist ||
                                config.projectType.primarySpecialist ||
                                (config.projectType.domainSpecialists || [])[0] ||
@@ -214,7 +214,7 @@ function runMigrations(projectDir, frameworkPath) {
     log();
   }
 
-  // Clean up orphaned files after all migrations (v0.20.0+: singular domainSpecialist)
+  // Clean up orphaned files after all migrations (v0.17.0+: singular domainSpecialist)
   const hasGitHubWorkflow = fs.existsSync(path.join(projectDir, '.claude', 'hooks', 'workflow-trigger.js'));
   const cleanupConfig = {
     domainSpecialist: config.projectType?.domainSpecialist ||

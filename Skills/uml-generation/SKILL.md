@@ -4,7 +4,7 @@ description: Generate UML diagrams from project source code using PlantUML with 
 ---
 
 # UML Generation Skill
-**Version:** v0.20.0
+**Version:** 0.17.0
 
 ## Purpose
 Analyze source code and generate UML diagrams with PlantUML syntax and online rendering URLs.

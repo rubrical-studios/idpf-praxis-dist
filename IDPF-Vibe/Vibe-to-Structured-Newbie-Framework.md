@@ -1,5 +1,5 @@
 # Vibe-to-Structured Development Framework (Newbie)
-**Version:** v0.20.0
+**Version:** 0.17.0
 **Source:** IDPF-Vibe/Vibe-to-Structured-Newbie-Framework.md
 **Type:** Beginner-Friendly Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md

@@ -1,5 +1,5 @@
 # System Instructions: Core Developer
-**Version:** v0.20.0
+**Version:** 0.17.0
 **Source:** System-Instructions/Core-Developer-Instructions.md
 **Purpose:** Foundation competencies for all domain specialists
 

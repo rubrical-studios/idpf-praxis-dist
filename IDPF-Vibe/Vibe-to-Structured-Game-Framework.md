@@ -1,5 +1,5 @@
 # Vibe-to-Structured Development Framework (Game)
-**Version:** v0.20.0
+**Version:** 0.17.0
 **Source:** IDPF-Vibe/Vibe-to-Structured-Game-Framework.md
 **Type:** Game Development Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md

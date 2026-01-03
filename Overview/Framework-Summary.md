@@ -1,5 +1,5 @@
 # Framework Summary
-**Version:** v0.20.0
+**Version:** 0.20.1
 **Source:** Overview/Framework-Summary.md
 **Purpose:** Compact startup reference for framework developers
 
@@ -13,7 +13,7 @@
 | Testing Frameworks | 7 | IDPF-Testing-Core + 6 specialized |
 | Domain Specialists | 23 | 12 Base + 10 Pack + 1 PRD |
 | Core Instructions | 2 | Core-Developer-Instructions + Domain-Selection-Guide |
-| Skills | 21 | Skills/ |
+| Skills | 22 | Skills/ |
 | Assistant Guidelines | 4 | Assistant/ |
 
 ---
@@ -43,7 +43,7 @@
 |-------|----------|
 | tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns | TDD |
 | bdd-writing | BDD |
-| extract-prd | PRD |
+| extract-prd, promote-to-prd | PRD |
 | anti-pattern-analysis, uml-generation | Code Quality |
 | flask-setup, sinatra-setup | Beginner Setup |
 | common-errors, sqlite-integration, beginner-testing | Beginner Support |

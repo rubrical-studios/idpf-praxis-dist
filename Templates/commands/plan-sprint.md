@@ -1,5 +1,5 @@
 ---
-version: "{{VERSION}}"
+version: "v0.20.1"
 allowed-tools: Bash
 description: Plan sprint by selecting epics (project)
 ---

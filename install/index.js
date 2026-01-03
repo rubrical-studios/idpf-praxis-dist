@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.18.0
+// **Version:** 0.20.1
 /**
  * IDPF Framework Installer - Main Entry Point
  * Unified cross-platform installer for Windows, macOS, and Linux
@@ -58,8 +58,8 @@ const {
 
 const {
   generateClaudeMd,
-  // generateSwitchRole removed in v0.20.0 - single specialist model
-  // generateAddRole removed in v0.20.0 - single specialist model
+  // generateSwitchRole removed in v0.17.0 - single specialist model
+  // generateAddRole removed in v0.17.0 - single specialist model
   generateGhPmuConfig,
   generateSettingsLocal,
   generatePrdReadme,
@@ -563,10 +563,10 @@ async function main() {
     divider();
     log();
 
-    // framework-config.json (using new v0.20.0+ schema - single specialist)
+    // framework-config.json (using new v0.17.0+ schema - single specialist)
     createOrUpdateConfig(projectDir, manifest, {
       processFramework,
-      domainSpecialist,  // v0.20.0: singular string instead of array
+      domainSpecialist,  // v0.17.0: singular string instead of array
       frameworkPath,
     });
     logSuccess('  ✓ framework-config.json');
@@ -715,11 +715,17 @@ async function main() {
     if (rulesResult.startup) {
       logSuccess('  ✓ .claude/rules/03-startup.md');
     }
+    if (rulesResult.charterEnforcement) {
+      logSuccess('  ✓ .claude/rules/04-charter-enforcement.md');
+    }
     if (rulesResult.windowsShell) {
       logSuccess('  ✓ .claude/rules/05-windows-shell.md (Windows only)');
     }
+    if (rulesResult.runtimeTriggers) {
+      logSuccess('  ✓ .claude/rules/06-runtime-triggers.md');
+    }
 
-    // switch-role and add-role commands removed in v0.20.0 - single specialist model
+    // switch-role and add-role commands removed in v0.17.0 - single specialist model
     // prepare-release/prepare-beta moved to deployWorkflowCommands in v0.17.1
 
     // Deploy core commands (always available, not tied to GitHub workflow)
@@ -798,7 +804,7 @@ async function main() {
 
     // Clean up orphaned files from previous installations
     const cleanupConfig = {
-      domainSpecialist,  // v0.20.0: singular
+      domainSpecialist,  // v0.17.0: singular
       enableGitHubWorkflow: enableGitHubWorkflow,
     };
     const cleanupResult = cleanupOrphanedFiles(projectDir, cleanupConfig);

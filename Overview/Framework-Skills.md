@@ -38,8 +38,9 @@
 | Skill | Function | When Used |
 |-------|----------|-----------|
 | extract-prd | Extract PRD from existing code | Reverse-PRD workflow |
+| promote-to-prd | Transform proposals into PRD | Pre-Create-Backlog planning |
 
-**Coverage:** Test parsing (pytest, Jest, JUnit, RSpec), NFR detection, architecture inference
+**Coverage:** Test parsing, NFR detection, architecture inference, proposal analysis, charter alignment
 
 ---
 
@@ -106,7 +107,7 @@
 | IDPF-Agile | tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns |
 | IDPF-Vibe (Newbie) | flask-setup, sinatra-setup, common-errors, sqlite-integration, beginner-testing |
 
-**Standalone:** anti-pattern-analysis, bdd-writing, extract-prd, uml-generation
+**Standalone:** anti-pattern-analysis, bdd-writing, extract-prd, promote-to-prd, uml-generation
 
 ---
 

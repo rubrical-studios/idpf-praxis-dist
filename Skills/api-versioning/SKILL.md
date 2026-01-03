@@ -5,7 +5,7 @@ license: Complete terms in LICENSE.txt
 ---
 
 # API Versioning
-**Version:** v0.20.0
+**Version:** 0.17.0
 
 ## When to Use
 - Designing evolving APIs

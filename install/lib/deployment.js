@@ -10,10 +10,10 @@ const { computeFileHash, writeManifest, readManifest, isFileModified } = require
 const { readFrameworkVersion } = require('./detection');
 
 /**
- * Copy file with {{VERSION}} placeholder replacement
+ * Copy file with 0.20.1 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace {{VERSION}} with
+ * @param {string} version - Version string to replace 0.20.1 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
@@ -177,13 +177,13 @@ function deployFrameworkScripts(projectDir, frameworkPath) {
 
 /**
  * Deploy rules to .claude/rules/ directory
- * v0.20.0+: domainSpecialist is singular string (primarySpecialist removed)
+ * v0.17.0+: domainSpecialist is singular string (primarySpecialist removed)
  */
 function deployRules(projectDir, frameworkPath, processFramework, domainSpecialist, _unused, enableGitHubWorkflow, version) {
   const rulesDir = path.join(projectDir, '.claude', 'rules');
   fs.mkdirSync(rulesDir, { recursive: true });
 
-  const results = { antiHallucination: false, githubWorkflow: false, startup: false, windowsShell: false };
+  const results = { antiHallucination: false, githubWorkflow: false, charterEnforcement: false, startup: false, runtimeTriggers: false, windowsShell: false };
 
   // Copy anti-hallucination rules (always)
   const ahSrc = path.join(frameworkPath, 'Assistant', 'Anti-Hallucination-Rules-for-Software-Development.md');
@@ -213,6 +213,34 @@ function deployRules(projectDir, frameworkPath, processFramework, domainSpeciali
       fs.writeFileSync(ghDest, ghWithSource);
       results.githubWorkflow = true;
     }
+  }
+
+  // Copy Charter Enforcement rules (v0.20.0+)
+  const ceSrc = path.join(frameworkPath, 'Reference', 'Charter-Enforcement.md');
+  const ceDest = path.join(rulesDir, '04-charter-enforcement.md');
+  if (fs.existsSync(ceSrc)) {
+    // Read source and add Source reference after Version line
+    const ceContent = fs.readFileSync(ceSrc, 'utf8');
+    const ceWithSource = ceContent.replace(
+      /(\*\*Version:\*\* .+)/,
+      '$1\n**Source:** Reference/Charter-Enforcement.md'
+    );
+    fs.writeFileSync(ceDest, ceWithSource);
+    results.charterEnforcement = true;
+  }
+
+  // Copy Runtime Artifact Triggers (v0.20.0+)
+  const rtSrc = path.join(frameworkPath, 'Reference', 'Runtime-Artifact-Triggers.md');
+  const rtDest = path.join(rulesDir, '06-runtime-triggers.md');
+  if (fs.existsSync(rtSrc)) {
+    // Read source and add Source reference after Version line
+    const rtContent = fs.readFileSync(rtSrc, 'utf8');
+    const rtWithSource = rtContent.replace(
+      /(\*\*Version:\*\* .+)/,
+      '$1\n**Source:** Reference/Runtime-Artifact-Triggers.md'
+    );
+    fs.writeFileSync(rtDest, rtWithSource);
+    results.runtimeTriggers = true;
   }
 
   // Generate startup rules
@@ -351,7 +379,8 @@ function deployWorkflowCommands(projectDir, frameworkPath) {
     'open-release',
     'prepare-release',
     'prepare-beta',
-    'close-release'
+    'close-release',
+    'charter'  // v0.20.0: Charter management command
   ];
 
   const deployed = { commands: [], scripts: [] };

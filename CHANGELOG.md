@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.20.1] - 2026-01-02
+
+### Fixed
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.20.1` placeholder in `Templates/framework-manifest.json`
+- **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
+
+### Changed
+- **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
+- **Version placeholder standardized** - All version tokens now use `v0.20.1` format for consistent replacement
+
+---
+
 ## [0.20.0] - 2025-12-31
 
 ### Added
@@ -73,7 +85,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `{{VERSION}}` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.20.1` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---
@@ -88,7 +100,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [v0.20.0] - 2025-12-29
+## [0.17.0] - 2025-12-29
 
 ### Breaking Changes
 - **Single-Specialist Model** (#588) - Users now select ONE Base Expert at install time instead of multiple specialists:
