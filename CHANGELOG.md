@@ -8,6 +8,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.20.3] - 2026-01-04
+
+### Fixed
+- **Charter template detection** (#688) - Startup workflow now detects incomplete template CHARTER.md files with placeholders
+
+### Added
+- **Template placeholder detection** (#689) - Regex pattern `{[a-z][a-z0-9-]*}` identifies unfilled template files
+- **Charter detection in startup rules** (#690) - Full startup flow with:
+  - `.no-charter` opt-out support
+  - Template vs complete charter detection
+  - Extraction/Inception mode prompts for templates or missing charters
+  - Charter summary display format for complete charters
+
+### Changed
+- **`/charter` command** - Workflow includes template detection step before displaying summary
+- **Charter-Enforcement rules** - Skip validation for template files (charter not yet completed)
+- **`generateStartupRules()`** - Expanded with complete charter detection flow for user projects
+
+---
+
 ## [0.20.2] - 2026-01-03
 
 ### Changed
@@ -21,12 +41,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.20.1] - 2026-01-02
 
 ### Fixed
-- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.20.2` placeholder in `Templates/framework-manifest.json`
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.20.3` placeholder in `Templates/framework-manifest.json`
 - **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
 
 ### Changed
 - **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
-- **Version placeholder standardized** - All version tokens now use `v0.20.2` format for consistent replacement
+- **Version placeholder standardized** - All version tokens now use `v0.20.3` format for consistent replacement
 
 ---
 
@@ -95,7 +115,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.20.2` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.20.3` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---

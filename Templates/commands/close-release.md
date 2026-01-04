@@ -1,5 +1,5 @@
 ---
-version: "v0.20.2"
+version: "v0.20.3"
 description: Close release with GitHub Release and cleanup
 argument-hint: [--skip-release-page]
 ---

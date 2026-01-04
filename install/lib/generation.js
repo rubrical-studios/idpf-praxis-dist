@@ -271,12 +271,12 @@ See \`Templates/Testing-Approach-Selection-Guide.md\` for guidance on:
  */
 function generateStartupRules(frameworkPath, processFramework, domainSpecialist, _unused, version) {
   const hasSpecialist = domainSpecialist && domainSpecialist !== 'None';
-  const specialistStep = hasSpecialist
-    ? `2. **Load Specialist**: Read \`${frameworkPath}/System-Instructions/Domain/Base/${domainSpecialist}.md\`
-3. **Report Ready**: Confirm initialization complete with "Active Role: ${domainSpecialist}"
-4. **Ask**: What would you like to work on?`
-    : `2. **Report Ready**: Confirm initialization complete
-3. **Ask**: What would you like to work on?`;
+  const specialistLoad = hasSpecialist
+    ? `3. **Load Specialist**: Read \`${frameworkPath}/System-Instructions/Domain/Base/${domainSpecialist}.md\`
+4. **Report Ready**: Confirm initialization with charter status and "Active Role: ${domainSpecialist}"
+5. **Ask**: What would you like to work on?`
+    : `3. **Report Ready**: Confirm initialization with charter status
+4. **Ask**: What would you like to work on?`;
 
   return `# Session Startup
 
@@ -291,7 +291,85 @@ function generateStartupRules(frameworkPath, processFramework, domainSpecialist,
 When starting a new session:
 
 1. **Confirm Date**: State the date from environment info
-${specialistStep}
+2. **Charter Detection**: Check project charter status (see Charter Detection below)
+${specialistLoad}
+
+---
+
+## Charter Detection
+
+At startup, check for project charter:
+
+### Step 1: Check for Opt-Out
+
+\`\`\`bash
+test -f .no-charter
+\`\`\`
+
+**If \`.no-charter\` exists:** Skip all charter prompting, proceed to specialist loading.
+
+### Step 2: Check for CHARTER.md
+
+\`\`\`bash
+test -f CHARTER.md
+\`\`\`
+
+**If CHARTER.md does not exist:** Go to Step 4 (Extraction/Inception prompt).
+
+### Step 3: Template Detection
+
+Check if CHARTER.md contains unfilled template placeholders:
+
+\`\`\`
+Regex: /{[a-z][a-z0-9-]*}/
+\`\`\`
+
+**If placeholders found (template):** Go to Step 4 (Extraction/Inception prompt).
+**If no placeholders (complete):** Display charter summary:
+
+\`\`\`
+📋 Project: {project-name} (from CHARTER.md)
+   Vision: {vision summary}
+   Current focus: {current focus}
+\`\`\`
+
+Then proceed to specialist loading.
+
+### Step 4: Extraction/Inception Prompt
+
+When no charter or template detected, offer to create one:
+
+**If existing code found:**
+\`\`\`
+📁 I found code in this project but no charter files.
+
+A charter helps me understand your project's goals.
+Would you like me to:
+
+  1. Analyze the code and draft a charter
+  2. Skip for now
+  3. Never ask for this project
+\`\`\`
+
+**If no code (new project):**
+\`\`\`
+📁 This looks like a new project.
+
+A charter helps me understand your goals.
+Would you like me to:
+
+  1. Guide you through charter creation
+  2. Skip for now
+  3. Never ask for this project
+\`\`\`
+
+### User Response Handling
+
+| Choice | Action |
+|--------|--------|
+| **Option 1** | Run \`/charter\` command (Extraction or Inception mode) |
+| **Option 2** | Skip, proceed to specialist loading (don't ask again this session) |
+| **Option 3** | Create \`.no-charter\` file, add to \`.gitignore\`, proceed |
 
 ---
 
@@ -302,6 +380,7 @@ ${specialistStep}
 | Framework workflow | \`${frameworkPath}/${processFramework}/\` |
 | Domain specialist | \`${frameworkPath}/System-Instructions/Domain/Base/{specialist}.md\` |
 | Skill usage | \`.claude/skills/{skill-name}/SKILL.md\` |
+| Charter management | Run \`/charter\` command |
 
 ---
 
