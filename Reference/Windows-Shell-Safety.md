@@ -1,6 +1,6 @@
 # Windows Shell Safety for Claude Code
 
-**Version:** 0.20.1
+**Version:** 0.21.0
 **Source:** Reference/Windows-Shell-Safety.md
 
 ---

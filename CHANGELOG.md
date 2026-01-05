@@ -8,6 +8,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.21.0] - 2026-01-05
+
+### Added
+- **Unit Testing Infrastructure** (#698) - Jest v29.7.0 test framework with v8 coverage provider
+  - `jest.config.js` with coverage thresholds (70% statements, 60% branches)
+  - Centralized `/tests` directory structure
+  - Test fixtures for configs, changelogs, git logs
+  - Mock factories for dynamic test data generation
+  - Mock exec utilities for child_process mocking
+- **CI Pipeline** (#699) - GitHub Actions workflow for automated testing
+  - `.github/workflows/test.yml` runs on all branches/PRs
+  - Coverage artifacts uploaded and retained for 30 days
+- **Test Coverage** (#700) - 163 tests across 14 test suites covering 20 source files
+  - P0 tests: workflow-trigger, validate-helpers, assign-release, recommend-version
+  - P1 tests: minimize-helper, version-header-fix, analyze-commits, update-release-notes, switch-release, transfer-issue
+  - P2 tests: stub-hooks, sprint-scripts, wait-for-ci
+- **Test Documentation** (#701) - `/tests/README.md` with comprehensive guide
+  - Directory structure explanation
+  - Test execution commands
+  - Coverage threshold policy
+  - Mock strategy documentation
+
+### Changed
+- **ESLint Configuration** - Added Jest globals support for test files
+- **package.json** - Added test scripts (`npm test`, `npm run test:coverage`, `npm run test:watch`)
+
+### Completed
+- **PRD: Unit Testing Non-Installer Scripts** - Full lifecycle completed (#612)
+
+---
+
 ## [0.20.3] - 2026-01-04
 
 ### Fixed
@@ -41,12 +72,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.20.1] - 2026-01-02
 
 ### Fixed
-- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.20.3` placeholder in `Templates/framework-manifest.json`
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.21.0` placeholder in `Templates/framework-manifest.json`
 - **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
 
 ### Changed
 - **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
-- **Version placeholder standardized** - All version tokens now use `v0.20.3` format for consistent replacement
+- **Version placeholder standardized** - All version tokens now use `v0.21.0` format for consistent replacement
 
 ---
 
@@ -115,7 +146,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.20.3` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.21.0` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---

@@ -1,5 +1,5 @@
 # GitHub Workflow Integration
-**Version:** 0.20.1
+**Version:** 0.21.0
 **Source:** Reference/GitHub-Workflow.md
 
 ---

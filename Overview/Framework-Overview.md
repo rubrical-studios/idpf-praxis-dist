@@ -1,5 +1,5 @@
 # Framework Overview
-**Version:** 0.20.1
+**Version:** 0.21.0
 **Source:** Overview/Framework-Overview.md
 **Purpose:** Comprehensive reference for AI assistants and framework development
 
