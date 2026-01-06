@@ -100,6 +100,7 @@ async function main() {
   const migrateMode = args.includes('--migrate');
   const skipGitHub = args.includes('--skip-github'); // REQ-009: Skip GitHub setup
   const forceInstall = args.includes('--force'); // Allow install on non-main branches
+  const debugMode = args.includes('--debug') || args.includes('-d'); // Debug logging for EXTENSIBLE files
 
   // Load prompts module, auto-install if missing
   try {
@@ -763,7 +764,7 @@ async function main() {
       }
 
       // Deploy workflow commands and scripts
-      const workflowDeployed = deployWorkflowCommands(projectDir, frameworkPath);
+      const workflowDeployed = deployWorkflowCommands(projectDir, frameworkPath, debugMode);
       if (workflowDeployed.commands.length > 0) {
         for (const cmd of workflowDeployed.commands) {
           logSuccess(`  ✓ .claude/commands/${cmd}.md`);

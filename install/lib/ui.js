@@ -33,6 +33,14 @@ function logCyan(msg) {
   console.log(colors.cyan(msg));
 }
 
+/**
+ * Log debug message to stderr
+ * @param {string} msg - Debug message
+ */
+function logDebug(msg) {
+  console.error(colors.dim(`[DEBUG] ${msg}`));
+}
+
 function divider() {
   log(colors.cyan('───────────────────────────────────────'));
 }
@@ -129,6 +137,7 @@ module.exports = {
   logWarning,
   logError,
   logCyan,
+  logDebug,
   divider,
   UpgradeError,
   safeWriteFile,

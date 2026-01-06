@@ -8,17 +8,164 @@ const path = require('path');
 const { generateStartupRules } = require('./generation');
 const { computeFileHash, writeManifest, readManifest, isFileModified } = require('./checksums');
 const { readFrameworkVersion } = require('./detection');
+const {
+  parseCommandHeader,
+  extractExtensionBlocks,
+  restoreBlocks,
+  detectRogueEdits,
+  mergeFrontmatter,
+  extractFrontmatter,
+  rebuildWithFrontmatter
+} = require('./extensibility');
 
 /**
- * Copy file with 0.21.0 placeholder replacement
+ * Copy file with 0.21.1 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.21.0 with
+ * @param {string} version - Version string to replace 0.21.1 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
   content = content.replace(/\{\{VERSION\}\}/g, version);
   fs.writeFileSync(dest, content);
+}
+
+/**
+ * Deploy an extensible command file, preserving user extensions
+ *
+ * @param {string} src - Source template file path
+ * @param {string} dest - Destination file path
+ * @param {string} version - Version string to replace 0.21.1 with
+ * @param {boolean} debug - Enable debug logging
+ * @returns {{preserved: boolean, warnings: string[]}} Deployment result
+ */
+function deployExtensibleCommand(src, dest, version, debug = false) {
+  const { logWarning, logDebug } = require('./ui');
+  const warnings = [];
+  const filename = path.basename(dest);
+
+  if (debug) {
+    logDebug(`Processing: ${dest}`);
+  }
+
+  // Read the new template
+  let templateContent = fs.readFileSync(src, 'utf8');
+  templateContent = templateContent.replace(/\{\{VERSION\}\}/g, version);
+
+  // Check if destination exists
+  if (!fs.existsSync(dest)) {
+    // Fresh install - just copy
+    if (debug) {
+      logDebug(`  Fresh install (no existing file)`);
+    }
+    fs.writeFileSync(dest, templateContent);
+    if (debug) {
+      logDebug(`Complete: ${filename}`);
+    }
+    return { preserved: false, warnings: [] };
+  }
+
+  // Read existing file
+  const existingContent = fs.readFileSync(dest, 'utf8');
+
+  // Parse header to determine category
+  const header = parseCommandHeader(existingContent);
+
+  if (debug) {
+    if (header) {
+      logDebug(`  Category: ${header.category} (${header.version})`);
+    } else {
+      logDebug(`  Category: MANAGED (no header)`);
+    }
+  }
+
+  // If not EXTENSIBLE, treat as MANAGED (overwrite)
+  if (!header || header.category !== 'EXTENSIBLE') {
+    if (debug) {
+      logDebug(`  Overwriting (not EXTENSIBLE)`);
+      logDebug(`Complete: ${filename}`);
+    }
+    fs.writeFileSync(dest, templateContent);
+    return { preserved: false, warnings: [] };
+  }
+
+  // EXTENSIBLE file - preserve user extensions
+
+  // Extract extension blocks from existing file
+  const preservedBlocks = extractExtensionBlocks(existingContent);
+
+  if (debug) {
+    logDebug(`  Extension blocks found: ${preservedBlocks.size}`);
+    for (const [name, content] of preservedBlocks) {
+      const lineCount = content.split('\n').length;
+      logDebug(`    - ${name}: ${lineCount} lines`);
+    }
+  }
+
+  if (preservedBlocks.size === 0) {
+    // No extensions to preserve - just overwrite
+    if (debug) {
+      logDebug(`  No extensions to preserve`);
+      logDebug(`Complete: ${filename}`);
+    }
+    fs.writeFileSync(dest, templateContent);
+    return { preserved: false, warnings: [] };
+  }
+
+  if (debug) {
+    logDebug(`  Deploying new template...`);
+  }
+
+  // Detect rogue edits (changes outside extension markers)
+  const rogueCheck = detectRogueEdits(existingContent, templateContent);
+  if (rogueCheck.hasRogueEdits) {
+    if (debug) {
+      logDebug(`  ⚠️  Rogue edits detected outside extension markers`);
+      logDebug(`  Changes will be lost (use extension markers to preserve)`);
+    }
+    warnings.push(`${filename}: Changes outside extension markers will be lost`);
+    for (const detail of rogueCheck.details) {
+      warnings.push(`  - ${detail}`);
+    }
+  } else if (debug) {
+    logDebug(`  Rogue edits detected: none`);
+  }
+
+  // Restore preserved blocks into new template
+  if (debug) {
+    logDebug(`  Restoring extension blocks...`);
+  }
+  const { content: restoredContent, warnings: restoreWarnings } = restoreBlocks(templateContent, preservedBlocks);
+  warnings.push(...restoreWarnings);
+
+  if (debug) {
+    for (const [name] of preservedBlocks) {
+      logDebug(`    - ${name}: ✓ restored`);
+    }
+  }
+
+  // Handle frontmatter merging if present
+  const existingFm = extractFrontmatter(existingContent);
+  const templateFm = extractFrontmatter(restoredContent);
+
+  let finalContent = restoredContent;
+  if (existingFm && templateFm) {
+    const { merged, warnings: fmWarnings } = mergeFrontmatter(existingFm.frontmatter, templateFm.frontmatter);
+    warnings.push(...fmWarnings);
+    finalContent = rebuildWithFrontmatter(merged, templateFm.body);
+    if (debug) {
+      logDebug(`  Frontmatter merged`);
+    }
+  }
+
+  // Write the final content
+  fs.writeFileSync(dest, finalContent);
+
+  if (debug) {
+    logDebug(`Complete: ${filename}`);
+  }
+
+  return { preserved: true, extensionCount: preservedBlocks.size, warnings };
 }
 
 /**
@@ -360,8 +507,18 @@ function deployCoreCommands(projectDir, frameworkPath) {
 /**
  * Deploy workflow commands and scripts for GitHub workflow integration
  * Copies from Templates/commands/ and Templates/scripts/ to project .claude/
+ * Preserves USER-EXTENSION blocks in EXTENSIBLE command files
+ *
+ * @param {string} projectDir - Target project directory
+ * @param {string} frameworkPath - Framework source directory
+ * @param {boolean} debug - Enable debug logging for EXTENSIBLE files
  */
-function deployWorkflowCommands(projectDir, frameworkPath) {
+function deployWorkflowCommands(projectDir, frameworkPath, debug = false) {
+  const { logWarning, logDebug } = require('./ui');
+
+  if (debug) {
+    logDebug('Deploying workflow commands with extensibility support...');
+  }
   const commandsDir = path.join(projectDir, '.claude', 'commands');
   const scriptsDir = path.join(projectDir, '.claude', 'scripts');
   fs.mkdirSync(commandsDir, { recursive: true });
@@ -383,23 +540,37 @@ function deployWorkflowCommands(projectDir, frameworkPath) {
     'charter'  // v0.20.0: Charter management command
   ];
 
-  const deployed = { commands: [], scripts: [] };
+  const deployed = { commands: [], scripts: [], preserved: [], warnings: [] };
 
   for (const cmd of workflowCommands) {
-    // Deploy command (.md file) with version replacement
+    // Deploy command (.md file) with extensibility support
     const srcCmd = path.join(frameworkPath, 'Templates', 'commands', `${cmd}.md`);
     const destCmd = path.join(commandsDir, `${cmd}.md`);
     if (fs.existsSync(srcCmd)) {
-      copyFileWithVersion(srcCmd, destCmd, version);
+      const result = deployExtensibleCommand(srcCmd, destCmd, version, debug);
       deployed.commands.push(cmd);
+      if (result.preserved) {
+        deployed.preserved.push({ command: cmd, extensionCount: result.extensionCount });
+      }
+      if (result.warnings.length > 0) {
+        deployed.warnings.push(...result.warnings);
+      }
     }
 
-    // Deploy script (.js file) with version replacement
+    // Deploy script (.js file) with version replacement (scripts are always overwritten)
     const srcScript = path.join(frameworkPath, 'Templates', 'scripts', `${cmd}.js`);
     const destScript = path.join(scriptsDir, `${cmd}.js`);
     if (fs.existsSync(srcScript)) {
       copyFileWithVersion(srcScript, destScript, version);
       deployed.scripts.push(cmd);
+    }
+  }
+
+  // Display warnings about rogue edits
+  if (deployed.warnings.length > 0) {
+    logWarning('\nExtensibility warnings:');
+    for (const warning of deployed.warnings) {
+      logWarning(`  ${warning}`);
     }
   }
 

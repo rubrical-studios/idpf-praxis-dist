@@ -24,8 +24,8 @@ git commit -F .tmp-msg.txt
 rm .tmp-msg.txt
 ```
 
-## Command Substitution in Arguments
-**Avoid `$(...)` in tool arguments.**
+## Command Substitution
+**ALL `$(...)` patterns are unreliable:** tool arguments, variable assignments, for loops, nested substitution.
 ```bash
 # BAD - unreliable
 gh issue create --body "$(cat README.md)"
@@ -34,27 +34,25 @@ gh issue create --body "$(cat README.md)"
 gh issue create --body-file README.md
 ```
 
-## gh pmu Body-File Flags
+## gh pmu Body Flags
+**Prefer `--body-stdout` / `--body-stdin`** for cleaner workflows.
+
+### Preferred: Stdout/Stdin
 ```bash
+# Export, edit, update (no tmp/ directory)
+gh pmu view 123 --body-stdout > .tmp-body.md
+gh pmu edit 123 -F .tmp-body.md && rm .tmp-body.md
+
 # Create with body from file
 gh pmu create --title "Bug: ..." -F .tmp-body.md --status backlog
-
-# Export body for editing (replaces gh issue view --json body -q '.body')
-gh pmu view 123 --body-file    # Creates tmp/issue-123.md
-gh issue edit 123 --body-file tmp/issue-123.md
-rm tmp/issue-123.md
 ```
 
-### Stdin/Stdout Options
-`--body-stdout` and `--body-stdin` are **Windows-safe** piping alternatives:
+### Alternative: Body-File
 ```bash
-# Both work reliably on Windows
-gh pmu view 123 --body-stdout > issue-body.md
-cat issue-body.md | gh pmu edit 123 --body-stdin
-
-# File-based approach (also works)
-gh pmu view 123 --body-file
+# Uses tmp/ directory (requires cleanup)
+gh pmu view 123 --body-file    # Creates tmp/issue-123.md
 gh pmu edit 123 -F tmp/issue-123.md
+rm tmp/issue-123.md
 ```
 
 ## Path Handling
@@ -94,6 +92,24 @@ gh api graphql --input .tmp-query.json
 rm .tmp-query.json
 ```
 
+## Loops with Command Substitution
+**Loops using `$(...)` fail.** File globbing works.
+```bash
+# BAD - for loop with command substitution
+for file in $(find . -name "*.md"); do echo "$file"; done
+
+# GOOD - glob patterns work
+for file in *.md; do echo "$file"; done
+
+# GOOD - pre-compute to temp file
+git log --oneline > .tmp-list.txt
+while read -r line; do echo "$line"; done < .tmp-list.txt
+rm .tmp-list.txt
+
+# GOOD - find with -exec
+find . -name "*.md" -exec wc -l {} \;
+```
+
 ## Environment Variables
 **Use Unix-style syntax in Git Bash.**
 ```bash
@@ -108,7 +124,9 @@ export MY_VAR=value
 ## Quick Reference
 | Pattern | Windows Safe? | Alternative |
 |---------|:-------------:|-------------|
-| `$(command)` in args | Unreliable | Write tool + temp file |
+| `$(command)` anywhere | Unreliable | Write tool + temp file |
+| `for x in $(cmd)` loops | No | Glob patterns or temp file |
+| Nested `$(...)` | No | Sequential commands |
 | Heredoc with backticks | No | Write tool + temp file |
 | Single quotes | Mostly | Prefer double quotes |
 | Backslash paths | No | Forward slashes |
