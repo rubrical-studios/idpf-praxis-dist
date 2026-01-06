@@ -1,38 +1,29 @@
 # Constraints: {project-name}
-
+**Source:** Templates/Lifecycle/Inception/Constraints.md
 **Last Updated:** {date}
-
----
 
 ## Technical Constraints
 
 ### Required Technologies
-
 | Technology | Reason | Flexibility |
 |------------|--------|-------------|
 | | | None / Low / Medium |
-| | | |
 
 ### Prohibited Technologies
-
 | Technology | Reason |
 |------------|--------|
 | | |
 
 ### Compatibility Requirements
-
 | Requirement | Specification |
 |-------------|---------------|
 | Browser support | |
 | OS support | |
 | API compatibility | |
 
----
-
 ## Resource Constraints
 
 ### Team
-
 | Aspect | Value |
 |--------|-------|
 | Team size | |
@@ -40,7 +31,6 @@
 | Expertise gaps | |
 
 ### Budget
-
 | Category | Constraint |
 |----------|------------|
 | Infrastructure | |
@@ -48,33 +38,25 @@
 | Tools/licenses | |
 
 ### Timeline
-
 | Milestone | Deadline | Flexibility |
 |-----------|----------|-------------|
 | | | Hard / Soft / TBD |
 
----
-
 ## Business Constraints
 
 ### Stakeholder Requirements
-
 | Stakeholder | Requirement | Priority |
 |-------------|-------------|----------|
 | | | |
 
 ### Regulatory/Compliance
-
 | Regulation | Requirement | Impact |
 |------------|-------------|--------|
 | | | |
 
----
-
 ## Operational Constraints
 
 ### Infrastructure
-
 | Constraint | Specification |
 |------------|---------------|
 | Hosting | |
@@ -82,21 +64,16 @@
 | Availability target | |
 
 ### Security
-
 | Constraint | Requirement |
 |------------|-------------|
 | Authentication | |
 | Data handling | |
 | Audit requirements | |
 
----
-
 ## Constraint Trade-offs
-
 | Constraint A | vs | Constraint B | Decision |
 |--------------|----|--------------|---------|
 | | | | |
 
 ---
-
 *See also: Architecture.md, Tech-Stack.md*

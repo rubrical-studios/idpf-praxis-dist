@@ -1,63 +1,94 @@
 # IDPF-Chaos Framework
-**Version:** 0.19.0
+**Version:** v0.22.0
 **Source:** IDPF-Chaos/IDPF-Chaos.md
 **Extends:** IDPF-Testing-Core
-**Framework-Debug:** True
 
 ---
 
 ## Overview
-Framework for chaos engineering experiments: resilience testing, fault injection, failure scenario validation.
-**Core Principle:** Proactively test system resilience by introducing controlled failures.
+Framework for chaos engineering experiments. Tests system resilience by introducing controlled failures to discover weaknesses before production incidents.
 
 ---
 
-## Chaos Principles
+## Chaos Engineering Principles
 | Principle | Description |
 |-----------|-------------|
-| Build a Hypothesis | Define expected behavior under failure |
-| Vary Real-World Events | Inject realistic failures |
-| Run in Production | Test real systems safely |
-| Automate Experiments | Enable continuous validation |
-| Minimize Blast Radius | Start small, expand gradually |
+| **Build Hypothesis** | Define expected behavior under failure |
+| **Vary Real-World Events** | Inject realistic failures |
+| **Run in Production** | Test real systems safely |
+| **Automate Experiments** | Enable continuous validation |
+| **Minimize Blast Radius** | Start small, expand gradually |
 
 ---
 
 ## Terminology
 | Term | Definition |
 |------|------------|
-| Chaos Experiment | Controlled fault injection with hypothesis |
-| Steady State | Normal system metrics before fault |
-| Blast Radius | Scope of potential impact |
-| GameDay | Scheduled event with multiple scenarios |
-| Abort Condition | Threshold triggering experiment stop |
+| **Chaos Experiment** | Controlled fault injection with hypothesis |
+| **Steady State** | Normal behavior metrics before injection |
+| **Blast Radius** | Scope of potential impact |
+| **Fault Injection** | Deliberate failure introduction |
+| **GameDay** | Scheduled multi-scenario event |
+| **Abort Condition** | Threshold triggering immediate stop |
 
 ---
 
-## Fault Types
+## Fault Injection Types
 
-### Infrastructure
-Instance termination, AZ/Region failure, Disk failure, Resource exhaustion
+### Infrastructure Faults
+| Fault Type | Tools | Risk |
+|------------|-------|------|
+| Instance termination | Chaos Monkey, Gremlin, AWS FIS | Medium |
+| AZ/Region failure | Gremlin, AWS FIS | High |
+| Disk failure | Gremlin, dd | Medium |
+| Resource exhaustion | stress-ng, Gremlin | Medium |
 
-### Network
-Latency injection, Packet loss, DNS failure, Network partition
+### Network Faults
+| Fault Type | Tools | Risk |
+|------------|-------|------|
+| Latency injection | tc, Gremlin, Toxiproxy | Low |
+| Packet loss | tc, Gremlin, Pumba | Medium |
+| DNS failure | Gremlin, custom | Medium |
+| Network partition | iptables, Gremlin | High |
 
-### Application
-Memory pressure, CPU stress, Process kill, Thread exhaustion
+### Application Faults
+| Fault Type | Tools | Risk |
+|------------|-------|------|
+| Memory pressure | stress-ng, Gremlin | Medium |
+| CPU stress | stress-ng, Gremlin | Medium |
+| Process kill | kill, Gremlin | Medium |
+| Thread exhaustion | Custom, Gremlin | Medium |
 
-### Dependency
-Service unavailable, Slow dependency, Database failure, Cache eviction
+### Dependency Faults
+| Fault Type | Tools | Risk |
+|------------|-------|------|
+| Service unavailable | Toxiproxy, Gremlin | Medium |
+| Slow dependency | Toxiproxy, Gremlin | Low |
+| Database failure | Gremlin, custom | High |
+| Cache eviction | Custom scripts | Low |
+| Message queue failure | Gremlin, custom | Medium |
+
+### State Faults
+| Fault Type | Tools | Risk |
+|------------|-------|------|
+| Data corruption | Custom scripts | High |
+| Clock skew | chrony, Gremlin | Medium |
+| Certificate expiry | Custom scripts | Medium |
 
 ---
 
 ## Tool Selection
-| Tool | Platform | Best For |
-|------|----------|----------|
-| Chaos Monkey | AWS | Instance termination |
-| Gremlin | Multi-cloud | Enterprise chaos |
-| LitmusChaos | Kubernetes | K8s native |
-| AWS FIS | AWS | AWS infrastructure |
-| Toxiproxy | Any | Network simulation |
+| Tool | Platform | Best For | Cost |
+|------|----------|----------|------|
+| **Chaos Monkey** | AWS | Instance termination | Free |
+| **Gremlin** | Multi-cloud, K8s | Enterprise chaos | Commercial |
+| **LitmusChaos** | Kubernetes | K8s native | Free |
+| **Chaos Mesh** | Kubernetes | K8s native | Free |
+| **AWS FIS** | AWS | AWS infrastructure | Pay per use |
+| **Toxiproxy** | Any | Network simulation | Free |
+| **Pumba** | Docker | Docker chaos | Free |
+
+**Selection:** K8s extensive → LitmusChaos | Enterprise SaaS → Gremlin | AWS only → AWS FIS + Chaos Monkey | Network faults → Toxiproxy
 
 ---
 
@@ -66,106 +97,108 @@ Service unavailable, Slow dependency, Database failure, Cache eviction
 ### Hypothesis Template
 ```
 Given: [steady-state conditions]
-When: [fault is injected]
+When: [fault injected]
 Then: [expected behavior]
 ```
 
+### Steady State Metrics
+| Category | Examples |
+|----------|----------|
+| Availability | Uptime %, success rate |
+| Latency | p50, p95, p99 |
+| Throughput | Requests/second |
+| Error Rate | Failed %, exceptions |
+| Saturation | CPU %, memory %, queue depth |
+
 ### Blast Radius Controls
-- Target Scope: 1 of 10 pods
-- Duration: Max 10 minutes
-- Auto-Rollback: Error rate > 5%
-- Environment: Staging first
+| Control | Example |
+|---------|---------|
+| Target Scope | 1 of 10 pods |
+| User Impact | Canary traffic only |
+| Duration | Max 10 minutes |
+| Auto-Rollback | Error rate > 5% |
+| Environment | Staging first |
 
 ### Abort Conditions
-- Error rate > threshold
-- Latency > threshold
-- Revenue impact detected
-- Data loss detected
+Immediately stop if: Error rate > threshold | Latency > threshold | Revenue impact | Customer complaints | On-call escalation | Data loss
 
 ---
 
 ## Experiment Workflow
 ```
-Define Hypothesis -> Set Up Observability -> Design Experiment -> Get Approval -> Run Experiment -> Analyze Results -> [Expand Scope / Fix System]
-```
-
----
-
-## Directory Structure
-```
-<chaos-repo>/
-├── PRD/TestPlans/
-├── experiments/ (infrastructure/, network/, application/)
-├── gamedays/YYYY-QN-GameDay/
-├── dashboards/
-└── .github/workflows/
+Define Steady State Hypothesis → Set Up Observability → Design Experiment → Get Approval → Run (Limited) → Analyze → Hypothesis Valid? → Expand Scope OR Fix System
 ```
 
 ---
 
 ## GameDay Planning
+**Structure:**
+| Phase | Duration | Activities |
+|-------|----------|------------|
+| Kickoff | 15 min | Objectives, safety briefing |
+| Experiments | 2-4 hours | Run scenarios |
+| Debrief | 30 min | Findings, action items |
+| Documentation | 1 hour | Write up results |
 
-### Structure
-| Phase | Duration |
-|-------|----------|
-| Kickoff | 15 min |
-| Experiments | 2-4 hours |
-| Debrief | 30 min |
-| Documentation | 1 hour |
+**Roles:** GameDay Lead | Fault Operator | Observer | Scribe | On-Call
 
-### Roles
-GameDay Lead, Fault Operator, Observer, Scribe, On-Call
+**Frequency:** Beginning: Quarterly (staging) | Intermediate: Monthly (staging + limited prod) | Advanced: Weekly/Continuous (full prod)
+
+---
+
+## Observability Integration
+| Type | Purpose | Tools |
+|------|---------|-------|
+| Metrics | Impact measurement | Prometheus, Datadog |
+| Logs | Error details | ELK, Splunk |
+| Traces | Request flow | Jaeger, Zipkin |
+| Dashboards | Visualization | Grafana |
+| Alerts | Abort triggers | PagerDuty |
 
 ---
 
 ## Safety Practices
-
-### Progressive Complexity
-1. Single instance, Development (Self-approval)
-2. Single instance, Staging (Team lead)
-3. Multiple instances, Staging (Manager)
-4. Single instance, Production (SRE lead)
-5. Multiple instances, Production (VP)
+| Stage | Scope | Environment | Approval |
+|-------|-------|-------------|----------|
+| 1 | Single instance | Development | Self |
+| 2 | Single instance | Staging | Team lead |
+| 3 | Multiple instances | Staging | Eng manager |
+| 4 | Single instance | Production (canary) | SRE lead |
+| 5 | Multiple instances | Production | VP Engineering |
 
 ---
 
-## GitHub Labels
-| Label | Description |
-|-------|-------------|
-| experiment | Chaos experiment |
-| gameday | GameDay related |
-| infrastructure-fault | Infrastructure failure |
-| network-fault | Network failure |
-| finding | Resilience finding |
+## GitHub Project Labels
+| Label | Color | Description |
+|-------|-------|-------------|
+| `chaos` | `#6554C0` | Chaos work |
+| `experiment` | `#0E8A16` | Chaos experiment |
+| `gameday` | `#D93F0B` | GameDay related |
+| `infrastructure-fault` | `#0052CC` | Infrastructure failure |
+| `network-fault` | `#1D76DB` | Network failure |
+| `finding` | `#FBCA04` | Resilience finding |
 
 ---
 
 ## Session Commands
-| Command | Description |
-|---------|-------------|
-| Chaos-Start | Begin session |
-| Design-Experiment | Create experiment plan |
-| Plan-GameDay | Plan GameDay event |
-| Run-Experiment | Execute experiment |
-| Abort-Experiment | Emergency stop |
-| Chaos-Report | Generate results |
+**Chaos:** Chaos-Start | Chaos-Status | Design-Experiment | Plan-GameDay | Run-Experiment | Abort-Experiment | Chaos-Report
 
 ---
 
 ## Best Practices
-**Do:** Clear hypothesis, define abort conditions, notify stakeholders, staging first, document findings
-**Don't:** Run without monitoring, skip hypothesis, ignore abort conditions, run in prod without approval
+**Do:** Clear hypothesis | Define abort conditions | Notify stakeholders | Staging first | Document findings | Fix before expanding | Automate experiments | Practice rollback
+**Don't:** Run without monitoring | Skip hypothesis | Ignore abort conditions | Production without approval | Expand after failures | Disable safety controls
 
 ---
 
 ## Maturity Model
 | Level | Characteristics |
 |-------|-----------------|
-| 1 Initial | Manual, staging only |
-| 2 Managed | Documented, some production |
-| 3 Defined | Standard processes, regular GameDays |
-| 4 Measured | Automated, continuous production |
-| 5 Optimized | Fully automated, proactive |
+| 1: Initial | Manual, staging only, reactive |
+| 2: Managed | Documented, some production, planned |
+| 3: Defined | Standard processes, regular GameDays |
+| 4: Measured | Automated, continuous production, SLO-driven |
+| 5: Optimized | Fully automated, proactive discovery |
 
 ---
 

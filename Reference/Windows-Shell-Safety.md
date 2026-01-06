@@ -1,6 +1,5 @@
 # Windows Shell Safety for Claude Code
-
-**Version:** 0.21.0
+**Version:** v0.22.0
 **Source:** Reference/Windows-Shell-Safety.md
 
 ---
@@ -34,25 +33,27 @@ gh issue create --body "$(cat README.md)"
 gh issue create --body-file README.md
 ```
 
-## gh pmu Body Flags
-**Prefer `--body-stdout` / `--body-stdin`** for cleaner workflows.
-
-### Preferred: Stdout/Stdin
+## gh pmu Body-File Flags
 ```bash
-# Export, edit, update (no tmp/ directory)
-gh pmu view 123 --body-stdout > .tmp-body.md
-gh pmu edit 123 -F .tmp-body.md && rm .tmp-body.md
-
 # Create with body from file
 gh pmu create --title "Bug: ..." -F .tmp-body.md --status backlog
+
+# Export body for editing (replaces gh issue view --json body -q '.body')
+gh pmu view 123 --body-file    # Creates tmp/issue-123.md
+gh issue edit 123 --body-file tmp/issue-123.md
+rm tmp/issue-123.md
 ```
 
-### Alternative: Body-File
+### Stdin/Stdout Options
+`--body-stdout` and `--body-stdin` are **Windows-safe** piping alternatives:
 ```bash
-# Uses tmp/ directory (requires cleanup)
-gh pmu view 123 --body-file    # Creates tmp/issue-123.md
+# Both work reliably on Windows
+gh pmu view 123 --body-stdout > issue-body.md
+cat issue-body.md | gh pmu edit 123 --body-stdin
+
+# File-based approach (also works)
+gh pmu view 123 --body-file
 gh pmu edit 123 -F tmp/issue-123.md
-rm tmp/issue-123.md
 ```
 
 ## Path Handling

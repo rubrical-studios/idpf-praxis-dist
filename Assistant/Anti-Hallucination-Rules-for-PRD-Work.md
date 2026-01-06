@@ -1,41 +1,39 @@
 # Anti-Hallucination Rules for PRD Work
-**Version:** 0.17.0
+**Version:** v0.22.0
+**Source:** Assistant/Anti-Hallucination-Rules-for-PRD-Work.md
+
+---
 
 ## Core Principle
 **Stakeholder truth over helpful invention. Traceability over assumption. Validation over completion.**
-
----
+PRD work requires rigorous accuracy because fabricated requirements lead to building the wrong product.
 
 ## Information Source Hierarchy
-1. **Stakeholder statements** (absolute authority) - Direct quotes, written feedback, meeting notes
-2. **Existing artifacts** - Codebase, tests, API docs, schemas (for extract-prd)
-3. **Domain standards** - Regulations (HIPAA, PCI-DSS, GDPR), compliance
-4. **Logical inference** (with caveats) - Flag as inference, validate with stakeholder
+1. **Stakeholder statements** (absolute authority): Direct quotes, written feedback, meeting notes
+2. **Existing artifacts** (documented evidence): Codebase, test files, API docs, schemas
+3. **Domain standards** (external reference): Regulations (HIPAA, PCI-DSS, GDPR), compliance
+4. **Logical inference** (with explicit caveats): Must be flagged and validated
 
----
-
-## NEVER Invent
+## Absolute "Never Do" Rules
+### NEVER Invent:
 - Requirements not stated by stakeholders
-- User stories without evidence
-- Acceptance criteria beyond traceable
-- NFRs without code evidence/stakeholder input
-- Priority levels without confirmation
-- Success metrics not discussed
-- Personas from imagination
-- Timeline estimates without team input
+- User stories without evidence of user need
+- Acceptance criteria beyond what's testable/traceable
+- NFRs without code evidence or stakeholder input
+- Priority levels (MoSCoW) without stakeholder confirmation
+- Success metrics, personas, user journeys without research
+- Technical constraints or timeline estimates without verification
 
-## NEVER Assume
+### NEVER Assume:
 - What stakeholders "probably meant"
-- Requirements are complete
-- User needs beyond stated
+- Requirements are complete without asking
+- User needs beyond what was stated
 - Priority because it "seems important"
-- Technical feasibility without verification
 - Scope includes unstated features
+- NFR targets without discussion
 
----
-
-## Source Attribution
-**Every requirement MUST have a source:**
+## Requirement Source Attribution
+Every requirement MUST have a source:
 ```markdown
 REQ-001: User can reset password via email
 Source: Stakeholder interview 2025-01-15, Sarah Chen
@@ -45,46 +43,35 @@ Source: Stakeholder interview 2025-01-15, Sarah Chen
 | Source Type | Confidence | Action |
 |-------------|------------|--------|
 | Direct stakeholder quote | High | Document verbatim |
-| Written feedback | High | Reference document |
-| Inferred from code/tests | Medium | Flag, confirm |
-| Industry standard | Medium | Cite, confirm applicability |
-| Assistant suggestion | Low | Flag, require validation |
+| Written stakeholder feedback | High | Reference document |
+| Inferred from code/tests | Medium | Flag as "Inferred", confirm |
+| Industry standard | Medium | Cite standard, confirm applicability |
+| Assistant suggestion | Low | Flag as "Suggested", require validation |
 
----
+## Scope Boundary Rules
+- **In-Scope MUST Be Explicit:** Only include features stakeholders explicitly requested
+- **Out-of-Scope MUST Be Documented:** Document what's excluded with rationale
+- **Scope Creep Detection:** Flag when tempted to add features "users will expect" or "competitors have"
 
-## Scope Rules
-**In-Scope:** Only features stakeholders explicitly requested
-**Out-of-Scope:** Must document explicitly excluded items
-**Scope Creep:** Flag when tempted to add "expected" features
-
----
-
-## Priority Rules
-**Never assign without stakeholder input:**
-| Priority | Requires |
-|----------|----------|
-| Must Have | "required", "must", "critical" |
-| Should Have | "important", "should", "want" |
-| Could Have | "nice to have", "if possible" |
-| Won't Have | Explicitly excluded |
-
----
+## Priority Assignment Rules
+- **Never Assign Priority Without Stakeholder Input**
+- **MoSCoW Requires Explicit Confirmation:**
+  - Must Have: Stakeholder said "required", "must", "critical"
+  - Should Have: Stakeholder said "important", "should", "want"
+  - Could Have: Stakeholder said "nice to have", "if possible"
+  - Won't Have: Stakeholder explicitly excluded
 
 ## NFR Rules
-**Code-Inferred (extract-prd):** Flag confidence, cite evidence
-**Stakeholder-Stated:** Quote exact targets
-**Never Invent Targets:** Ask for uptime, response time requirements
+- Code-inferred NFRs must be flagged: "Status: [Inferred from code - confirm with stakeholders]"
+- Never change stakeholder-stated NFR values
+- Never invent NFR targets (e.g., "99.9% uptime" without discussion)
 
----
+## Acceptance Criteria Rules
+- Derive ONLY from stated requirements
+- Flag implied AC: "Note: Error handling not explicitly discussed - confirm this AC"
+- Every AC must be verifiable, specific, and traceable
 
-## Acceptance Criteria
-- Derive only from stated requirements
-- Flag implied criteria for confirmation
-- Must be testable, specific, traceable
-
----
-
-## extract-prd Rules
+## extract-prd Specific Rules
 | Extraction | Minimum Evidence |
 |------------|------------------|
 | Feature exists | Test file + passing assertions |
@@ -92,35 +79,32 @@ Source: Stakeholder interview 2025-01-15, Sarah Chen
 | API endpoint | Route definition + handler |
 | Data model | Schema/migration + usage |
 
-**Never Over-State:** Document confidence level honestly
+## Elicitation Session Rules
+- **Record, Don't Interpret:** Capture exact stakeholder words
+- **Clarify Ambiguity Immediately:** "Fast" → What response time? "Secure" → What requirements?
+- **Don't Fill Gaps Silently:** Ask which approach when error handling wasn't discussed
 
----
+## PRD Completion Checklist
+- [ ] Every requirement has a documented source
+- [ ] No requirements were invented without stakeholder input
+- [ ] All priorities were assigned by stakeholders
+- [ ] NFR targets came from stakeholders or code evidence
+- [ ] Acceptance criteria derive from stated requirements only
+- [ ] Scope boundaries explicitly defined (in/out)
+- [ ] Assumptions are documented and flagged for validation
 
-## Elicitation Rules
-- Record, don't interpret
-- Clarify ambiguity immediately ("fast" → what response time?)
-- Don't fill gaps silently - ask
+## When This Ruleset Applies
+- Using IDPF-PRD framework for requirements gathering
+- PRD-Analyst domain specialist is active
+- Running extract-prd skill on existing code
+- Creating or reviewing PRD documents
 
----
-
-## Checklists
-**PRD Completion:**
-- [ ] Every requirement has documented source
-- [ ] No invented requirements
-- [ ] All priorities assigned by stakeholders
-- [ ] NFR targets from stakeholders/code evidence
-- [ ] AC derives from stated requirements only
-- [ ] Scope boundaries explicit
-- [ ] Ambiguous terms clarified
-- [ ] Assumptions flagged for validation
-
-**extract-prd Completion:**
-- [ ] Features traced to code/test evidence
-- [ ] Confidence levels accurate
-- [ ] Inferred requirements flagged
-- [ ] NFRs sourced to code patterns
-- [ ] Gaps noted
-- [ ] Output marked as draft
+## Final Reminder
+**Invented requirements build the wrong product.** When tempted to "help" by adding requirements:
+1. **Stop** - Is this from a stakeholder or your imagination?
+2. **Source** - Can you cite where this came from?
+3. **Flag** - If inferred, mark it clearly
+4. **Validate** - Get stakeholder confirmation before finalizing
 
 ---
 

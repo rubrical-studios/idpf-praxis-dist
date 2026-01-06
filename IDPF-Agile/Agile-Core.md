@@ -1,5 +1,6 @@
 # Agile-Driven Development Framework - Core
-**Version:** 0.19.0
+**Version:** v0.22.0
+**Source:** IDPF-Agile/Agile-Core.md
 **Module:** Core (loaded at session startup)
 
 ---
@@ -7,9 +8,9 @@
 ## Terminology
 1. **User Story**: Feature from user's perspective with acceptance criteria
 2. **Sprint**: Time-boxed iteration (1-2 weeks)
-3. **Epic**: Large feature area with related stories
-4. **Story Points**: Relative effort estimate (Fibonacci: 1,2,3,5,8,13,21)
-5. **Definition of Done**: Checklist for story completion
+3. **Epic**: Large feature area with multiple stories
+4. **Story Points**: Relative effort (Fibonacci: 1,2,3,5,8,13,21)
+5. **Definition of Done (DoD)**: Checklist for story completion
 
 ---
 
@@ -21,59 +22,35 @@ Product Backlog Creation → Sprint Planning → Story Development (TDD) → Spr
 ---
 
 ## Key Commands
+**Backlog Operations (GitHub-Native):**
+- **"Create-Backlog"** - Create GitHub epics/stories from PRD
+- **"Add-Story"** - Create story with epic auto-detection
+- **"Prioritize-Backlog"** - Update Priority field (P0/P1/P2)
 
-### Backlog Operations (GitHub-Native)
-| Command | Description |
-|---------|-------------|
-| Create-Backlog | Create GitHub epics/stories from PRD |
-| Add-Story | Create new story with epic auto-detection |
-| Prioritize-Backlog | Update Priority field (P0/P1/P2) |
+**Story Workflow:**
+- **"Start-Story [#ID]"** - Begin development (In Progress + assign)
+- **"Story-Complete [#ID]"** - Mark story done
 
-### Story Workflow
-| Command | Description |
-|---------|-------------|
-| Start-Story [#ID] | Begin development (In Progress + assign) |
-| Story-Complete [#ID] | Mark story as done |
+**Development:**
+- **"Run-Tests"** - Execute test suite
+- **"Show-Coverage"** - Display coverage report
 
-### Development Commands
-| Command | Description |
-|---------|-------------|
-| Run-Tests | Execute full test suite |
-| Show-Coverage | Display test coverage report |
-
-### GitHub Integration
-- All backlog commands work against GitHub issues
-- No local backlog files created
-- Requires `.gh-pmu.yml` and `gh pmu` extension
-- Stories linked to epics via `gh pmu sub add`
+**GitHub Integration:** All backlog via GitHub issues. Requires `.gh-pmu.yml` and `gh pmu`. Stories linked via `gh pmu sub add`.
 
 ---
 
 ## TDD Cycle (RED-GREEN-REFACTOR)
+**RED:** Write failing test → verify FAILS → proceed
+**GREEN:** Minimal implementation → verify PASSES → proceed
+**REFACTOR:** Analyze and improve → keep tests passing → next behavior
 
-TDD phases execute **autonomously** within each story. No user interaction between phases. Only checkpoints: **In Review** (after implementation) and **Done** (user approval).
+**Execution:** Phases autonomous. Checkpoint at story completion (In Review → Done).
 
-### RED Phase
-1. Write failing test
-2. Verify FAIL
-3. Proceed to GREEN
-
-### GREEN Phase
-1. Write minimal implementation
-2. Verify PASS
-3. Proceed to REFACTOR
-
-### REFACTOR Phase
-1. Analyze for refactoring
-2. Refactor keeping tests passing
-3. Continue with next behavior or Story-Complete
-
-**Skills:** tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery
+**Skills:** `tdd-red-phase`, `tdd-green-phase`, `tdd-refactor-phase`, `tdd-failure-recovery`
 
 ---
 
 ## Story Development Flow
-
 **Start-Story [#ID]:**
 1. `gh pmu move [#ID] --status in_progress`
 2. Assign to first available
@@ -82,7 +59,7 @@ TDD phases execute **autonomously** within each story. No user interaction betwe
 5. Begin TDD cycles
 
 **Story-Complete [#ID]:**
-1. Verify all acceptance criteria met
+1. Verify acceptance criteria met
 2. Run full test suite
 3. `gh pmu move [#ID] --status done`
 4. Unassign issue
@@ -93,14 +70,8 @@ TDD phases execute **autonomously** within each story. No user interaction betwe
 ## User Story Format
 ```markdown
 ### Story [ID]: [Title]
-**As a** [user type]
-**I want** [goal]
-**So that** [benefit]
-
-**Acceptance Criteria:**
-- [ ] Criterion 1
-- [ ] Criterion 2
-
+**As a** [user] **I want** [goal] **So that** [benefit]
+**Acceptance Criteria:** - [ ] Criterion 1
 **Story Points:** [1,2,3,5,8,13,21]
 **Priority:** [High/Medium/Low]
 **Status:** [Backlog/Selected/In Progress/Done]
@@ -111,14 +82,9 @@ TDD phases execute **autonomously** within each story. No user interaction betwe
 ## Definition of Done (Global)
 - [ ] All acceptance criteria met
 - [ ] Unit tests written and passing
-- [ ] Code follows project conventions
+- [ ] Code follows conventions
 - [ ] No known bugs
 - [ ] Documentation updated (if applicable)
-
----
-
-## Additional Documentation
-Loaded on-demand: Templates, Commands, Best Practices, Transitions
 
 ---
 

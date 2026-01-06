@@ -1,39 +1,35 @@
+# UML Generation Skill
+**Version:** v0.22.0
+**Source:** Skills/uml-generation/SKILL.md
+
 ---
 name: uml-generation
 description: Generate UML diagrams from project source code using PlantUML with online rendering
 ---
-
-# UML Generation Skill
-**Version:** 0.17.0
-
 ## Purpose
-Analyze source code and generate UML diagrams with PlantUML syntax and online rendering URLs.
-
+Analyze project source code and generate UML diagrams with PlantUML syntax and online rendering URLs. Provides visual documentation during code analysis.
 ## When to Invoke
-- Code analysis requiring visual documentation
-- Architecture review and documentation
-- Reverse-engineering existing codebases
-- Understanding class hierarchies
-- Documenting API call flows
-- Technical debt visualization (with anti-pattern-analysis)
-
-## Supported Diagrams
+- **Code analysis** requiring visual documentation
+- **Architecture review** and documentation
+- **Reverse-engineering** existing codebases
+- **Understanding class hierarchies**
+- **Documenting API call flows**
+- **Technical debt visualization** (with anti-pattern-analysis)
+- **PRD extraction** (with extract-prd skill)
+## Supported Diagram Types
 | Diagram | Use Case | Priority |
 |---------|----------|----------|
-| **Class** | Code structure, inheritance | High |
-| **Sequence** | Method flows, API interactions | High |
-| **Component** | Architecture, module dependencies | Medium |
-| **Activity** | Workflow logic, algorithms | Medium |
-| **State** | State machines, lifecycle | Low |
-
+| **Class Diagram** | Code structure, inheritance, associations | High |
+| **Sequence Diagram** | Method call flows, API interactions | High |
+| **Component Diagram** | Architecture, module dependencies | Medium |
+| **Activity Diagram** | Workflow logic, algorithms | Medium |
+| **State Diagram** | State machines, lifecycle | Low |
 ## Output Format
-Each diagram includes:
-1. **PlantUML Source** - Copyable syntax
-2. **Online URL** - `http://www.plantuml.com/plantuml/svg/[encoded]`
-3. **Download Links** - SVG and PNG variants
-
+Each generated diagram includes:
+1. **PlantUML Source** (copyable)
+2. **Online Rendering URL:** `http://www.plantuml.com/plantuml/svg/[encoded]`
+3. **Download Links:** SVG and PNG formats
 ## PlantUML Quick Reference
-
 ### Class Diagram
 ```plantuml
 @startuml
@@ -42,14 +38,13 @@ class ClassName {
   -privateField: Type
   +publicMethod(): ReturnType
 }
-ClassA <|-- ClassB        ' inheritance
-ClassA <|.. ClassB        ' implementation
-ClassA *-- ClassB         ' composition
-ClassA --> ClassB         ' association
-ClassA "1" --> "*" ClassB ' multiplicity
+ClassA <|-- ClassB        : inheritance
+ClassA *-- ClassB         : composition
+ClassA o-- ClassB         : aggregation
+ClassA --> ClassB         : association
+ClassA "1" --> "*" ClassB : one-to-many
 @enduml
 ```
-
 ### Sequence Diagram
 ```plantuml
 @startuml
@@ -66,7 +61,6 @@ else error
 end
 @enduml
 ```
-
 ### Component Diagram
 ```plantuml
 @startuml
@@ -81,29 +75,26 @@ package "Backend" {
 [API Gateway] --> [User Service]
 @enduml
 ```
-
 ## URL Encoding
-1. UTF-8 encode source
-2. Deflate compress
-3. Base64-like encode (PlantUML alphabet)
-4. Construct: `http://www.plantuml.com/plantuml/svg/{encoded}`
-
-**Limit:** ~2000 chars (browser limit). For larger diagrams, output source only.
-
+PlantUML uses: UTF-8 encode -> Deflate compress -> Base64-like encode -> Construct URL
+**URL Length Limit:** ~2000 characters. For larger diagrams, output source only.
 ## Integration Points
-| Integration | Use |
-|-------------|-----|
-| extract-prd | Visual architecture in PRD extraction |
-| anti-pattern-analysis | Visualize problematic classes |
-| Backend-Specialist | Service layer diagrams |
-| API-Integration | Sequence diagrams for flows |
-
+| Integration | Workflow |
+|-------------|----------|
+| **extract-prd** | Create class/component diagrams during code analysis |
+| **anti-pattern-analysis** | Visualize problematic classes |
+| **Backend-Specialist** | Service layer class diagrams |
+| **API-Integration-Specialist** | Sequence diagrams for API flows |
 ## Limitations (Phase 1)
-- Internet required for rendering
-- URL length ~2000 chars
-- Code visible to public PlantUML server
-- No caching
-
+| Limitation | Workaround |
+|------------|------------|
+| Internet required | Use PlantUML locally |
+| URL length ~2000 chars | Output source only for large diagrams |
+| Public server | Self-host for sensitive code |
+## Resources
+See `resources/` directory for diagram guides, encoding details, and language-specific patterns.
+## Related
+- **extract-prd**: Code analysis for PRD extraction
+- **anti-pattern-analysis**: Code quality visualization
 ---
-
 **End of Skill Document**

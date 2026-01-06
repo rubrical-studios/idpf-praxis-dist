@@ -1,5 +1,5 @@
 # Cloud Provider Integration Guide
-**Version:** 0.20.0
+**Version:** v0.22.0
 
 **Framework:** IDPF-QA-Automation
 

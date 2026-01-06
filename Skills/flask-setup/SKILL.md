@@ -3,79 +3,72 @@ name: flask-setup-for-beginners
 description: Set up Python Flask development environment for beginners with step-by-step guidance, virtual environment creation, and troubleshooting
 license: Complete terms in LICENSE.txt
 ---
-
 # Flask Setup for Beginners
-**Version:** 0.17.0
+**Version:** v0.22.0
+**Source:** Skills/flask-setup/SKILL.md
 
-## When to Use
-- User wants Flask web application
-- Beginner needs Flask environment setup
+Guides complete beginners through setting up a Flask development environment with detailed explanations and verification steps.
+## When to Use This Skill
+- User wants to build a Flask web application
+- User is a beginner and needs Flask environment setup
 - User asks "How do I set up Flask?"
-
-## Instructions for ASSISTANT
-**Format ALL instructions as Claude Code copy/paste blocks.**
-
-**DO NOT:** Manual instructions like "Open File Explorer", "Navigate to folder"
-**ALWAYS:** Single code block with TASK, STEPs, and report request
-
+## ASSISTANT Output Format
+**CRITICAL:** Format ALL technical instructions as Claude Code copy/paste blocks.
+```
+TASK: Set up Flask project
+STEP 1: Copy this entire code block
+STEP 2: Open Claude Code
+STEP 3: Paste into Claude Code
+STEP 4: Report back: What did Claude Code say?
+---
+[Instructions for Claude Code to execute]
+```
 ## Setup Steps
-
-### 1. Verify Python
+### Step 1: Verify Python
 ```bash
 python --version
 ```
-**Expected:** Python 3.8+ | **If missing:** Install from python.org, check "Add to PATH"
-
-### 2. Create Virtual Environment
+Expected: `Python 3.8.x` or higher
+### Step 2: Create Virtual Environment
 ```bash
 python -m venv venv
 ```
-**What:** Isolated Python environment for project
-**Verify:** `venv` folder created (10-30 seconds)
-
-### 3. Activate Virtual Environment
+Creates isolated Python environment for this project. Wait 10-30 seconds.
+### Step 3: Activate Virtual Environment
 **Windows PowerShell:** `venv\Scripts\Activate.ps1`
-**Windows CMD:** `venv\Scripts\activate.bat`
+**Windows Command Prompt:** `venv\Scripts\activate.bat`
 **Mac/Linux:** `source venv/bin/activate`
-
-**Success:** `(venv)` appears in prompt
-**Issue (Windows):** `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
-
-### 4. Install Flask
+Success indicator: `(venv)` appears at start of terminal prompt.
+### Step 4: Install Flask
 ```bash
 pip install flask
 ```
-**Wait:** 30-60 seconds
-**Verify:** "Successfully installed flask-X.X.X"
-
-### 5. Create app.py
-Location: Project root (same level as `venv/`)
+Wait 30-60 seconds. Success message: "Successfully installed flask-X.X.X"
+### Step 5: Create app.py
+Create new file `app.py` in project folder (same level as `venv` folder).
+**Project structure:**
 ```
 my-project/
-├── venv/
-└── app.py  ← Create here
+├── venv/           <- Virtual environment folder
+└── app.py          <- Your main Flask file
 ```
-
-### 6. Verify Installation
+### Step 6: Verify Installation
 ```bash
-python --version
-pip list
-python -c "import flask; print(flask.__version__)"
+python --version           # Python 3.8+
+pip list                   # Should show Flask
+python -c "import flask; print(flask.__version__)"  # Should print version
 ```
-
-## Troubleshooting
+## Common Issues
 | Issue | Solution |
 |-------|----------|
-| `python: command not found` | Install Python, add to PATH |
-| `pip: command not found` | Activate virtual environment |
-| Execution policy error | Run Set-ExecutionPolicy command |
-| Permission errors | Ensure venv activated |
-
+| "python: command not found" | Install Python from python.org, check "Add to PATH" |
+| "Execution policy error" (Windows) | `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` |
+| "ModuleNotFoundError: flask" | Virtual environment not activated |
+| "pip: command not found" | Virtual environment not activated |
+## Resources
+See `resources/verification-checklist.md` for detailed troubleshooting.
 ## Next Steps
-After setup: Create first route, run dev server, build first page.
-
-**Remember:** Keep terminal with `(venv)` open while developing.
-
+After setup: Create first Flask route, learn about development server, build first web page.
+**Remember:** Keep terminal with `(venv)` open while developing!
 ---
-
-**End of Skill**
+**End of Flask Setup for Beginners Skill**

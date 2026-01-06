@@ -3,112 +3,77 @@ name: api-versioning
 description: Guide developers through API versioning strategies, deprecation workflows, and backward compatibility patterns
 license: Complete terms in LICENSE.txt
 ---
-
 # API Versioning
-**Version:** 0.17.0
+**Version:** v0.22.0
+**Source:** Skills/api-versioning/SKILL.md
 
-## When to Use
-- Designing evolving APIs
-- Planning breaking changes
+This Skill guides developers through API versioning strategies including URL-based, header-based, and content negotiation approaches, along with deprecation workflows and backward compatibility patterns.
+## When to Use This Skill
+Invoke this Skill when:
+- Designing a new API that will evolve over time
+- Planning breaking changes to an existing API
 - Establishing deprecation policies
-- Migrating clients between versions
-
+- Migrating clients between API versions
+- Choosing between versioning strategies
 ## Versioning Strategies
-
-### 1. URL Path (Recommended for Public)
-```
-/api/v1/users
-/api/v2/users
-```
-**Pros:** Visible, easy routing/caching | **Cons:** URL pollution
-
-### 2. Query Parameter
-```
-/api/users?version=1
-```
-**Pros:** Optional, easy to add | **Cons:** Less explicit
-
-### 3. Header
-```
-Accept-Version: v1
-```
-**Pros:** Clean URLs | **Cons:** Harder to test
-
-### 4. Media Type
-```
-Accept: application/vnd.company.users.v2+json
-```
-**Pros:** RESTful | **Cons:** Complex
-
+### 1. URL Path Versioning
+Version in the URL path: `/api/v1/users`, `/api/v2/users`
+**Pros:** Highly visible, easy to route/cache, simple client implementation
+**Cons:** URL pollution, can't version individual resources differently
+**Best for:** Public APIs, major version changes
+### 2. Query Parameter Versioning
+Version as query parameter: `/api/users?version=1`
+**Pros:** Optional (can default), single URL structure
+**Cons:** Easy to miss, can interfere with caching
+**Best for:** Optional versioning, date-based versions
+### 3. Header Versioning
+Version in HTTP header: `Accept-Version: v1` or `X-API-Version: 2`
+**Pros:** Clean URLs, follows HTTP semantics
+**Cons:** Harder to test in browser, less visible
+**Best for:** Internal APIs, fine-grained versioning
+### 4. Content Negotiation (Media Type)
+Version in Accept header: `Accept: application/vnd.company.users.v2+json`
+**Pros:** RESTful approach, supports multiple formats
+**Cons:** Complex implementation, harder for clients
+**Best for:** Strict REST, enterprise environments
 ## Decision Matrix
-| Factor | URL | Query | Header | Media |
-|--------|:---:|:-----:|:------:|:-----:|
-| Visibility | High | Med | Low | Low |
-| Simplicity | High | High | Med | Low |
-| Caching | Easy | Med | Hard | Hard |
-
+| Factor | URL Path | Query Param | Header | Media Type |
+|--------|----------|-------------|--------|------------|
+| Visibility | High | Medium | Low | Low |
+| Simplicity | High | High | Medium | Low |
+| RESTful | Medium | Low | Medium | High |
+| Caching | Easy | Medium | Complex | Complex |
+| Testing | Easy | Easy | Medium | Hard |
 ## Version Numbering
-**Semantic:** `MAJOR.MINOR.PATCH` (breaking.additions.fixes)
-**Date-based:** `2024-01-01` (frequent releases)
-**Simple:** `v1, v2, v3` (infrequent changes)
-
+**Semantic Versioning:** `MAJOR.MINOR.PATCH` - MAJOR for breaking changes, MINOR for additions, PATCH for fixes
+**Date-Based:** `YYYY-MM-DD` - For frequent releases, rolling deprecation windows
+**Simple Major:** `v1, v2, v3` - For infrequent major changes
 ## Backward Compatibility
-
-**Safe changes:**
-- Adding endpoints, optional parameters, new response fields
-
-**Breaking changes (require new version):**
-- Removing endpoints/fields, changing types, renaming fields
-
-## Deprecation Lifecycle
-```
-Active → Deprecated → Sunset → Removed
-```
-
-**Communication:**
-- Documentation updates
-- Deprecation headers: `Deprecation: true`, `Sunset: [date]`
-- Email notifications
-- Minimum notice (e.g., 6 months)
-
-## Deprecation Header
-```
-Deprecation: true
-Sunset: Sat, 01 Jun 2025 00:00:00 GMT
-Link: <https://api.example.com/docs/migration>; rel="deprecation"
-```
-
-## Migration Support
-1. Provide migration guide
-2. Offer parallel versions
-3. Log deprecated usage
-4. Notify heavy users
-
-## Deployment Strategies
-- **Blue-Green:** Deploy to inactive, switch traffic
-- **Canary:** Route % to new version, monitor
-- **Shadow:** Compare v1/v2 responses
-
-## GraphQL Versioning
-```graphql
-type User {
-  name: String! @deprecated(reason: "Use fullName")
-  fullName: String!
-}
-```
-
-## Checklists
-
-**Before Release:**
-- [ ] Strategy chosen and documented
-- [ ] Version scheme defined
+**Safe changes:** Adding new endpoints, optional parameters, new response fields, new enum values
+**Breaking changes:** Removing endpoints/fields, changing field types, renaming fields, changing required parameters
+## Deprecation Workflow
+**Lifecycle:** Active -> Deprecated -> Sunset -> Removed
+**Communication:** Documentation updates, API response headers, email/changelog notifications, minimum notice period
+**Deprecation header:** `Deprecation: true`, `Sunset: Sat, 01 Jun 2025 00:00:00 GMT`
+## Implementation Checklist
+### Before Releasing
+- [ ] Versioning strategy chosen
+- [ ] Version numbering scheme defined
+- [ ] Documentation includes version information
 - [ ] Deprecation policy documented
-
-**When Deprecating:**
+- [ ] Client SDKs version-aware
+### When Deprecating
+- [ ] Deprecation announced
 - [ ] Migration guide written
-- [ ] Headers added
+- [ ] Deprecation headers added
 - [ ] Sunset date set
-
+- [ ] Usage monitoring in place
+## Resources
+See `resources/` directory for detailed guides on strategy comparison, deprecation workflow, and compatibility patterns.
+## Relationship to Other Skills
+**Complements:** `error-handling-patterns`, `postgresql-integration`
+**Independent from:** TDD skills
+## Expected Outcome
+After using this skill: API versioning strategy selected, version numbering established, deprecation policy defined, migration workflow understood, backward compatibility patterns applied.
 ---
-
 **End of API Versioning Skill**

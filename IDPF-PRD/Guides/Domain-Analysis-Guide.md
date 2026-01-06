@@ -1,5 +1,5 @@
 # Domain Analysis Guide
-**Version:** 0.20.0
+**Version:** v0.22.0
 
 **Purpose:** Help identify domain-specific patterns, requirements, and considerations during PRD development.
 

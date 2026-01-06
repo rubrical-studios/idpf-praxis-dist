@@ -1,5 +1,5 @@
 # Elicitation Worksheet
-**Version:** 0.20.0
+**Version:** v0.22.0
 
 **Project Name:** _______________________
 **Date:** _______________________

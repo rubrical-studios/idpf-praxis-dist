@@ -1,5 +1,5 @@
 # Vibe-to-Structured Development Framework (Desktop)
-**Version:** 0.17.0
+**Version:** v0.22.0
 **Source:** IDPF-Vibe/Vibe-to-Structured-Desktop-Framework.md
 **Type:** Desktop Application Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md
@@ -7,149 +7,164 @@
 ---
 
 ## Purpose
-Specializes Core Framework for Windows, macOS, Linux desktop applications.
+Desktop application development specialization for Windows, macOS, Linux, and cross-platform.
 **Evolution Target:** IDPF-Agile
 
 ---
 
-## Platform Coverage
-**Windows, macOS, Linux, Cross-platform (Electron, Tauri, Qt)**
-
-### Application Types
-CLI tools, GUI apps (WinForms, WPF, SwiftUI, GTK), System utilities, File processors
+## Desktop Platform Coverage
+- **Windows**: WinForms, WPF, WinUI
+- **macOS**: AppKit, SwiftUI
+- **Linux**: GTK, Qt
+- **Cross-platform**: Electron, Tauri, Qt, .NET MAUI
+**Types**: CLI tools, GUI applications, System utilities, File processors
 
 ---
 
-## Session Initialization Questions
+## Session Initialization
+After Core Framework init (Steps 1-4), ask:
 - Primary target platform? (Windows/macOS/Linux/Cross-platform)
 - Application type? (CLI/GUI/System utility)
-- User environment?
-- Language preference?
+- User environment? (What OS developing on?)
+- Language preference? (Python/Ruby/JavaScript/C#/Rust/etc.)
 
 ---
 
-## Windows Development
-
-### Paths and Scripts
-- Use backslashes: `E:\Projects\my-app\src\main.py`
-- Environment: `%USERPROFILE%`, `%APPDATA%`, `%TEMP%`
-- Use `.cmd` or `.bat` scripts (NOT PowerShell)
-
-### Verification
+## Windows Desktop
+**Paths:** `E:\Projects\my-app\src\main.py`, `%USERPROFILE%`, `%APPDATA%`, `%TEMP%`
+**Scripts:** Use .cmd/.bat (not PowerShell)
+**Libraries:** `pywin32`, `winshell`, `pyinstaller` (Python); `win32ole`, `ocra` (Ruby); `node-windows`, `electron` (Node.js)
 ```
-cd E:\Projects\my-app
-python src\main.py --help
+STEP 6: python src\main.py
+STEP 7: Verify output in console window
+STEP 8: Report errors or success
 ```
 
 ---
 
-## macOS Development
-
-### Paths and Scripts
-- Use forward slashes: `/Users/username/Projects/my-app/`
-- Environment: `$HOME`, `$TMPDIR`
-- Use `.sh` bash scripts, make executable with `chmod +x`
-
-### Verification
-```bash
-cd ~/Projects/my-app
-python3 src/main.py --help
+## macOS Desktop
+**Paths:** `/Users/username/...`, `~/Documents`, `$HOME`, `$TMPDIR`
+**Scripts:** .sh bash scripts, `chmod +x build.sh`
+**Frameworks:** AppKit, SwiftUI, `py2app`, `rumps`
+```
+STEP 6: python3 src/main.py
+STEP 7: Verify output in Terminal
+STEP 8: Report results
 ```
 
 ---
 
-## Linux Development
-
-### Paths and Scripts
-- Use forward slashes: `/home/username/projects/my-app/`
-- Environment: `$HOME`, `$XDG_CONFIG_HOME`
-- Follow XDG directory specs
+## Linux Desktop
+**Paths:** `/home/username/...`, `~/.config/myapp/`, `$XDG_CONFIG_HOME`
+**Scripts:** .sh bash scripts
+**Libraries:** PyGObject (GTK), PyQt5, python-xlib; .desktop files for launchers; systemd for services
+```
+STEP 6: python3 src/main.py
+STEP 7: Check terminal output
+STEP 8: Report results
+```
 
 ---
 
-## Cross-Platform Development
+## Cross-Platform Frameworks
+| Framework | Best For | Notes |
+|-----------|----------|-------|
+| **Electron** | Web tech (HTML/CSS/JS) | Native APIs via Node.js, large bundles (~150MB) |
+| **Tauri** | Rust + Web | Lightweight (~3-10MB), system webview |
+| **Qt** | Native look/feel | C++/Python/Ruby, comprehensive widgets |
+| **.NET MAUI** | C# apps | Windows, macOS, Linux (via Avalonia) |
 
-### Frameworks
-| Framework | Description |
-|-----------|-------------|
-| Electron | JS/Node.js, web tech |
-| Tauri | Rust + Web, lightweight |
-| Qt | C++/Python, native look |
-| .NET MAUI | C#, cross-platform |
-
-### Path Handling
+**Path handling:**
 ```python
 import os
 from pathlib import Path
 data_path = os.path.join('data', 'input.txt')
-config = Path.home() / '.config' / 'myapp'
+home_dir = os.path.expanduser('~')
 ```
 
 ---
 
-## Desktop Verification Patterns
-
-### CLI
-```
-python src\main.py
-python src\main.py --input data\test.txt
-python src\main.py --input nonexistent.txt  # Error handling
-```
-
-### GUI
-- Does window appear?
-- Do controls render?
-- Click, type, check menus
-
----
-
-## Electron Workflow
+## Electron Development
 ```bash
-npm init -y && npm install electron --save-dev
+mkdir my-electron-app && cd my-electron-app
+npm init -y
+npm install electron --save-dev
 ```
-- `main.js` (main process), `preload.js` (bridge), `index.html` (UI)
-- Use `contextBridge` for security
-
-## Tauri Workflow
-```bash
-npm create tauri-app@latest my-app
-```
-- Rust backend, web frontend
-- Smaller bundles than Electron
+**Structure:** `package.json`, `main.js`, `preload.js`, `index.html`, `renderer.js`
+**IPC Pattern:** Use `contextBridge` in preload.js for secure main/renderer communication
+**Gotchas:** Use `preload.js` with `contextIsolation: true` (not nodeIntegration), handle `window-all-closed`, use `path.join(__dirname, ...)`
 
 ---
 
-## Best Practices
+## Tauri Development
+```bash
+npm create tauri-app@latest my-tauri-app
+cd my-tauri-app && npm install && npm run tauri dev
+```
+**Structure:** `src/` (frontend), `src-tauri/` (Rust backend with `main.rs`, `tauri.conf.json`)
+**Commands:** Define with `#[tauri::command]`, register in `invoke_handler!` macro
+**Gotchas:** `cargo check` for quick feedback, update CSP in tauri.conf.json, use `--release` for smaller binaries
 
+---
+
+## Native Patterns
+**SwiftUI (macOS):**
+```swift
+struct ContentView: View {
+    @State private var message = "Hello, macOS!"
+    var body: some View {
+        VStack {
+            Text(message).font(.largeTitle)
+            Button("Click Me") { message = "Clicked!" }.buttonStyle(.borderedProminent)
+        }.frame(width: 400, height: 300).padding()
+    }
+}
+```
+**WinUI 3 (Windows):** XAML layouts with C# code-behind
+
+---
+
+## Desktop Best Practices
 ### Vibe Phase
-- Test in cmd.exe (Windows), Terminal (macOS/Linux)
-- Handle spaces in paths
-- Use pathlib for cross-platform
+- **Windows:** Test in cmd.exe, use absolute paths, handle spaces in paths
+- **macOS:** Test in Terminal, request permissions early, consider sandboxing
+- **Linux:** Follow XDG specs, handle missing dependencies gracefully
+- **Cross-Platform:** Use pathlib, test on multiple platforms early, abstract differences
 
-### Evolution Point
-- Document platform requirements
-- Plan packaging per platform
-
-### Agile Phase
-- Platform-specific tests
-- Create installers
+### Structured Phase
+- Add platform-specific tests
+- Implement platform-specific optimizations
+- Create platform-specific packaging
 
 ---
 
-## Packaging
-
+## Packaging & Distribution
 | Platform | Tool | Output |
 |----------|------|--------|
-| Windows | PyInstaller | .exe |
-| macOS | py2app | .app |
-| Linux | AppImage | .AppImage |
-| Cross | electron-builder | All platforms |
+| Windows | PyInstaller | .exe, NSIS installer |
+| macOS | py2app | .app bundle, .dmg |
+| Linux | AppImage, dpkg-deb | .AppImage, .deb |
+| Electron | electron-builder | All platforms |
+| Tauri | tauri build | .msi, .dmg, .AppImage |
+
+**Code Signing:** Windows (~$300-500/yr), macOS ($99/yr Apple Developer), Linux (GPG, free)
+
+---
+
+## Transition Triggers
+| Trigger | Threshold | Action |
+|---------|-----------|--------|
+| Multiple windows | > 3 with inter-communication | State management architecture |
+| Background processing | Long-running tasks blocking UI | Thread/process architecture |
+| Data persistence | > 5 data types stored | Database design |
+| Cross-platform | Support > 2 platforms | Platform abstraction layer |
+| Packaging | Need installer/updates | Distribution strategy |
 
 ---
 
 ## When to Use
-**Use for:** CLI tools, GUI apps, System utilities, File processors, Cross-platform desktop
-**Consider other frameworks for:** Mobile, Web, Games
+**Use this:** CLI tools, GUI applications, system utilities, file processors, cross-platform desktop apps
+**Consider other:** Mobile → Mobile Framework | Web → Web Framework | Games → Game Framework
 
 ---
 

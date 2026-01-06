@@ -1,96 +1,140 @@
 # Framework Development Reference
-**Version:** 0.19.1
+**Version:** v0.22.0
 **Source:** Overview/Framework-Development.md
-**Purpose:** Detailed reference for IDPF development frameworks
 
 ---
 
-## IDPF-PRD (Pre-Development)
-**Location:** `IDPF-PRD/IDPF-PRD.md` | **Type:** Requirements Engineering
+**Purpose:** Detailed reference for IDPF development frameworks (2 frameworks: Agile, Vibe)
 
-**Auto-Template Selection:**
-| Framework | Template |
-|-----------|----------|
+## IDPF-PRD Framework (Pre-Development)
+**Location:** `IDPF-PRD/IDPF-PRD.md`
+**Type:** Requirements Engineering & PRD Generation
+
+Transform ideas into implementation-ready Product Requirements Documents through guided, AI-assisted elicitation. IDPF-PRD is the **pre-development phase** that produces PRDs feeding into IDPF-Agile.
+
+### Automatic Template Selection (Rev 3)
+| Framework | Auto-Selected Template |
+|-----------|------------------------|
 | IDPF-Agile | PRD-Agile-Lightweight |
+Use `Use-Template [name]` command to override.
 
-**Forward Path:** Discovery → Elicitation → Specification → Generation
-**Reverse Path:** Analyze → Extract → Refine → Generate
+### Workflow Phases
+**Forward Path:** Phase 1: Discovery → Phase 2: Elicitation → Phase 3: Specification → Phase 4: Generation
+1. **Discovery:** Domain analysis, stakeholder mapping, vision & goals
+2. **Elicitation:** Functional requirements, NFRs, constraints & risks
+3. **Specification:** Requirement detailing, acceptance criteria, testing approach
+4. **Generation:** Template selection, PRD assembly, framework handoff
 
-**Commands:**
-- Forward: PRD-Start, PRD-Status, PRD-Next, Generate-PRD, Export-PRD
-- Reverse: Reverse-PRD-Start, Reverse-PRD-Analyze, Reverse-PRD-Extract
+**Reverse Path:** Phase R1: Analyze → Phase R2: Extract → Phase R3: Refine → Phase R4: Generate
+1. **Analyze:** Scan structure, detect tech stack, infer architecture
+2. **Extract:** Parse tests for features, detect NFRs from patterns
+3. **Refine:** User validates/modifies extracted content
+4. **Generate:** Standard PRD generation from validated worksheets
 
-**Handoff:** PRD → Agile (Epics/Stories) | Skip → Vibe
+### PRD Commands
+**Forward Path:** PRD-Start, PRD-Status, PRD-Next, PRD-Back, Discovery-Complete, Elicitation-Complete, Specification-Complete, Generate-PRD, Export-PRD, List-NFRs, Suggest-NFRs
+**Reverse Path:** Reverse-PRD-Start, Reverse-PRD-Analyze, Reverse-PRD-Extract, Reverse-PRD-Refine, Reverse-PRD-Status
+
+### Framework Handoff
+- **PRD → IDPF-Agile:** Features mapped to Epics/Stories, begin Sprint 0 planning
+- **Skip PRD → IDPF-Vibe:** Exploratory projects with unknown scope
 
 ---
 
-## IDPF-Agile
+## IDPF-Agile Framework
 **Location:** `IDPF-Agile/Agile-Driven Development Framework.md`
-**Type:** Sprint-Based Development
+**Type:** Sprint-Based Development with User Stories
 
-**Terminology:**
-- Product Backlog: All stories
-- Sprint Backlog: Current sprint stories
-- Story Points: Fibonacci (1,2,3,5,8,13,21)
-- Velocity: Points per sprint
+### Key Components
+**Terminology:** Product Backlog, Sprint Backlog, User Story, Story Points (Fibonacci: 1, 2, 3, 5, 8, 13, 21), Sprint, Epic, Definition of Done (DoD), Velocity
 
-**Workflow:** Backlog Creation → Sprint Planning → Story Development (TDD) → Review → Retrospective
+**Workflow Stages:**
+1. **Product Backlog Creation**: Generate stories from vision, organize into epics
+2. **Sprint Planning**: Select stories, set sprint goal, estimate capacity
+3. **Story Development**: Implement using TDD cycles (RED-GREEN-REFACTOR)
+4. **Sprint Review**: Validate completed stories, gather feedback
+5. **Sprint Retrospective**: Process improvement and velocity analysis
 
 **User Story Format:**
 ```
-As a [user type] I want [goal] So that [benefit]
-Acceptance Criteria: - [ ] ...
-Story Points: [n] | Priority: [H/M/L] | Status: [...]
+As a [user type]
+I want [goal]
+So that [benefit]
+
+Acceptance Criteria:
+- [ ] Criterion 1
+- [ ] Criterion 2
+
+Story Points: [estimate]
+Priority: [High/Medium/Low]
+Status: [Backlog/Selected/In Progress/In Review/Done]
 ```
 
-**Commands:**
-- Backlog: Create-Backlog, Add-Story, Refine-Story, Split-Story
-- Sprint: Plan-Sprint, Start-Story, Story-Complete, Sprint-Status, Sprint-Retro
-- Dev: Run-Tests, Show-Coverage (TDD phases execute autonomously)
-- Release: Open-Release, Prepare-Release, Close-Release
+**Agile Commands:**
+- **Backlog Operations**: Create-Backlog, Add-Story, Refine-Story, Estimate-Story, Prioritize-Backlog, Split-Story
+- **GitHub Issue Commands**: Create-Backlog (creates Epic/Story hierarchy with sub-issue linking)
+- **Sprint Commands**: Plan-Sprint, Sprint-Status, Start-Story, Story-Complete, Sprint-Retro, End-Sprint
+- **Development Commands**: Run-Tests, Show-Coverage
+- **Utility Commands**: List-Commands, Help
+- **Release Lifecycle Commands**: Open-Release, Prepare-Release, Close-Release
 
-**When to Use:** Evolving requirements, iterative delivery, velocity tracking
+### When to Use
+- Building products with evolving requirements
+- Iterative delivery with regular feedback
+- Feature prioritization based on user value
+- Medium to large projects
+- Velocity tracking and predictability needed
+
+### GitHub Project Template
+See `Reference/GitHub-Project-Template-Agile.md` for views, labels, custom fields, issue hierarchy.
 
 ---
 
-## IDPF-Vibe
-**Location:** `IDPF-Vibe/` | **Core Rev:** 4.0
+## IDPF-Vibe Framework
+**Location:** `IDPF-Vibe/`
+**Core Framework Revision:** 4.0
+**Type:** Exploratory Development → Structured Evolution
 
-**Architecture:**
-- Core: Platform-agnostic workflow
-- Platforms: Desktop, Mobile, Web, Game, Embedded, Newbie
+Enable exploratory development phase without formal requirements, then evolve into IDPF-Agile when project direction crystallizes.
 
-**Three-Phase Workflow:**
+### Architecture
+**Core Framework:** Vibe-to-Structured-Core-Framework.md (Rev 4.0)
+**Platform-Specific:** Desktop (Rev 2), Mobile (Rev 3), Web (Rev 2), Game (Rev 1), Embedded (Rev 1), Newbie (Rev 1)
 
-**Phase 1 (Vibe):** Exploratory, no formal requirements
-- Commands: Vibe-Start, Try-This, Show-Me, That-Works, Undo-That, Run-It
+### Three-Phase Workflow
+**Phase 1: VIBE PHASE** - Exploratory, rapid iteration, natural language prompts
+**Vibe Commands:** Vibe-Start, Try-This, Show-Me, That-Works, Undo-That, Run-It, Vibe-Status, Vibe-End, Ready-to-Structure, Vibe-Abandon
 
-**Phase 2 (Evolution):** User says "Ready-to-Structure"
-- Evolves to IDPF-Agile: Generates as-built Product Backlog
+**Phase 2: EVOLUTION POINT** - Triggered when user says "Ready-to-Structure" or project feels complete
 
-**Phase 3 (Agile):** TDD with IDPF-Agile framework
+**Evolution to IDPF-Agile:** Generates as-built Product Backlog with completed stories (Done), documents Vibe features as Story 0.x
 
-**Platform Coverage:**
-| Platform | Technologies |
-|----------|-------------|
-| Desktop | Python, Ruby, Node/Electron, C#, Rust |
-| Mobile | Swift, Kotlin, React Native, Flutter |
-| Web | React, Vue, Express, Flask, Django |
-| Game | Godot, Unity, Unreal, Phaser |
-| Embedded | Arduino, ESP32, STM32, Wokwi, QEMU |
-| Newbie | Flask/Sinatra, vanilla HTML/CSS/JS, SQLite |
+**Phase 3: AGILE PHASE** - Switch to IDPF-Agile framework, all new development follows TDD
+
+### Platform Coverage
+- **Desktop (Rev 2):** CLI tools, GUI applications, Python, Ruby, JavaScript, C#, Rust
+- **Mobile (Rev 3):** iOS, Android, React Native, Flutter
+- **Web (Rev 2):** Frontend (React, Vue, Svelte), Backend (Node.js, Python, Ruby), Full-stack (Next.js, Remix)
+- **Game (Rev 1):** Godot, Unity, Unreal, browser games
+- **Embedded (Rev 1):** Arduino, ESP32, STM32, Raspberry Pi, RTOS
+- **Newbie (Rev 1):** Python (Flask) or Ruby (Sinatra), Skills integration
+
+### When to Use
+- Starting with unclear requirements
+- Need exploration phase first
+- Prototyping before formalizing
+- Requirements will emerge from experimentation
 
 ---
 
 ## Framework Transition Flow
-
 ```
 IDPF-Vibe → IDPF-Agile (terminal)
 ```
+- **IDPF-Vibe** evolves to **IDPF-Agile**
+- **IDPF-Agile** is the terminal framework
 
-**Transition Path:**
-- **IDPF-Vibe** (exploratory) evolves to **IDPF-Agile** (structured)
-- **IDPF-Agile** is terminal - projects remain in Agile through completion
+**No direct entry to Agile:** Use IDPF-PRD first or use IDPF-Vibe for exploration
 
 ---
 

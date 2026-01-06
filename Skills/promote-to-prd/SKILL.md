@@ -1,30 +1,22 @@
 # Skill: promote-to-prd
-**Version:** 0.20.0
+**Version:** v0.22.0
+**Source:** Skills/promote-to-prd/SKILL.md
 
 **Purpose:** Transform proposals into detailed PRD documents using Inception/ context
 **Audience:** Developers promoting approved proposals to actionable requirements
 **Load with:** Anti-Hallucination-Rules-for-PRD-Work.md
-
----
-
 ## Overview
-Transforms proposal documents into PRDs. Uses Inception/ artifacts for scope validation and targeted clarifying questions.
-**Key Principle:** Proposals = "what and why" at high level. PRDs add "how" with user stories, acceptance criteria, prioritized requirements.
+Transforms a proposal document into a detailed Product Requirements Document (PRD). Uses Inception/ artifacts as context to validate scope alignment and generate targeted clarifying questions.
+**Key Principle:** Proposals capture the "what and why" at a high level. PRDs add the "how" with user stories, acceptance criteria, and prioritized requirements.
 **Replaces:** IDPF-PRD 4-phase workflow
-
 ## When to Use
-- Proposal approved, ready for implementation planning
+- Proposal approved and ready for implementation planning
 - Need detailed requirements before Create-Backlog
-- Validate proposal fits current charter scope
+- Want to validate proposal fits current charter scope
 - Need user stories and acceptance criteria from high-level idea
-
 ## Skill Command
-| Command | Purpose |
-|---------|---------|
-| `/prd promote <proposal-path>` | Transform proposal into PRD |
-
+`/prd promote <proposal-path>` - Transform proposal into PRD
 ## Process Flow
-
 ### Phase 1: Load Context
 | File | Purpose | Required |
 |------|---------|----------|
@@ -32,156 +24,49 @@ Transforms proposal documents into PRDs. Uses Inception/ artifacts for scope val
 | `CHARTER.md` | Project vision and current focus | If exists |
 | `Inception/Scope-Boundaries.md` | In-scope/out-of-scope items | If exists |
 | `Inception/Constraints.md` | Technical/business constraints | If exists |
-| `Inception/Architecture.md` | System architecture | If exists |
-| `Inception/Charter-Details.md` | Full charter context | On-demand |
-
-**If no Inception/ artifacts:** Proceed with proposal analysis only, flag limited validation, recommend `/charter` first.
-
 ### Phase 2: Validate Against Charter
 | Check | Action if Misaligned |
 |-------|---------------------|
 | Fits in-scope items | Continue |
-| Outside current scope | Ask: "This isn't in current scope. Expand scope?" |
+| Outside current scope | Ask: "Expand scope?" |
 | Conflicts with constraints | Flag conflict, ask for resolution |
-| Depends on out-of-scope work | Identify dependencies |
-
-**Conversational Resolution:**
-```
-"This proposal adds [X], but current scope focuses on [Y].
-Options:
-1. Expand charter scope to include this
-2. Defer to future release
-3. Proceed anyway (creates charter drift)"
-```
-
 ### Phase 3: Analyze Proposal Gaps
-| Element | How to Detect | Gap Action |
-|---------|---------------|------------|
-| Problem statement | "Problem:", "Issue:", first paragraph | Ask if missing |
-| Proposed solution | "Solution:", "Approach:", section headers | Ask if missing |
-| User stories | "As a...", "User can..." | Generate questions |
-| Acceptance criteria | "- [ ]", "Done when", "Acceptance:" | Generate questions |
-| Technical requirements | "Must support", "Requires", tech terms | Infer from constraints |
-| Priority | "P0-P3", "High/Medium/Low" | Ask if missing |
-| Scope boundaries | "Out of scope", "Not included" | Generate from context |
-
+| Element | Gap Action |
+|---------|------------|
+| Problem statement | Ask if missing |
+| Proposed solution | Ask if missing |
+| User stories | Generate questions |
+| Acceptance criteria | Generate questions |
+| Priority | Ask if missing |
 ### Phase 4: Dynamic Question Generation
-Generate questions based on gaps AND project context. Questions tailored to specific proposal.
-
-| Category | Trigger | Example Questions |
-|----------|---------|-------------------|
-| Users | No user stories | "Who are the primary users of [feature]?" |
-| Workflow | Vague solution | "What's the main workflow for [feature]?" |
-| Done criteria | No acceptance criteria | "What does 'done' look like for this?" |
-| Constraints | Architecture implications | "Any constraints from current architecture?" |
-| Priority | No priority stated | "Priority relative to other work?" |
-| Edge cases | Complex feature | "What edge cases should we handle?" |
-| Dependencies | Cross-cutting concern | "Does this depend on other work?" |
-
-**Question Rules:**
-1. **Context-aware:** Reference specific details from proposal
-2. **Minimal:** Only ask what's truly missing
-3. **Specific:** "Who uses the bulk import feature?" not "Who are users?"
-4. **Actionable:** Each answer directly becomes PRD content
-
-**Asking Questions:** Present 3-5 at a time, conversational tone, allow "skip"/"not sure", adapt follow-ups.
-
+Questions are tailored to this specific proposal, not from a static bank.
+**Question Categories:** Users, Workflow, Done criteria, Constraints, Priority, Edge cases, Dependencies
+**Rules:** Context-aware, minimal, specific, actionable. Present 3-5 at a time.
 ### Phase 5: Generate PRD
-Create PRD document in `PRD/PRD-<name>.md`:
-```markdown
-# PRD: <Feature Name>
-**Status:** Draft
-**Created:** <date>
-**Source Proposal:** <proposal-path>
----
-## Overview
-<From proposal problem statement and solution>
----
-## User Stories
-### Story 1: <Title>
-**As a** <user type>
-**I want** <capability>
-**So that** <benefit>
-**Acceptance Criteria:**
-- [ ] <criterion 1>
-- [ ] <criterion 2>
----
-## Requirements
-### P0 - Critical
-| ID | Requirement | Acceptance Criteria |
-|----|-------------|---------------------|
-| R1 | <requirement> | <criteria> |
-### P1 - High
-| ID | Requirement | Acceptance Criteria |
-|----|-------------|---------------------|
-### P2 - Medium
-| ID | Requirement | Acceptance Criteria |
-|----|-------------|---------------------|
----
-## Technical Considerations
-<Aligned with Inception/Architecture.md>
----
-## Out of Scope
-<Explicit exclusions>
----
-## Dependencies
-<Cross-references to other work>
----
-## Open Questions
-<Unresolved items flagged during promotion>
----
-*Generated by promote-to-prd skill*
-*Ready for Create-Backlog*
-```
-
+Creates PRD document in `PRD/PRD-<name>.md` with:
+- Overview (from proposal)
+- User Stories with Acceptance Criteria
+- Requirements (P0-P2 prioritized)
+- Technical Considerations (aligned with Architecture)
+- Out of Scope
+- Dependencies
+- Open Questions
 ### Phase 6: Next Steps
-After PRD generation, prompt:
-```
-PRD created: PRD/PRD-Feature-X.md
-Next steps:
-1. Review and edit the PRD
-2. Run Create-Backlog to generate issues
-3. Assign to release
-Run Create-Backlog now? (yes/no)
-```
-
-## Integration with Other Components
+After PRD generation: Review/edit, run Create-Backlog to generate issues, assign to release.
+## Integration
 | Component | Integration |
 |-----------|-------------|
 | **Proposals** | Input: `Proposal/<name>.md` |
 | **Inception/** | Context: Scope, constraints, architecture |
-| **CHARTER.md** | Validation: Scope alignment |
 | **PRD/** | Output: `PRD/PRD-<name>.md` |
 | **Create-Backlog** | Downstream: Generates issues from PRD |
-| **extract-prd** | Complementary: Extracts from code, this promotes from proposals |
-
-## Comparison: IDPF-PRD vs promote-to-prd
-| Aspect | IDPF-PRD | promote-to-prd |
-|--------|----------|----------------|
-| Phases | 4 formal phases | Single conversational flow |
-| Input | Start from scratch | Proposal + Inception/ context |
-| Questions | Static worksheets | Dynamic, context-aware |
-| Validation | Manual review | Charter scope checking |
-| Output | PRD after all phases | PRD incrementally built |
-| Duration | Multiple sessions | Single session |
-| Complexity | Comprehensive | Focused on gaps |
-
-## Error Handling
-| Situation | Response |
-|-----------|----------|
-| Proposal file not found | "Proposal not found at <path>. Check the path?" |
-| No Inception/ artifacts | "No charter context found. Proceeding with limited validation." |
-| User skips all questions | "Insufficient detail for PRD. Add more to proposal first?" |
-| Proposal is empty/minimal | "Proposal needs more detail. Minimum: problem + proposed solution." |
-
+| **extract-prd** | Complementary: Extracts from code |
 ## Quality Checklist
-Before finalizing PRD:
 - [ ] All user stories have acceptance criteria
 - [ ] Requirements are prioritized (P0-P2)
 - [ ] Technical considerations align with architecture
 - [ ] Out of scope is explicitly stated
 - [ ] Open questions are flagged
 - [ ] PRD is Create-Backlog compatible
-
 ---
 **End of promote-to-prd Skill**

@@ -1,93 +1,102 @@
 # Vibe Agent System Instructions (Mobile)
-**Version:** 0.17.0
+**Version:** v0.22.0
+**Source:** System-Instructions/Vibe/Vibe-Agent-Mobile-Instructions.md
 **Type:** Mobile Application Agent Behaviors
 **Extends:** Vibe-Agent-Core-Instructions.md
 
 ---
 
 ## Purpose
-Specializes core instructions for iOS and Android development.
+Specializes core instructions for mobile app development on iOS and Android.
+
+**Adds ONLY mobile-specific behaviors:** Platform detection, simulator/emulator management, touch interaction guidance.
 
 ---
 
-## Platform Detection
-**Direct:** mobile app, iOS app, Android app
-**Frameworks:** Swift (iOS), Kotlin/Java (Android), React Native, Flutter
+## Mobile Platform Detection
+**Direct indicators:** "mobile app", "iOS app", "Android app", "simulator", "emulator"
+**Framework indicators:** Swift → iOS, Kotlin/Java → Android, React Native/Flutter → Cross-platform
 
 ---
 
-## iOS (Xcode)
-
+## Platform-Specific Behaviors
+### iOS (Xcode)
 ```
-STEP 1: Select iPhone 15 Pro simulator
-STEP 2: Press Cmd+R
-STEP 3: Wait 30-60 seconds
-STEP 4: Verify UI renders, interactions work
-STEP 5: Check Xcode console for errors
-STEP 6: Report results
-```
-
----
-
-## Android (Android Studio)
-
-```
-STEP 1: Select Pixel 7 API 33 emulator
-STEP 2: Press Shift+F10
-STEP 3: Wait 1-2 minutes (Gradle + emulator)
-STEP 4: Verify UI renders, interactions work
-STEP 5: Check Logcat for errors
-STEP 6: Report results
+STEP 6: Select "iPhone 15 Pro" simulator, press Cmd+R
+STEP 7: Wait for build (30-60 seconds)
+STEP 8: iOS Simulator launches
+STEP 9: Verify: UI renders, can interact, no errors in Xcode console
+STEP 10: Report results
 ```
 
----
-
-## React Native
-
+### Android (Android Studio)
 ```
-STEP 1: npm start (Metro)
+STEP 6: Select "Pixel 7 API 33", press Shift+F10
+STEP 7: Wait for Gradle build (1-2 minutes)
+STEP 8: Emulator launches
+STEP 9: Verify: UI renders, can interact, no errors in Logcat
+STEP 10: Report results
+```
+
+### React Native
+```
+STEP 1: npm start (Metro bundler)
 STEP 2: npm run ios (separate terminal)
-STEP 3: npm run android (separate terminal)
-STEP 4: Test hot reload (edit/save)
-STEP 5: Report both platforms
+STEP 3: npm run android (another terminal)
+STEP 4: Test hot reload (edit, save, both platforms reload)
+STEP 5: Report behavior on both platforms
 ```
 
----
-
-## Flutter
-
+### Flutter
 ```
 STEP 1: flutter run
-STEP 2: Select device if multiple
-STEP 3: Wait 1-3 minutes first build
-STEP 4: Hot reload: press 'r'
+STEP 2: Select device if multiple available
+STEP 3: Wait for build (1-3 minutes first time)
+STEP 4: Test hot reload (press 'r')
 STEP 5: Report results
 ```
 
 ---
 
-## Touch Targets
-**iOS:** 44x44 points
-**Android:** 48x48 dp
+## Mobile UI/UX Guidance
+**Minimum touch target sizes:**
+- iOS: 44x44 points
+- Android: 48x48 dp
 
 ---
 
-## Common Errors
+## Common Mobile Errors
+**iOS Simulator not booting:**
+```
+killall -9 Simulator
+open -a Simulator
+xcrun simctl erase "iPhone 15 Pro"  # if still stuck
+```
 
-**Simulator stuck (iOS):** `killall -9 Simulator`
-**Emulator stuck (Android):** `adb kill-server && adb start-server`
+**Android Emulator not starting:**
+```
+adb devices
+adb kill-server && adb start-server
+emulator -avd Pixel_7_API_33
+```
 
 ---
 
 ## Quick Reference
+### Running Apps
+| Platform | Command |
+|----------|---------|
+| iOS (Xcode) | Cmd+R |
+| Android (Studio) | Shift+F10 |
+| React Native iOS | `npm run ios` |
+| React Native Android | `npm run android` |
+| Flutter | `flutter run` |
 
-| Platform | Run | Hot Reload |
-|----------|-----|------------|
-| iOS (Xcode) | Cmd+R | - |
-| Android (Studio) | Shift+F10 | - |
-| React Native iOS | npm run ios | 'r' in Metro |
-| React Native Android | npm run android | 'r' in Metro |
-| Flutter | flutter run | 'r' in terminal |
+### Hot Reload
+| Platform | Method |
+|----------|--------|
+| React Native | Press 'r' in Metro |
+| Flutter | Press 'r' in terminal |
 
 ---
 

@@ -1,163 +1,116 @@
 # IDPF-PRD Framework
-**Version:** 0.17.0
+**Version:** v0.22.0
 **Source:** IDPF-PRD/IDPF-PRD.md
-**Framework-Debug:** True
+**Status:** Deprecated
+
+> **DEPRECATED** - Superseded by `promote-to-prd` skill. 4-phase workflow too heavyweight; static worksheets replaced by dynamic AI questions; Inception/ artifacts provide context upfront.
+> **Migration:** Use `Skills/promote-to-prd/SKILL.md`
+
 **Load with:** Anti-Hallucination-Rules-for-PRD-Work.md
 
 ---
 
 ## Overview
-IDPF-PRD transforms ideas into implementation-ready requirements through guided AI-assisted elicitation.
-**Purpose:** Generate PRD documents for IDPF-Agile development.
+IDPF-PRD is the pre-development phase. Transforms ideas into implementation-ready requirements through guided elicitation.
+**Purpose:** Generate PRD documents feeding into IDPF-Agile.
 
 ---
 
 ## Terminology
-1. **ASSISTANT**: AI assistant (Claude)
-2. **User**: Human developer/product owner
-3. **PRD**: Product Requirements Document
-4. **NFR**: Non-Functional Requirement
-5. **Session**: Conversation for one project's requirements
+| Term | Definition |
+|------|------------|
+| **PRD** | Product Requirements Document |
+| **NFR** | Non-Functional Requirement |
+| **Stakeholder** | Anyone with interest in outcome |
+| **Session** | Single conversation for one project |
 
 ---
 
 ## Workflow Phases
 ```
-Phase 1: Discovery -> Domain Analysis, Stakeholder Mapping, Vision & Goals
-Phase 2: Elicitation -> Functional Reqs, Non-Functional Reqs, Constraints & Risks
-Phase 3: Specification -> Requirement Detailing, Acceptance Criteria, Testing Approach
-Phase 4: Generation -> Template Selection, PRD Assembly, Framework Handoff
+Phase 1: Discovery (Domain Analysis → Stakeholder Mapping → Vision & Goals)
+Phase 2: Elicitation (Functional → Non-Functional → Constraints & Risks)
+Phase 3: Specification (Requirement Detailing → Acceptance Criteria → Testing Approach)
+Phase 4: Generation (Template Selection → PRD Assembly → Framework Handoff)
 ```
-
----
-
-## Session Initialization
-1. Load Anti-Hallucination Rules
-2. Declare Framework Revision
-3. Display Commands
-4. Begin Discovery
-5. Guide through phases
-
-**Critical:** Never invent requirements - only document stakeholder statements or code evidence.
 
 ---
 
 ## Phase 1: Discovery
+**Activities:** Domain Analysis | Stakeholder Mapping | Vision & Goals
 
-### Domain Analysis
-- Industry/vertical, regulatory requirements (HIPAA, PCI-DSS, GDPR, SOC 2)
-- Similar products, domain terminology, common patterns
+**Domain Questions:** Industry/vertical? Regulatory requirements? (HIPAA, PCI-DSS, GDPR, SOC 2) Similar products? Domain terminology?
+**Stakeholder Questions:** Primary end users? Secondary users? Business sponsors? Technical authority? Approvers?
+**Vision Questions:** Problem solved? One-sentence vision? Top 3 success metrics? 6-month/1-year success?
 
-### Stakeholder Mapping
-- Primary/secondary users, sponsors, technical authority, approval chain
-
-### Vision & Goals
-- Problem solved, vision statement, success metrics, 6-month/1-year goals
-
-**Output:** Discovery Worksheet
+**Output:** Discovery Worksheet or session responses
 
 ---
 
 ## Phase 2: Elicitation
+**Activities:** Functional Requirements | Non-Functional Requirements | Constraints & Risks
 
-### Functional Requirements
-- Core features, user tasks, workflows, inputs/outputs, integrations
+**Functional:** Core features? User tasks? Critical workflows? Inputs/outputs? Integrations?
 
-### NFR Questions
-| Category | Questions |
-|----------|-----------|
-| Performance | Response time, concurrent users, throughput |
-| Security | Authentication, authorization, encryption |
-| Reliability | Availability (99.9%+), downtime, backup/recovery |
-| Usability | Accessibility (WCAG), browsers/devices, locales |
+**NFR Questions:**
+- **Performance:** Response time? Concurrent users? Throughput?
+- **Security:** Authentication? Authorization? Encryption?
+- **Reliability:** Availability (99.9%)? Downtime? Backup/recovery?
+- **Usability:** Accessibility (WCAG 2.1)? Browsers/devices? Languages?
 
-### Constraints
-- Budget, deadline, technology, team skills, infrastructure, legacy systems
-
-**Output:** Elicitation Worksheet
+**Constraints:** Budget? Deadline? Technology? Team skills? Infrastructure? Legacy systems?
 
 ---
 
 ## Phase 3: Specification
-
-### Requirement Format
+**Requirement Format:**
 ```
 REQ-XXX: [Title]
-├── Description
-├── Rationale
+├── Description: [What it does]
+├── Rationale: [Why needed]
 ├── Priority: [High/Medium/Low]
-├── Dependencies
-├── Acceptance Criteria (AC-1, AC-2, AC-3)
-├── NFR Links
-└── Testing Approach
+├── Dependencies: [Related]
+├── Acceptance Criteria: AC-1, AC-2, AC-3
+└── Testing Approach: [TDD + ATDD/BDD if applicable]
 ```
 
-### Testing Approach Selection
+**Testing Approach:**
 | Approach | Required | When |
 |----------|----------|------|
 | TDD | Yes | All development |
 | ATDD | Optional | Formal acceptance, compliance |
 | BDD | Optional | Stakeholder collaboration |
 
-**Output:** Specification Worksheet
-
 ---
 
 ## Phase 4: Generation
+**Template Selection:** Standard project → Agile-Lightweight | Regulated/enterprise → Comprehensive | Exploratory → Skip PRD, use IDPF-Vibe
 
-### Template Selection
-**Auto-Selection:**
-| Framework | Template |
-|-----------|----------|
-| IDPF-Agile | PRD-Agile-Lightweight |
-
-**Decision tree:** Regulated/enterprise -> Comprehensive, Standard -> Agile-Lightweight, Exploratory -> Skip PRD, use IDPF-Vibe
-
-### Framework Handoff
-**To IDPF-Agile:** Features -> Epics, Capabilities -> Stories, Success -> AC, NFRs -> DoD, then Backlog creation
-
-**Output:** PRD-[ProjectName].md
+**Framework Handoff to IDPF-Agile:**
+- Feature areas → Epics
+- Capabilities → User Stories
+- Success criteria → Acceptance Criteria
+- NFRs → Definition of Done
+- Ready for: Backlog creation, Sprint 0
 
 ---
 
 ## PRD Commands
-
-### Navigation
-| Command | Description |
-|---------|-------------|
-| PRD-Start | Begin new session |
-| PRD-Status | Show phase and progress |
-| PRD-Next | Move to next activity |
-| PRD-Back | Return to previous |
-| PRD-Skip | Skip current activity |
-
-### Phase Completion
-| Command | Description |
-|---------|-------------|
-| Discovery-Complete | Proceed to Elicitation |
-| Elicitation-Complete | Proceed to Specification |
-| Specification-Complete | Proceed to Generation |
-| Generate-PRD | Assemble PRD document |
-
-### Utility
-| Command | Description |
-|---------|-------------|
-| List-NFRs | Show NFR catalog |
-| Suggest-NFRs | Domain-specific suggestions |
-| Use-Template [name] | Override template |
-| Review-Worksheet | Display captured info |
+**Navigation:** PRD-Start | PRD-Status | PRD-Next | PRD-Back | PRD-Skip
+**Phase:** Discovery-Complete | Elicitation-Complete | Specification-Complete | Generate-PRD
+**Utility:** List-NFRs | Suggest-NFRs | List-Constraints | Show-Template | Use-Template [name] | Review-Worksheet
+**Output:** Export-Discovery | Export-Elicitation | Export-Specification | Export-PRD
 
 ---
 
 ## PRD Lifecycle
-
 | Status | Location | Description |
 |--------|----------|-------------|
-| Draft | PRD/ | Being written |
-| Ready | PRD/ | Ready for development |
-| Backlog Created | PRD/ | Issues created from PRD |
-| In Progress | PRD/ | Development underway |
-| Complete | PRD/Implemented/ | All requirements done |
+| Draft | `PRD/` | Phases incomplete |
+| Ready | `PRD/` | Complete, ready for dev |
+| Backlog Created | `PRD/` | GitHub issues created |
+| In Progress | `PRD/` | Development underway |
+| Complete | `PRD/Implemented/` | All requirements implemented |
 
 ---
 
@@ -173,48 +126,20 @@ REQ-XXX: [Title]
 
 ---
 
-## Domain Patterns
-| Domain | NFRs | Integrations |
-|--------|------|--------------|
-| E-commerce | PCI-DSS, 99.9% uptime | Payment, inventory |
-| Healthcare | HIPAA, encryption | EHR, labs |
-| Finance | SOX, transaction atomicity | Banking, reporting |
-| SaaS | Multi-tenancy, 99.9% SLA | Identity, billing |
+## Reverse-PRD: Extraction from Existing Code
+**Purpose:** Extract PRD from existing codebases without documentation.
 
----
+**Phases:**
+- R1 Analyze: Structure scan → Tech stack → Architecture inference
+- R2 Extract: Test parsing → API extraction → NFR detection
+- R3 Refine: User validation → Context addition → Priority assignment
+- R4 Generate: Standard PRD generation
 
-## Reverse-PRD: Extraction from Code
+**Commands:** Reverse-PRD-Start | Reverse-PRD-Analyze | Reverse-PRD-Extract | Reverse-PRD-Refine | Reverse-PRD-Status
 
-### When to Use
-- Legacy codebase without documentation
-- Compliance/audit requirement generation
-- Onboarding to existing project
+**Confidence Levels:** High (multiple sources) → Verify | Medium (single source) → Confirm | Low (indirect) → Validate carefully
 
-### Workflow
-```
-R1: Analyze -> Structure Scan, Tech Stack, Architecture
-R2: Extract -> Test Parsing, API Extraction, NFR Detection
-R3: Refine -> User Validation, Context Addition, Priority
-R4: Generate -> Standard IDPF-PRD Generation
-```
-
-### Commands
-| Command | Description |
-|---------|-------------|
-| Reverse-PRD-Start | Begin extraction |
-| Reverse-PRD-Analyze | Run structure analysis |
-| Reverse-PRD-Extract | Generate draft worksheets |
-| Reverse-PRD-Refine | Interactive refinement |
-
-**Skill:** `extract-prd`
-**Limitation:** Extracts only explicit content; requires human refinement.
-
----
-
-## Framework Transitions
-
-**PRD -> IDPF-Agile:** Requirements defined, ready for development
-**PRD -> Skip (IDPF-Vibe):** Exploratory, unknown scope
+**Limitations:** Cannot understand intent | Missing business context | Language coverage | False positives possible
 
 ---
 

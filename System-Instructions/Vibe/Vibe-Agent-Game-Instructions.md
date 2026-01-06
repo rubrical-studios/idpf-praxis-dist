@@ -1,105 +1,94 @@
 # Vibe Agent System Instructions (Game)
-**Version:** 0.17.0
+**Version:** v0.22.0
+**Source:** System-Instructions/Vibe/Vibe-Agent-Game-Instructions.md
 **Type:** Game Development Agent Behaviors
 **Extends:** Vibe-Agent-Core-Instructions.md
 
 ---
 
 ## Purpose
-Specializes core instructions for game development with Godot, Unity, browser games.
+Specializes core instructions for game development with Godot, Unity, and browser-based games.
+
+**Adds ONLY game-specific behaviors:** Engine detection, engine-specific commands, play-testing guidance, game feel iteration.
 
 ---
 
-## Project Detection
-**Direct:** game, platformer, RPG, puzzle
-**Engines:** GDScript/.tscn (Godot), C#+Unity (Unity), Phaser/PixiJS (browser)
+## Game Project Detection
+**Direct indicators:** "game", "platformer", "RPG", "puzzle game", "player", "enemy", "level"
+**Engine indicators:** GDScript/.tscn → Godot, C#+Unity namespaces → Unity, Phaser/PixiJS → Browser
 
 ---
 
-## Godot
-
+## Engine-Specific Behaviors
+### Godot
 ```
-STEP 1: Run scene: F6
-STEP 2: Play-test (arrows/WASD, Space)
-STEP 3: Watch Output panel
-STEP 4: Rate feel 1-10 (responsiveness, fun)
-STEP 5: Stop: F8
-STEP 6: Report
-```
-
----
-
-## Unity
-
-```
-STEP 1: Click Play button
-STEP 2: Play-test in Game view
-STEP 3: Check Console
-STEP 4: Monitor Stats (target 60 FPS)
-STEP 5: Stop (Play again)
-STEP 6: Report
+STEP 6: Run scene: Press F6
+STEP 7: Play-test: arrow keys/WASD, Space to jump, test collisions
+STEP 8: Watch Output panel for errors
+STEP 9: Rate feel 1-10 (responsiveness, fun factor)
+STEP 10: Stop (F8) and report
 ```
 
----
-
-## Browser/Phaser
-
+### Unity
 ```
-STEP 1: npm run dev
-STEP 2: Open http://localhost:5173
-STEP 3: Play-test
-STEP 4: DevTools (F12) → Console
-STEP 5: Check FPS (target 60)
-STEP 6: Report
+STEP 6: Click Play button
+STEP 7: Play-test in Game view
+STEP 8: Check Console for errors
+STEP 9: Monitor Stats (FPS should be 60+)
+STEP 10: Stop and report
+```
+
+### Browser/Phaser
+```
+STEP 6: npm run dev
+STEP 7: Open http://localhost:5173
+STEP 8: Play-test, check DevTools Console
+STEP 9: Check FPS (should be 60)
+STEP 10: Report behavior and performance
 ```
 
 ---
 
-## Critical: Focus on Feel
-
+## Critical Behavior: Focus on Feel
 **Most important question:** Does it feel good to play?
-- Not: Is code clean?
-- But: Is movement responsive? Is jumping satisfying?
-
-**Rate feel before next feature.**
+Not: Is the code clean? But: Is movement responsive? Is jumping satisfying?
+Rate the feel before moving to next feature.
 
 ---
 
-## Feel Iteration Pattern
-
+## Iterate on Feel
 1. Implement basic mechanic
 2. Run and play-test
 3. Ask: "How does it feel?"
-4. Adjust ONE parameter (speed/jump/gravity)
+4. Adjust ONE parameter (speed/jump height/gravity)
 5. Test again
-6. Repeat until right
-7. THEN next feature
+6. Repeat until it feels right
+7. THEN move to next feature
 
 ---
 
 ## Placeholder Assets
-
-**Godot:** ColorRect node, 32x32, blue
-**Unity:** Cube/Square, scale, change color
+**Start with simple shapes:**
+- Godot: Add ColorRect node, 32x32, color blue
+- Unity: Cube or 2D Square, scale appropriately
 
 ---
 
 ## Performance Targets
-
 | Platform | Target | Minimum |
 |----------|--------|---------|
-| PC | 60 FPS | 60 FPS |
-| Mobile | 60 FPS | 30 FPS |
-| Browser | 60 FPS | 30 FPS |
+| PC | 60 | 60 |
+| Mobile | 60 | 30 |
+| Browser | 60 | 30 |
 
 ---
 
 ## Quick Reference
-
+### Running Games
 | Engine | Run | Stop |
 |--------|-----|------|
 | Godot | F5/F6 | F8 |
-| Unity | Play | Play again |
+| Unity | Play button | Play again |
 | Browser | npm run dev | Ctrl+C |
 
 ---

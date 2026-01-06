@@ -1,38 +1,33 @@
 # Agile-Driven Development Framework - Templates
-**Version:** 0.17.0
+**Version:** v0.22.0
+**Source:** IDPF-Agile/Agile-Templates.md
 **Module:** Templates (loaded on-demand)
 
 ---
 
 ## GitHub-Native Backlog
-IDPF-Agile uses GitHub issues. Use `Create-Backlog` to create epics/stories. Templates below are reference formats for issue content.
+IDPF-Agile uses GitHub issues for backlog. Use `Create-Backlog` for epics/stories. Templates below are reference formats for issue content.
 
 ---
 
 ## Product Backlog Format
 ```markdown
 # Product Backlog: [Project Name]
-**Project Vision:** [One-sentence description]
+**Project Vision:** [One-sentence]
 
 ## Definition of Done (Global)
 - [ ] All acceptance criteria met
-- [ ] Unit tests written and passing
-- [ ] Code follows project conventions
+- [ ] Unit tests passing
+- [ ] Code follows conventions
 - [ ] No known bugs
-- [ ] Documentation updated (if applicable)
+- [ ] Documentation updated
 
-## Epic: [Epic Name]
-**Epic Goal:** [What this epic achieves]
+## Epic: [Name]
+**Epic Goal:** [What achieved]
 
 ### Story [ID]: [Title]
-**As a** [user type]
-**I want** [goal]
-**So that** [benefit]
-
-**Acceptance Criteria:**
-- [ ] Criterion 1
-- [ ] Criterion 2
-
+**As a** [user] **I want** [goal] **So that** [benefit]
+**Acceptance Criteria:** - [ ] Criterion
 **Story Points:** [1,2,3,5,8,13,21]
 **Priority:** [High/Medium/Low]
 **Status:** [Backlog/Selected/In Progress/Done]
@@ -43,14 +38,14 @@ IDPF-Agile uses GitHub issues. Use `Create-Backlog` to create epics/stories. Tem
 ## Sprint Backlog Format
 ```markdown
 # Sprint [N] Backlog: [Project Name]
-**Sprint Goal:** [What we aim to achieve]
+**Sprint Goal:** [Aim]
 **Duration:** [Start] to [End]
 **Total Story Points:** [Sum]
 
 ## Selected Stories
 ### Story [ID]: [Title]
 **As a** [user] **I want** [goal] **So that** [benefit]
-**Acceptance Criteria:** [list]
+**Acceptance Criteria:** - [ ] Criterion
 **Story Points:** [points]
 **Status:** [Selected/In Progress/Done]
 
@@ -62,35 +57,47 @@ IDPF-Agile uses GitHub issues. Use `Create-Backlog` to create epics/stories. Tem
 
 ## Sprint Summary Format
 ```markdown
-# Sprint [N] Summary
-**Goal:** [Original] | **Duration:** [Start-End]
+# Sprint [N] Summary: [Project Name]
+**Sprint Goal:** [Original goal]
+**Duration:** [Start] to [End]
 
-## Completed: [X] points
+## Completed Stories
 - [Story ID]: [Title] - [Points]
+**Total Completed:** [X] points
 
-## Incomplete: [Y] points (carried over)
+## Incomplete Stories
 - [Story ID]: [Title] - [Points] - [Reason]
+**Carried Over:** [Y] points
 
 ## Velocity
-Planned: [X] | Completed: [Y]
+**Planned:** [Total] | **Completed:** [Points]
 
-## Key Achievements / Challenges / New Stories Discovered
+## Key Achievements
+- [Achievement 1]
+
+## Challenges
+- [Challenge 1]
 ```
 
 ---
 
 ## Retrospective Format
 ```markdown
-# Sprint [N] Retrospective
+# Sprint [N] Retrospective: [Project Name]
 **Date:** [Date]
 
 ## What Went Well
+- [Positive 1]
+
 ## What Could Be Improved
+- [Improvement 1]
+
 ## Action Items for Next Sprint
-- [ ] Action 1
+- [ ] [Action 1]
 
 ## Velocity Trends
-Sprint 1: [X] | Sprint N: [Y] | Average: [Avg]
+**Sprint 1:** [X] points
+**Average:** [Avg] points/sprint
 ```
 
 ---

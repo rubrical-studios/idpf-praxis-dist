@@ -1,50 +1,56 @@
 # Agile-Driven Development Framework - Best Practices
-**Version:** 0.17.0
+**Version:** v0.22.0
+**Source:** IDPF-Agile/Agile-Best-Practices.md
 **Module:** Best Practices (loaded on-demand)
 
 ---
 
 ## Story Writing
-**DO:** Use "As a... I want... So that...", focus on user value, keep small (1-3 days), include acceptance criteria, estimate relatively
-**DON'T:** Write technical tasks as stories, make too large, skip criteria, estimate in hours
+**DO:** Use "As a... I want... So that..." | Focus on user value | Keep small (1-3 days) | Clear acceptance criteria | Estimate relatively
+**DON'T:** Write technical tasks as stories | Make stories too large | Skip acceptance criteria | Estimate in hours
 
 ---
 
 ## Sprint Planning
-**DO:** Select cohesive stories, consider dependencies, sustainable velocity, mix features/tech debt, leave buffer
-**DON'T:** Overcommit, select unrelated stories, ignore tech debt, skip estimation
+**DO:** Select stories supporting cohesive goal | Consider dependencies | Sustainable velocity | Mix features + tech debt | Leave buffer
+**DON'T:** Overcommit | Select unrelated stories | Ignore tech debt | Skip estimation
 
 ---
 
 ## Development
-**DO:** TDD rigorously, commit frequently with references, update status, ask for help, refactor continuously
-**DON'T:** Skip tests, work multiple stories, let debt accumulate, ignore failing tests
+**DO:** Follow TDD rigorously | Commit frequently with story refs | Update status as you progress | Ask for help when blocked | Refactor continuously
+**DON'T:** Skip tests | Work multiple stories simultaneously | Let tech debt accumulate | Ignore failing tests
 
 ---
 
 ## Review & Retrospective
-**DO:** Celebrate, be honest, identify actions, adjust process, track velocity
-**DON'T:** Skip retros, blame individuals, repeat mistakes, ignore data
+**DO:** Celebrate completions | Be honest about issues | Identify actionable improvements | Adjust based on learnings | Track velocity
+**DON'T:** Skip retrospectives | Blame individuals | Repeat mistakes | Ignore velocity data
 
 ---
 
 ## Special Scenarios
 
 ### Story Blocked
-`Story-Blocked [#ID] [reason]` → adds `blocked` label, comments reason
-Options: Resolve, Archive-Story, work different story
+1. **"Story-Blocked [#ID] [reason]"**
+2. Add `blocked` label + comment
+3. Options: Resolve blocker | Archive (`Archive-Story`) | Work on different story
 
 ### Story Scope Creep
-`Story-Growing [#ID]` → adds `scope-creep` label
-Options: Split-Story, Estimate-Story, archive and create new
+1. **"Story-Growing [#ID]"**
+2. Add `scope-creep` label
+3. Options: Split (`Split-Story`) | Re-estimate | Archive and create new
 
 ### Emergency Bug
-`Emergency-Bug [description]` → creates issue with `emergency` label, P0 priority
-Fix with TDD
+1. **"Emergency-Bug [description]"**
+2. Create issue with `emergency` label, Priority P0
+3. Fix with TDD (failing test → fix → verify)
 
 ### Scope Change
-`Pivot [new direction]` → documents in epic/PRD issue
-For each open story: Keep / Archive / Close
+1. **"Pivot [new direction]"**
+2. Document in parent epic/PRD issue
+3. For each open story: Keep / Archive / Close
+4. Resume with updated backlog
 
 ---
 

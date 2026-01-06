@@ -8,6 +8,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+
+## [0.22.0] - 2026-01-06
+
+### Added
+- **`/extensions` command** (#734) - New command for managing extensible regions in command templates
+  - List all extensible regions across commands
+  - Add/remove custom extensions to command checklists
+  - View extension configuration
+
+### Changed
+- **Extensible Summary Checklists** - Four commands now support user-defined checklist extensions:
+  - `/open-release` (#730) - Custom validation steps when opening releases
+  - `/prepare-release` (#731) - Custom pre-release checks
+  - `/close-release` (#732) - Custom verification steps when closing releases
+  - `/prepare-beta` (#733) - Custom beta preparation steps
+
+### Infrastructure
+- **Templates/ minimization pipeline** (#735) - Templates directory now included in minimization for token optimization
+
+---
 ## [0.21.1] - 2026-01-05
 
 ### Fixed
@@ -33,7 +53,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Internal
 - Integrated extensibility.js into deployment workflow
 - Lowered coverage thresholds to match actual coverage
-- Restored v0.21.1 placeholders to 209 framework source files
+- Restored v0.22.0 placeholders to 209 framework source files
 
 ---
 
@@ -101,12 +121,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.20.1] - 2026-01-02
 
 ### Fixed
-- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.21.1` placeholder in `Templates/framework-manifest.json`
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.22.0` placeholder in `Templates/framework-manifest.json`
 - **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
 
 ### Changed
 - **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
-- **Version placeholder standardized** - All version tokens now use `v0.21.1` format for consistent replacement
+- **Version placeholder standardized** - All version tokens now use `v0.22.0` format for consistent replacement
 
 ---
 
@@ -175,7 +195,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.21.1` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.22.0` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---

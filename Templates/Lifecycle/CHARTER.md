@@ -1,18 +1,16 @@
 # Project Charter: {project-name}
+**Source:** Templates/Lifecycle/CHARTER.md
 
 **Status:** Draft | Active | Complete
 **Last Updated:** {date}
 
 ## Vision
-
 {1-2 sentence summary of what we're building and why}
 
 ## Current Focus
-
 {Current release/milestone target}
 
 ## Tech Stack
-
 | Layer | Technology |
 |-------|------------|
 | Language | {language} |
@@ -20,7 +18,6 @@
 | Database | {database} |
 
 ## In Scope (Current)
-
 - {Priority 1}
 - {Priority 2}
 - {Priority 3}

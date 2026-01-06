@@ -1,12 +1,11 @@
 ---
-version: "v0.21.1"
+version: "v0.22.0"
 allowed-tools: Bash
 description: Run sprint retrospective (project)
 ---
+**Source:** Templates/commands/sprint-retro.md
 
 Run a retrospective for the current sprint.
-
-Run the sprint-retro script:
 
 ```bash
 node .claude/scripts/shared/sprint-retro.js "$ARGUMENTS"

@@ -1,131 +1,85 @@
 # Skill: extract-prd
-**Version:** 0.17.0
+**Version:** v0.22.0
 **Source:** Skills/extract-prd/SKILL.md
 
-**Purpose:** Extract PRD worksheets from existing codebases
-**Audience:** Developers documenting legacy/undocumented projects
+**Purpose:** Extract lifecycle artifacts from existing codebases
+**Audience:** Developers documenting legacy or undocumented projects
 **Load with:** Anti-Hallucination-Rules-for-PRD-Work.md
-
----
-
+## Overview
+Analyzes existing codebases to generate lifecycle artifacts (CHARTER.md + Inception/ directory). Extracts features from tests, infers architecture from code patterns, and produces draft documentation for user refinement.
+**Use Case:** You have working code but no charter or documentation. This skill reverse-engineers lifecycle artifacts from what was built.
+**Critical:** All extracted content must be traceable to code evidence. Never invent details not supported by tests, code patterns, or documentation. Mark all inferences with confidence levels.
+**Output:** CHARTER.md + Inception/ artifacts (not PRD worksheets)
 ## When to Use
 - Legacy codebase without documentation
 - Project built without upfront requirements
 - Onboarding to existing project
-- Compliance/audit requirement generation
-
+- Pre-LTS baseline documentation
+- Session startup detects code but no charter
 ## Skill Commands
-| Command | Purpose |
-|---------|---------|
-| `Analyze-Structure` | Map file/directory organization, detect tech stack |
-| `Extract-From-Tests` | Parse test files for feature descriptions |
-| `Extract-From-API` | Parse API definitions for endpoints/operations |
-| `Detect-NFRs` | Identify NFRs from code patterns |
-| `Generate-Worksheets` | Output IDPF-PRD compatible worksheets |
-
-## Code Analysis Sources
-
-### Priority 1: High-Value
-| Source | Extracts |
-|--------|----------|
-| Test files | Features, acceptance criteria |
-| API routes | Endpoints, operations |
-| OpenAPI/Swagger | Full API specification |
-| GraphQL schema | Types, queries, mutations |
-
-### Priority 2: Supporting
-| Source | Extracts |
-|--------|----------|
-| README.md | Overview, setup, features |
-| Config files | NFRs, environment settings |
-| Package files | Dependencies, tech stack |
-| Dockerfile | Deployment pattern |
-
-### Priority 3: Supplementary
-| Source | Extracts |
-|--------|----------|
-| Git history | Feature evolution |
-| Comments | Intent, constraints |
-| Error handlers | Edge cases |
-
+| Command | Purpose | Output |
+|---------|---------|--------|
+| `Analyze-Structure` | Map file/directory organization, detect tech stack | Inception/Architecture.md, Inception/Tech-Stack.md |
+| `Extract-From-Tests` | Parse test files for feature descriptions | Inception/Scope-Boundaries.md |
+| `Extract-From-API` | Parse API definitions for endpoints/operations | Inception/Scope-Boundaries.md |
+| `Detect-NFRs` | Identify NFRs from code patterns | Inception/Constraints.md, Inception/Test-Strategy.md |
+| `Generate-Artifacts` | Output CHARTER.md + Inception/ directory | Full lifecycle structure |
+## Extraction Source Mapping
+### Priority 1: High-Value Sources
+| Source | Extracts To |
+|--------|-------------|
+| **Test files** | Inception/Scope-Boundaries.md, Inception/Test-Strategy.md |
+| **API routes** | Inception/Scope-Boundaries.md |
+| **OpenAPI/Swagger** | Inception/Scope-Boundaries.md, Inception/Architecture.md |
+| **GraphQL schema** | Inception/Scope-Boundaries.md, Inception/Architecture.md |
+| **Source structure** | Inception/Architecture.md |
+### Priority 2: Supporting Sources
+| Source | Extracts To |
+|--------|-------------|
+| **README.md** | CHARTER.md, Inception/Charter-Details.md |
+| **Config files** | Inception/Constraints.md |
+| **Package files** | Inception/Tech-Stack.md |
+| **Dockerfile** | Inception/Architecture.md |
 ## Test Parsing Patterns
-**Python (pytest):** `def test_[feature]_[behavior]()` → Feature + Behavior
-**JavaScript (Jest):** `describe()` → Feature, `it()` → Behaviors/AC
-**Java (JUnit):** `@DisplayName` → Description, class name → Feature
-**Ruby (RSpec):** `describe` → Feature, `context` → Scenario, `it` → Behavior
-
+**Python (pytest):** Function name `test_<feature>_<behavior>` + docstring -> Feature + Behavior
+**JavaScript (Jest/Mocha):** `describe()` blocks -> Feature grouping, `it()`/`test()` -> Individual behaviors
+**Ruby (RSpec):** `describe/context/it` blocks -> Feature hierarchy
+**Java (JUnit):** `@Test` with `@DisplayName` -> Feature + Behavior
 ## NFR Detection Patterns
-
-### Security
-| Pattern | NFR |
-|---------|-----|
-| `bcrypt`, `argon2` | SEC-001: Password hashing |
-| `@authenticate` | SEC-002: Authentication required |
-| `@authorize` | SEC-003: Authorization controls |
-| `csrf_token` | SEC-004: CSRF protection |
-| `validate`, `sanitize` | SEC-006: Input validation |
-| `rateLimit` | SEC-008: Rate limiting |
-
-### Performance
-| Pattern | NFR |
-|---------|-----|
-| `@cache`, `redis` | PERF-001: Caching |
-| `async`, `await` | PERF-002: Async processing |
-| `pool` | PERF-003: Connection pooling |
-| `index` | PERF-004: Database indexing |
-| `pagination` | PERF-005: Pagination |
-
-### Reliability
-| Pattern | NFR |
-|---------|-----|
-| `retry` | REL-001: Retry logic |
-| `circuit`, `breaker` | REL-002: Circuit breaker |
-| `timeout` | REL-003: Timeout handling |
-| `transaction` | REL-005: Transaction support |
-| `health`, `liveness` | REL-007: Health checks |
-
-### Observability
-| Pattern | NFR |
-|---------|-----|
-| `logger` | OBS-001: Logging |
-| `metrics` | OBS-002: Metrics collection |
-| `trace`, `span` | OBS-003: Distributed tracing |
-| `audit` | OBS-004: Audit logging |
-
-## Architecture Inference
-| Pattern | Architecture |
-|---------|--------------|
-| `/api/*` routes | REST API |
-| `schema.graphql` | GraphQL API |
-| `/pages/*` (Next.js) | SSR Web Application |
-| `socket`, `websocket` | Real-time Application |
-
+| Code Pattern | Inferred Constraint |
+|--------------|---------------------|
+| `bcrypt`, `argon2` | Password hashing required |
+| `@authenticate` | Authentication required |
+| `csrf_token` | CSRF protection |
+| `@cache`, `redis` | Caching implemented |
+| `retry`, `maxRetries` | Retry logic implemented |
+| `transaction` | Transaction support |
 ## Confidence Levels
-| Level | Criteria | Action |
-|-------|----------|--------|
-| **High** | Multiple sources confirm | Verify only |
-| **Medium** | Single source | Review and confirm |
-| **Low** | Indirect evidence | Validate carefully |
-
-## Output Location
-- PRD: `PRD/PRD-[ProjectName].md`
-- Worksheets: `PRD/Worksheets/[Type]-Worksheet-[ProjectName].md`
-
-## Workflow Integration
+| Level | Criteria | User Action |
+|-------|----------|-------------|
+| **High** | Multiple sources confirm, explicit in tests | Verify only |
+| **Medium** | Single source, reasonable inference | Review and confirm |
+| **Low** | Indirect evidence, pattern-based guess | Validate carefully |
+## Output Structure
 ```
-Reverse-PRD-Start → [extract-prd executes]
-→ Reverse-PRD-Analyze → Reverse-PRD-Extract
-→ Reverse-PRD-Refine → Generate-PRD
+project-root/
+├── CHARTER.md                      <- Overview (extracted)
+├── Inception/                      <- What we're building
+│   ├── Charter-Details.md          <- Full specs (extracted)
+│   ├── Architecture.md             <- System view (extracted)
+│   ├── Tech-Stack.md               <- Dependencies (extracted)
+│   ├── Scope-Boundaries.md         <- Features (extracted)
+│   ├── Test-Strategy.md            <- Test approach (extracted)
+│   ├── Constraints.md              <- NFRs (extracted)
+│   └── Milestones.md               <- Empty (needs input)
+├── Construction/                   <- Empty (populated during dev)
+└── Transition/                     <- Empty (populated during release)
 ```
-
 ## Limitations
-1. Cannot understand intent - only explicit code
-2. Missing business rationale
-3. Possible false positives
-4. Best support: Python, JavaScript, Java, Ruby
-
-**Critical:** All extracted requirements must be traceable to code evidence. Mark inferences with confidence levels.
-
+1. Cannot understand intent - Only extracts what's explicit in code
+2. Missing context - Business rationale not in code is not captured
+3. False positives - Some patterns may be incorrectly interpreted
+4. Language coverage - Best support for Python, JavaScript, Java, Ruby, Go
+**Important:** Extracted artifacts are **drafts** requiring human refinement.
 ---
-
 **End of Skill**

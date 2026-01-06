@@ -3,136 +3,92 @@ name: postgresql-integration
 description: Guide developers through PostgreSQL setup, connection configuration, query patterns, and best practices
 license: Complete terms in LICENSE.txt
 ---
-
 # PostgreSQL Integration
-**Version:** 0.17.0
+**Version:** v0.22.0
+**Source:** Skills/postgresql-integration/SKILL.md
 
-## When to Use
-- Setting up PostgreSQL connection
-- Implementing database operations
+Guides developers through PostgreSQL database integration including connection setup, query patterns, transaction handling, and connection pooling.
+## When to Use This Skill
+- Setting up PostgreSQL connection in a new project
+- Implementing database queries and operations
 - Configuring connection pooling
 - Handling transactions
-- Troubleshooting PostgreSQL issues
-
+- Troubleshooting common PostgreSQL issues
 ## Connection Setup
-
-### Connection String
+### Connection String Format
 ```
-postgresql://[user[:password]@][host][:port][/dbname][?param=value]
+postgresql://[user[:password]@][host][:port][/dbname][?param1=value1&...]
 ```
-
-### Security
-**NEVER hardcode credentials.** Use:
-1. Environment variables: `DATABASE_URL=postgresql://...`
-2. Config files (not in version control)
-3. Secret management services
-
-### SSL Modes
+**Security:** NEVER hardcode credentials. Use environment variables or secret management.
+### SSL/TLS Configuration
 | Mode | Description |
 |------|-------------|
-| disable | No SSL |
-| require | Require SSL, no verification |
-| verify-ca | SSL with CA verification |
-| verify-full | SSL with full verification |
-
+| `disable` | No SSL |
+| `require` | Require SSL, no verification |
+| `verify-ca` | Require SSL with CA verification |
+| `verify-full` | Require SSL with full verification |
 ## Query Patterns
-
-### Parameterized Queries (Required)
+**ALWAYS use parameterized queries:**
 ```sql
 -- CORRECT
 SELECT * FROM users WHERE id = $1
-
 -- WRONG (SQL injection vulnerable)
 SELECT * FROM users WHERE id = {user_id}
 ```
-
-### Common Operations
+**Common Operations:**
 ```sql
--- SELECT
-SELECT col1, col2 FROM table WHERE condition ORDER BY col1 LIMIT 100;
-
--- INSERT with returning
-INSERT INTO table (col1) VALUES ($1) RETURNING id;
-
--- UPDATE
-UPDATE table SET col1 = $1, updated_at = NOW() WHERE id = $2 RETURNING *;
-
--- DELETE
-DELETE FROM table WHERE id = $1 RETURNING id;
+-- SELECT with RETURNING
+INSERT INTO table_name (col1, col2) VALUES ($1, $2) RETURNING id;
+-- UPDATE with RETURNING
+UPDATE table_name SET col1 = $1 WHERE id = $2 RETURNING *;
+-- Batch INSERT
+INSERT INTO table_name (col1, col2) VALUES ($1, $2), ($3, $4), ($5, $6);
 ```
-
 ## Transaction Handling
-
-### Isolation Levels
-| Level | Dirty Read | Non-repeatable | Phantom |
-|-------|:----------:|:--------------:|:-------:|
-| READ COMMITTED (default) | No | Yes | Yes |
-| REPEATABLE READ | No | No | Yes |
-| SERIALIZABLE | No | No | No |
-
-### Best Practices
-- Keep transactions short
-- Handle errors with rollback
-- Never wait for user input mid-transaction
-
-### Savepoints
 ```sql
 BEGIN;
-INSERT INTO table1 ...;
-SAVEPOINT my_savepoint;
-INSERT INTO table2 ...;  -- might fail
-ROLLBACK TO SAVEPOINT my_savepoint;
-COMMIT;
+-- operations
+COMMIT;  -- or ROLLBACK;
 ```
-
+**Isolation Levels:**
+| Level | Dirty Read | Non-repeatable Read | Phantom Read |
+|-------|------------|---------------------|--------------|
+| READ COMMITTED (default) | No | Possible | Possible |
+| REPEATABLE READ | No | No | Possible |
+| SERIALIZABLE | No | No | No |
+**Best Practices:**
+- Keep transactions short
+- Handle errors explicitly
+- Never wait for user input mid-transaction
 ## Connection Pooling
-
-### Why Pool?
-Opening connections is expensive (TCP, auth, memory). Pools maintain open connections for reuse.
-
-### Key Parameters
-| Parameter | Purpose |
-|-----------|---------|
-| min_connections | Minimum to maintain |
-| max_connections | Maximum allowed |
-| connection_timeout | Wait time for connection |
-| idle_timeout | Close idle after |
-
-### Sizing
-```
-max_connections = core_count * 2  (SSD systems)
-```
-
+**Why:** Opening connections is expensive (TCP handshake, auth, memory)
+**Key Parameters:**
+- `min_connections` - Minimum to maintain
+- `max_connections` - Maximum allowed
+- `connection_timeout` - Wait time for available connection
+- `idle_timeout` - Time before closing idle connection
+**Sizing Guideline:** `max_connections = core_count * 2`
 ## Error Handling
-
-### Common Errors
-| Error | Cause |
-|-------|-------|
-| ECONNREFUSED | Server not running |
-| authentication failed | Wrong credentials |
-| relation does not exist | Table not found |
-| duplicate key | Unique constraint violation |
-
-### Retry Strategy
-1. Exponential backoff
-2. Max 3 attempts
-3. Log each retry
-4. Fail after max
-
+**Connection errors:** `ECONNREFUSED` (server not running), `ETIMEDOUT` (network issue), `authentication failed`
+**Query errors:** `syntax error`, `relation does not exist`, `duplicate key`, `foreign key violation`
+**Retry Strategy:** Wait with exponential backoff, maximum retry count (e.g., 3), log each attempt
 ## Performance Tips
-
-### Indexing
+**Indexing:**
 ```sql
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_orders_user_date ON orders(user_id, created_at);
 ```
-
-### Query Analysis
+**Query Analysis:**
 ```sql
 EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'test@example.com';
 ```
-Look for: Sequential scans on large tables, high cost estimates
-
+Look for: Sequential scans on large tables, high cost estimates, actual vs estimated row counts.
+## Resources
+See `resources/` directory for setup guide, query patterns, and common errors.
+## Relationship to Other Skills
+**Complements:** `sqlite-integration`, `migration-patterns`
+**Independent from:** TDD skills
+## Expected Outcome
+After using this skill: PostgreSQL connection configured securely, queries use parameterized inputs, transactions handled appropriately, connection pooling configured.
 ---
-
 **End of PostgreSQL Integration Skill**

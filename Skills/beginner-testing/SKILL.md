@@ -3,117 +3,116 @@ name: beginner-testing
 description: Introduce test-driven development to beginners with simple Flask/Sinatra test examples and TDD concepts
 license: Complete terms in LICENSE.txt
 ---
-
 # Beginner Testing Introduction
-**Version:** 0.17.0
+**Version:** v0.22.0
+**Source:** Skills/beginner-testing/SKILL.md
 
-## When to Use
-- User's Vibe app ready to transition to Structured
-- User mentions "testing" or "how to test"
-- User has 3-4 features, wants quality assurance
-
+Introduces beginners to automated testing and Test-Driven Development (TDD) with simple, understandable examples.
+## When to Use This Skill
+- User has working Vibe app ready to transition to Structured Phase
+- User mentions "testing" or asks "how to test"
+- Evolution Point reached (user says "Ready-to-Structure")
+- User has built 3-4 features and wants to add quality assurance
 ## Prerequisites
-- Working Flask/Sinatra app with 3-4 features
+User should have:
+- Working Flask or Sinatra app with 3-4 features
 - Understanding of routes and functions
-- Code works but no tests
-
+- Code that works, but no tests yet
 ## What is Testing?
-**Without tests:** Change code → Open browser → Click around → Hope nothing broke
-**With tests:** Change code → Run tests → See green/red → Know immediately
-
-## TDD Cycle
-```
-RED → GREEN → REFACTOR
-
-1. RED: Write test that fails (feature doesn't exist)
-2. GREEN: Write just enough code to pass
-3. REFACTOR: Clean up while tests still pass
-```
-
-## Test Types (Simple)
-| Type | Tests | Example |
-|------|-------|---------|
-| Unit | Individual functions | `add_numbers(2,3)` returns `5` |
-| Route | Pages load correctly | `/` returns status 200 |
-| Integration | Parts work together | Form adds to database |
-
-**Beginners: Start with route tests!**
-
-## First Test (Flask)
+Testing means writing code that checks if your code works.
+**Without tests:** Make a change -> Open browser -> Click around manually -> Hope nothing broke -> Repeat
+**With tests:** Make a change -> Run tests (one command) -> See green or red -> Know immediately if something broke
+## What is TDD?
+**The TDD Cycle: RED -> GREEN -> REFACTOR**
+1. **RED:** Write a test that fails (feature doesn't exist yet)
+2. **GREEN:** Write just enough code to make test pass
+3. **REFACTOR:** Clean up the code while tests still pass
+Then repeat for next feature!
+## Types of Tests
+1. **Unit Tests** - Tests individual functions/pieces
+2. **Route Tests** - Tests that web pages load correctly (start here for beginners)
+3. **Integration Tests** - Tests that different parts work together
+## Your First Test (Flask)
 ```python
 # test_app.py
 def test_homepage_loads():
+    """Test that homepage loads without errors."""
     from app import app
     client = app.test_client()
     response = client.get('/')
-    assert response.status_code == 200
+    assert response.status_code == 200  # 200 = success
 ```
-
 **Run:** `pip install pytest && pytest`
-
-## First Test (Sinatra)
+## Your First Test (Sinatra)
 ```ruby
 # test_app.rb
 require 'minitest/autorun'
 require 'rack/test'
 require_relative 'app'
-
 class AppTest < Minitest::Test
   include Rack::Test::Methods
-  def app; Sinatra::Application; end
-
+  def app
+    Sinatra::Application
+  end
   def test_homepage_loads
     get '/'
     assert last_response.ok?
   end
 end
 ```
-
 **Run:** `ruby test_app.rb`
-
 ## Common Assertions
-**Python:** `assert value == 5`, `assert 'text' in response.data`
-**Ruby:** `assert_equal 5, value`, `assert_includes body, 'text'`
-
-## TDD Example: Delete Feature
+**Python (pytest):**
 ```python
-# 1. RED - Write failing test
+assert something == True
+assert value == 5
+assert 'text' in response.data
+```
+**Ruby (minitest):**
+```ruby
+assert something
+assert_equal 5, value
+assert_includes body, 'text'
+```
+## TDD Example: Adding Delete Feature
+**Step 1: RED** - Write failing test
+```python
 def test_delete_note():
     client = app.test_client()
-    client.post('/add', data={'note': 'Test'})
+    client.post('/add', data={'note': 'Test note'})
     response = client.get('/delete/1')
     assert response.status_code == 302
-
-# 2. GREEN - Make it pass
+```
+Run test -> It fails! (Route doesn't exist yet)
+**Step 2: GREEN** - Make test pass
+```python
 @app.route('/delete/<int:note_id>')
 def delete_note(note_id):
-    # implementation
+    conn = get_db()
+    conn.execute('DELETE FROM notes WHERE id = ?', (note_id,))
+    conn.commit()
+    conn.close()
     return redirect('/')
-
-# 3. REFACTOR - Clean up
 ```
-
-## Test Output
-**Pass:** `3 passed in 0.12s`
-**Fail:** `FAILED - AssertionError: assert 404 == 200`
-
-## What to Test (Beginners)
-- Routes exist (not 404)
-- Forms submit successfully
-- Data saves/displays correctly
-
-## Common Mistakes
-| Mistake | Solution |
-|---------|----------|
-| Not running tests | Run after every change |
-| Tests depend on order | Each test independent |
-| One giant test | Small tests, one thing each |
-
-## Benefits
-- Clarity: Test defines "working"
-- Confidence: Know when things break
-- Less fear: Change without worrying
-
+Run test -> It passes!
+**Step 3: REFACTOR** - Clean up code (tests still pass)
+## Common Testing Mistakes
+1. **Not running tests** - Run tests after every change
+2. **Tests depend on order** - Each test should work independently
+3. **Testing too much at once** - Small tests, one thing each
+4. **Not testing the right thing** - Actually verify the important behavior
+## Benefits of TDD for Beginners
+1. **Clarity** - Test defines what "working" means
+2. **Confidence** - Know immediately when something breaks
+3. **Better Code** - Testable code is usually better organized
+4. **Documentation** - Tests show how to use your code
+5. **Less Fear** - Change code without worrying about breaking things
+## Resources
+See `resources/` directory for complete examples:
+- `flask-test-example.py`
+- `sinatra-test-example.rb`
+- `tdd-explained.md`
+## Next Steps
+Once comfortable with basic testing: Add more route tests, test form submissions, test database operations, learn fixtures and mocking.
 ---
-
-**End of Skill**
+**End of Beginner Testing Introduction Skill**

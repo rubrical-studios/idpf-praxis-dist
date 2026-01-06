@@ -1,12 +1,11 @@
 ---
-version: "v0.21.1"
+version: "v0.22.0"
 allowed-tools: Bash
 description: Show current sprint status (project)
 ---
+**Source:** Templates/commands/sprint-status.md
 
 Show the status of the current sprint.
-
-Run the sprint-status script:
 
 ```bash
 node .claude/scripts/shared/sprint-status.js "$ARGUMENTS"

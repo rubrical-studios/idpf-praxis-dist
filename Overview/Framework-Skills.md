@@ -1,113 +1,82 @@
 # Framework Skills Reference
-**Version:** 0.19.1
+**Version:** v0.22.0
 **Source:** Overview/Framework-Skills.md
-**Purpose:** Reference for all Skills
 
 ---
 
-## Overview
-**Location:** `Skills/` | **Total:** 21 skills
-**Format:** SKILL.md + resources/ + LICENSE.txt
+**Location:** `Skills/`
+**Total Skills:** 21 (6 TDD/BDD, 1 PRD extraction, 2 code quality, 2 beginner setup, 3 beginner support, 2 database, 2 advanced testing, 2 architecture, 1 DevOps)
 
----
+**Skill Characteristics:**
+- Packaged as distributable units (SKILL.md + resources/ + LICENSE.txt)
+- Provide copy/paste Claude Code instruction blocks (NOT manual instructions)
+- Include verification checklists and resource files
 
-## TDD Skills
-
+## TDD Skills (Experienced Developers)
 | Skill | Function | When Used |
 |-------|----------|-----------|
-| tdd-red-phase | Write failing tests, verify failure | First-Step, Start-Story |
-| tdd-green-phase | Minimal implementation to pass | After RED verified |
-| tdd-refactor-phase | Improve code, maintain green | After GREEN success |
-| tdd-failure-recovery | Handle unexpected behaviors, rollback | Test misbehaves, need rollback |
-| test-writing-patterns | AAA pattern, test doubles, assertions | Test structure guidance |
-
----
-
-## BDD Skills
-
-| Skill | Function | When Used |
-|-------|----------|-----------|
-| bdd-writing | Gherkin syntax, feature files, step definitions | Acceptance criteria as specs |
-
-**Tools:** Cucumber, pytest-bdd, SpecFlow, Behave, RSpec
-
----
+| tdd-red-phase | Guide RED phase - writing failing tests | Starting new feature/behavior |
+| tdd-green-phase | Guide GREEN phase - minimal implementation | After RED phase verified failing |
+| tdd-refactor-phase | Guide REFACTOR phase - code improvement | After GREEN phase success |
+| tdd-failure-recovery | Handle unexpected test behaviors | Test behaves unexpectedly |
+| test-writing-patterns | Test structure, patterns, assertions | Need guidance on test structure |
+| bdd-writing | BDD specification with Gherkin syntax | Writing acceptance criteria |
 
 ## PRD Skills
-
 | Skill | Function | When Used |
 |-------|----------|-----------|
-| extract-prd | Extract PRD from existing code | Reverse-PRD workflow |
-| promote-to-prd | Transform proposals into PRD | Pre-Create-Backlog planning |
-
-**Coverage:** Test parsing, NFR detection, architecture inference, proposal analysis, charter alignment
-
----
+| extract-prd | Extract PRD worksheets from existing codebases | Reverse-PRD workflow |
+| promote-to-prd | Transform proposals into PRD documents | Promoting approved proposals |
 
 ## Code Quality Skills
-
 | Skill | Function | When Used |
 |-------|----------|-----------|
-| anti-pattern-analysis | Detect anti-patterns in code review | Reviews, refactoring planning |
-| uml-generation | Generate UML from source (PlantUML) | Architecture documentation |
+| anti-pattern-analysis | Systematic detection of anti-patterns | Code reviews, refactoring |
+| uml-generation | Generate UML diagrams using PlantUML | Architecture documentation |
 
----
-
-## Beginner Skills
-
+## Beginner Setup Skills
 | Skill | Function |
 |-------|----------|
-| flask-setup | Flask environment setup |
-| sinatra-setup | Sinatra environment setup |
-| common-errors | Troubleshooting reference |
-| sqlite-integration | Database integration for beginners |
-| beginner-testing | TDD introduction |
+| flask-setup | Python Flask environment setup |
+| sinatra-setup | Ruby Sinatra environment setup |
 
----
+## Beginner Support Skills
+| Skill | Function |
+|-------|----------|
+| common-errors | Troubleshooting reference |
+| sqlite-integration | Database integration guidance |
+| beginner-testing | Testing introduction and TDD education |
 
 ## Database Skills
-
 | Skill | Function |
 |-------|----------|
-| postgresql-integration | PostgreSQL setup, pooling, queries |
-| migration-patterns | Schema versioning, rollback, zero-downtime |
-
----
+| postgresql-integration | PostgreSQL setup, connection pooling, queries |
+| migration-patterns | Schema versioning, migrations, rollback |
 
 ## Advanced Testing Skills
-
 | Skill | Function |
 |-------|----------|
-| property-based-testing | Hypothesis/fast-check patterns |
-| mutation-testing | Test suite quality assessment |
-
----
+| property-based-testing | Property-based testing patterns |
+| mutation-testing | Mutation testing and test suite assessment |
 
 ## Architecture Skills
-
 | Skill | Function |
 |-------|----------|
-| api-versioning | Versioning strategies, deprecation |
-| error-handling-patterns | Error hierarchy, API responses |
-
----
+| api-versioning | API versioning strategies and deprecation |
+| error-handling-patterns | Error hierarchy and API error responses |
 
 ## DevOps Skills
-
 | Skill | Function |
 |-------|----------|
-| ci-cd-pipeline-design | Pipeline architecture, security |
+| ci-cd-pipeline-design | CI/CD pipeline architecture |
 
----
-
-## Framework Dependencies
-
+## Framework-Skill Dependencies
 | Framework | Required Skills |
 |-----------|----------------|
 | IDPF-Agile | tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns |
-| IDPF-Vibe (Newbie) | flask-setup, sinatra-setup, common-errors, sqlite-integration, beginner-testing |
+| IDPF-Vibe (vibe-newbie) | flask-setup, sinatra-setup, common-errors, sqlite-integration, beginner-testing |
 
-**Standalone:** anti-pattern-analysis, bdd-writing, extract-prd, promote-to-prd, uml-generation
+**Standalone Skills:** anti-pattern-analysis, bdd-writing, extract-prd, promote-to-prd, uml-generation
 
 ---
 

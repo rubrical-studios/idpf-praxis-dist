@@ -1,100 +1,94 @@
 # IDPF-Performance Framework
-**Version:** 0.17.0
+**Version:** v0.22.0
 **Source:** IDPF-Performance/IDPF-Performance.md
 **Extends:** IDPF-Testing-Core
 
 ---
 
 ## Overview
-Framework for performance testing: load, stress, endurance, capacity planning.
-Validates response time, throughput, scalability, resource utilization.
+Framework for performance tests. Validates response time, throughput, scalability, and resource utilization under various load conditions.
 
 ---
 
 ## Terminology
 | Term | Definition |
 |------|------------|
-| Load Test | Behavior under expected load |
-| Stress Test | Find breaking point |
-| Endurance/Soak Test | Degradation over sustained load |
-| Spike Test | Sudden traffic bursts |
-| Capacity Test | Maximum throughput |
-| Virtual Users (VUs) | Simulated concurrent users |
-| Throughput | Requests per second (RPS) |
-| Percentile (p95/p99) | Response time at percentile |
+| **Load Test** | Validate under expected load |
+| **Stress Test** | Find breaking point |
+| **Endurance/Soak Test** | Detect degradation over time |
+| **Spike Test** | Handle sudden bursts |
+| **Capacity Test** | Determine max throughput |
+| **Virtual Users (VUs)** | Simulated concurrent users |
+| **Throughput** | Requests per second (RPS) |
+| **Percentile (p95/p99)** | Response time at percentile |
+| **Ramp-Up** | Gradual VU increase |
+| **Think Time** | User pause between requests |
+| **Threshold** | Pass/fail criteria |
 
 ---
 
-## Test Types
-| Type | Duration | Load Pattern |
-|------|----------|--------------|
-| Load | 15-60 min | Steady state |
-| Stress | Until failure | Ramping up |
-| Endurance | 4-24 hours | Steady state |
-| Spike | 15-30 min | Sudden spikes |
-| Capacity | Varies | Incremental |
+## Performance Test Types
+| Type | Purpose | Duration | Pattern |
+|------|---------|----------|---------|
+| **Load Test** | Expected load | 15-60 min | Steady |
+| **Stress Test** | Breaking point | Until failure | Ramping |
+| **Endurance/Soak** | Memory leaks | 4-24 hours | Steady |
+| **Spike Test** | Traffic bursts | 15-30 min | Spikes |
+| **Capacity Test** | Max throughput | Varies | Incremental |
+| **Scalability Test** | Scaling validation | Varies | Incremental |
 
 ---
 
 ## Tool Selection
 | Tool | Language | Strengths |
 |------|----------|-----------|
-| k6 | JavaScript | Developer-friendly, CI/CD |
-| JMeter | Java/XML | Mature, plugins |
-| Gatling | Scala | Efficient, great reports |
-| Locust | Python | Simple, distributed |
-| Artillery | JavaScript | YAML config, easy CI |
+| **k6** | JavaScript | Developer-friendly, CI/CD, cloud option |
+| **JMeter** | Java/XML | Mature, plugins, protocol support |
+| **Gatling** | Scala/Java | Efficient, great reports |
+| **Locust** | Python | Simple, distributed |
+| **Artillery** | JavaScript | YAML config, easy CI |
+| **wrk/wrk2** | Lua | Lightweight, precise latency |
+
+**Selection:** JavaScript → k6/Artillery | Python → Locust | Java/Scala → Gatling/JMeter | GUI needed → JMeter | HTTP benchmarking → wrk2
 
 ---
 
-## Directory Structure
+## Load Profile Patterns
+
+### Ramp-Up
 ```
-<performance-repo>/
-├── PRD/TestPlans/
-├── src/scenarios/ (load-test.js, stress-test.js)
-├── src/lib/ (utilities)
-├── src/data/ (test data)
-├── src/thresholds/
-├── results/
-└── .github/workflows/
+Users: 0 → ramp up → steady state → ramp down → 0
+```
+
+### Spike
+```
+Users: baseline → spike → baseline → spike → baseline
+```
+
+### Step (Capacity)
+```
+Users: step increases until failure
 ```
 
 ---
 
 ## Key Metrics
-| Metric | Target |
-|--------|--------|
-| Response Time (p50) | < 200ms |
-| Response Time (p95) | < 500ms |
-| Response Time (p99) | < 1000ms |
-| Error Rate | < 0.1% |
-| Apdex | > 0.9 |
+| Metric | Description | Good Values |
+|--------|-------------|-------------|
+| **Response Time (p50)** | Median | < 200ms |
+| **Response Time (p95)** | 95th percentile | < 500ms |
+| **Response Time (p99)** | 99th percentile | < 1000ms |
+| **Throughput** | RPS | Depends on capacity |
+| **Error Rate** | Failed/total | < 0.1% |
+| **Apdex** | Performance Index | > 0.9 |
 
 ### Threshold Configuration (k6)
 ```javascript
 thresholds: {
   'http_req_duration': ['p(95)<500', 'p(99)<1000'],
   'http_req_failed': ['rate<0.01'],
+  'http_reqs': ['rate>1000'],
 }
-```
-
----
-
-## Load Profiles
-
-### Ramp-Up Pattern
-```
-Ramp Up → Steady State → Ramp Down
-```
-
-### Spike Pattern
-```
-Baseline → Spike → Baseline → Spike → Baseline
-```
-
-### Step Pattern (Capacity)
-```
-Step increases until failure
 ```
 
 ---
@@ -102,46 +96,102 @@ Step increases until failure
 ## Test Data Management
 | Approach | Use Case |
 |----------|----------|
-| CSV Files | User credentials, IDs |
-| JSON Files | Complex payloads |
-| Dynamic Generation | Unique per request |
+| **CSV Files** | User credentials, IDs |
+| **JSON Files** | Complex payloads |
+| **Dynamic Generation** | Unique data per request |
+| **Shared Array** | Large datasets (k6) |
 
 ---
 
 ## CI/CD Integration
-- **On-demand:** workflow_dispatch with inputs
-- **Scheduled:** Nightly/weekly soak tests
-- **Artifacts:** Upload results for analysis
+
+### GitHub Actions (k6)
+```yaml
+name: Load Test
+on:
+  workflow_dispatch:
+    inputs:
+      environment: { default: 'staging' }
+      duration: { default: '5m' }
+      vus: { default: '50' }
+jobs:
+  load-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: grafana/k6-action@v0.3.1
+        with:
+          filename: src/scenarios/load-test.js
+          flags: --env ENV=${{ inputs.environment }} --duration ${{ inputs.duration }} --vus ${{ inputs.vus }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: k6-results
+          path: results/
+```
+
+### Scheduled Soak Test
+```yaml
+name: Scheduled Soak Test
+on:
+  schedule:
+    - cron: '0 2 * * 0'  # Sunday 2 AM
+jobs:
+  soak-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: grafana/k6-action@v0.3.1
+        env:
+          K6_DURATION: '4h'
+          K6_VUS: '100'
+```
 
 ---
 
-## GitHub Labels
-| Label | Description |
-|-------|-------------|
-| load-test | Load test development |
-| stress-test | Stress test development |
-| soak-test | Endurance testing |
-| capacity | Capacity planning |
-| baseline | Baseline measurement |
+## GitHub Project Labels
+| Label | Color | Description |
+|-------|-------|-------------|
+| `performance` | `#0052CC` | Performance work |
+| `load-test` | `#0E8A16` | Load test |
+| `stress-test` | `#D93F0B` | Stress test |
+| `soak-test` | `#5319E7` | Endurance test |
+| `capacity` | `#1D76DB` | Capacity planning |
+| `baseline` | `#C5DEF5` | Baseline measurement |
+
+---
+
+## Workflow Phases
+| Phase | Activities |
+|-------|------------|
+| **PLAN** | Define SLAs/SLOs, identify critical paths, establish baselines |
+| **DESIGN** | Create workload model, design profiles, configure thresholds |
+| **DEVELOP** | Write scripts, build data generators, setup monitoring |
+| **EXECUTE** | Run tests, collect metrics, monitor resources |
+| **REPORT** | Analyze percentiles, compare baselines, generate recommendations |
 
 ---
 
 ## Session Commands
-| Command | Description |
-|---------|-------------|
-| Perf-Plan-Start | Begin planning |
-| Baseline-Define | Establish baselines |
-| Load-Test-Create | Create load test |
-| Stress-Test-Create | Create stress test |
-| Threshold-Define | Define pass/fail criteria |
-| Run-Load-Test | Execute load test |
-| Analyze-Results | Analyze results |
-| Compare-Baseline | Compare to baseline |
+**Planning:** Perf-Plan-Start | Baseline-Define | SLA-Review
+**Development:** Load-Test-Create | Stress-Test-Create | Threshold-Define
+**Execution:** Run-Load-Test | Run-Stress-Test | Run-Soak-Test
+**Analysis:** Analyze-Results | Compare-Baseline | Generate-Report
 
 ---
 
 ## Monitoring Integration
-APM (New Relic, Datadog), Infrastructure (Prometheus), Logging (ELK), Dashboards (Grafana)
+| Type | Examples | Purpose |
+|------|----------|---------|
+| APM | New Relic, Datadog | App-level metrics |
+| Infrastructure | Prometheus, CloudWatch | Server/container |
+| Logging | ELK, Splunk | Log correlation |
+| Dashboards | Grafana | Visualization |
+
+---
+
+## References
+- [k6 Documentation](https://k6.io/docs/)
+- [JMeter Manual](https://jmeter.apache.org/usermanual/)
+- [Gatling Documentation](https://gatling.io/docs/)
 
 ---
 

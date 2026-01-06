@@ -1,28 +1,29 @@
 # IDPF-Testing-Core Framework
-**Version:** 0.19.0
+**Version:** v0.22.0
 **Source:** IDPF-Testing-Core/IDPF-Testing-Core.md
-**Framework-Debug:** True
 
 ---
 
 ## Overview
-Foundation for all testing-focused development. Establishes common architecture, terminology, and workflows.
-**Core Principle:** "Test automation is software development."
+Foundational framework for testing-focused development. Establishes common architecture, terminology, workflows, and integration patterns for specialized testing frameworks.
+**Core Principle:** Test automation is software development. Same tools, skills, and practices.
 
 ---
 
 ## Terminology
 | Term | Definition |
 |------|------------|
-| Test Repository | Separate Git repo for test code |
-| Test Plan | Lightweight document defining scope, referencing app PRD |
-| AUT | Application Under Test |
-| Test Infrastructure | Utilities, helpers, framework code |
-| Coverage Mapping | Traceability from tests to requirements |
+| **Test Repository** | Separate Git repo with test code |
+| **Test Plan** | Lightweight doc defining scope, referencing PRD |
+| **Application Under Test (AUT)** | Application being tested |
+| **Test Framework** | IDPF framework governing testing |
+| **Test Suite** | Collection of related test cases |
+| **Test Infrastructure** | Utilities, helpers, framework code |
+| **Coverage Mapping** | Traceability from tests to requirements |
 
 ---
 
-## Architecture
+## Testing Framework Architecture
 ```
 IDPF-Testing-Core
 ├── IDPF-QA-Automation (Selenium, Playwright, Cypress, Appium)
@@ -37,31 +38,26 @@ IDPF-Testing-Core
 
 ## Embedded vs Separate Repository
 
-### Embedded (Uses IDPF-Agile)
-| Type | Location | Governance |
-|------|----------|------------|
-| TDD | App repo | IDPF-Agile |
-| ATDD | App repo | IDPF-Agile + Specs |
-| BDD | App repo | IDPF-Agile + Specs |
+### Embedded (NOT IDPF-Testing)
+| Testing Type | Location | Governance |
+|--------------|----------|------------|
+| TDD (unit) | Application repo | IDPF-Agile |
+| ATDD (acceptance) | Application repo | IDPF-Agile + PRD |
+| BDD (behavior) | Application repo | IDPF-Agile + PRD |
 
 ### Separate (Uses IDPF-Testing)
-| Type | Framework | Rationale |
-|------|-----------|-----------|
+| Testing Type | Framework | Rationale |
+|--------------|-----------|-----------|
 | QA Automation | IDPF-QA-Automation | Independent codebase |
 | Performance | IDPF-Performance | Specialized tooling |
-| Security | IDPF-Security | Vulnerability tracking |
+| Security | IDPF-Security | Scans, vulnerability tracking |
 | Chaos | IDPF-Chaos | Experiment definitions |
-| Contract | IDPF-Contract-Testing | Cross-repo coordination |
-| Accessibility | IDPF-Accessibility | Flexible (embedded or separate) |
+| Contract Testing | IDPF-Contract-Testing | Cross-repo coordination |
 
----
-
-## Test Development Methodology
-
-Test repositories use IDPF-Agile for test development.
-
-### TDD for Test Code
-Applies to: Test utilities, Page objects, API clients, Test data generators, Framework infrastructure
+### Flexible
+| Testing Type | Framework | Options |
+|--------------|-----------|---------|
+| Accessibility | IDPF-Accessibility | Embedded (axe-core CI) OR Separate (audit docs) |
 
 ---
 
@@ -71,33 +67,46 @@ PLAN → DESIGN → DEVELOP → EXECUTE → REPORT
 ```
 | Phase | Activities |
 |-------|------------|
-| Plan | Create Test Plan, define scope, identify coverage |
-| Design | Design architecture, select tools, define patterns |
-| Develop | Write test code using TDD |
-| Execute | Run tests (manual, CI/CD, scheduled) |
-| Report | Analyze results, track metrics |
+| **PLAN** | Create Test Plan, define scope, identify requirements coverage |
+| **DESIGN** | Design architecture, select tools, define patterns |
+| **DEVELOP** | Write test code (TDD), build utilities, create test data |
+| **EXECUTE** | Run tests (manual, CI/CD, scheduled) |
+| **REPORT** | Analyze results, track metrics, report to stakeholders |
 
 ---
 
-## Test Plan
+## Test Plan Document
+Test Plans replace PRDs for test repositories. Lightweight, reference application PRD.
 
-Stored in `<test-repo>/PRD/TestPlans/`
+| Aspect | PRD (Application) | Test Plan (Testing) |
+|--------|-------------------|---------------------|
+| Purpose | Define what to build | Define what to test |
+| Scope | Features, requirements | Test coverage, scenarios |
+| Detail | Comprehensive | Lightweight, evolving |
+| Traceability | Standalone | References application PRD |
 
-**Must include:**
+**Location:** `<test-repo>/PRD/TestPlans/[TestPlanName].md`
+
+**Required:**
 - Link to application repository
 - Link to application PRD
 - Requirement coverage mapping (REQ-IDs)
-- Version of AUT
+- Version/release of AUT
 
 ---
 
 ## Directory Structure
 ```
-<test-repo>/
-├── PRD/TestPlans/
-├── src/tests/
-├── src/pages/
-├── src/utils/
+<test-repo-root>/
+├── PRD/
+│   ├── Templates/
+│   │   └── [Testing-Type]-Test-Plan.md
+│   └── TestPlans/
+├── src/
+│   ├── tests/
+│   ├── pages/        # Page objects (QA)
+│   ├── utils/
+│   └── config/
 ├── reports/
 ├── .github/workflows/
 └── README.md
@@ -105,46 +114,34 @@ Stored in `<test-repo>/PRD/TestPlans/`
 
 ---
 
-## GitHub Labels
-| Label | Description |
-|-------|-------------|
-| qa-automation | QA test development |
-| performance | Performance tests |
-| security | Security tests |
-| accessibility | Accessibility tests |
-| chaos | Chaos experiments |
-| contract | Contract tests |
-| test-plan | Planning/documentation |
-| implementation | Test code development |
+## GitHub Project Labels
+| Label | Color | Description |
+|-------|-------|-------------|
+| `qa-automation` | `#FF991F` | QA automation |
+| `performance` | `#0052CC` | Performance testing |
+| `security` | `#FF5630` | Security testing |
+| `accessibility` | `#36B37E` | Accessibility testing |
+| `chaos` | `#6554C0` | Chaos engineering |
+| `contract` | `#00B8D9` | Contract testing |
+| `test-plan` | `#6B778C` | Test planning |
+| `implementation` | `#36B37E` | Test code development |
+| `bug` | `#FF5630` | Test framework issues |
+| `enhancement` | `#6554C0` | Framework improvements |
 
 ---
 
 ## Session Commands
-
-### Planning
-| Command | Description |
-|---------|-------------|
-| Test-Plan-Start | Begin test plan creation |
-| Test-Plan-Review | Review existing plan |
-| Coverage-Check | Verify requirement coverage |
-
-### Development
-| Command | Description |
-|---------|-------------|
-| Test-Dev-Start | Begin test development |
-| Run-Tests | Execute suite |
-| Generate-Report | Create results report |
-
-Standard IDPF-Agile commands also apply.
+**Planning:** Test-Plan-Start | Test-Plan-Review | Coverage-Check
+**Development:** Test-Dev-Start | Run-Tests | Generate-Report
+**Standard:** All IDPF-Agile commands apply
 
 ---
 
-## Framework Extensions
-Each specialized framework extends Testing-Core with:
-- Specialized Test Plan template
-- Tool-specific configuration
-- Domain terminology
-- Framework-specific workflows
+## Integration Points
+- **Extends:** IDPF-Agile (test code follows TDD)
+- **References:** Application PRD for traceability
+- **Uses:** ATDD/BDD specs from application
+- **Outputs:** Test results, coverage reports, metrics
 
 ---
 

@@ -1,12 +1,11 @@
 ---
-version: "v0.21.1"
+version: "v0.22.0"
 allowed-tools: Bash
 description: Plan sprint by selecting epics (project)
 ---
+**Source:** Templates/commands/plan-sprint.md
 
 Plan a new sprint by selecting epics to include.
-
-Run the plan-sprint script:
 
 ```bash
 node .claude/scripts/shared/plan-sprint.js "$ARGUMENTS"
