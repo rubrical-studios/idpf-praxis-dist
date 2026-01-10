@@ -8,6 +8,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.23.1] - 2026-01-10
+
+### Fixed
+- **#776** - Integrate REQ-007, REQ-008, REQ-009 into installer
+  - `createExtensibilityStructure()` now called during install
+  - `deployFrameworkScripts()` deploys framework scripts with checksum tracking
+  - `cleanupRenamedCommands()` removes old command files (open-release, close-release, etc.)
+- **#778** - Fix deployment of framework-only files and Skills redundancy
+- **#779** - Fix missing GitHub Releases and version placeholder
+- **#784** - Fix stale command references in .min-mirror
+  - Updated extensions.md with correct command names
+  - Updated prepare-beta.md with correct script paths
+
+### Documentation
+- **#781** - Update GitHub-Workflow.md for gh-pmu v0.11.0
+
+### Internal
+- **#782** - Add minimize-config.json validation and drift detection
+
+---
+
 ## [0.23.0] - 2026-01-09
 
 ### Changed
@@ -33,7 +54,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Infrastructure
 - **minimize-config.json** - Removed overly broad "Merge" pattern that excluded merge-branch.md
-- **Rules rebuild from minimized sources** - All rules now use v0.23.0 placeholder
+- **Rules rebuild from minimized sources** - All rules now use v0.23.1 placeholder
 
 ---
 
@@ -81,7 +102,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Internal
 - Integrated extensibility.js into deployment workflow
 - Lowered coverage thresholds to match actual coverage
-- Restored v0.23.0 placeholders to 209 framework source files
+- Restored v0.23.1 placeholders to 209 framework source files
 
 ---
 
@@ -149,12 +170,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.20.1] - 2026-01-02
 
 ### Fixed
-- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.23.0` placeholder in `Templates/framework-manifest.json`
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.23.1` placeholder in `Templates/framework-manifest.json`
 - **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
 
 ### Changed
 - **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
-- **Version placeholder standardized** - All version tokens now use `v0.23.0` format for consistent replacement
+- **Version placeholder standardized** - All version tokens now use `v0.23.1` format for consistent replacement
 
 ---
 
@@ -223,7 +244,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.23.0` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.23.1` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---

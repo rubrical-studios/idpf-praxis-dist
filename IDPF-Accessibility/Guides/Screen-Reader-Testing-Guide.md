@@ -1,5 +1,5 @@
 # Screen Reader Testing Guide
-**Version:** v0.23.0
+**Version:** v0.23.1
 
 **Framework:** IDPF-Accessibility
 

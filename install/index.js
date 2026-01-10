@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.20.1
+// **Version:** 0.23.1
 /**
  * IDPF Framework Installer - Main Entry Point
  * Unified cross-platform installer for Windows, macOS, and Linux
@@ -77,6 +77,9 @@ const {
   deployGitPrePushHook,
   deployWorkflowCommands,
   displayGitHubSetupSuccess,
+  createExtensibilityStructure,
+  deployFrameworkScripts,
+  cleanupRenamedCommands,
 } = require('./lib/deployment');
 
 const {
@@ -726,6 +729,24 @@ async function main() {
       logSuccess('  ✓ .claude/rules/06-runtime-triggers.md');
     }
 
+    // REQ-007: Create extensibility directory structure
+    const extensibilityResult = createExtensibilityStructure(projectDir, manifest.extensibleCommands || []);
+    if (extensibilityResult.created.length > 0) {
+      logSuccess(`  ✓ Extensibility directories (${extensibilityResult.created.length} created)`);
+    }
+
+    // REQ-008: Deploy framework scripts with checksum tracking
+    const scriptsResult = deployFrameworkScripts(projectDir, frameworkPath);
+    if (scriptsResult.deployed.framework.length > 0) {
+      logSuccess(`  ✓ Framework scripts (${scriptsResult.deployed.framework.length} files)`);
+    }
+    if (scriptsResult.deployed.lib.length > 0) {
+      logSuccess(`  ✓ Shared library scripts (${scriptsResult.deployed.lib.length} files)`);
+    }
+    if (scriptsResult.modified.length > 0) {
+      logWarning(`  ⚠ User-modified scripts detected: ${scriptsResult.modified.join(', ')}`);
+    }
+
     // switch-role and add-role commands removed in v0.17.0 - single specialist model
     // prepare-release/prepare-beta moved to deployWorkflowCommands in v0.17.1
 
@@ -773,6 +794,14 @@ async function main() {
       if (workflowDeployed.scripts.length > 0) {
         for (const script of workflowDeployed.scripts) {
           logSuccess(`  ✓ .claude/scripts/${script}.js`);
+        }
+      }
+
+      // REQ-009: Clean up renamed/removed commands from previous versions
+      const renamedResult = cleanupRenamedCommands(projectDir);
+      if (renamedResult.removed.length > 0) {
+        for (const file of renamedResult.removed) {
+          logSuccess(`  ✓ Removed: ${file}`);
         }
       }
 

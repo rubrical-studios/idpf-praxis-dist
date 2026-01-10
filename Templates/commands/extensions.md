@@ -1,5 +1,5 @@
 ---
-version: "v0.23.0"
+version: "v0.23.1"
 description: Discover, view, and manage extension points in release commands
 argument-hint: <subcommand> [options]
 ---
@@ -18,9 +18,10 @@ Unified management of extension points across release commands.
 ## Target Commands
 | Command | File |
 |---------|------|
-| `/open-release` | `Templates/commands/open-release.md` |
+| `/create-branch` | `Templates/commands/create-branch.md` |
 | `/prepare-release` | `Templates/commands/prepare-release.md` |
-| `/close-release` | `Templates/commands/close-release.md` |
+| `/merge-branch` | `Templates/commands/merge-branch.md` |
+| `/destroy-branch` | `Templates/commands/destroy-branch.md` |
 | `/prepare-beta` | `Templates/commands/prepare-beta.md` |
 ---
 ## Subcommand: list
@@ -44,6 +45,8 @@ Extension Points (Release Commands)
   └── post-validation       : Coverage gates [HAS CONTENT]
 Total: N extension points (X with content, Y empty)
 ```
+### Step 4: Filter by Command
+If `--command X` passed, show only that command's extension points.
 ---
 ## Subcommand: view
 **Usage:** `/extensions view <command>:<point>`
@@ -74,10 +77,10 @@ Report: `✓ valid` or `✗ issue description`
 ## Subcommand: matrix
 **Usage:** `/extensions matrix`
 ```
-Point                | open | prepare | close | beta |
----------------------|------|---------|-------|------|
-post-analysis        |  -   |    ●    |   -   |  ●   |
-pre-validation       |  -   |    ○    |   -   |  ○   |
+Point                | create | prepare | beta |
+---------------------|--------|---------|------|
+post-analysis        |   -    |    ●    |  ●   |
+pre-validation       |   -    |    ○    |  ○   |
 Legend: ● = has content, ○ = empty, - = not applicable
 ```
 ---

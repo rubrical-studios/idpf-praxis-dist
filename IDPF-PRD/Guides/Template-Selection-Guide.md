@@ -1,5 +1,5 @@
 # Template Selection Guide
-**Version:** v0.23.0
+**Version:** v0.23.1
 
 **Purpose:** Help select the appropriate PRD template based on project characteristics.
 

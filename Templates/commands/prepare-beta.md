@@ -1,22 +1,22 @@
 ---
-version: "v0.23.0"
+version: "v0.23.1"
 description: Tag beta from feature branch (no merge to main)
 argument-hint: [--skip-coverage] [--dry-run] [--help]
 ---
 <!-- EXTENSIBLE: v0.17.0 -->
 # /prepare-beta
-Tag beta release from feature branch without merging to main.
-## Extension Points
+Tag a beta release from feature branch without merging to main.
+## Available Extension Points
 | Point | Location | Purpose |
 |-------|----------|---------|
 | `post-analysis` | After Phase 1 | Commit analysis |
 | `pre-validation` | Before Phase 2 | Setup test environment |
 | `post-validation` | After Phase 2 | Beta validation |
 | `post-prepare` | After Phase 3 | Additional updates |
-| `pre-tag` | Before Phase 4 | Final gate |
+| `pre-tag` | Before Phase 4 tagging | Final gate |
 | `post-tag` | After Phase 4 | Beta monitoring |
-| `checklist-before-tag` | Summary | Pre-tag verification |
-| `checklist-after-tag` | Summary | Post-tag verification |
+| `checklist-before-tag` | Summary Checklist | Pre-tag verification |
+| `checklist-after-tag` | Summary Checklist | Post-tag verification |
 ---
 ## Arguments
 | Argument | Description |
@@ -36,9 +36,9 @@ fi
 ```
 ### Verify Config
 ```bash
-node .claude/scripts/open-release/verify-config.js
+node .claude/scripts/create-branch/verify-config.js
 ```
-**If `success: false`, STOP.**
+**If `success: false`, STOP and report error.**
 ---
 ## Phase 1: Analysis
 ```bash
@@ -53,24 +53,26 @@ node .claude/scripts/framework/analyze-commits.js
 ```bash
 node .claude/scripts/framework/recommend-version.js
 ```
+Recommend beta version (e.g., `v1.0.0-beta.1`).
 <!-- USER-EXTENSION-END: post-analysis -->
-**ASK USER:** Confirm beta version.
+**ASK USER:** Confirm beta version before proceeding.
 ---
 ## Phase 2: Validation
 <!-- USER-EXTENSION-START: pre-validation -->
+<!-- Setup: prepare test environment for beta validation -->
 <!-- USER-EXTENSION-END: pre-validation -->
 ```bash
 go test ./...
 ```
 <!-- USER-EXTENSION-START: post-validation -->
 ### Coverage Gate (Optional)
-**If `--skip-coverage`, skip.**
+**If `--skip-coverage` was passed, skip this section.**
 ```bash
 node .claude/scripts/prepare-release/coverage.js
 ```
-**If `success: false`, STOP.**
+**If `success` is false, STOP.**
 <!-- USER-EXTENSION-END: post-validation -->
-**ASK USER:** Confirm validation passed.
+**ASK USER:** Confirm validation passed before proceeding.
 ---
 ## Phase 3: Prepare
 Update CHANGELOG.md with beta section.
@@ -85,9 +87,10 @@ git commit -m "chore: prepare beta $VERSION"
 git push origin $(git branch --show-current)
 ```
 <!-- USER-EXTENSION-START: pre-tag -->
+<!-- Final gate: sign-off checks before beta tag -->
 <!-- USER-EXTENSION-END: pre-tag -->
 ### Step 4.2: Create Beta Tag
-**ASK USER:** Confirm ready to tag.
+**ASK USER:** Confirm ready to tag beta.
 ```bash
 git tag -a $VERSION -m "Beta $VERSION"
 git push origin $VERSION
@@ -96,18 +99,19 @@ git push origin $VERSION
 <!-- USER-EXTENSION-START: post-tag -->
 ### Monitor Beta Build
 ```bash
-node .claude/scripts/close-release/monitor-release.js
+node .claude/scripts/prepare-release/monitor-release.js
 ```
+Monitor beta build and asset upload.
 <!-- USER-EXTENSION-END: post-tag -->
 ---
 ## Next Step
-When ready for full release:
+Beta is tagged. When ready for full release:
 1. Merge feature branch to main
-2. Run `/prepare-release`
+2. Run `/prepare-release` for official release
 ---
 ## Summary Checklist
 **Before tagging:**
-- [ ] Not on main
+- [ ] Not on main branch
 - [ ] Config verified
 - [ ] Commits analyzed
 - [ ] Beta version confirmed

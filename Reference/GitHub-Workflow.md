@@ -1,5 +1,5 @@
 # GitHub Workflow Integration
-**Version:** v0.23.0
+**Version:** v0.23.1
 ---
 **MUST READ:** At session startup and after compaction.
 ## Project Configuration
@@ -44,11 +44,15 @@ gh extension install rubrical-studios/gh-pmu
 | `gh pmu split [#] --from=body` | Manual sub-issue creation |
 **Bulk Operations:**
 - `gh pmu move [#] --status done --recursive` - Update issue + all sub-issues
+- `gh pmu move [#] --recursive --dry-run` - Preview recursive changes
 - `gh pmu triage --query "..." --apply status:backlog` - Bulk update
 - `gh pmu intake --apply` - Add untracked issues
+**Move Flags:** `--status`, `--branch` (replaces `--release`), `--microsprint`, `--backlog` (clear fields), `--recursive`, `--dry-run`, `--depth N`, `-f/--force`, `--yes`
+**Deprecation:** `--release` flag deprecated, use `--branch` instead.
 **Microsprint:** `start`, `current`, `add [#]`, `remove [#]`, `close`, `list`, `resolve`
-**Release:** `start --branch release/vX.Y.Z`, `current`, `move [#] --release current` (recommended), `remove [#]`, `close [--tag]`, `list`
-**Patch Releases:** Use `gh pmu release` with `patch/` branch naming (e.g., `--branch patch/v1.1.5`)
+**Branch:** `start --branch release/vX.Y.Z`, `current`, `reopen [name]`, `move [#] --branch current` (recommended), `remove [#]`, `close [--tag]`, `list`
+**Deprecation:** `gh pmu release` deprecated, use `gh pmu branch` instead.
+**Patch Releases:** Use `gh pmu branch` with `patch/` branch naming (e.g., `--branch patch/v1.1.5`)
 **Auto-Close:** Default Kanban template auto-closes issues when moved to `done`. `gh issue close` only needed for close reason or comment.
 ## Critical Rules
 - **Issues close ONLY when user says "Done"** - Never close automatically, skip STOP checkpoint, or close because code shipped
@@ -147,10 +151,12 @@ If yes: `gh issue edit [parent] --add-label "epic"`, add "story" to sub-issues
 **Artifacts:** `Microsprints/[name]/review.md`, `retro.md`
 **Team model:** One active microsprint shared by team. Join/Wait/Cancel prompt if another is active.
 **Stale detection:** >24h old prompts Close/Abandon/Resume
+### 6.5. Branch Reopen Workflow
+`gh pmu branch reopen [branch-name]` - Reopen closed branch tracker (e.g., `release/v1.2.0`, `patch/v1.1.5`)
 ### 10-11. Release/Patch Workflow
-**Start:** `gh pmu release start --branch "release/v1.2.0"` (or `patch/v1.1.5` for patches)
-**Add:** `gh pmu move [#] --release current`
-**Close:** `gh pmu release close [--tag]`
+**Start:** `gh pmu branch start --branch "release/v1.2.0"` (or `patch/v1.1.5` for patches)
+**Add:** `gh pmu move [#] --branch current`
+**Close:** `gh pmu branch close [--tag]`
 **Artifacts:** `Releases/[release|patch]/vX.Y.Z/[release|patch]-notes.md`, `changelog.md`
 ### 12. PR-Only Main Merges
 All work via PRs to main. Never push directly.
