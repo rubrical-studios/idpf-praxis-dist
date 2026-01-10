@@ -8,6 +8,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.23.0] - 2026-01-09
+
+### Changed
+- **Release Command Consolidation** (#751) - Complete overhaul of release workflow commands:
+  - Renamed `/open-release` → `/create-branch` - Unified branch creation for releases and patches
+  - Renamed `/assign-release` → `/assign-branch` - Works with any tracked branch
+  - Renamed `/switch-release` → `/switch-branch` - Context switching for branches
+  - Removed `/close-release` - Folded into `/prepare-release` Phase 5
+  - Tracker issue naming now uses "Branch:" prefix with unified `branch` label
+
+### Added
+- **`/merge-branch` command** (#755) - Merge feature branches to main with gated validation
+  - Default gates: uncommitted changes, tests pass
+  - Extensible gates for custom validation
+  - PR creation, approval wait, and cleanup
+- **`/destroy-branch` command** (#756) - Safe branch deletion with validation
+  - Prevents deletion of protected branches (main, master, develop)
+  - Force delete option for emergency cleanup
+
+### Fixed
+- **Session-Startup version chain** - Consistent version flow from source → minimized → rules
+- **Anti-hallucination rules** - Added STOP boundary enforcement, expanded "Never Invent" list
+
+### Infrastructure
+- **minimize-config.json** - Removed overly broad "Merge" pattern that excluded merge-branch.md
+- **Rules rebuild from minimized sources** - All rules now use v0.23.0 placeholder
+
+---
 
 ## [0.22.0] - 2026-01-06
 
@@ -53,7 +81,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Internal
 - Integrated extensibility.js into deployment workflow
 - Lowered coverage thresholds to match actual coverage
-- Restored v0.22.0 placeholders to 209 framework source files
+- Restored v0.23.0 placeholders to 209 framework source files
 
 ---
 
@@ -121,12 +149,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.20.1] - 2026-01-02
 
 ### Fixed
-- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.22.0` placeholder in `Templates/framework-manifest.json`
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.23.0` placeholder in `Templates/framework-manifest.json`
 - **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
 
 ### Changed
 - **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
-- **Version placeholder standardized** - All version tokens now use `v0.22.0` format for consistent replacement
+- **Version placeholder standardized** - All version tokens now use `v0.23.0` format for consistent replacement
 
 ---
 
@@ -195,7 +223,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.22.0` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.23.0` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---

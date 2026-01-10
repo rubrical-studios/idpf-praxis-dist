@@ -1,7 +1,6 @@
 # Runbook: {project-name}
-**Source:** Templates/Lifecycle/Transition/Runbook.md
 **Last Updated:** {date}
-
+---
 ## Quick Reference
 | Action | Command/Procedure |
 |--------|-------------------|
@@ -10,62 +9,53 @@
 | Restart service | |
 | View logs | |
 | Health check | |
-
+---
 ## Common Operations
-
 ### Starting the Service
 ```bash
 {command}
 ```
-Expected output: {description}
-
+Expected: {description}
 ### Stopping the Service
 ```bash
 {command}
 ```
-Expected output: {description}
-
 ### Viewing Logs
 ```bash
 {command}
 ```
 Log location: {path}
-
+---
 ## Troubleshooting
-
 ### Problem: Service Won't Start
-**Symptoms:** {Symptom 1}, {Symptom 2}
-**Diagnosis:** Check {what to check}, Verify {what to verify}
-**Resolution:** {Steps}
-
+**Symptoms:** {list}
+**Diagnosis:**
+1. Check {what}
+2. Verify {what}
+**Resolution:**
+1. {Step 1}
 ### Problem: High Memory Usage
-**Symptoms:** {Symptom 1}
-**Diagnosis:** {Step 1}
-**Resolution:** {Step 1}
-
+**Symptoms:** {list}
+**Resolution:** {steps}
 ### Problem: Database Connection Issues
-**Symptoms:** {Symptom 1}
-**Diagnosis:** {Step 1}
-**Resolution:** {Step 1}
-
+**Symptoms:** {list}
+**Resolution:** {steps}
+---
 ## Scheduled Tasks
 | Task | Schedule | Description |
 |------|----------|-------------|
 | | | |
-
+---
 ## Backup and Recovery
-
-### Backup Procedure
+### Backup
 1. {Step 1}
 2. {Step 2}
-
-**Backup location:** {path}
+**Location:** {path}
 **Retention:** {policy}
-
-### Recovery Procedure
+### Recovery
 1. {Step 1}
 2. {Step 2}
-
+---
 ## Escalation
 | Severity | Response Time | Contact |
 |----------|---------------|---------|
@@ -73,11 +63,5 @@ Log location: {path}
 | High | | |
 | Medium | | |
 | Low | | |
-
-## Related Documentation
-- Deployment-Guide.md - How to deploy
-- Inception/Architecture.md - System architecture
-- Inception/Constraints.md - Operational constraints
-
 ---
 *Part of IDPF Lifecycle Artifacts*

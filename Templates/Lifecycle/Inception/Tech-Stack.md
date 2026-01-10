@@ -1,7 +1,6 @@
 # Tech Stack: {project-name}
-**Source:** Templates/Lifecycle/Inception/Tech-Stack.md
 **Last Updated:** {date}
-
+---
 ## Core Stack
 | Layer | Technology | Version | Rationale |
 |-------|------------|---------|-----------|
@@ -10,7 +9,7 @@
 | Framework | | | |
 | Database | | | |
 | Cache | | | |
-
+---
 ## Development Tools
 | Tool | Version | Purpose |
 |------|---------|---------|
@@ -19,7 +18,7 @@
 | Linter | | |
 | Formatter | | |
 | Test Framework | | |
-
+---
 ## Infrastructure
 | Component | Technology | Environment |
 |-----------|------------|-------------|
@@ -27,28 +26,25 @@
 | CI/CD | | |
 | Container | | |
 | Orchestration | | |
-
+---
 ## Key Dependencies
-
-### Production Dependencies
+### Production
 | Package | Version | Purpose |
 |---------|---------|---------|
 | | | |
-
-### Development Dependencies
+### Development
 | Package | Version | Purpose |
 |---------|---------|---------|
 | | | |
-
+---
 ## Version Constraints
 | Dependency | Constraint | Reason |
 |------------|------------|--------|
 | | | |
-
+---
 ## Upgrade Plan
 | Dependency | Current | Target | Timeline |
 |------------|---------|--------|----------|
 | | | | |
-
 ---
-*See also: Architecture.md, Constraints.md*
+*See: Architecture.md, Constraints.md*

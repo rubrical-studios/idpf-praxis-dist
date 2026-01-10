@@ -3,78 +3,160 @@ name: ci-cd-pipeline-design
 description: Guide developers through CI/CD pipeline design including architecture patterns, stage design, and security considerations
 license: Complete terms in LICENSE.txt
 ---
-# CI/CD Pipeline Design
-**Version:** v0.22.0
-**Source:** Skills/ci-cd-pipeline-design/SKILL.md
 
-Guides developers through designing effective CI/CD pipelines including pipeline architecture, stage design, environment promotion strategies, and security considerations.
-## When to Use This Skill
+# CI/CD Pipeline Design
+**Version:** v0.23.0
+
+## When to Use
+
 - Setting up CI/CD for a new project
 - Optimizing existing pipeline performance
 - Adding security scanning to pipelines
 - Designing multi-environment deployment
 - Choosing between CI/CD platforms
-## CI/CD Fundamentals
-**Continuous Integration (CI):** Automatically build and test code on every change. Goals: detect integration issues early, maintain code quality, fast feedback (<10 min ideal).
-**Continuous Delivery (CD):** Automatically prepare releases for deployment. Goals: always deployable main branch, consistent release process, reduced deployment risk.
-**Continuous Deployment:** Automatically deploy every change to production. Requirements: high test coverage, feature flags, monitoring, fast rollback.
-## Pipeline Architecture Patterns
+
+## Pipeline Architecture
+
 ### Linear Pipeline
 ```
 Build -> Test -> Security -> Deploy
 ```
-Best for simple projects, single deployment target.
+**Best for:** Simple projects, single deployment target
+
 ### Parallel Pipeline
 ```
-        ┌─ Unit Tests ──┐
-Build ──┼─ Lint/Format ─┼── Deploy
-        └─ SAST Scan ───┘
+        ┌─ Unit Tests ─┐
+Build ──┼─ Lint/Format ┼── Deploy
+        └─ SAST Scan  ─┘
 ```
-Best for faster feedback, independent quality gates.
+**Best for:** Faster feedback, resource efficiency
+
 ### Multi-Environment Pipeline
 ```
 Build -> Test -> Staging -> Approval -> Production
 ```
-Best for production deployments, compliance requirements.
+**Best for:** Production deployments, compliance requirements
+
 ## Stage Design
-**Build Stage:** Create deployable artifacts. Cache dependencies, use multi-stage builds, version artifacts.
-**Test Stage:** Verify code quality. Follow test pyramid (many unit, some integration, few E2E).
-**Security Stage:** Identify vulnerabilities. SAST, dependency scan, secrets scan, container scan.
-**Deploy Stage:** Release to target environment. Automatic to staging, manual approval for production.
-## Environment Promotion Strategies
-| Strategy | Description |
-|----------|-------------|
-| **Sequential** | Dev -> QA -> Staging -> Production |
-| **Blue-Green** | Deploy to Green, switch traffic, keep Blue for rollback |
-| **Canary** | Deploy to subset (10%), monitor, gradually increase |
-| **Rolling** | Update instances one at a time |
+
+### Build Stage
+```yaml
+build:
+  steps:
+    - checkout code
+    - install dependencies
+    - compile/transpile
+    - create artifacts
+```
+
+### Test Stage
+```yaml
+test:
+  parallel:
+    unit_tests:
+      - run unit tests
+      - collect coverage
+    integration_tests:
+      - start dependencies
+      - run integration tests
+```
+
+### Security Stage
+```yaml
+security:
+  parallel:
+    sast: static code analysis
+    dependency_scan: check for vulnerable dependencies
+    secrets_scan: detect hardcoded secrets
+    container_scan: scan container images
+```
+
+**Tools:**
+- SAST: SonarQube, Semgrep, CodeQL
+- Dependencies: Dependabot, Snyk
+- Secrets: GitLeaks, TruffleHog
+- Containers: Trivy, Clair
+
+## Environment Promotion
+
+### Blue-Green Deployment
+```
+Load Balancer
+    ├── Blue (current)
+    └── Green (new)
+```
+Switch traffic after verification.
+
+### Canary Deployment
+```
+Traffic: 90% -> Stable (v1)
+         10% -> Canary (v2)
+```
+Gradually increase traffic to new version.
+
+### Rolling Deployment
+Update instances one at a time with health checks.
+
 ## Security Considerations
-**Secrets Management:** Never hardcode secrets, use environment variables or secret management services, rotate regularly.
-**SAST Integration:** Run static analysis (Semgrep, SonarQube, CodeQL), fail on high/critical findings.
-**Supply Chain Security:** Dependency scanning (npm audit, Snyk), SBOM generation.
-**Container Security:** Scan images (Trivy), sign images (cosign).
+
+### Secrets Management
+```yaml
+steps:
+  - name: Deploy
+    env:
+      API_KEY: ${{ secrets.API_KEY }}
+```
+- Use environment variables
+- Use secret management services
+- Rotate secrets regularly
+
+### Supply Chain Security
+```yaml
+dependencies:
+  steps:
+    - npm audit --audit-level=high
+    - syft packages . -o spdx-json > sbom.json
+```
+
 ## GitHub API Best Practices
-**Authentication:** Use fine-scoped PATs or GitHub Apps, reuse tokens across runs.
-**Rate Limiting:** Implement exponential backoff with jitter, monitor `X-RateLimit-Remaining` headers.
-**Workflow Triggers:** Prevent cascading runs with `concurrency` settings:
+
+### Rate Limiting
+```yaml
+retry:
+  max_attempts: 3
+  initial_interval: 1s
+  multiplier: 2
+  randomization_factor: 0.5
+```
+
+### Workflow Triggers
 ```yaml
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 ```
-**Abuse Detection Prevention:** Avoid high-volume auth attempts, rapid workflow creation/deletion, excessive API calls.
+
+### Abuse Detection Prevention
+- Use fine-scoped PATs instead of interactive auth
+- Implement request throttling
+- Add delays between bulk operations
+- Use GitHub Apps with proper rate limit handling
+
 ## Best Practices
-1. **Fast Feedback** - Keep CI under 10 minutes, run fast tests first, parallelize
-2. **Reliable Pipelines** - Reproducible builds, pin dependencies, consistent environments
-3. **Clear Visibility** - Good naming, clear stage purposes, meaningful errors
-4. **Security First** - Scan early, block on security failures, minimal permissions
-5. **Environment Parity** - Same configuration patterns, infrastructure as code
+
+1. **Fast Feedback** - Keep CI under 10 minutes
+2. **Reliable Pipelines** - Pin dependency versions
+3. **Clear Visibility** - Good naming, meaningful error messages
+4. **Security First** - Scan early and often
+5. **Environment Parity** - Infrastructure as code
+
 ## Resources
-See `resources/` directory for architecture patterns, stage design, platform examples, and security checklist.
-## Relationship to Other Skills
-**Complements:** `api-versioning`, `migration-patterns`
-**Independent from:** TDD skills
-## Expected Outcome
-After using this skill: Pipeline architecture designed, stages configured, security scanning integrated, environment promotion strategy defined, platform-specific implementation ready.
+
+- `resources/architecture-patterns.md`
+- `resources/stage-design.md`
+- `resources/platform-examples.md`
+- `resources/security-checklist.md`
+
 ---
+
 **End of CI/CD Pipeline Design Skill**

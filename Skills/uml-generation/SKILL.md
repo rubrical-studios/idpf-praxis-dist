@@ -1,35 +1,57 @@
 # UML Generation Skill
-**Version:** v0.22.0
-**Source:** Skills/uml-generation/SKILL.md
+**Version:** v0.23.0
 
 ---
 name: uml-generation
 description: Generate UML diagrams from project source code using PlantUML with online rendering
 ---
+
 ## Purpose
-Analyze project source code and generate UML diagrams with PlantUML syntax and online rendering URLs. Provides visual documentation during code analysis.
+
+Analyze project source code and generate UML diagrams with PlantUML syntax and online rendering URLs.
+
 ## When to Invoke
-- **Code analysis** requiring visual documentation
-- **Architecture review** and documentation
-- **Reverse-engineering** existing codebases
-- **Understanding class hierarchies**
-- **Documenting API call flows**
-- **Technical debt visualization** (with anti-pattern-analysis)
-- **PRD extraction** (with extract-prd skill)
+
+- Code analysis requiring visual documentation
+- Architecture review and documentation
+- Reverse-engineering existing codebases
+- Understanding class hierarchies
+
 ## Supported Diagram Types
+
 | Diagram | Use Case | Priority |
 |---------|----------|----------|
-| **Class Diagram** | Code structure, inheritance, associations | High |
+| **Class Diagram** | Code structure, inheritance | High |
 | **Sequence Diagram** | Method call flows, API interactions | High |
 | **Component Diagram** | Architecture, module dependencies | Medium |
 | **Activity Diagram** | Workflow logic, algorithms | Medium |
-| **State Diagram** | State machines, lifecycle | Low |
+
 ## Output Format
-Each generated diagram includes:
-1. **PlantUML Source** (copyable)
-2. **Online Rendering URL:** `http://www.plantuml.com/plantuml/svg/[encoded]`
-3. **Download Links:** SVG and PNG formats
+
+### 1. PlantUML Source (Copyable)
+```plantuml
+@startuml
+class User {
+  +id: int
+  +name: string
+  +getOrders(): List<Order>
+}
+@enduml
+```
+
+### 2. Online Rendering URL
+```
+View: http://www.plantuml.com/plantuml/svg/[encoded]
+```
+
+### 3. Download Links
+```
+SVG: http://www.plantuml.com/plantuml/svg/[encoded]
+PNG: http://www.plantuml.com/plantuml/png/[encoded]
+```
+
 ## PlantUML Quick Reference
+
 ### Class Diagram
 ```plantuml
 @startuml
@@ -38,63 +60,69 @@ class ClassName {
   -privateField: Type
   +publicMethod(): ReturnType
 }
+
 ClassA <|-- ClassB        : inheritance
 ClassA *-- ClassB         : composition
-ClassA o-- ClassB         : aggregation
 ClassA --> ClassB         : association
 ClassA "1" --> "*" ClassB : one-to-many
 @enduml
 ```
+
 ### Sequence Diagram
 ```plantuml
 @startuml
 participant Client
 participant Server
+
 Client -> Server: request()
 activate Server
 Server --> Client: response
 deactivate Server
-alt success
-  Server --> Client: 200 OK
-else error
-  Server --> Client: 500 Error
-end
 @enduml
 ```
+
 ### Component Diagram
 ```plantuml
 @startuml
 package "Frontend" {
   [Web App]
 }
+
 package "Backend" {
   [API Gateway]
   [User Service]
 }
+
 [Web App] --> [API Gateway]
 [API Gateway] --> [User Service]
 @enduml
 ```
+
 ## URL Encoding
-PlantUML uses: UTF-8 encode -> Deflate compress -> Base64-like encode -> Construct URL
-**URL Length Limit:** ~2000 characters. For larger diagrams, output source only.
-## Integration Points
-| Integration | Workflow |
-|-------------|----------|
-| **extract-prd** | Create class/component diagrams during code analysis |
-| **anti-pattern-analysis** | Visualize problematic classes |
-| **Backend-Specialist** | Service layer class diagrams |
-| **API-Integration-Specialist** | Sequence diagrams for API flows |
-## Limitations (Phase 1)
+
+PlantUML uses custom encoding:
+1. UTF-8 encode the source
+2. Deflate compress
+3. Base64-like encode
+4. Construct URL: `http://www.plantuml.com/plantuml/svg/{encoded}`
+
+**URL Length Limit:** ~2000 characters
+
+## Limitations
+
 | Limitation | Workaround |
 |------------|------------|
 | Internet required | Use PlantUML locally |
-| URL length ~2000 chars | Output source only for large diagrams |
-| Public server | Self-host for sensitive code |
+| URL length ~2000 chars | Output source only |
+| Public server | Self-host |
+
 ## Resources
-See `resources/` directory for diagram guides, encoding details, and language-specific patterns.
-## Related
-- **extract-prd**: Code analysis for PRD extraction
-- **anti-pattern-analysis**: Code quality visualization
+
+- [Class Diagram Guide](resources/class-diagram-guide.md)
+- [Sequence Diagram Guide](resources/sequence-diagram-guide.md)
+- [Component Diagram Guide](resources/component-diagram-guide.md)
+- [PlantUML Encoding](resources/plantuml-encoding.md)
+
 ---
+
 **End of Skill Document**

@@ -1,211 +1,110 @@
 # Framework System Instructions Reference
-**Version:** v0.22.0
-**Source:** Overview/Framework-System-Instructions.md
-
+**Version:** v0.23.0
+**Purpose:** System Instructions reference
 ---
-
+## Overview
 **Location:** `System-Instructions/`
-**Critical:** System Instructions are REQUIRED for all framework operation. Frameworks define process; System Instructions define identity and expertise.
-
+**Purpose:** Define assistant identity, expertise, and behavioral patterns
+**Critical:** System Instructions are REQUIRED for all framework operation.
+---
 ## Domain Specialization Architecture
 **Pattern:** Core + Domain Specialization
-- **Core-Developer-Instructions.md (Rev 1.0)**: Foundation competencies for all developers
-- **23 Domain Specialists**: Specialized expertise profiles (loaded with Core)
-- **Domain-Selection-Guide.md (Rev 1.0)**: Guide for choosing specialist(s)
-
-**Loading Pattern:**
+- **Core-Developer-Instructions.md (Rev 1.0):** Foundation competencies
+- **23 Domain Specialists:** Specialized expertise (loaded with Core)
+- **Domain-Selection-Guide.md (Rev 1.0):** Specialist selection guide
+### Loading Pattern
 1. Load Core-Developer-Instructions.md (universal competencies)
-2. Load appropriate Domain specialist file(s) for depth
+2. Load appropriate Domain specialist file(s)
 3. Domain extends and deepens core competencies
-
 ### Core Developer Competencies
-- Version Control (Git workflows, branching strategies, PR reviews)
-- Testing Fundamentals (Unit, Integration, E2E, TDD methodology)
-- Agile Development (Scrum, Kanban, sprint planning, CI/CD)
-- Code Quality (SOLID, DRY, YAGNI, KISS principles)
-- Design Patterns (Creational, Structural, Behavioral, MVC, Repository)
-- Cross-Platform Awareness (OS differences, path handling)
-- Security Fundamentals (OWASP Top 10, input validation, authentication)
-- Performance Basics (Big O notation, caching strategies, profiling)
-
-## Domain Specialist System Instructions
-### 1. Full-Stack-Developer.md
-- End-to-end application development spanning frontend and backend
-- Holistic system thinking and architectural decisions
-- API contract design that serves both layers efficiently
-- Technologies: React/Vue/Angular + Node.js/Python/Ruby + PostgreSQL/MongoDB
-### 2. Backend-Specialist.md
-- Server-side applications, REST/GraphQL APIs
-- Authentication/authorization (OAuth, JWT, session management)
-- Business logic, middleware, background jobs
-- Technologies: Python (Django/Flask/FastAPI), Node.js (Express/NestJS), Ruby (Rails), Java (Spring), Go
-### 3. Frontend-Specialist.md
-- React, Vue, Angular, Svelte frameworks
-- CSS architecture (BEM, CSS Modules, Tailwind, styled-components)
-- State management (Redux, Zustand, Pinia, Context API)
-- Performance (Core Web Vitals, lazy loading, code splitting)
-- Accessibility (WCAG, ARIA, semantic HTML)
-### 4. DevOps-Engineer.md
-- CI/CD pipelines (GitHub Actions, GitLab CI, Jenkins, CircleCI)
-- Containerization (Docker, Docker Compose, container registries)
-- Orchestration (Kubernetes, Helm charts, service mesh)
-- Infrastructure as Code (Terraform, Pulumi, CloudFormation, Ansible)
-- Monitoring (Prometheus, Grafana, ELK stack, Datadog)
-### 5. Database-Engineer.md
-- Schema design, normalization, indexing strategies
-- Query optimization, execution plans, EXPLAIN analysis
-- Replication (master-slave, master-master, sharding)
-- Migrations (Alembic, Flyway, Liquibase, Rails migrations)
-- Technologies: PostgreSQL, MySQL, MongoDB, Redis, Cassandra
-### 6. API-Integration-Specialist.md
-- REST, GraphQL, gRPC, WebSocket APIs
-- Microservices architecture, service discovery
-- API gateways (Kong, Tyk, AWS API Gateway)
-- Message brokers (Kafka, RabbitMQ, Redis Pub/Sub)
-- Service mesh (Istio, Linkerd)
-### 7. Security-Engineer.md
-- OWASP Top 10 vulnerabilities
-- Authentication (OAuth 2.0, OpenID Connect, SAML, multi-factor)
-- Cryptography (hashing, encryption, key management)
-- Penetration testing, security audits
-- Compliance (SOC 2, GDPR, HIPAA)
-### 8. Platform-Engineer.md
-- Internal developer platforms (IDPs)
-- Service catalogs, golden paths
-- CI/CD templates and reusable workflows
-- Developer experience (DevEx) optimization
-- Self-service infrastructure provisioning
-### 9. Mobile-Specialist.md
-- iOS development (Swift, SwiftUI, UIKit)
-- Android development (Kotlin, Jetpack Compose)
-- Cross-platform (React Native, Flutter, Ionic)
-- Offline-first architecture, local storage
-- Push notifications, deep linking, app store deployment
-### 10. Data-Engineer.md
-- ETL/ELT pipelines (Airflow, Prefect, Dagster)
-- Data processing (Spark, Dask, Pandas)
-- Data modeling (Kimball, Data Vault, star schema)
-- Data warehousing (Snowflake, BigQuery, Redshift)
-- Data quality, lineage, governance
-### 11. QA-Test-Engineer.md
-- Test strategy, test pyramid, risk-based testing
-- Test automation (Cypress, Playwright, Selenium, Appium)
-- Performance testing (k6, JMeter, Gatling, Locust)
-- TDD/BDD methodologies (RSpec, Cucumber, Jest, pytest)
-- CI integration, test reporting, coverage analysis
-### 12. Cloud-Solutions-Architect.md
-- System design, architectural patterns (microservices, event-driven, CQRS)
-- AWS/Azure/GCP services and best practices
-- Scalability, high availability, disaster recovery
-- CAP theorem, eventual consistency, distributed systems
-- Architecture Decision Records (ADRs)
-### 13. SRE-Specialist.md
-- SLO/SLI/SLA definition and management
-- Error budgets, reliability engineering
-- Observability (logs, metrics, traces, distributed tracing)
-- Incident response, postmortems, blameless culture
-- Chaos engineering, resilience testing
-### 14. Embedded-Systems-Engineer.md
-- C/C++ for embedded systems
-- ARM Cortex-M, AVR, ESP32 microcontrollers
-- RTOS (FreeRTOS, Zephyr, ThreadX)
-- Hardware protocols (I2C, SPI, UART, CAN)
-- Low-level debugging, memory management
-### 15. ML-Engineer.md
-- TensorFlow, PyTorch, scikit-learn, XGBoost
-- Model development (supervised, unsupervised, reinforcement learning)
-- Deep learning architectures (CNN, RNN, LSTM, Transformers, GANs)
-- MLOps (MLflow, Kubeflow, SageMaker, model serving)
-- Model optimization (quantization, pruning, distillation)
-### 16. Performance-Engineer.md
-- Application performance optimization
-- Profiling (CPU, memory, database profiling)
-- Load testing (k6, Gatling, JMeter, Locust)
-- Frontend performance (Core Web Vitals, lighthouse)
-- Backend performance (query optimization, caching, CDN)
-- APM tools (New Relic, Datadog, AppDynamics)
-### 17. PRD-Analyst.md
-- Requirements elicitation and documentation
-- PRD creation using IDPF-PRD framework
-- Reverse-PRD extraction from existing code
-- Integration with IDPF-Agile
-### 18. Accessibility-Specialist.md
-- WCAG 2.1/2.2 guidelines and compliance
-- Assistive technology testing (screen readers, keyboard navigation)
-- Accessibility auditing and remediation
-- Legal compliance (ADA, Section 508, EAA)
-### 19. Desktop-Application-Developer.md
-- Cross-platform desktop applications (Windows, macOS, Linux)
-- UI frameworks (Qt, GTK, WinForms, WPF, Electron, Tauri)
-- System integration and native APIs
-- Packaging, distribution, and installers
-### 20. Game-Developer.md
-- Game engines (Unity, Unreal, Godot)
-- Game programming patterns (game loop, ECS, state machines)
-- Physics, collision detection, and rendering
-- Multiplayer networking and game services
-### 21. Graphics-Engineer-Specialist.md
-- Computer graphics fundamentals (rasterization, ray tracing)
-- GPU programming (shaders, compute, GPGPU)
-- Graphics APIs (Vulkan, DirectX, OpenGL, Metal, WebGPU)
-- Rendering pipelines and optimization
-### 22. Systems-Programmer-Specialist.md
-- Low-level systems programming (memory, concurrency, I/O)
-- Operating system internals and kernel development
-- Compilers, interpreters, and language runtimes
-- Performance-critical code and hardware interaction
-### 23. Technical-Writer-Specialist.md
-- Documentation engineering and docs-as-code workflows
-- API documentation (OpenAPI, AsyncAPI)
-- Documentation generators (Docusaurus, MkDocs, Sphinx)
-- Technical writing best practices and style guides
-
+- Version Control (Git workflows, branching, PR reviews)
+- Testing Fundamentals (Unit, Integration, E2E, TDD)
+- Agile Development (Scrum, Kanban, CI/CD)
+- Code Quality (SOLID, DRY, YAGNI, KISS)
+- Design Patterns (Creational, Structural, Behavioral, MVC)
+- Cross-Platform Awareness (OS differences, paths)
+- Security Fundamentals (OWASP Top 10, authentication)
+- Performance Basics (Big O, caching, profiling)
+---
+## Domain Specialists (23)
+### Base Experts (12)
+| Specialist | Focus |
+|------------|-------|
+| Full-Stack-Developer | End-to-end apps, holistic design, API contracts |
+| Backend-Specialist | Server-side, REST/GraphQL, auth, business logic |
+| Frontend-Specialist | React/Vue/Angular/Svelte, CSS, state, a11y |
+| Mobile-Specialist | iOS (Swift), Android (Kotlin), cross-platform |
+| Desktop-Application-Developer | Cross-platform desktop, UI frameworks |
+| Game-Developer | Unity, Unreal, Godot, game patterns |
+| Embedded-Systems-Engineer | C/C++, microcontrollers, RTOS, protocols |
+| Systems-Programmer-Specialist | Low-level, OS, compilers, performance |
+| Data-Engineer | ETL/ELT, data processing, warehousing |
+| ML-Engineer | TensorFlow/PyTorch, MLOps, deep learning |
+| Cloud-Solutions-Architect | System design, AWS/Azure/GCP, scalability |
+| SRE-Specialist | SLO/SLI/SLA, error budgets, observability |
+### Expertise Packs (10)
+| Specialist | Focus |
+|------------|-------|
+| DevOps-Engineer | CI/CD, containers, K8s, IaC, monitoring |
+| Database-Engineer | Schema, queries, replication, migrations |
+| API-Integration-Specialist | REST/GraphQL/gRPC, microservices, messaging |
+| Security-Engineer | OWASP, auth, cryptography, compliance |
+| Platform-Engineer | IDPs, service catalogs, DevEx |
+| QA-Test-Engineer | Test strategy, automation, performance |
+| Performance-Engineer | Profiling, load testing, APM |
+| Accessibility-Specialist | WCAG, assistive tech, legal compliance |
+| Graphics-Engineer-Specialist | GPU, shaders, rendering, graphics APIs |
+| Technical-Writer-Specialist | Documentation, API docs, style guides |
+### PRD (1)
+| Specialist | Focus |
+|------------|-------|
+| PRD-Analyst | Requirements elicitation, PRD creation, Reverse-PRD |
+---
 ## Domain Selection Guide
 ### Quick Reference
-| Use Case | Recommended Domains |
-|----------|---------------------|
+| Use Case | Recommended |
+|----------|-------------|
 | Full-Stack Web | Core + Backend + Frontend + Database |
 | Cloud-Native Microservices | Core + API-Integration + DevOps + Cloud-Architect |
 | Mobile App with Backend | Core + Mobile + Backend |
-| Data Platform | Core + Data-Engineer + Database-Engineer + Cloud-Architect |
-| Secure Production System | Core + Backend + Security + SRE |
+| Data Platform | Core + Data-Engineer + Database + Cloud-Architect |
+| Secure Production | Core + Backend + Security + SRE |
 ### Decision Tree
-- If building APIs/services: Backend-Specialist
-- If building UIs: Frontend-Specialist
-- If managing infrastructure: DevOps-Engineer or Platform-Engineer
-- If designing systems: Cloud-Solutions-Architect
-- If ensuring reliability: SRE-Specialist
-- If working with data: Data-Engineer + Database-Engineer
-- If mobile apps: Mobile-Specialist
-- If security focus: Security-Engineer
-- If performance focus: Performance-Engineer
-- If machine learning: ML-Engineer
-- If embedded/IoT: Embedded-Systems-Engineer
-- If API integration: API-Integration-Specialist
-- If testing: QA-Test-Engineer
-- If requirements: PRD-Analyst
-- If accessibility: Accessibility-Specialist
-- If desktop apps: Desktop-Application-Developer
-- If game development: Game-Developer
-- If graphics/rendering: Graphics-Engineer-Specialist
-- If systems/low-level: Systems-Programmer-Specialist
-- If documentation: Technical-Writer-Specialist
-
-**Multiple domains can be combined for cross-functional expertise.**
-
+- APIs/services: Backend-Specialist
+- UIs: Frontend-Specialist
+- Infrastructure: DevOps-Engineer or Platform-Engineer
+- System design: Cloud-Solutions-Architect
+- Reliability: SRE-Specialist
+- Data work: Data-Engineer + Database-Engineer
+- Mobile: Mobile-Specialist
+- Security: Security-Engineer
+- Performance: Performance-Engineer
+- ML: ML-Engineer
+- Embedded/IoT: Embedded-Systems-Engineer
+- Testing: QA-Test-Engineer
+- Requirements: PRD-Analyst
+- Accessibility: Accessibility-Specialist
+- Desktop: Desktop-Application-Developer
+- Games: Game-Developer
+- Graphics: Graphics-Engineer-Specialist
+- Systems/low-level: Systems-Programmer-Specialist
+- Documentation: Technical-Writer-Specialist
+**Multiple domains can be combined.**
+---
 ## Vibe Agent System Instructions
-### Vibe-Agent-Core-Instructions.md (Rev 1.3)
-Platform-agnostic behavioral instructions for Vibe-to-Structured workflow. Key behaviors: Concise communication, single code block enforcement, context preservation, TDD cycle management.
-### Platform-Specific Vibe Instructions
+### Core (Rev 1.3)
+- Platform-agnostic behavioral instructions for Vibe workflow
+- Key behaviors: Concise communication, single code block, context preservation, TDD management
+### Platform-Specific
 - Vibe-Agent-Desktop-Instructions.md
 - Vibe-Agent-Web-Instructions.md
 - Vibe-Agent-Mobile-Instructions.md
 - Vibe-Agent-Game-Instructions.md
 - Vibe-Agent-Embedded-Instructions.md
 - Vibe-Agent-Newbie-Instructions.md
-### Integration Pattern
-Core Vibe instructions apply to all platforms. Platform-specific instructions add specialized guidance. Both must be loaded together for proper behavior.
-
+### Integration
+- Core Vibe instructions apply to all platforms
+- Platform-specific adds specialized guidance
+- Both must be loaded together
 ---
-
 **End of Framework System Instructions Reference**

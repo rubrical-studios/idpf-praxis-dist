@@ -3,91 +3,143 @@ name: migration-patterns
 description: Guide developers through database migration best practices including versioning, rollbacks, and zero-downtime strategies
 license: Complete terms in LICENSE.txt
 ---
-# Migration Patterns
-**Version:** v0.22.0
-**Source:** Skills/migration-patterns/SKILL.md
 
-Guides developers through database migration best practices including schema versioning, rollback procedures, and zero-downtime migration patterns.
-## When to Use This Skill
+# Migration Patterns
+**Version:** v0.23.0
+
+## When to Use
+
 - Planning database schema changes
 - Setting up migration workflow for a new project
 - Implementing rollback procedures
 - Performing migrations in production environments
-- Dealing with large table migrations
+
 ## Schema Versioning Strategies
-**Sequential Numbering:** `001_create_users.sql`, `002_add_email.sql`
-- Pros: Simple, clear ordering
-- Cons: Merge conflicts in teams
-**Timestamp-Based:** `20240115120000_create_users.sql`
-- Pros: Reduces merge conflicts, supports team development
-- Cons: Longer filenames
-**When to use:** Solo projects -> Sequential; Team projects -> Timestamp-based
+
+### Sequential Numbering
+```
+001_create_users_table.sql
+002_add_email_to_users.sql
+```
+**Best for:** Solo projects
+
+### Timestamp-Based
+```
+20240115120000_create_users_table.sql
+20240115143022_add_email_to_users.sql
+```
+**Best for:** Team projects
+
 ## Migration File Structure
+
 ```
 migrations/
-├── up/
-│   ├── 001_create_users.sql
-│   └── 002_add_indexes.sql
-├── down/
-│   ├── 001_drop_users.sql
-│   └── 002_drop_indexes.sql
-└── seed/
-    └── initial_data.sql
+├── 001_create_users/
+│   ├── up.sql
+│   └── down.sql
+└── 002_add_indexes/
+    ├── up.sql
+    └── down.sql
 ```
-## Rollback Procedures
-**Forward-only (recommended for production):** Never delete data, fix issues with new migrations
-**Reversible:** Provide down migration for each up, allows rollback to any state
-**Rollback Testing:**
-```bash
-migrate up -> migrate status -> migrate down -> migrate status -> migrate up -> migrate status
-```
-## Zero-Downtime Migrations
-### Expand-Contract Pattern
-**Phase 1 - Expand:** Add new column/table, keep old structure working
-**Phase 2 - Migrate:** Copy/transform data to new structure
-**Phase 3 - Contract:** Remove old column/table
-### Large Table Migrations
+
+### Migration File Contents
+
+**Up migration:**
 ```sql
--- Create new table with desired schema
-CREATE TABLE users_new (...);
--- Copy data in batches
-INSERT INTO users_new ... SELECT ... FROM users WHERE id > $last_id LIMIT 10000;
--- Swap tables
-ALTER TABLE users RENAME TO users_old;
-ALTER TABLE users_new RENAME TO users;
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+CREATE INDEX idx_users_email ON users(email);
 ```
+
+**Down migration:**
+```sql
+DROP INDEX IF EXISTS idx_users_email;
+DROP TABLE IF EXISTS users;
+```
+
+## Rollback Procedures
+
+**Types:**
+- **Forward-only** (recommended for production): Never delete data, fix with new migrations
+- **Reversible:** Provide down migration for each up
+
+### Safe Rollback Pattern
+```sql
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM users LIMIT 1) THEN
+        RAISE EXCEPTION 'Cannot rollback: users table has data';
+    END IF;
+END $$;
+DROP TABLE users;
+```
+
+## Zero-Downtime Migrations
+
+### Expand-Contract Pattern
+
+1. **Expand:** Add new column/table, keep old working
+2. **Migrate:** Copy/transform data to new structure
+3. **Contract:** Remove old column/table
+
+### Example: Renaming a Column
+
+**Phase 1:** Add new column, sync with trigger
+**Phase 2:** Application uses both
+**Phase 3:** Remove old column
+
 ### Adding NOT NULL Constraint (Zero-Downtime)
+
 ```sql
 -- Step 1: Add check constraint (not validated)
-ALTER TABLE users ADD CONSTRAINT users_email_not_null CHECK (email IS NOT NULL) NOT VALID;
--- Step 2: Validate constraint (allows reads)
+ALTER TABLE users ADD CONSTRAINT users_email_not_null
+CHECK (email IS NOT NULL) NOT VALID;
+
+-- Step 2: Validate constraint
 ALTER TABLE users VALIDATE CONSTRAINT users_email_not_null;
+
 -- Step 3: Convert to NOT NULL
 ALTER TABLE users ALTER COLUMN email SET NOT NULL;
 ALTER TABLE users DROP CONSTRAINT users_email_not_null;
 ```
+
 ### Adding Index Without Locking
 ```sql
 CREATE INDEX CONCURRENTLY idx_users_email ON users(email);
 ```
+
 ## Pre-Migration Checklist
+
 - [ ] Migration tested in staging
 - [ ] Rollback tested and working
 - [ ] Backup taken
 - [ ] Team notified
 - [ ] Monitoring in place
+
 ## Post-Migration Verification
+
 ```sql
-\d table_name                    -- Verify structure
-SELECT COUNT(*) FROM table_name  -- Verify data integrity
-SELECT indexname FROM pg_indexes WHERE tablename = 'table_name'  -- Verify indexes
+\d table_name                  -- Verify structure
+SELECT COUNT(*) FROM table_name; -- Verify data
 ```
+
+## Common Migration Commands
+
+| Action | Raw SQL | ORM Equivalent |
+|--------|---------|----------------|
+| Create table | CREATE TABLE | create_table |
+| Add column | ALTER TABLE ADD | add_column |
+| Add index | CREATE INDEX | add_index |
+
 ## Resources
-See `resources/` directory for versioning strategies, rollback guide, and zero-downtime patterns.
-## Relationship to Other Skills
-**Complements:** `postgresql-integration`, `sqlite-integration`
-**Independent from:** TDD skills
-## Expected Outcome
-After using this skill: Migration workflow established, versioning strategy implemented, rollback procedures defined, zero-downtime patterns understood.
+
+- `resources/versioning-strategies.md`
+- `resources/rollback-guide.md`
+- `resources/zero-downtime.md`
+
 ---
+
 **End of Migration Patterns Skill**

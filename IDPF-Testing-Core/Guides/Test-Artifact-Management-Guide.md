@@ -1,5 +1,5 @@
 # Test Artifact Management Guide
-**Version:** v0.22.0
+**Version:** v0.23.0
 
 **Framework:** IDPF-Testing-Core
 

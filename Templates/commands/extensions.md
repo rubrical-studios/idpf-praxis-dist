@@ -1,24 +1,20 @@
 ---
-version: "v0.22.0"
+version: "v0.23.0"
 description: Discover, view, and manage extension points in release commands
 argument-hint: <subcommand> [options]
 ---
-
 # /extensions
-**Source:** Templates/commands/extensions.md
-
 Unified management of extension points across release commands.
-
 ## Subcommands
 | Subcommand | Description |
 |------------|-------------|
 | `list` | Show all extension points |
-| `list --command X` | Show extension points for specific command |
-| `view X:Y` | Show content of extension point Y in command X |
-| `edit X:Y` | Edit extension point Y in command X |
+| `list --command X` | Show for specific command |
+| `view X:Y` | Show content of extension Y in command X |
+| `edit X:Y` | Edit extension Y in command X |
 | `validate` | Check all extension blocks are properly formatted |
-| `matrix` | Show cross-command extension point comparison |
-
+| `matrix` | Show cross-command comparison |
+---
 ## Target Commands
 | Command | File |
 |---------|------|
@@ -26,59 +22,72 @@ Unified management of extension points across release commands.
 | `/prepare-release` | `Templates/commands/prepare-release.md` |
 | `/close-release` | `Templates/commands/close-release.md` |
 | `/prepare-beta` | `Templates/commands/prepare-beta.md` |
-
+---
 ## Subcommand: list
 **Usage:** `/extensions list [--command <name>]`
-
-Parse extension points using marker pattern:
+### Step 1: Parse Extension Points
+Extract using marker pattern:
 ```
 <!-- USER-EXTENSION-START: {name} -->
 ...content...
 <!-- USER-EXTENSION-END: {name} -->
 ```
-
-Extension point **has content** if there is non-whitespace, non-comment text between markers.
-
+### Step 2: Detect Content
+**Empty:** No non-whitespace between markers
+**Has content:** Non-whitespace exists
+### Step 3: Format Output
+```
+Extension Points (Release Commands)
+/prepare-release
+  ├── post-analysis         : Commit analysis [HAS CONTENT]
+  ├── pre-validation        : Setup, fixtures
+  └── post-validation       : Coverage gates [HAS CONTENT]
+Total: N extension points (X with content, Y empty)
+```
+---
 ## Subcommand: view
 **Usage:** `/extensions view <command>:<point>`
-**Example:** `/extensions view prepare-release:post-validation`
-
-Locate and display content between START and END markers.
-
+1. Parse command:point from argument
+2. Find `USER-EXTENSION-START: {point}` marker
+3. Extract content between START/END
+4. Display with location and line numbers
+---
 ## Subcommand: edit
 **Usage:** `/extensions edit <command>:<point>`
-
-1. Present current content
-2. **ASK USER** for new content
-3. Update file
-4. Confirm change
-
+1. Locate extension block
+2. Present current content
+3. **ASK USER** for new content
+4. Replace content between markers
+5. Confirm change
+---
 ## Subcommand: validate
 **Usage:** `/extensions validate`
-
-Validate each block for:
+Check each block for:
 | Check | Description |
 |-------|-------------|
-| Matching pairs | Every START has a matching END |
-| Valid names | Names match `[a-z][a-z0-9-]*` pattern |
-| No nesting | Extension blocks are not nested |
-| Documented | Each point appears in "Available Extension Points" table |
-
+| Matching pairs | Every START has END |
+| Valid names | Match `[a-z][a-z0-9-]*` |
+| No nesting | Blocks not nested |
+| Documented | Appears in extension table |
+Report: `✓ valid` or `✗ issue description`
+---
 ## Subcommand: matrix
 **Usage:** `/extensions matrix`
-
-Build union of all extension point names across all target commands.
+```
+Point                | open | prepare | close | beta |
+---------------------|------|---------|-------|------|
+post-analysis        |  -   |    ●    |   -   |  ●   |
+pre-validation       |  -   |    ○    |   -   |  ○   |
 Legend: ● = has content, ○ = empty, - = not applicable
-
-## Extension Point Naming Convention
-| Pattern | Used By | Purpose |
-|---------|---------|---------|
-| `pre-*` | All | Before a workflow phase |
-| `post-*` | All | After a workflow phase |
-| `checklist` | open-release | Single verification checklist |
-| `checklist-before-*` | prepare-*, close-* | Pre-action verification items |
-| `checklist-after-*` | prepare-*, close-* | Post-action verification items |
-
+```
 ---
-
+## Naming Convention
+| Pattern | Purpose |
+|---------|---------|
+| `pre-*` | Before workflow phase |
+| `post-*` | After workflow phase |
+| `checklist` | Single verification |
+| `checklist-before-*` | Pre-action verification |
+| `checklist-after-*` | Post-action verification |
+---
 **End of Extensions Command**

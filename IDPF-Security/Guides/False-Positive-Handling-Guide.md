@@ -1,5 +1,5 @@
 # False Positive Handling Strategy
-**Version:** v0.22.0
+**Version:** v0.23.0
 
 **Framework:** IDPF-Security
 

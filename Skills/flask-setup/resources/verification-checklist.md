@@ -1,5 +1,5 @@
 # Flask Setup Verification Checklist
-**Version:** v0.22.0
+**Version:** v0.23.0
 
 Use this checklist to verify your Flask setup is correct.
 

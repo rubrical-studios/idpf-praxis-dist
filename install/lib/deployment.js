@@ -19,10 +19,10 @@ const {
 } = require('./extensibility');
 
 /**
- * Copy file with 0.22.0 placeholder replacement
+ * Copy file with 0.23.0 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.22.0 with
+ * @param {string} version - Version string to replace 0.23.0 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
@@ -35,7 +35,7 @@ function copyFileWithVersion(src, dest, version) {
  *
  * @param {string} src - Source template file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.22.0 with
+ * @param {string} version - Version string to replace 0.23.0 with
  * @param {boolean} debug - Enable debug logging
  * @returns {{preserved: boolean, warnings: string[]}} Deployment result
  */
@@ -204,7 +204,7 @@ function createExtensibilityStructure(projectDir, extensibleCommands = []) {
   createDir(libDir, created, existed);
 
   // AC-5: .claude/scripts/{command}/ for each extensible command
-  const defaultCommands = ['open-release', 'prepare-release', 'prepare-beta', 'close-release'];
+  const defaultCommands = ['create-branch', 'prepare-release', 'prepare-beta', 'merge-branch', 'destroy-branch', 'switch-branch', 'assign-branch'];
   const commandsToCreate = extensibleCommands.length > 0 ? extensibleCommands : defaultCommands;
 
   for (const cmd of commandsToCreate) {
@@ -526,17 +526,18 @@ function deployWorkflowCommands(projectDir, frameworkPath, debug = false) {
   const version = readFrameworkVersion(frameworkPath);
 
   const workflowCommands = [
-    'assign-release',
-    'switch-release',
+    'assign-branch',
+    'switch-branch',
     'transfer-issue',
     'plan-sprint',
     'sprint-status',
     'sprint-retro',
     'end-sprint',
-    'open-release',
+    'create-branch',
     'prepare-release',
     'prepare-beta',
-    'close-release',
+    'merge-branch',
+    'destroy-branch',
     'charter'  // v0.20.0: Charter management command
   ];
 
@@ -599,6 +600,49 @@ function displayGitHubSetupSuccess(repoUrl, projectUrl) {
   log();
 }
 
+/**
+ * Clean up orphaned command files from previous versions
+ * Removes commands that have been renamed or removed in the current version
+ *
+ * @param {string} projectDir - Target project directory
+ * @returns {{removed: string[], notFound: string[]}} Cleanup results
+ */
+function cleanupOrphanedFiles(projectDir) {
+  const commandsDir = path.join(projectDir, '.claude', 'commands');
+  const scriptsSharedDir = path.join(projectDir, '.claude', 'scripts', 'shared');
+
+  // Commands renamed or removed in v0.23.0
+  const orphanedCommands = [
+    'open-release',      // renamed to create-branch
+    'switch-release',    // renamed to switch-branch
+    'assign-release',    // renamed to assign-branch
+    'close-release'      // removed (folded into prepare-release)
+  ];
+
+  const removed = [];
+  const notFound = [];
+
+  for (const cmd of orphanedCommands) {
+    // Remove command file (.md)
+    const cmdPath = path.join(commandsDir, `${cmd}.md`);
+    if (fs.existsSync(cmdPath)) {
+      fs.unlinkSync(cmdPath);
+      removed.push(`commands/${cmd}.md`);
+    } else {
+      notFound.push(`commands/${cmd}.md`);
+    }
+
+    // Remove script file (.js) from shared directory
+    const scriptPath = path.join(scriptsSharedDir, `${cmd}.js`);
+    if (fs.existsSync(scriptPath)) {
+      fs.unlinkSync(scriptPath);
+      removed.push(`scripts/shared/${cmd}.js`);
+    }
+  }
+
+  return { removed, notFound };
+}
+
 module.exports = {
   createExtensibilityStructure,
   deployFrameworkScripts,
@@ -608,4 +652,5 @@ module.exports = {
   deployGitPrePushHook,
   deployWorkflowCommands,
   displayGitHubSetupSuccess,
+  cleanupOrphanedFiles,
 };

@@ -1,14 +1,9 @@
 # Windows Shell Safety for Claude Code
-**Version:** v0.22.0
-**Source:** Reference/Windows-Shell-Safety.md
-
+**Version:** v0.23.0
 ---
-
 **MUST READ:** Auto-loaded on Windows at session startup.
-
 ## Shell Environment
 Claude Code uses Git Bash on Windows. Most Unix commands work, but these patterns fail.
-
 ## Heredocs with Backticks
 **NEVER use backticks inside heredocs.**
 ```bash
@@ -22,7 +17,6 @@ EOF
 git commit -F .tmp-msg.txt
 rm .tmp-msg.txt
 ```
-
 ## Command Substitution
 **ALL `$(...)` patterns are unreliable:** tool arguments, variable assignments, for loops, nested substitution.
 ```bash
@@ -32,30 +26,21 @@ gh issue create --body "$(cat README.md)"
 # GOOD - use --body-file flag
 gh issue create --body-file README.md
 ```
-
-## gh pmu Body-File Flags
+## gh pmu Body Flags
+**Prefer `--body-stdout` / `--body-stdin`** for cleaner workflows.
 ```bash
-# Create with body from file
+# Export body, edit, update (preferred - no tmp/ directory)
+gh pmu view 123 --body-stdout > .tmp-body.md
+gh pmu edit 123 -F .tmp-body.md && rm .tmp-body.md
+
+# Creating issues with body from file
 gh pmu create --title "Bug: ..." -F .tmp-body.md --status backlog
 
-# Export body for editing (replaces gh issue view --json body -q '.body')
+# Alternative: Body-File Pattern (uses tmp/ directory)
 gh pmu view 123 --body-file    # Creates tmp/issue-123.md
-gh issue edit 123 --body-file tmp/issue-123.md
+gh pmu edit 123 -F tmp/issue-123.md
 rm tmp/issue-123.md
 ```
-
-### Stdin/Stdout Options
-`--body-stdout` and `--body-stdin` are **Windows-safe** piping alternatives:
-```bash
-# Both work reliably on Windows
-gh pmu view 123 --body-stdout > issue-body.md
-cat issue-body.md | gh pmu edit 123 --body-stdin
-
-# File-based approach (also works)
-gh pmu view 123 --body-file
-gh pmu edit 123 -F tmp/issue-123.md
-```
-
 ## Path Handling
 **Use forward slashes. Quote paths with spaces.**
 ```bash
@@ -66,7 +51,6 @@ cd C:\Users\Name\My Projects
 cd "C:/Users/Name/My Projects"
 cd "$USERPROFILE/My Projects"
 ```
-
 ## Temp File Best Practices
 1. **Use relative paths** for temp files (`.tmp-*`) - absolute paths get backslashes stripped
 2. **Use Write tool** instead of `cat`, `echo >`, or heredocs
@@ -76,7 +60,6 @@ cd "$USERPROFILE/My Projects"
 gh issue create --body-file .tmp-body.md
 rm .tmp-body.md
 ```
-
 ## Quoting Rules
 **Prefer double quotes. Escape special characters.**
 ```bash
@@ -84,7 +67,6 @@ rm .tmp-body.md
 echo "$HOME"
 echo "The file is \`important\`"
 ```
-
 ## JSON in Commands
 **Use temp files for JSON payloads.**
 ```bash
@@ -92,7 +74,6 @@ echo "The file is \`important\`"
 gh api graphql --input .tmp-query.json
 rm .tmp-query.json
 ```
-
 ## Loops with Command Substitution
 **Loops using `$(...)` fail.** File globbing works.
 ```bash
@@ -110,7 +91,6 @@ rm .tmp-list.txt
 # GOOD - find with -exec
 find . -name "*.md" -exec wc -l {} \;
 ```
-
 ## Environment Variables
 **Use Unix-style syntax in Git Bash.**
 ```bash
@@ -121,7 +101,6 @@ echo %USERPROFILE%
 echo "$USERPROFILE"
 export MY_VAR=value
 ```
-
 ## Quick Reference
 | Pattern | Windows Safe? | Alternative |
 |---------|:-------------:|-------------|
@@ -138,7 +117,5 @@ export MY_VAR=value
 | Pipes `\|` | Yes | - |
 | Redirection `>` `>>` | Yes | - |
 | `$VAR` expansion | Yes | - |
-
 ---
-
 **End of Windows Shell Safety**

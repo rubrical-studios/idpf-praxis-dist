@@ -3,92 +3,148 @@ name: postgresql-integration
 description: Guide developers through PostgreSQL setup, connection configuration, query patterns, and best practices
 license: Complete terms in LICENSE.txt
 ---
-# PostgreSQL Integration
-**Version:** v0.22.0
-**Source:** Skills/postgresql-integration/SKILL.md
 
-Guides developers through PostgreSQL database integration including connection setup, query patterns, transaction handling, and connection pooling.
-## When to Use This Skill
+# PostgreSQL Integration
+**Version:** v0.23.0
+
+## When to Use
+
 - Setting up PostgreSQL connection in a new project
 - Implementing database queries and operations
 - Configuring connection pooling
 - Handling transactions
-- Troubleshooting common PostgreSQL issues
+
 ## Connection Setup
+
 ### Connection String Format
 ```
 postgresql://[user[:password]@][host][:port][/dbname][?param1=value1&...]
 ```
-**Security:** NEVER hardcode credentials. Use environment variables or secret management.
-### SSL/TLS Configuration
+
+### Security Best Practices
+
+**NEVER hardcode credentials in source code.**
+
+Use environment variables:
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/mydb
+```
+
+### SSL Modes
+
 | Mode | Description |
 |------|-------------|
 | `disable` | No SSL |
 | `require` | Require SSL, no verification |
 | `verify-ca` | Require SSL with CA verification |
 | `verify-full` | Require SSL with full verification |
+
 ## Query Patterns
-**ALWAYS use parameterized queries:**
+
+### Parameterized Queries
+
+**ALWAYS use parameterized queries to prevent SQL injection.**
+
 ```sql
 -- CORRECT
 SELECT * FROM users WHERE id = $1
--- WRONG (SQL injection vulnerable)
+
+-- WRONG (vulnerable)
 SELECT * FROM users WHERE id = {user_id}
 ```
-**Common Operations:**
+
+### Common Operations
+
 ```sql
--- SELECT with RETURNING
-INSERT INTO table_name (col1, col2) VALUES ($1, $2) RETURNING id;
--- UPDATE with RETURNING
-UPDATE table_name SET col1 = $1 WHERE id = $2 RETURNING *;
--- Batch INSERT
-INSERT INTO table_name (col1, col2) VALUES ($1, $2), ($3, $4), ($5, $6);
+-- SELECT with filtering
+SELECT column1, column2 FROM table_name
+WHERE condition ORDER BY column1 LIMIT 100;
+
+-- INSERT with returning
+INSERT INTO table_name (column1, column2)
+VALUES ($1, $2) RETURNING id;
+
+-- UPDATE with conditions
+UPDATE table_name
+SET column1 = $1, updated_at = NOW()
+WHERE id = $2 RETURNING *;
 ```
+
 ## Transaction Handling
+
 ```sql
 BEGIN;
 -- operations
-COMMIT;  -- or ROLLBACK;
+COMMIT;
+-- or ROLLBACK; if error
 ```
-**Isolation Levels:**
+
+### Isolation Levels
+
 | Level | Dirty Read | Non-repeatable Read | Phantom Read |
 |-------|------------|---------------------|--------------|
-| READ COMMITTED (default) | No | Possible | Possible |
+| READ COMMITTED | No | Possible | Possible |
 | REPEATABLE READ | No | No | Possible |
 | SERIALIZABLE | No | No | No |
-**Best Practices:**
-- Keep transactions short
-- Handle errors explicitly
-- Never wait for user input mid-transaction
+
+**PostgreSQL default:** READ COMMITTED
+
+### Best Practices
+
+1. Keep transactions short
+2. Handle errors explicitly
+3. Use appropriate isolation
+4. Avoid user interaction mid-transaction
+
 ## Connection Pooling
-**Why:** Opening connections is expensive (TCP handshake, auth, memory)
-**Key Parameters:**
+
+### Key Parameters
+
 - `min_connections` - Minimum to maintain
 - `max_connections` - Maximum allowed
-- `connection_timeout` - Wait time for available connection
+- `connection_timeout` - Time to wait for available connection
 - `idle_timeout` - Time before closing idle connection
-**Sizing Guideline:** `max_connections = core_count * 2`
+
+### Sizing Guidelines
+
+```
+max_connections = core_count * 2
+```
+
 ## Error Handling
-**Connection errors:** `ECONNREFUSED` (server not running), `ETIMEDOUT` (network issue), `authentication failed`
-**Query errors:** `syntax error`, `relation does not exist`, `duplicate key`, `foreign key violation`
-**Retry Strategy:** Wait with exponential backoff, maximum retry count (e.g., 3), log each attempt
+
+### Common Error Categories
+
+- **Connection:** ECONNREFUSED, ETIMEDOUT, authentication failed
+- **Query:** syntax error, relation does not exist, duplicate key
+
+### Retry Strategy
+
+1. Wait with exponential backoff
+2. Maximum retry count (3 attempts)
+3. Log each retry attempt
+
 ## Performance Tips
-**Indexing:**
+
+### Indexing
+
 ```sql
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_orders_user_date ON orders(user_id, created_at);
 ```
-**Query Analysis:**
+
+### Query Analysis
+
 ```sql
 EXPLAIN ANALYZE SELECT * FROM users WHERE email = 'test@example.com';
 ```
-Look for: Sequential scans on large tables, high cost estimates, actual vs estimated row counts.
+
 ## Resources
-See `resources/` directory for setup guide, query patterns, and common errors.
-## Relationship to Other Skills
-**Complements:** `sqlite-integration`, `migration-patterns`
-**Independent from:** TDD skills
-## Expected Outcome
-After using this skill: PostgreSQL connection configured securely, queries use parameterized inputs, transactions handled appropriately, connection pooling configured.
+
+- `resources/setup-guide.md`
+- `resources/query-patterns.md`
+- `resources/common-errors.md`
+
 ---
+
 **End of PostgreSQL Integration Skill**

@@ -3,19 +3,22 @@ name: bdd-writing
 description: Guide developers on writing BDD specifications using Gherkin syntax, feature files, and step definitions
 license: Complete terms in LICENSE.txt
 ---
-# BDD Writing
-**Version:** v0.22.0
-**Source:** Skills/bdd-writing/SKILL.md
 
-Guidance for writing Behavior-Driven Development (BDD) specifications using Gherkin syntax, feature files, and step definitions.
-## When to Use This Skill
+# BDD Writing
+**Version:** v0.23.0
+
+## When to Use
+
 - Writing acceptance criteria as executable specifications
 - Creating feature files for new functionality
 - Defining step definitions for scenarios
 - Integrating BDD with TDD workflow
-- Questions about Gherkin syntax or tool selection
+- Tool selection guidance (Cucumber, pytest-bdd, etc.)
+
 ## Gherkin Syntax
+
 ### Core Keywords
+
 | Keyword | Purpose |
 |---------|---------|
 | **Feature** | Groups related scenarios |
@@ -27,14 +30,18 @@ Guidance for writing Behavior-Driven Development (BDD) specifications using Gher
 | **Background** | Shared setup for all scenarios |
 | **Scenario Outline** | Parameterized scenarios |
 | **Examples** | Data table for outlines |
-### Feature File Structure
+
+### Basic Feature File Structure
+
 ```gherkin
 Feature: User Authentication
   As a registered user
   I want to log into the system
   So that I can access my account
+
   Background:
     Given the login page is displayed
+
   Scenario: Successful login with valid credentials
     Given a user "alice" exists with password "secret123"
     When the user enters username "alice"
@@ -42,62 +49,88 @@ Feature: User Authentication
     And the user clicks the login button
     Then the user sees the dashboard
 ```
-### Scenario Outline (Parameterized)
+
+### Scenario Outline (Parameterized Tests)
+
 ```gherkin
 Scenario Outline: Login with various credentials
   Given a user "<username>" exists with password "<password>"
   When the user attempts to login with "<input_user>" and "<input_pass>"
   Then the result is "<outcome>"
+
   Examples:
     | username | password  | input_user | input_pass | outcome |
     | alice    | secret123 | alice      | secret123  | success |
     | alice    | secret123 | alice      | wrong      | failure |
 ```
-## Step Definitions
-Step definitions connect Gherkin steps to executable code.
-**Best practices:**
+
+### Data Tables
+
+```gherkin
+Scenario: Create multiple users
+  Given the following users exist:
+    | username | email            | role  |
+    | alice    | alice@example.com| admin |
+    | bob      | bob@example.com  | user  |
+  When I view the user list
+  Then I see 2 users
+```
+
+## Step Definition Best Practices
+
 1. **Keep Steps Reusable** - Generic over specific
 2. **Use Parameters** - Single definition for multiple cases
-3. **Declarative Over Imperative** - "Given user is logged in" not "Given user opens login page and enters..."
+3. **Declarative Over Imperative** - Test behavior, not UI mechanics
+
 ## Best Practices
+
 | Do | Don't |
 |----|-------|
 | One behavior per scenario | Multiple behaviors per scenario |
 | Use business language | Use technical jargon |
 | Keep scenarios short (3-7 steps) | Write long scenarios (10+ steps) |
 | Make scenarios independent | Create dependencies between scenarios |
-| Focus on behavior | Focus on UI mechanics |
+
 ## Anti-Patterns to Avoid
-1. **UI-Focused Steps** - Test behavior, not UI mechanics
+
+1. **UI-Focused Steps** - "When I click button with id submit-btn"
 2. **Too Many Steps** - Split into focused scenarios
-3. **Coupled Steps** - Self-contained steps
+3. **Coupled Steps** - Steps should be self-contained
 4. **Inconsistent Language** - Use consistent terminology
+
 ## BDD + TDD Integration (Double Loop)
+
 ```
 OUTER LOOP: BDD (Acceptance Tests)
   1. Write failing acceptance scenario
+
   INNER LOOP: TDD (Unit Tests)
     2. RED: Write failing unit test
     3. GREEN: Write minimal code to pass
     4. REFACTOR: Improve code quality
     5. Repeat until feature complete
+
   6. Acceptance scenario passes
   7. Move to next scenario
 ```
-## Tool Selection
+
+## Tool Selection Guide
+
 | Tool | Language | Best For |
 |------|----------|----------|
-| **Cucumber** | JS, Java, Ruby | Most popular, multi-language |
-| **pytest-bdd** | Python | Python projects, pytest integration |
+| **Cucumber** | JS, Java, Ruby | Multi-language, most popular |
+| **pytest-bdd** | Python | pytest integration |
 | **SpecFlow** | C#/.NET | .NET ecosystem |
-| **Behave** | Python | Python alternative to pytest-bdd |
+| **Behave** | Python | Python alternative |
 | **Karate** | Java | API testing with BDD |
+
 ## Resources
-See `resources/` directory for Gherkin syntax reference, feature file templates, and step definition patterns.
-## Relationship to Other Skills
-**Complements:** `test-writing-patterns`, `tdd-red-phase`, `beginner-testing`
-**Used by:** IDPF-Agile for user story validation
-## Expected Outcome
-After applying BDD writing patterns: Feature files are clear and readable, scenarios focus on behavior, step definitions are reusable, BDD integrates smoothly with TDD workflow.
+
+- `resources/gherkin-syntax.md`
+- `resources/feature-file-template.md`
+- `resources/step-definition-patterns.md`
+- `resources/tool-comparison.md`
+
 ---
+
 **End of BDD Writing Skill**

@@ -1,14 +1,12 @@
 # Architecture: {project-name}
-**Source:** Templates/Lifecycle/Inception/Architecture.md
 **Last Updated:** {date}
-
+---
 ## Overview
 {High-level description of system architecture}
-
 ## Architecture Style
 **Style:** {Monolith | Microservices | Serverless | CLI | Desktop | Mobile | Hybrid}
-**Rationale:** {Why this architecture style was chosen}
-
+**Rationale:** {Why chosen}
+---
 ## System Context
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -18,33 +16,31 @@
 │  └────────────┘  └────────────┘  └────────────┘    │
 └─────────────────────────────────────────────────────┘
          │                │                │
-         ▼                ▼                ▼
    {External 1}     {External 2}     {External 3}
 ```
-
+---
 ## Component Overview
 | Component | Responsibility | Technology |
 |-----------|----------------|------------|
 | | | |
-
+---
 ## Data Flow
-{Description of how data flows through the system}
-
+{Description of data flow}
 ### Primary Data Path
 1. {Step 1}
 2. {Step 2}
 3. {Step 3}
-
+---
 ## External Integrations
 | System | Type | Purpose |
 |--------|------|---------|
-| | API / Database / File / Message Queue | |
-
+| | API / Database / File / MQ | |
+---
 ## Key Architectural Decisions
-| Decision | Choice | Alternatives Considered | Rationale |
-|----------|--------|------------------------|-----------|
+| Decision | Choice | Alternatives | Rationale |
+|----------|--------|--------------|-----------|
 | | | | |
-
+---
 ## Non-Functional Considerations
 | Aspect | Approach |
 |--------|----------|
@@ -52,6 +48,5 @@
 | Security | |
 | Performance | |
 | Observability | |
-
 ---
-*See also: Tech-Stack.md, Constraints.md*
+*See: Tech-Stack.md, Constraints.md*
