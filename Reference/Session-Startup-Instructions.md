@@ -1,5 +1,5 @@
 # Session Startup Instructions
-**Version:** v0.23.1
+**Version:** v0.23.2
 **Purpose:** Standard initialization procedure for AI assistant sessions
 ---
 ## Rules Auto-Loading (v2.9+)
@@ -19,6 +19,11 @@ State the date from environment information and proceed. If user corrects, use t
 Overview/Framework-Summary.md
 ```
 Provides: current versions/counts, framework selection matrix, skills registry, on-demand file references.
+### 2a. Load Process Framework (Self-Hosted)
+**Applies when:** `framework-config.json` contains `selfHosted: true`
+1. Read `framework-config.json` for `processFramework` value
+2. Load core file: `IDPF-Agile` → `.min-mirror/IDPF-Agile/Agile-Core.md`, `IDPF-Vibe` → `.min-mirror/IDPF-Vibe/Vibe-Core.md`
+3. Report: "Process Framework: {name} (self-hosted)"
 ### 3. Check Project Charter (User Projects)
 **Note:** Applies to user projects, not idpf-praxis framework repository.
 1. Check for opt-out: `test -f .no-charter` - if exists, bypass charter prompting
@@ -27,7 +32,7 @@ Provides: current versions/counts, framework selection matrix, skills registry, 
    - **If not exists:** Prompt with options: (1) Create charter now, (2) Skip for session, (3) Never ask again
 **Token budget:** Only CHARTER.md loaded at startup (~150-200 tokens). Inception/ artifacts loaded on-demand.
 ### 4. Confirm Initialization
-Report: Date, Framework version, Skill count, Specialists count, GitHub Workflow status, Charter status
+Report: Date, Framework version, Skill count, Specialists count, Process framework (if self-hosted), GitHub Workflow status, Charter status
 Ask user what they would like to work on.
 ### 5. Check Open Releases
 ```bash

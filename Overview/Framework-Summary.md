@@ -1,5 +1,5 @@
 # Framework Summary
-**Version:** v0.23.1
+**Version:** v0.23.2
 **Purpose:** Compact startup reference
 ---
 ## Quick Reference
@@ -30,30 +30,30 @@
 | IDPF-Chaos | 1 | Testing-Core |
 | IDPF-Contract-Testing | 1 | Testing-Core |
 ### Skills Registry
-| Skill | Version | Category |
-|-------|---------|----------|
-| tdd-red-phase | 0.17.0 | TDD |
-| tdd-green-phase | 0.17.0 | TDD |
-| tdd-refactor-phase | 0.17.0 | TDD |
-| tdd-failure-recovery | 0.17.0 | TDD |
-| test-writing-patterns | 0.17.0 | TDD |
-| bdd-writing | 0.17.0 | BDD |
-| extract-prd | 0.17.0 | PRD |
-| promote-to-prd | 0.17.0 | PRD |
-| anti-pattern-analysis | 0.17.0 | Code Quality |
-| uml-generation | 0.17.0 | Code Quality |
-| flask-setup | 0.17.0 | Beginner Setup |
-| sinatra-setup | 0.17.0 | Beginner Setup |
-| common-errors | 0.17.0 | Beginner Support |
-| sqlite-integration | 0.17.0 | Beginner Support |
-| beginner-testing | 0.17.0 | Beginner Support |
-| postgresql-integration | 0.17.0 | Database |
-| migration-patterns | 0.17.0 | Database |
-| property-based-testing | 0.17.0 | Advanced Testing |
-| mutation-testing | 0.17.0 | Advanced Testing |
-| api-versioning | 0.17.0 | Architecture |
-| error-handling-patterns | 0.17.0 | Architecture |
-| ci-cd-pipeline-design | 0.17.0 | DevOps |
+| Skill | Category |
+|-------|----------|
+| tdd-red-phase | TDD |
+| tdd-green-phase | TDD |
+| tdd-refactor-phase | TDD |
+| tdd-failure-recovery | TDD |
+| test-writing-patterns | TDD |
+| bdd-writing | BDD |
+| extract-prd | PRD |
+| promote-to-prd | PRD |
+| anti-pattern-analysis | Code Quality |
+| uml-generation | Code Quality |
+| flask-setup | Beginner Setup |
+| sinatra-setup | Beginner Setup |
+| common-errors | Beginner Support |
+| sqlite-integration | Beginner Support |
+| beginner-testing | Beginner Support |
+| postgresql-integration | Database |
+| migration-patterns | Database |
+| property-based-testing | Advanced Testing |
+| mutation-testing | Advanced Testing |
+| api-versioning | Architecture |
+| error-handling-patterns | Architecture |
+| ci-cd-pipeline-design | DevOps |
 ---
 ## Framework Selection Matrix
 | Project Type | Starting Point | Evolution Path |

@@ -1,0 +1,58 @@
+#!/bin/bash
+# **Version:** {{VERSION}}
+#
+# Pre-push hook: Prevents unauthorized version tag pushes
+#
+# This hook ensures version tags (v*) can only be pushed through
+# the /prepare-release process, which creates an authorization marker.
+#
+# Installation: Copied to .git/hooks/pre-push by install.js
+
+# Authorization marker file
+MARKER_FILE=".release-authorized"
+
+# Read stdin for refs being pushed
+while read local_ref local_sha remote_ref remote_sha; do
+    # Check if this is a version tag (refs/tags/v*)
+    if [[ "$remote_ref" == refs/tags/v* ]]; then
+        TAG_NAME="${remote_ref#refs/tags/}"
+
+        # Check for authorization marker
+        if [[ ! -f "$MARKER_FILE" ]]; then
+            echo ""
+            echo "============================================================"
+            echo "  ERROR: Tag push blocked!"
+            echo "============================================================"
+            echo ""
+            echo "  Version tag '$TAG_NAME' cannot be pushed directly."
+            echo ""
+            echo "  Version tags can only be pushed through /prepare-release"
+            echo "  to ensure all validations pass before deployment."
+            echo ""
+            echo "  To release:"
+            echo "    1. Run /prepare-release"
+            echo "    2. Follow the release process"
+            echo "    3. The tag will be pushed automatically"
+            echo ""
+            echo "  If you need to push this tag manually (emergency):"
+            echo "    echo 'emergency-override' > .release-authorized"
+            echo "    git push --tags"
+            echo "    rm .release-authorized"
+            echo ""
+            echo "============================================================"
+            exit 1
+        fi
+
+        # Marker exists - validate it
+        MARKER_CONTENT=$(cat "$MARKER_FILE" 2>/dev/null)
+        echo "Tag push authorized via marker file."
+        echo "  Tag: $TAG_NAME"
+        echo "  Marker: $MARKER_CONTENT"
+
+        # Clean up marker after successful validation
+        # (actual deletion happens after push completes - see post-push or manual cleanup)
+    fi
+done
+
+# Allow the push
+exit 0

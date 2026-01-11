@@ -1,5 +1,5 @@
 # IDPF-PRD Framework
-**Version:** v0.23.1
+**Version:** v0.23.2
 **Status:** Deprecated
 > **DEPRECATED:** Superseded by **`promote-to-prd`** skill. 4-phase workflow too heavyweight; static worksheets replaced by dynamic AI-generated questions; Inception/ artifacts provide strategic context. See Issue #643.
 
