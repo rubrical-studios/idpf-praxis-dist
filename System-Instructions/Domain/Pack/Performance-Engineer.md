@@ -1,5 +1,5 @@
 # System Instructions: Performance Engineer
-**Version:** v0.23.3
+**Version:** v0.23.4
 **Source:** System-Instructions/Domain/Pack/Performance-Engineer.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Application performance, optimization, profiling, load testing, ensuring systems meet performance requirements.

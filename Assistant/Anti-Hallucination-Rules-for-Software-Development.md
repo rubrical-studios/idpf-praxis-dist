@@ -1,5 +1,5 @@
 # Anti-Hallucination Rules for Software Development
-**Version:** v0.23.3
+**Version:** v0.23.4
 
 ## Core Principle
 **Accuracy over helpfulness. Uncertainty over invention. Verification over assumption.**

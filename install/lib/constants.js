@@ -115,7 +115,7 @@ const INSTALLED_FILES_MANIFEST = {
     ],
   },
   scripts: {
-    dir: '.claude/scripts',
+    dir: '.claude/scripts/shared',
     files: [
       (config) => config?.enableGitHubWorkflow ? 'assign-branch.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'switch-branch.js' : null,
@@ -124,9 +124,17 @@ const INSTALLED_FILES_MANIFEST = {
       (config) => config?.enableGitHubWorkflow ? 'sprint-status.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'sprint-retro.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'end-sprint.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'create-branch.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'merge-branch.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'destroy-branch.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'cleanup-release-assets.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'generate-changelog.js' : null,
+    ],
+  },
+  scriptsLib: {
+    dir: '.claude/scripts/shared/lib',
+    files: [
+      (config) => config?.enableGitHubWorkflow ? 'gh.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'git.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'output.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'poll.js' : null,
     ],
   },
   hooks: {

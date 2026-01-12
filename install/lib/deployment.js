@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const { generateStartupRules } = require('./generation');
 const { computeFileHash, writeManifest, readManifest, isFileModified } = require('./checksums');
-const { readFrameworkVersion } = require('./detection');
+const { readFrameworkVersion, getDeploymentConfig } = require('./detection');
 const {
   parseCommandHeader,
   extractExtensionBlocks,
@@ -19,10 +19,10 @@ const {
 } = require('./extensibility');
 
 /**
- * Copy file with 0.23.3 placeholder replacement
+ * Copy file with 0.23.4 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.23.3 with
+ * @param {string} version - Version string to replace 0.23.4 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
@@ -35,7 +35,7 @@ function copyFileWithVersion(src, dest, version) {
  *
  * @param {string} src - Source template file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.23.3 with
+ * @param {string} version - Version string to replace 0.23.4 with
  * @param {boolean} debug - Enable debug logging
  * @returns {{preserved: boolean, warnings: string[]}} Deployment result
  */
@@ -506,7 +506,8 @@ function deployCoreCommands(projectDir, frameworkPath) {
 
 /**
  * Deploy workflow commands and scripts for GitHub workflow integration
- * Copies from Templates/commands/ and Templates/scripts/ to project .claude/
+ * Copies from Templates/commands/ to .claude/commands/
+ * Copies from Templates/scripts/shared/ to .claude/scripts/shared/
  * Preserves USER-EXTENSION blocks in EXTENSIBLE command files
  *
  * @param {string} projectDir - Target project directory
@@ -520,27 +521,24 @@ function deployWorkflowCommands(projectDir, frameworkPath, debug = false) {
     logDebug('Deploying workflow commands with extensibility support...');
   }
   const commandsDir = path.join(projectDir, '.claude', 'commands');
-  const scriptsDir = path.join(projectDir, '.claude', 'scripts');
+  const scriptsSharedDir = path.join(projectDir, '.claude', 'scripts', 'shared');
+  const scriptsLibDir = path.join(projectDir, '.claude', 'scripts', 'shared', 'lib');
   fs.mkdirSync(commandsDir, { recursive: true });
-  fs.mkdirSync(scriptsDir, { recursive: true });
+  fs.mkdirSync(scriptsSharedDir, { recursive: true });
+  fs.mkdirSync(scriptsLibDir, { recursive: true });
   const version = readFrameworkVersion(frameworkPath);
 
-  const workflowCommands = [
-    'assign-branch',
-    'switch-branch',
-    'transfer-issue',
-    'plan-sprint',
-    'sprint-status',
-    'sprint-retro',
-    'end-sprint',
-    'create-branch',
-    'prepare-release',
-    'prepare-beta',
-    'merge-branch',
-    'destroy-branch',
-    'charter',     // v0.20.0: Charter management command
-    'extensions'   // v0.24.0: Extensions management command
-  ];
+  // Read workflow commands from manifest (single source of truth)
+  const deploymentConfig = getDeploymentConfig(frameworkPath);
+  const workflowCommands = deploymentConfig?.commands?.workflow
+    ? deploymentConfig.commands.workflow.map(f => f.replace('.md', ''))
+    : [
+        // Fallback to hardcoded list if manifest is missing (for backwards compatibility)
+        'assign-branch', 'switch-branch', 'transfer-issue', 'plan-sprint',
+        'sprint-status', 'sprint-retro', 'end-sprint', 'create-branch',
+        'prepare-release', 'prepare-beta', 'merge-branch', 'destroy-branch',
+        'charter', 'extensions'
+      ];
 
   const deployed = { commands: [], scripts: [], preserved: [], warnings: [] };
 
@@ -560,11 +558,23 @@ function deployWorkflowCommands(projectDir, frameworkPath, debug = false) {
     }
 
     // Deploy script (.js file) with version replacement (scripts are always overwritten)
-    const srcScript = path.join(frameworkPath, 'Templates', 'scripts', `${cmd}.js`);
-    const destScript = path.join(scriptsDir, `${cmd}.js`);
+    const srcScript = path.join(frameworkPath, 'Templates', 'scripts', 'shared', `${cmd}.js`);
+    const destScript = path.join(scriptsSharedDir, `${cmd}.js`);
     if (fs.existsSync(srcScript)) {
       copyFileWithVersion(srcScript, destScript, version);
       deployed.scripts.push(cmd);
+    }
+  }
+
+  // Deploy lib scripts (gh.js, git.js, output.js, poll.js)
+  const srcLibDir = path.join(frameworkPath, 'Templates', 'scripts', 'shared', 'lib');
+  if (fs.existsSync(srcLibDir)) {
+    const libFiles = fs.readdirSync(srcLibDir).filter(f => f.endsWith('.js'));
+    for (const libFile of libFiles) {
+      const srcLib = path.join(srcLibDir, libFile);
+      const destLib = path.join(scriptsLibDir, libFile);
+      copyFileWithVersion(srcLib, destLib, version);
+      deployed.scripts.push(`lib/${libFile.replace('.js', '')}`);
     }
   }
 

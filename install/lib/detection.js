@@ -380,6 +380,34 @@ function readFrameworkVersion(frameworkPath) {
 }
 
 /**
+ * Read the full framework manifest
+ * Returns the parsed manifest object or null if not found/invalid
+ * @param {string} frameworkPath - Path to framework installation
+ * @returns {object|null} Parsed manifest or null
+ */
+function readFrameworkManifest(frameworkPath) {
+  const manifestPath = path.join(frameworkPath, 'framework-manifest.json');
+  if (fs.existsSync(manifestPath)) {
+    try {
+      return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+/**
+ * Get deployment files configuration from manifest
+ * @param {string} frameworkPath - Path to framework installation
+ * @returns {object|null} deploymentFiles section or null
+ */
+function getDeploymentConfig(frameworkPath) {
+  const manifest = readFrameworkManifest(frameworkPath);
+  return manifest?.deploymentFiles || null;
+}
+
+/**
  * Parse existing CLAUDE.md for locked framework, domain specialist, and project instructions
  * v0.17.0+: Returns singular domainSpecialist (string) instead of existingDomains (array)
  */
@@ -476,6 +504,8 @@ module.exports = {
   linkProjectBoard,
   getGitHubUsername,
   readFrameworkVersion,
+  readFrameworkManifest,
+  getDeploymentConfig,
   parseExistingInstallation,
   copyFile,
   getCurrentDate,

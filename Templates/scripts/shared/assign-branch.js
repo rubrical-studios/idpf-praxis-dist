@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.23.0
+// **Version:** 0.23.4
 /**
  * assign-branch.js
  *
@@ -266,7 +266,13 @@ async function assignSubIssuesToRelease(issueNumber, release, useCurrent) {
 }
 
 async function main() {
-    const args = process.argv.slice(2);
+    let args = process.argv.slice(2);
+
+    // Handle space-separated arguments passed as a single string (from skill invocation)
+    // e.g., "#789 #790 #788" gets passed as one arg instead of three separate args
+    if (args.length === 1 && args[0].includes(' ')) {
+        args = args[0].split(/\s+/).filter(a => a.trim());
+    }
 
     // Parse args - order-independent parsing
     const assignAll = args.includes('--all');
@@ -349,23 +355,24 @@ async function main() {
         console.log('');
         console.log('Usage:');
         if (releases.length === 1) {
-            console.log('  /assign-branch #issue              # Assign to current release');
+            // Show quick workflow first when there's a current release
+            console.log('  /assign-branch --add-ready         # Quick: assign all ready issues');
+            console.log('  /assign-branch #issue              # Assign single issue');
             console.log('  /assign-branch #issue #issue ...   # Assign multiple issues');
+        } else {
+            console.log('  /assign-branch --add-ready         # Assign all ready issues to current');
         }
-        console.log('  /assign-branch #issue release/...  # Assign to specific release');
-        console.log('  /assign-branch release/... #issue  # Same (order doesn\'t matter)');
+        console.log('  /assign-branch release/... #issue  # Assign to specific release');
         console.log('  /assign-branch release/... --all   # Assign all backlog issues');
-        console.log('  /assign-branch --add-ready         # Assign all ready issues');
         console.log('');
         console.log('Examples:');
         if (currentRelease) {
+            console.log(`  /assign-branch --add-ready          # Most common workflow`);
             console.log(`  /assign-branch #123`);
             console.log(`  /assign-branch #123 #124 #125`);
-            console.log(`  /assign-branch --add-ready`);
         }
         console.log(`  /assign-branch ${releases[0].version} #123`);
-        console.log(`  /assign-branch ${releases[0].version} --all`);
-        console.log(`  /assign-branch ${releases[0].version} --add-ready\n`);
+        console.log(`  /assign-branch ${releases[0].version} --all\n`);
         endTimer('total');
         return;
     }

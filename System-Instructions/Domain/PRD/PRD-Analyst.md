@@ -1,5 +1,5 @@
 # System Instructions: PRD Analyst
-**Version:** v0.23.3
+**Version:** v0.23.4
 **Source:** System-Instructions/Domain/PRD/PRD-Analyst.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Requirements engineering, stakeholder elicitation, product specification, PRD creation.

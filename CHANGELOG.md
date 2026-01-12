@@ -8,6 +8,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.23.4] - 2026-01-11
+
+### Fixed
+- **#816** - Script deployment paths not deploying any scripts to user projects
+  - Fixed incorrect paths in `deployment.js` (`scripts/shared/` → `Templates/scripts/shared/`)
+  - Updated `constants.js` INSTALLED_FILES_MANIFEST for correct cleanup paths
+- **#815** - Command template requirements causing confusion and failures
+  - Removed incorrect branch naming validation from `/create-branch`
+  - Fixed deprecated `gh pmu release start --branch` → `gh pmu branch start --name`
+  - Removed release branch requirement from `/prepare-release`
+- **#814** - Deploy-dist workflow missing `contents: write` permission for releases
+- **#796** - `/assign-branch` not handling space-separated arguments correctly
+- **#811** - Help text reorganized to show `--add-ready` first
+
+### Added
+- **#812** - Manifest-driven deployment for workflow commands
+  - Commands now read from `framework-manifest.json` instead of hardcoded list
+  - Added `readFrameworkManifest()` and `getDeploymentConfig()` helper functions
+  - Single source of truth for deployment file configuration
+
+### Changed
+- **#818** - Post-release verification items tracked for v0.24.0
+
+---
+
 ## [0.23.3] - 2026-01-11
 
 ### Fixed
@@ -88,7 +113,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Infrastructure
 - **minimize-config.json** - Removed overly broad "Merge" pattern that excluded merge-branch.md
-- **Rules rebuild from minimized sources** - All rules now use v0.23.3 placeholder
+- **Rules rebuild from minimized sources** - All rules now use v0.23.4 placeholder
 
 ---
 
@@ -136,7 +161,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Internal
 - Integrated extensibility.js into deployment workflow
 - Lowered coverage thresholds to match actual coverage
-- Restored v0.23.3 placeholders to 209 framework source files
+- Restored v0.23.4 placeholders to 209 framework source files
 
 ---
 
@@ -204,12 +229,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.20.1] - 2026-01-02
 
 ### Fixed
-- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.23.3` placeholder in `Templates/framework-manifest.json`
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.23.4` placeholder in `Templates/framework-manifest.json`
 - **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
 
 ### Changed
 - **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
-- **Version placeholder standardized** - All version tokens now use `v0.23.3` format for consistent replacement
+- **Version placeholder standardized** - All version tokens now use `v0.23.4` format for consistent replacement
 
 ---
 
@@ -278,7 +303,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.23.3` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.23.4` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---
