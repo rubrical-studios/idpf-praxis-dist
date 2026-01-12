@@ -116,7 +116,7 @@ function extractZip(zipPath, destDir) {
       execSync(`unzip -q -o "${zipPath}" -d "${destDir}"`, { stdio: 'pipe' });
     }
     return true;
-  } catch (err) {
+  } catch (_err) {
     return false;
   }
 }
@@ -156,7 +156,7 @@ function checkGitCleanState(projectDir) {
     }
 
     return { isClean: true, commitHash, error: null };
-  } catch (err) {
+  } catch (_err) {
     // Git command failed - treat as clean to allow install to proceed
     return { isClean: true, commitHash: null, error: null };
   }
@@ -204,7 +204,7 @@ function checkGhCliPrerequisites() {
   // AC-2: Check if gh is authenticated
   try {
     execSync('gh auth status', { stdio: 'pipe' });
-  } catch (err) {
+  } catch (_err) {
     issues.push({
       type: 'not_authenticated',
       message: 'GitHub CLI is not authenticated',
@@ -261,7 +261,7 @@ function checkGhCliPrerequisites() {
       try {
         execSync('gh extension install rubrical-studios/gh-pmu', { stdio: 'pipe' });
         logSuccess('  ✓ Installed gh-pmu extension');
-      } catch (installErr) {
+      } catch (_installErr) {
         issues.push({
           type: 'gh_pmu_install_failed',
           message: 'Failed to install gh-pmu extension',

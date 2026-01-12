@@ -1,5 +1,5 @@
 # Domain Specialist Selection Guide
-**Version:** v0.23.2
+**Version:** v0.23.3
 **Purpose:** Guide for selecting appropriate domain specialist during installation
 ---
 ## How to Use This Guide

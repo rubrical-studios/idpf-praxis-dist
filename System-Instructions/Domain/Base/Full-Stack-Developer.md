@@ -1,5 +1,5 @@
 # System Instructions: Full Stack Developer
-**Version:** v0.23.2
+**Version:** v0.23.3
 **Source:** System-Instructions/Domain/Base/Full-Stack-Developer.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** End-to-end application development spanning frontend and backend.

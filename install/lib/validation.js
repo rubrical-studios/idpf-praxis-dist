@@ -128,7 +128,7 @@ function cleanupOrphanedFiles(projectDir, config) {
         const fullPath = path.join(dirPath, f);
         return fs.statSync(fullPath).isFile();
       });
-    } catch (err) {
+    } catch (_err) {
       continue;
     }
 

@@ -1,5 +1,5 @@
 # System Instructions: Database Engineer
-**Version:** v0.23.2
+**Version:** v0.23.3
 **Source:** System-Instructions/Domain/Pack/Database-Engineer.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Database design, optimization, management, data integrity and performance at scale.

@@ -19,10 +19,10 @@ const {
 } = require('./extensibility');
 
 /**
- * Copy file with 0.23.2 placeholder replacement
+ * Copy file with 0.23.3 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.23.2 with
+ * @param {string} version - Version string to replace 0.23.3 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
@@ -35,12 +35,12 @@ function copyFileWithVersion(src, dest, version) {
  *
  * @param {string} src - Source template file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.23.2 with
+ * @param {string} version - Version string to replace 0.23.3 with
  * @param {boolean} debug - Enable debug logging
  * @returns {{preserved: boolean, warnings: string[]}} Deployment result
  */
 function deployExtensibleCommand(src, dest, version, debug = false) {
-  const { logWarning, logDebug } = require('./ui');
+  const { logDebug } = require('./ui');
   const warnings = [];
   const filename = path.basename(dest);
 
@@ -463,7 +463,7 @@ function deployGitPrePushHook(projectDir, frameworkPath) {
     if (existing.includes('Pre-push hook: Prevents unauthorized version tag pushes')) {
       // Our hook already installed - update it with version replacement
       copyFileWithVersion(srcHook, destHook, version);
-      try { fs.chmodSync(destHook, 0o755); } catch (e) { /* Windows may not support chmod */ }
+      try { fs.chmodSync(destHook, 0o755); } catch (_e) { /* Windows may not support chmod */ }
       return { success: true, action: 'updated' };
     } else {
       // Different hook exists - don't overwrite
@@ -473,7 +473,7 @@ function deployGitPrePushHook(projectDir, frameworkPath) {
 
   // Install hook with version replacement
   copyFileWithVersion(srcHook, destHook, version);
-  try { fs.chmodSync(destHook, 0o755); } catch (e) { /* Windows may not support chmod */ }
+  try { fs.chmodSync(destHook, 0o755); } catch (_e) { /* Windows may not support chmod */ }
   return { success: true, action: 'installed' };
 }
 
@@ -538,7 +538,8 @@ function deployWorkflowCommands(projectDir, frameworkPath, debug = false) {
     'prepare-beta',
     'merge-branch',
     'destroy-branch',
-    'charter'  // v0.20.0: Charter management command
+    'charter',     // v0.20.0: Charter management command
+    'extensions'   // v0.24.0: Extensions management command
   ];
 
   const deployed = { commands: [], scripts: [], preserved: [], warnings: [] };

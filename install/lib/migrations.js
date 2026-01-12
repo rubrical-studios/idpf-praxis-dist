@@ -6,7 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const { logSuccess, logWarning, divider, log } = require('./ui');
-const { parseExistingInstallation, getCurrentDate, readFrameworkVersion, trackProject } = require('./detection');
+const { parseExistingInstallation, getCurrentDate, readFrameworkVersion } = require('./detection');
 const { generateClaudeMd } = require('./generation');
 const { deployRules } = require('./deployment');
 const { cleanupOrphanedFiles } = require('./validation');
@@ -88,7 +88,7 @@ const MIGRATIONS = [
   {
     version: '2.9.2',
     description: 'Fix settings.local.json hooks configuration',
-    migrate: (projectDir, frameworkPath, config) => {
+    migrate: (projectDir, _frameworkPath, _config) => {
       // Check if workflow hook exists but settings not configured
       const hasHook = fs.existsSync(path.join(projectDir, '.claude', 'hooks', 'workflow-trigger.js'));
       if (!hasHook) {

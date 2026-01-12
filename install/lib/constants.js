@@ -78,10 +78,10 @@ const INSTALLED_FILES_MANIFEST = {
     files: [
       'CLAUDE.md',
       'framework-config.json',
-      (config) => process.platform === 'win32' ? 'run_claude.cmd' : null,
-      (config) => process.platform === 'win32' ? 'runp_claude.cmd' : null,
-      (config) => process.platform !== 'win32' ? 'run_claude.sh' : null,
-      (config) => process.platform !== 'win32' ? 'runp_claude.sh' : null,
+      (_config) => process.platform === 'win32' ? 'run_claude.cmd' : null,
+      (_config) => process.platform === 'win32' ? 'runp_claude.cmd' : null,
+      (_config) => process.platform !== 'win32' ? 'run_claude.sh' : null,
+      (_config) => process.platform !== 'win32' ? 'runp_claude.sh' : null,
     ],
   },
   rules: {
@@ -110,6 +110,8 @@ const INSTALLED_FILES_MANIFEST = {
       (config) => config?.enableGitHubWorkflow ? 'prepare-beta.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'merge-branch.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'destroy-branch.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'charter.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'extensions.md' : null,
     ],
   },
   scripts: {

@@ -38,7 +38,6 @@ const colors = {
 
 function log(msg = '') { console.log(msg); }
 function logSuccess(msg) { console.log(colors.green(msg)); }
-function logWarning(msg) { console.log(colors.yellow(msg)); }
 function logError(msg) { console.log(colors.red(msg)); }
 
 // ======================================
@@ -239,7 +238,7 @@ async function main() {
     execSync(`git clone --depth 1 --branch ${latestVersion} ${DIST_REPO} ${TEMP_DIR}`, {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
-  } catch (err) {
+  } catch (_err) {
     logError('ERROR: Failed to download update');
     removeDir(TEMP_DIR);
     process.exit(1);

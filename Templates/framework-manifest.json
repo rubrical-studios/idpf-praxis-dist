@@ -1,29 +1,19 @@
 {
-  "version": "0.23.2",
+  "version": "0.23.3",
   "scripts": {
-    "framework": {
-      "source": "scripts/framework/",
-      "target": ".claude/scripts/framework/",
-      "files": [
-        "analyze-commits.js",
-        "recommend-version.js",
-        "wait-for-ci.js",
-        "update-release-notes.js"
-      ]
-    },
     "shared": {
       "source": "scripts/shared/",
       "target": ".claude/scripts/shared/",
       "files": [
-        "assign-release.js",
-        "cleanup-release-assets.js",
-        "end-sprint.js",
-        "generate-changelog.js",
+        "assign-branch.js",
+        "switch-branch.js",
+        "transfer-issue.js",
         "plan-sprint.js",
-        "sprint-retro.js",
         "sprint-status.js",
-        "switch-release.js",
-        "transfer-issue.js"
+        "sprint-retro.js",
+        "end-sprint.js",
+        "cleanup-release-assets.js",
+        "generate-changelog.js"
       ]
     },
     "lib": {
@@ -45,18 +35,21 @@
     }
   },
   "extensibleCommands": [
-    "open-release",
+    "create-branch",
     "prepare-release",
     "prepare-beta",
-    "close-release"
+    "merge-branch",
+    "destroy-branch"
   ],
   "managedCommands": [
-    "assign-release",
-    "end-sprint",
+    "assign-branch",
+    "switch-branch",
+    "transfer-issue",
     "plan-sprint",
-    "sprint-retro",
     "sprint-status",
-    "switch-release",
-    "transfer-issue"
+    "sprint-retro",
+    "end-sprint",
+    "charter",
+    "extensions"
   ]
 }

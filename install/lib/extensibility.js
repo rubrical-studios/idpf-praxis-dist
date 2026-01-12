@@ -11,8 +11,7 @@
  * @module install/lib/extensibility
  */
 
-const fs = require('fs');
-const path = require('path');
+// fs and path are available via Node.js but not currently needed in this module
 
 /**
  * REQ-002: Parse command file header to extract category and version

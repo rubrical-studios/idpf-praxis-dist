@@ -15,7 +15,7 @@ const { execSync } = require('child_process');
 // Import modules
 const {
   BASE_EXPERTS,
-  DOMAIN_SPECIALISTS,
+  // DOMAIN_SPECIALISTS - not used directly in index.js, used by detection.js
   FRAMEWORK_SKILLS,
   VIBE_VARIANT_SKILLS,
   PROCESS_FRAMEWORKS,
@@ -33,7 +33,7 @@ const {
 } = require('./lib/ui');
 
 const {
-  isValidTransition,
+  // isValidTransition - used indirectly via getValidTransitionTargets
   getValidTransitionTargets,
   getTransitionBlockReason,
   cleanupOrphanedFiles,
@@ -116,7 +116,7 @@ async function main() {
         prompts = require('prompts');
         console.log(colors.green('✓ Dependency installed successfully'));
         console.log();
-      } catch (installErr) {
+      } catch (_installErr) {
         console.log(colors.red('Failed to install prompts module.'));
         console.log(colors.red('Please run: npm install prompts'));
         process.exit(1);
@@ -379,7 +379,7 @@ async function main() {
         try {
           execSync('git init', { cwd: projectDir, stdio: 'pipe' });
           logSuccess('Initialized git repository');
-        } catch (err) {
+        } catch (_err) {
           logWarning('Failed to initialize git repository - continuing anyway');
         }
       }
@@ -397,7 +397,7 @@ async function main() {
           logWarning('Use --force to install anyway.');
           process.exit(1);
         }
-      } catch (err) {
+      } catch (_err) {
         // Git command failed - possibly detached HEAD or other edge case
         // Continue with installation rather than blocking
       }

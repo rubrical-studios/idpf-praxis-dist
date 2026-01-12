@@ -1,5 +1,5 @@
 # Charter Enforcement
-**Version:** v0.23.2
+**Version:** v0.23.3
 **Purpose:** Define checkpoints for charter validation and scope conflict handling
 ---
 ## Overview
@@ -82,5 +82,18 @@ Charter enforcement validates work items align with project scope. Validation is
 - Per-session: "Skip charter validation for this session"
 - Permanent: Create `.no-charter-enforcement` file
 **Quiet Mode:** "Validate silently - only warn on conflicts" (skips "possibly misaligned" confirmations)
+---
+## Framework Exclusions
+IDPF framework files are **automatically excluded** from charter scope validation.
+**Excluded Patterns:**
+| Pattern | Description |
+|---------|-------------|
+| `.claude/**` | Rules, hooks, scripts, commands |
+| `IDPF-*/**` | Framework directories |
+| `Overview/**`, `Assistant/**`, `Reference/**` | Framework documentation |
+| `System-Instructions/**`, `Skills/**` | Specialists and skills |
+| `Templates/**`, `.min-mirror/**` | Templates and minimized files |
+| `framework-config.json`, `framework-manifest.json`, `.gh-pmu.yml` | Config files |
+**Charter Scope Applies To:** `src/`, `lib/`, `app/`, `tests/`, project docs, Proposals, PRDs
 ---
 **End of Charter Enforcement**

@@ -1,5 +1,5 @@
 # System Instructions: QA & Test Engineer
-**Version:** v0.23.2
+**Version:** v0.23.3
 **Source:** System-Instructions/Domain/Pack/QA-Test-Engineer.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Test strategy, automation frameworks, quality assurance processes, ensuring software quality.

@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.23.2",
+  "version": "0.23.3",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -37,5 +37,74 @@
     "Assistant",
     "System-Instructions",
     "Skills"
-  ]
+  ],
+  "deploymentFiles": {
+    "commands": {
+      "core": [
+        "change-domain-expert.md"
+      ],
+      "workflow": [
+        "assign-branch.md",
+        "switch-branch.md",
+        "transfer-issue.md",
+        "plan-sprint.md",
+        "sprint-status.md",
+        "sprint-retro.md",
+        "end-sprint.md",
+        "create-branch.md",
+        "prepare-release.md",
+        "prepare-beta.md",
+        "merge-branch.md",
+        "destroy-branch.md",
+        "charter.md",
+        "extensions.md"
+      ]
+    },
+    "scripts": {
+      "shared": {
+        "source": "Templates/scripts/shared/",
+        "target": ".claude/scripts/shared/",
+        "files": [
+          "assign-branch.js",
+          "switch-branch.js",
+          "transfer-issue.js",
+          "plan-sprint.js",
+          "sprint-status.js",
+          "sprint-retro.js",
+          "end-sprint.js",
+          "cleanup-release-assets.js",
+          "generate-changelog.js"
+        ]
+      },
+      "lib": {
+        "source": "Templates/scripts/shared/lib/",
+        "target": ".claude/scripts/shared/lib/",
+        "files": [
+          "gh.js",
+          "git.js",
+          "output.js",
+          "poll.js"
+        ]
+      }
+    },
+    "hooks": {
+      "source": "Templates/hooks/",
+      "target": ".claude/hooks/",
+      "files": [
+        "workflow-trigger.js"
+      ]
+    },
+    "rules": {
+      "always": [
+        "01-anti-hallucination.md",
+        "03-startup.md",
+        "04-charter-enforcement.md",
+        "06-runtime-triggers.md"
+      ],
+      "conditional": {
+        "enableGitHubWorkflow": ["02-github-workflow.md"],
+        "windows": ["05-windows-shell.md"]
+      }
+    }
+  }
 }

@@ -1,5 +1,5 @@
 ---
-version: "v0.23.2"
+version: "v0.23.3"
 description: Create a branch with tracker issue
 argument-hint: <prefix/identifier> (e.g., release/v1.2.0, feature/new-auth)
 ---
@@ -26,11 +26,11 @@ Branch must follow `[prefix]/[name]`: exactly one `/`, both parts non-empty.
 git status --porcelain
 ```
 <!-- USER-EXTENSION-START: pre-create -->
-### Verify Config
+### Verify Config File Clean
 ```bash
-node .claude/scripts/create-branch/verify-config.js
+git status --porcelain .gh-pmu.yml
 ```
-**If `success` is false, STOP.**
+**If modified, STOP and restore.**
 <!-- USER-EXTENSION-END: pre-create -->
 ### Step 3: Create Branch with Tracker
 ```bash
@@ -57,7 +57,7 @@ Branch created.
 Branch: $BRANCH
 Tracker: #[issue-number]
 Directory: Releases/$BRANCH/
-Next: 1. Assign issues  2. Work issues  3. /prepare-release
+Next: 1. /assign-branch #N #N ...  2. work #N  3. /prepare-release
 ```
 ---
 ## Summary Checklist

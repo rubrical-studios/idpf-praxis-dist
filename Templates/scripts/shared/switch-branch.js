@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.23.2
+// **Version:** 0.23.3
 /**
  * switch-branch.js
  *
@@ -19,7 +19,7 @@ const { execSync } = require('child_process');
 function exec(cmd) {
     try {
         return execSync(cmd, { encoding: 'utf-8' }).trim();
-    } catch (e) {
+    } catch (_e) {
         return null;
     }
 }
@@ -31,11 +31,13 @@ function getOpenReleases() {
             const data = JSON.parse(result);
             return data.releases || data.items || data || [];
         }
-    } catch {}
+    } catch {
+        // Intentionally ignored
+    }
     return [];
 }
 
-function getSprints(release) {
+function getSprints(_release) {
     try {
         const result = exec('gh pmu microsprint list --json');
         if (result) {
@@ -44,7 +46,9 @@ function getSprints(release) {
             // Filter to sprints for this release (if release field exists)
             return sprints;
         }
-    } catch {}
+    } catch {
+        // Intentionally ignored
+    }
     return [];
 }
 

@@ -40,8 +40,8 @@ function parseManifest(frameworkPath) {
       return { success: false, error: 'Framework manifest missing required "version" field' };
     }
 
-    // Handle 0.23.2 placeholder - read actual version from root manifest
-    if (manifest.version === '0.23.2') {
+    // Handle 0.23.3 placeholder - read actual version from root manifest
+    if (manifest.version === '0.23.3') {
       const rootManifestPath = path.join(frameworkPath, 'framework-manifest.json');
       if (fs.existsSync(rootManifestPath)) {
         try {
@@ -49,8 +49,8 @@ function parseManifest(frameworkPath) {
           if (rootManifest.version) {
             manifest.version = rootManifest.version;
           }
-        } catch (e) {
-          // Fall through - keep 0.23.2 if root manifest can't be read
+        } catch (_e) {
+          // Fall through - keep 0.23.3 if root manifest can't be read
         }
       }
     }

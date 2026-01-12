@@ -5,7 +5,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { getCurrentDate } = require('./detection');
+// getCurrentDate was used by deprecated generateFrameworkConfig, now removed
 
 /**
  * Get the core framework filename for a process framework
@@ -18,35 +18,9 @@ function getCoreFrameworkFileName(processFramework) {
   return mapping[processFramework] || 'README.md';
 }
 
-/**
- * Generate framework-config.json
- * @deprecated Use createOrUpdateConfig from config.js instead (v0.16.1+)
- * This function uses the old schema with installedVersion and components.
- * Kept for reference only - not exported.
- */
-function generateFrameworkConfig(projectDir, frameworkPath, version, processFramework, domainList, primarySpecialist) {
-  const config = {
-    frameworkPath: frameworkPath,
-    installedVersion: version,
-    installedDate: getCurrentDate(),
-    projectType: {
-      processFramework: processFramework,
-      domainSpecialists: domainList,
-      primarySpecialist: primarySpecialist || null,
-    },
-    components: {
-      frameworks: true,
-      systemInstructions: true,
-      skills: true,
-      assistantGuidelines: true,
-    },
-  };
-
-  fs.writeFileSync(
-    path.join(projectDir, 'framework-config.json'),
-    JSON.stringify(config, null, 2)
-  );
-}
+// generateFrameworkConfig was deprecated in v0.16.1
+// Use createOrUpdateConfig from config.js instead
+// This function has been removed - see config.js for the new implementation
 
 /**
  * Generate CLAUDE.md file
@@ -191,7 +165,7 @@ function generateSettingsLocal(projectDir, enableGitHubWorkflow) {
       existing.hooks.UserPromptSubmit = hooksConfig.UserPromptSubmit;
       fs.writeFileSync(settingsPath, JSON.stringify(existing, null, 2));
       return 'merged';
-    } catch (e) {
+    } catch (_e) {
       // If we can't parse, leave it alone
       return false;
     }
