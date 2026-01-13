@@ -170,6 +170,20 @@ const MIGRATIONS = [
       }
     }
   },
+  {
+    version: '0.24.0',
+    description: 'Remove deprecated IDPF-PRD framework',
+    migrate: (projectDir, _frameworkPath, _config) => {
+      // IDPF-PRD was superseded by create-prd skill in v0.24
+      const idpfPrdPath = path.join(projectDir, 'IDPF-PRD');
+      if (fs.existsSync(idpfPrdPath)) {
+        fs.rmSync(idpfPrdPath, { recursive: true, force: true });
+        logSuccess('  ✓ Removed IDPF-PRD/ (superseded by create-prd skill)');
+      } else {
+        logSuccess('  ⊘ IDPF-PRD/ not found, skipping');
+      }
+    }
+  },
   // Future migrations added here
 ];
 

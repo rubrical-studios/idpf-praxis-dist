@@ -1,5 +1,5 @@
 # IDPF-Security Framework
-**Version:** v0.23.4
+**Version:** v0.24.0
 **Extends:** IDPF-Testing-Core
 **Framework-Debug:** True
 

@@ -1,5 +1,5 @@
 # System Instructions: Graphics Engineer Specialist
-**Version:** v0.23.4
+**Version:** v0.24.0
 **Source:** System-Instructions/Domain/Pack/Graphics-Engineer-Specialist.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** WebGL, Three.js, D3.js, shader programming, web-based graphics and data visualization.

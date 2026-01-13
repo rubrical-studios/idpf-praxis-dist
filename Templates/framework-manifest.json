@@ -1,5 +1,26 @@
 {
-  "version": "0.23.4",
+  "version": "0.24.0",
+  "deploymentFiles": {
+    "commands": {
+      "workflow": [
+        "assign-branch.md",
+        "switch-branch.md",
+        "transfer-issue.md",
+        "plan-sprint.md",
+        "sprint-status.md",
+        "sprint-retro.md",
+        "end-sprint.md",
+        "create-branch.md",
+        "prepare-release.md",
+        "prepare-beta.md",
+        "merge-branch.md",
+        "destroy-branch.md",
+        "charter.md",
+        "extensions.md",
+        "create-prd.md"
+      ]
+    }
+  },
   "scripts": {
     "shared": {
       "source": "scripts/shared/",
@@ -39,7 +60,8 @@
     "prepare-release",
     "prepare-beta",
     "merge-branch",
-    "destroy-branch"
+    "destroy-branch",
+    "create-prd"
   ],
   "managedCommands": [
     "assign-branch",

@@ -1,5 +1,5 @@
 # System Instructions: Security Engineer
-**Version:** v0.23.4
+**Version:** v0.24.0
 **Source:** System-Instructions/Domain/Pack/Security-Engineer.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Application security, vulnerability identification, security best practices, compliance.

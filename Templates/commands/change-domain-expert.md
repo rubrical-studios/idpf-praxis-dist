@@ -1,8 +1,9 @@
 ---
-version: "v0.23.4"
+version: "v0.24.0"
 description: Change domain specialist for this project
 argument-hint: [specialist-name] (optional)
 ---
+<!-- MANAGED -->
 # /change-domain-expert
 Change the active domain specialist for this project.
 ---

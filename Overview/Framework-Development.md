@@ -1,38 +1,28 @@
 # Framework Development Reference
-**Version:** v0.23.4
+**Version:** v0.24.0
 **Purpose:** IDPF development frameworks (2: Agile, Vibe)
 ---
-## IDPF-PRD Framework (Pre-Development)
-**Location:** `IDPF-PRD/IDPF-PRD.md`
-**Type:** Requirements Engineering & PRD Generation
-### Purpose
-Transform ideas into implementation-ready PRDs through AI-assisted elicitation. Pre-development phase feeding into IDPF-Agile.
-### Automatic Template Selection (Rev 3)
-| Framework | Auto-Selected Template |
-|-----------|------------------------|
-| IDPF-Agile | PRD-Agile-Lightweight |
-Use `Use-Template [name]` to override.
-### Workflow Phases
-**Forward Path:** `Discovery -> Elicitation -> Specification -> Generation`
-1. **Discovery:** Domain analysis, stakeholder mapping, vision & goals
-2. **Elicitation:** Functional requirements, NFRs, constraints & risks
-3. **Specification:** Requirement detailing, acceptance criteria, testing approach
-4. **Generation:** Template selection, PRD assembly, framework handoff
-**Reverse Path:** `Analyze -> Extract -> Refine -> Generate`
-1. **Analyze:** Scan structure, detect tech stack, infer architecture
-2. **Extract:** Parse tests for features, detect NFRs from patterns
-3. **Refine:** User validates/modifies extracted content
-4. **Generate:** Standard PRD generation from validated worksheets
-### Key Resources
-**Templates:** Discovery-Worksheet.md, Elicitation-Worksheet.md, Specification-Worksheet.md, Generation-Checklist.md
-**Guides:** Domain-Analysis-Guide.md, NFR-Catalog.md, Stakeholder-Mapping-Guide.md, Template-Selection-Guide.md, Extraction-Guide.md
-**Checklists:** Phase checklists, PRD-Readiness-Checklist.md
-### PRD Commands
-**Forward:** PRD-Start, PRD-Status, PRD-Next, PRD-Back, Discovery-Complete, Elicitation-Complete, Specification-Complete, Generate-PRD, Export-PRD, List-NFRs, Suggest-NFRs
-**Reverse:** Reverse-PRD-Start, Reverse-PRD-Analyze, Reverse-PRD-Extract, Reverse-PRD-Refine, Reverse-PRD-Status
-### Framework Handoff
-- **PRD -> IDPF-Agile:** Features mapped to Epics/Stories, begin Sprint 0
-- **Skip PRD -> IDPF-Vibe:** Exploratory projects with unknown scope
+## PRD Creation (Pre-Development)
+> **Note:** IDPF-PRD deprecated v0.24; replaced by `create-prd` skill.
+**Skill:** `Skills/create-prd/SKILL.md`
+**Command:** `/create-prd`
+### Modes
+| Mode | Command | Purpose |
+|------|---------|---------|
+| Promote | `/create-prd Proposal/X.md` | Proposal to PRD |
+| Extract | `/create-prd extract` | Codebase to PRD |
+| Interactive | `/create-prd` | Mode selection |
+### Features
+- Charter validation against `CHARTER.md`
+- Dynamic context-aware questions
+- Story transformation (impl details → user stories)
+- Priority validation (MoSCoW distribution)
+- Optional UML diagrams (`.drawio.svg`)
+- Single-session workflow
+### Integration
+- **Inputs:** `Proposal/*.md`, `Inception/`, `CHARTER.md`
+- **Outputs:** `PRD/{name}/PRD-{name}.md`, `Diagrams/`
+- **Downstream:** `Create-Backlog` generates GitHub issues
 ---
 ## IDPF-Agile Framework
 **Location:** `IDPF-Agile/Agile-Driven Development Framework.md`

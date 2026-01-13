@@ -1,8 +1,9 @@
 ---
-version: "v0.23.4"
+version: "v0.24.0"
 allowed-tools: Bash, AskUserQuestion
 description: Assign issues to a branch (project)
 ---
+<!-- MANAGED -->
 Assign issues to a branch.
 ```bash
 node .claude/scripts/shared/assign-branch.js "$ARGUMENTS"

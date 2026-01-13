@@ -1,5 +1,5 @@
 # Charter Enforcement
-**Version:** v0.23.4
+**Version:** v0.24.0
 **Purpose:** Define checkpoints for charter validation and scope conflict handling
 ---
 ## Overview
@@ -10,7 +10,7 @@ Charter enforcement validates work items align with project scope. Validation is
 |------------|---------|--------------|
 | Proposal Creation | File in `Proposal/` | CHARTER.md, Inception/Scope-Boundaries.md |
 | Proposal Update | Edit existing proposal | CHARTER.md, Inception/Scope-Boundaries.md |
-| PRD Creation | `promote-to-prd` or manual PRD | CHARTER.md, Inception/Scope-Boundaries.md |
+| PRD Creation | `create-prd` or manual PRD | CHARTER.md, Inception/Scope-Boundaries.md |
 | PRD Update | Edit existing PRD | CHARTER.md, Inception/Scope-Boundaries.md |
 | Enhancement Issue | `enhancement:` trigger | CHARTER.md (summary only) |
 | Add-Story Command | `Add-Story` or story issue | CHARTER.md (summary only) |

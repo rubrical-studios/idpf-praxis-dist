@@ -1,5 +1,5 @@
 # System Instructions: Desktop Application Developer
-**Version:** v0.23.4
+**Version:** v0.24.0
 **Source:** System-Instructions/Domain/Base/Desktop-Application-Developer.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Desktop app development using Electron, Tauri, and native frameworks.

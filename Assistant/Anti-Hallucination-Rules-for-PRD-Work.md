@@ -1,5 +1,5 @@
 # Anti-Hallucination Rules for PRD Work
-**Version:** v0.23.4
+**Version:** v0.24.0
 
 ## Core Principle
 **Stakeholder truth over helpful invention. Traceability over assumption. Validation over completion.**
@@ -142,6 +142,34 @@ Never over-state code evidence.
 - [ ] NFRs sourced to code patterns
 - [ ] Gaps noted
 - [ ] Output marked as draft
+
+---
+
+## Diagram Generation Rules
+
+### NEVER Invent:
+- ❌ Actors not in PRD user stories
+- ❌ States not derived from acceptance criteria
+- ❌ Components not in technical notes
+- ❌ API calls not documented
+- ❌ Relationships not stated
+
+### ALWAYS Verify:
+- ✓ Every actor appears in "As a..." clause
+- ✓ Every state maps to acceptance criterion
+- ✓ Every sequence traces to documented behavior
+- ✓ Every component in Technical Notes
+
+### Traceability Requirement
+Each diagram element MUST cite source:
+```
+Actor: "Framework Maintainer" (Story 1.1, 2.1)
+Use Case: "Create Branch" (Story 1.1)
+Activity Step: "Validate" (Story 1.1, AC-1)
+```
+
+### When Evidence Insufficient
+Skip diagram or flag elements as [TBD - needs validation].
 
 ---
 

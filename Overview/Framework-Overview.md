@@ -1,15 +1,15 @@
 # Framework Overview
-**Version:** v0.23.4
+**Version:** v0.24.0
 **Purpose:** Comprehensive reference for AI assistants and framework development
 ---
 ## Core Principle
 **System Instructions** define WHO; **Frameworks** define WHAT process; **Skills** provide capabilities; **Assistant Guidelines** ensure accuracy.
 ---
-## IDPF-PRD Framework
-**Location:** `IDPF-PRD/IDPF-PRD.md` | **Type:** Requirements Engineering
-**Forward Path:** Discovery -> Elicitation -> Specification -> Generation
-**Reverse Path:** Analyze -> Extract -> Refine -> Generate
-**Handoff:** PRD -> IDPF-Agile (features to Epics/Stories)
+## PRD Creation (create-prd Skill)
+> **Note:** IDPF-PRD deprecated v0.24; replaced by `create-prd` skill.
+**Skill:** `Skills/create-prd/SKILL.md` | **Command:** `/create-prd`
+**Modes:** Promote (proposal→PRD), Extract (code→PRD), Interactive
+**Handoff:** PRD -> Create-Backlog -> IDPF-Agile
 ---
 ## IDPF-Agile Framework
 **Location:** `IDPF-Agile/` | **Type:** Sprint-Based Development
@@ -42,7 +42,7 @@
 ---
 ## Skills (22)
 **TDD:** tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns, bdd-writing
-**PRD:** extract-prd, promote-to-prd
+**PRD:** extract-prd, create-prd
 **Code Quality:** anti-pattern-analysis, uml-generation
 **Beginner:** flask-setup, sinatra-setup, common-errors, sqlite-integration, beginner-testing
 **Database:** postgresql-integration, migration-patterns
@@ -87,7 +87,7 @@ Assistant Guidelines (HOW WELL)
 |--------------|---------------|-----------|
 | Defined requirements | IDPF-Agile | Terminal |
 | Unclear requirements | IDPF-Vibe | Vibe -> Agile |
-| Requirements engineering | IDPF-PRD | PRD -> Agile |
+| Need requirements | `/create-prd` | PRD -> Agile |
 | Separate test repo | IDPF-Testing-Core | Use Agile |
 ---
 ## Critical Success Factors

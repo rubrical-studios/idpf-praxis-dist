@@ -1,9 +1,9 @@
 ---
-version: "v0.23.4"
+version: "v0.24.0"
 description: Prepare framework release with version updates and validation (project)
 argument-hint: [options...] (phase:N, skip:*, audit:*, dry-run)
 ---
-<!-- EXTENSIBLE: v0.17.0 -->
+<!-- EXTENSIBLE -->
 # /prepare-release
 Execute the full release preparation workflow.
 ## Extension Points

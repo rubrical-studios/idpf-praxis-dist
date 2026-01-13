@@ -1,5 +1,5 @@
 # Framework Summary
-**Version:** v0.23.4
+**Version:** v0.24.0
 **Purpose:** Compact startup reference
 ---
 ## Quick Reference
@@ -16,9 +16,9 @@
 ### Development Frameworks
 | Framework | Revision | Type |
 |-----------|----------|------|
-| IDPF-PRD | 3 | Requirements Engineering |
 | IDPF-Agile | 3 | Sprint-Based Development |
 | IDPF-Vibe (Core) | 4.0 | Exploratory to Agile |
+> **Note:** IDPF-PRD deprecated v0.24; use `create-prd` skill.
 ### Testing Frameworks
 | Framework | Revision | Extends |
 |-----------|----------|---------|
@@ -39,7 +39,7 @@
 | test-writing-patterns | TDD |
 | bdd-writing | BDD |
 | extract-prd | PRD |
-| promote-to-prd | PRD |
+| create-prd | PRD |
 | anti-pattern-analysis | Code Quality |
 | uml-generation | Code Quality |
 | flask-setup | Beginner Setup |
@@ -77,7 +77,7 @@ VIBE --> AGILE (Terminal)
 ## Detailed Documentation
 | File | Content |
 |------|---------|
-| Framework-Development.md | IDPF-PRD, Agile, Vibe details |
+| Framework-Development.md | Agile, Vibe details, create-prd |
 | Framework-Testing.md | Testing-Core + 6 specialized |
 | Framework-System-Instructions.md | Core + 23 Domain Specialists |
 | Framework-Skills.md | All 22 skills |

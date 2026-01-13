@@ -1,8 +1,9 @@
 ---
-version: "v0.23.4"
+version: "v0.24.0"
 allowed-tools: Bash
 description: Plan sprint by selecting epics (project)
 ---
+<!-- MANAGED -->
 Plan new sprint by selecting epics.
 ```bash
 node .claude/scripts/shared/plan-sprint.js "$ARGUMENTS"

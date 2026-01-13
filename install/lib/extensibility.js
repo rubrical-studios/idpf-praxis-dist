@@ -17,16 +17,19 @@
  * REQ-002: Parse command file header to extract category and version
  *
  * Looks for comments like:
- *   <!-- EXTENSIBLE: v1.0.0 -->
- *   <!-- MANAGED: v1.0.0 -->
+ *   <!-- EXTENSIBLE -->           (versionless - v0.24+)
+ *   <!-- MANAGED -->              (versionless - v0.24+)
+ *   <!-- EXTENSIBLE: v1.0.0 -->   (legacy with version)
+ *   <!-- MANAGED: v1.0.0 -->      (legacy with version)
  *
  * @param {string} content - File content to parse
- * @returns {{category: string, version: string}|null} Header info or null if not found
+ * @returns {{category: string, version: string|null}|null} Header info or null if not found
  */
 function parseCommandHeader(content) {
-  // AC-1 & AC-2: Match EXTENSIBLE or MANAGED header with version
+  // AC-1 & AC-2: Match EXTENSIBLE or MANAGED header with optional version
   // AC-4: Version can have optional 'v' prefix
-  const headerRegex = /<!--\s*(EXTENSIBLE|MANAGED):\s*v?([\d.]+)\s*-->/i;
+  // Supports both versionless (v0.24+) and versioned (legacy) formats
+  const headerRegex = /<!--\s*(EXTENSIBLE|MANAGED)(?::\s*v?([\d.]+))?\s*-->/i;
   const match = content.match(headerRegex);
 
   if (!match) {
@@ -36,7 +39,7 @@ function parseCommandHeader(content) {
 
   return {
     category: match[1].toUpperCase(),  // Normalize to uppercase
-    version: match[2]                   // Version without 'v' prefix
+    version: match[2] || null          // Version or null if versionless
   };
 }
 

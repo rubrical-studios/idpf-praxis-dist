@@ -8,6 +8,45 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.24.0] - 2026-01-12
+
+### Added
+- **#832** - New `/create-prd` command with full and extract modes
+  - EXTENSIBLE markers for user customization
+  - Integrates with `codebase-analysis` skill for extraction
+- **#835** - UML diagram generation improvements
+  - Diagram type selection (sequence, class, state, ER)
+  - Appropriateness guidance for each diagram type
+  - Anti-hallucination rules for diagram content
+- **#844** - New `codebase-analysis` shared skill
+  - Tech stack detection, architecture inference
+  - NFR detection and test parsing guides
+- **#851** - Automated testing infrastructure for installer
+  - 59 tests in `install/test/` directory
+  - Tag parsing, migrations, and skill deployment tests
+
+### Changed
+- **#826** - Skill renamed: `promote-to-prd` → `create-prd`
+  - Enhanced Phase 4 with mandatory user/priority questions
+  - Added Phase 4.5 for story transformation
+  - Priority distribution validation for generated backlogs
+- **#847** - Tag format standardization
+  - Commands now use versionless `<!-- EXTENSIBLE -->` / `<!-- MANAGED -->`
+  - Frontmatter uses `v0.24.0` placeholder instead of hardcoded versions
+  - Installer regex updated for backward compatibility
+- **#840** - PRD directory structure: `PRD/Active/` and `PRD/Implemented/`
+- **#821** - README-DIST.md now uses `v0.24.0` placeholder
+
+### Removed
+- **#842** - Deprecated IDPF-PRD framework removed
+  - Functionality replaced by `create-prd` skill and `/create-prd` command
+  - Migration automatically removes `IDPF-PRD/` directory on upgrade
+
+### Fixed
+- **#857** - Removed non-existent `verify-config.js` references from `/prepare-release` and `/prepare-beta`
+
+---
+
 ## [0.23.4] - 2026-01-11
 
 ### Fixed
@@ -113,7 +152,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Infrastructure
 - **minimize-config.json** - Removed overly broad "Merge" pattern that excluded merge-branch.md
-- **Rules rebuild from minimized sources** - All rules now use v0.23.4 placeholder
+- **Rules rebuild from minimized sources** - All rules now use v0.24.0 placeholder
 
 ---
 
@@ -161,7 +200,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Internal
 - Integrated extensibility.js into deployment workflow
 - Lowered coverage thresholds to match actual coverage
-- Restored v0.23.4 placeholders to 209 framework source files
+- Restored v0.24.0 placeholders to 209 framework source files
 
 ---
 
@@ -229,12 +268,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.20.1] - 2026-01-02
 
 ### Fixed
-- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.23.4` placeholder in `Templates/framework-manifest.json`
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.24.0` placeholder in `Templates/framework-manifest.json`
 - **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
 
 ### Changed
 - **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
-- **Version placeholder standardized** - All version tokens now use `v0.23.4` format for consistent replacement
+- **Version placeholder standardized** - All version tokens now use `v0.24.0` format for consistent replacement
 
 ---
 
@@ -303,7 +342,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.23.4` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.24.0` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---

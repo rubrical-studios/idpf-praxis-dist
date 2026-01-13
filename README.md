@@ -1,6 +1,6 @@
 # IDPF Framework - AI-Assisted Development
 
-**Current Version:** 0.17.0
+**Current Version:** v0.24.0
 
 A comprehensive ecosystem for AI-assisted software development with Claude.
 
@@ -33,11 +33,11 @@ The installer will:
 - IDPF-Security, IDPF-Accessibility, IDPF-Chaos, IDPF-Contract-Testing
 
 ### Requirements
-- IDPF-PRD - Requirements engineering with PRD templates
+> **Note:** Requirements engineering uses the `create-prd` skill (IDPF-PRD deprecated in v0.24).
 
 ---
 
-## Skills (21)
+## Skills (23)
 
 **TDD:** tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns
 
@@ -51,7 +51,7 @@ The installer will:
 
 **Advanced Testing:** property-based-testing, mutation-testing
 
-**Analysis:** uml-generation, anti-pattern-analysis, bdd-writing, extract-prd
+**Analysis:** uml-generation, anti-pattern-analysis, bdd-writing, codebase-analysis, create-prd, extract-prd
 
 **DevOps:** ci-cd-pipeline-design
 
@@ -102,4 +102,6 @@ https://github.com/rubrical-studios/idpf-praxis
 
 ## License
 
-[Your license here]
+MIT License - Copyright (c) 2025 Rubrical Studios
+
+See [LICENSE](LICENSE) for full text.

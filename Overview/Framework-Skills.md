@@ -1,5 +1,5 @@
 # Framework Skills Reference
-**Version:** v0.23.4
+**Version:** v0.24.0
 **Purpose:** Skills reference
 ---
 ## Skills Overview
@@ -41,11 +41,11 @@
 **Coverage:** Test parsing (pytest, Jest, JUnit, RSpec), NFR detection, architecture inference
 **When Used:** Reverse-PRD workflow, documenting legacy code
 **Output:** PRD documents in `PRD/PRD-[ProjectName].md`
-### promote-to-prd
+### create-prd
 **Function:** Transform proposals into detailed PRDs using Inception/ context
 **Coverage:** Proposal analysis, charter alignment, user story generation, acceptance criteria
 **When Used:** Promoting approved proposals, pre-Create-Backlog planning
-**Integration:** Replaces IDPF-PRD 4-phase workflow, feeds into Create-Backlog
+**Integration:** Streamlined PRD creation (supersedes deprecated IDPF-PRD), feeds into Create-Backlog
 ---
 ## Code Quality Skills
 ### anti-pattern-analysis
@@ -113,6 +113,6 @@
 |-----------|----------------|
 | IDPF-Agile | tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns |
 | IDPF-Vibe (newbie) | flask-setup, sinatra-setup, common-errors, sqlite-integration, beginner-testing |
-**Standalone:** anti-pattern-analysis, bdd-writing, extract-prd, promote-to-prd, uml-generation
+**Standalone:** anti-pattern-analysis, bdd-writing, extract-prd, create-prd, uml-generation
 ---
 **End of Framework Skills Reference**
