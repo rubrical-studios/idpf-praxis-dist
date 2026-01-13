@@ -1,5 +1,5 @@
 ---
-version: "v0.24.0"
+version: "v0.24.1"
 description: Prepare framework release with version updates and validation (project)
 argument-hint: [options...] (phase:N, skip:*, audit:*, dry-run)
 ---
@@ -106,18 +106,25 @@ gh pr create --base main --head release/vX.Y.Z --title "Release vX.Y.Z"
 **ASK USER:** Approve and merge.
 ```bash
 gh pr merge --merge
+```
+### Step 4.5: Close Branch Tracker
+```bash
+gh pmu branch close
+```
+### Step 4.6: Switch to Main
+```bash
 git checkout main
 git pull origin main
 ```
 <!-- USER-EXTENSION-START: pre-tag -->
 <!-- USER-EXTENSION-END: pre-tag -->
-### Step 4.5: Tag Main
+### Step 4.7: Tag Main
 **ASK USER:** Confirm ready to tag.
 ```bash
 git tag -a vX.Y.Z -m "Release vX.Y.Z"
 git push origin vX.Y.Z
 ```
-### Step 4.6: Verify Deployment
+### Step 4.8: Verify Deployment
 ```bash
 gh run list --limit 1
 gh run watch
@@ -133,16 +140,12 @@ gh run watch
 ```bash
 gh issue close [TRACKER_NUMBER] --comment "Release vX.Y.Z deployed successfully"
 ```
-### Step 5.2: Close Release in Project
-```bash
-gh pmu release close --tag
-```
-### Step 5.3: Delete Release Branch
+### Step 5.2: Delete Release Branch
 ```bash
 git push origin --delete release/vX.Y.Z
 git branch -d release/vX.Y.Z
 ```
-### Step 5.4: Create GitHub Release
+### Step 5.3: Create GitHub Release
 ```bash
 gh release create vX.Y.Z --title "Release vX.Y.Z" --notes-file "Releases/release/vX.Y.Z/release-notes.md"
 ```
