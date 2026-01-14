@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Commands
-**Version:** v0.24.1
+**Version:** v0.25.0
 **Module:** Commands (loaded on-demand)
 **Source:** IDPF-Agile/Agile-Commands.md
 

@@ -1,5 +1,5 @@
 ---
-version: "v0.24.1"
+version: "v0.25.0"
 description: Tag beta from feature branch (no merge to main)
 argument-hint: [--skip-coverage] [--dry-run] [--help]
 ---
@@ -97,11 +97,11 @@ git push origin $VERSION
 ```
 **Note:** Beta tags feature branch. No merge to main.
 <!-- USER-EXTENSION-START: post-tag -->
-### Monitor Beta Build
+### Wait for CI Workflow
 ```bash
-node .claude/scripts/prepare-release/monitor-release.js
+node .claude/scripts/framework/wait-for-ci.js
 ```
-Monitor beta build and asset upload.
+**If CI fails, STOP and report.**
 <!-- USER-EXTENSION-END: post-tag -->
 ---
 ## Next Step

@@ -1,5 +1,5 @@
 # System Instructions: Frontend Specialist
-**Version:** v0.24.1
+**Version:** v0.25.0
 **Source:** System-Instructions/Domain/Base/Frontend-Specialist.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** User interfaces, client-side logic, browser technologies, frontend architecture.

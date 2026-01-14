@@ -6,7 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const { generateStartupRules } = require('./generation');
-const { computeFileHash, writeManifest, readManifest, isFileModified } = require('./checksums');
+const { computeFileHash, writeManifest, readManifest, isFileModified, updateManifestEntries } = require('./checksums');
 const { readFrameworkVersion, getDeploymentConfig } = require('./detection');
 const {
   parseCommandHeader,
@@ -19,10 +19,10 @@ const {
 } = require('./extensibility');
 
 /**
- * Copy file with 0.24.1 placeholder replacement
+ * Copy file with 0.25.0 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.24.1 with
+ * @param {string} version - Version string to replace 0.25.0 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
@@ -35,7 +35,7 @@ function copyFileWithVersion(src, dest, version) {
  *
  * @param {string} src - Source template file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.24.1 with
+ * @param {string} version - Version string to replace 0.25.0 with
  * @param {boolean} debug - Enable debug logging
  * @returns {{preserved: boolean, warnings: string[]}} Deployment result
  */
@@ -325,12 +325,15 @@ function deployFrameworkScripts(projectDir, frameworkPath) {
 /**
  * Deploy rules to .claude/rules/ directory
  * v0.17.0+: domainSpecialist is singular string (primarySpecialist removed)
+ * v0.25.0+: Track checksums in manifest for audit support
  */
 function deployRules(projectDir, frameworkPath, processFramework, domainSpecialist, _unused, enableGitHubWorkflow, version) {
   const rulesDir = path.join(projectDir, '.claude', 'rules');
   fs.mkdirSync(rulesDir, { recursive: true });
 
   const results = { antiHallucination: false, githubWorkflow: false, charterEnforcement: false, startup: false, runtimeTriggers: false, windowsShell: false };
+  const deployedAt = new Date().toISOString().split('T')[0];
+  const rulesChecksums = {};
 
   // Copy anti-hallucination rules (always)
   const ahSrc = path.join(frameworkPath, 'Assistant', 'Anti-Hallucination-Rules-for-Software-Development.md');
@@ -344,6 +347,11 @@ function deployRules(projectDir, frameworkPath, processFramework, domainSpeciali
     );
     fs.writeFileSync(ahDest, ahWithSource);
     results.antiHallucination = true;
+    rulesChecksums['01-anti-hallucination.md'] = {
+      checksum: computeFileHash(ahDest),
+      deployedAt,
+      source: 'Assistant/Anti-Hallucination-Rules-for-Software-Development.md',
+    };
   }
 
   // Copy GitHub workflow (if enabled)
@@ -359,6 +367,11 @@ function deployRules(projectDir, frameworkPath, processFramework, domainSpeciali
       );
       fs.writeFileSync(ghDest, ghWithSource);
       results.githubWorkflow = true;
+      rulesChecksums['02-github-workflow.md'] = {
+        checksum: computeFileHash(ghDest),
+        deployedAt,
+        source: 'Reference/GitHub-Workflow.md',
+      };
     }
   }
 
@@ -374,6 +387,11 @@ function deployRules(projectDir, frameworkPath, processFramework, domainSpeciali
     );
     fs.writeFileSync(ceDest, ceWithSource);
     results.charterEnforcement = true;
+    rulesChecksums['04-charter-enforcement.md'] = {
+      checksum: computeFileHash(ceDest),
+      deployedAt,
+      source: 'Reference/Charter-Enforcement.md',
+    };
   }
 
   // Copy Runtime Artifact Triggers (v0.20.0+)
@@ -388,12 +406,23 @@ function deployRules(projectDir, frameworkPath, processFramework, domainSpeciali
     );
     fs.writeFileSync(rtDest, rtWithSource);
     results.runtimeTriggers = true;
+    rulesChecksums['06-runtime-triggers.md'] = {
+      checksum: computeFileHash(rtDest),
+      deployedAt,
+      source: 'Reference/Runtime-Artifact-Triggers.md',
+    };
   }
 
   // Generate startup rules
   const startupContent = generateStartupRules(frameworkPath, processFramework, domainSpecialist, _unused, version);
-  fs.writeFileSync(path.join(rulesDir, '03-startup.md'), startupContent);
+  const startupDest = path.join(rulesDir, '03-startup.md');
+  fs.writeFileSync(startupDest, startupContent);
   results.startup = true;
+  rulesChecksums['03-startup.md'] = {
+    checksum: computeFileHash(startupDest),
+    deployedAt,
+    source: 'generated',
+  };
 
   // Copy Windows shell safety rules (Windows only)
   if (process.platform === 'win32') {
@@ -408,7 +437,17 @@ function deployRules(projectDir, frameworkPath, processFramework, domainSpeciali
       );
       fs.writeFileSync(wsDest, wsWithSource);
       results.windowsShell = true;
+      rulesChecksums['05-windows-shell.md'] = {
+        checksum: computeFileHash(wsDest),
+        deployedAt,
+        source: 'Reference/Windows-Shell-Safety.md',
+      };
     }
+  }
+
+  // Update manifest with rules checksums
+  if (Object.keys(rulesChecksums).length > 0) {
+    updateManifestEntries(projectDir, 'rules', rulesChecksums, version);
   }
 
   return results;
@@ -416,6 +455,7 @@ function deployRules(projectDir, frameworkPath, processFramework, domainSpeciali
 
 /**
  * Deploy workflow hook to .claude/hooks/
+ * v0.25.0+: Track checksum in manifest for audit support
  */
 function deployWorkflowHook(projectDir, frameworkPath) {
   const hooksDir = path.join(projectDir, '.claude', 'hooks');
@@ -428,6 +468,17 @@ function deployWorkflowHook(projectDir, frameworkPath) {
 
   if (fs.existsSync(srcHook)) {
     copyFileWithVersion(srcHook, destHook, version);
+
+    // Track checksum in manifest
+    const deployedAt = new Date().toISOString().split('T')[0];
+    updateManifestEntries(projectDir, 'hooks', {
+      'workflow-trigger.js': {
+        checksum: computeFileHash(destHook),
+        deployedAt,
+        source: 'Templates/hooks/workflow-trigger.js',
+      },
+    }, version);
+
     return true;
   }
   return false;
@@ -480,11 +531,14 @@ function deployGitPrePushHook(projectDir, frameworkPath) {
 /**
  * Deploy core commands that are always available (not tied to GitHub workflow)
  * Copies from Templates/commands/ to project .claude/commands/
+ * v0.25.0+: Track command checksums in manifest for audit support
  */
 function deployCoreCommands(projectDir, frameworkPath) {
   const commandsDir = path.join(projectDir, '.claude', 'commands');
   fs.mkdirSync(commandsDir, { recursive: true });
   const version = readFrameworkVersion(frameworkPath);
+  const deployedAt = new Date().toISOString().split('T')[0];
+  const commandChecksums = {};
 
   const coreCommands = [
     'change-domain-expert'
@@ -498,7 +552,19 @@ function deployCoreCommands(projectDir, frameworkPath) {
     if (fs.existsSync(srcCmd)) {
       copyFileWithVersion(srcCmd, destCmd, version);
       deployed.push(cmd);
+
+      // Track command checksum
+      commandChecksums[`${cmd}.md`] = {
+        checksum: computeFileHash(destCmd),
+        deployedAt,
+        source: `Templates/commands/${cmd}.md`,
+      };
     }
+  }
+
+  // Update manifest with command checksums
+  if (Object.keys(commandChecksums).length > 0) {
+    updateManifestEntries(projectDir, 'commands', commandChecksums, version);
   }
 
   return deployed;
@@ -509,6 +575,7 @@ function deployCoreCommands(projectDir, frameworkPath) {
  * Copies from Templates/commands/ to .claude/commands/
  * Copies from Templates/scripts/shared/ to .claude/scripts/shared/
  * Preserves USER-EXTENSION blocks in EXTENSIBLE command files
+ * v0.25.0+: Track command checksums in manifest for audit support
  *
  * @param {string} projectDir - Target project directory
  * @param {string} frameworkPath - Framework source directory
@@ -527,6 +594,8 @@ function deployWorkflowCommands(projectDir, frameworkPath, debug = false) {
   fs.mkdirSync(scriptsSharedDir, { recursive: true });
   fs.mkdirSync(scriptsLibDir, { recursive: true });
   const version = readFrameworkVersion(frameworkPath);
+  const deployedAt = new Date().toISOString().split('T')[0];
+  const commandChecksums = {};
 
   // Read workflow commands from manifest (single source of truth)
   const deploymentConfig = getDeploymentConfig(frameworkPath);
@@ -555,6 +624,14 @@ function deployWorkflowCommands(projectDir, frameworkPath, debug = false) {
       if (result.warnings.length > 0) {
         deployed.warnings.push(...result.warnings);
       }
+
+      // Track command checksum
+      commandChecksums[`${cmd}.md`] = {
+        checksum: computeFileHash(destCmd),
+        deployedAt,
+        source: `Templates/commands/${cmd}.md`,
+        extensible: result.preserved ? true : false,
+      };
     }
 
     // Deploy script (.js file) with version replacement (scripts are always overwritten)
@@ -576,6 +653,11 @@ function deployWorkflowCommands(projectDir, frameworkPath, debug = false) {
       copyFileWithVersion(srcLib, destLib, version);
       deployed.scripts.push(`lib/${libFile.replace('.js', '')}`);
     }
+  }
+
+  // Update manifest with command checksums
+  if (Object.keys(commandChecksums).length > 0) {
+    updateManifestEntries(projectDir, 'commands', commandChecksums, version);
   }
 
   // Display warnings about rogue edits

@@ -1,5 +1,5 @@
 ---
-version: "v0.24.1"
+version: "v0.25.0"
 description: Prepare framework release with version updates and validation (project)
 argument-hint: [options...] (phase:N, skip:*, audit:*, dry-run)
 ---
@@ -13,6 +13,7 @@ Execute the full release preparation workflow.
 | `pre-validation` | Before Phase 2 | Setup test environment |
 | `post-validation` | After Phase 2 | Custom validation |
 | `post-prepare` | After Phase 3 | Additional updates |
+| `post-pr-create` | After PR creation | CI wait, PR validation |
 | `pre-tag` | Before Phase 4 | Final gate, sign-off |
 | `post-tag` | After Phase 4 | Deployment, notifications |
 | `pre-close` | Before Phase 5 | Pre-close validation |
@@ -102,6 +103,15 @@ Update acceptance criteria on release issues before PR.
 ```bash
 gh pr create --base main --head release/vX.Y.Z --title "Release vX.Y.Z"
 ```
+<!-- USER-EXTENSION-START: post-pr-create -->
+<!-- BUILT-IN: ci-wait (disabled by default)
+### Wait for CI
+```bash
+node .claude/scripts/framework/wait-for-ci.js
+```
+**If CI fails, STOP and report.**
+-->
+<!-- USER-EXTENSION-END: post-pr-create -->
 ### Step 4.4: Merge PR
 **ASK USER:** Approve and merge.
 ```bash
@@ -130,6 +140,16 @@ gh run list --limit 1
 gh run watch
 ```
 <!-- USER-EXTENSION-START: post-tag -->
+### Wait for CI Workflow
+```bash
+node .claude/scripts/framework/wait-for-ci.js
+```
+**If CI fails, STOP and report.**
+### Update Release Notes
+```bash
+node .claude/scripts/framework/update-release-notes.js
+```
+Updates GitHub Release with formatted notes from CHANGELOG.
 <!-- USER-EXTENSION-END: post-tag -->
 ---
 <!-- USER-EXTENSION-START: pre-close -->

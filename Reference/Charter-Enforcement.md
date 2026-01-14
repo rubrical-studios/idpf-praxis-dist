@@ -1,5 +1,5 @@
 # Charter Enforcement
-**Version:** v0.24.1
+**Version:** v0.25.0
 **Purpose:** Define checkpoints for charter validation and scope conflict handling
 ---
 ## Overview

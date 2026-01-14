@@ -1,5 +1,5 @@
 {
-  "version": "0.24.1",
+  "version": "0.25.0",
   "deploymentFiles": {
     "commands": {
       "workflow": [
@@ -22,6 +22,16 @@
     }
   },
   "scripts": {
+    "framework": {
+      "source": "scripts/framework/",
+      "target": ".claude/scripts/framework/",
+      "files": [
+        "analyze-commits.js",
+        "recommend-version.js",
+        "update-release-notes.js",
+        "wait-for-ci.js"
+      ]
+    },
     "shared": {
       "source": "scripts/shared/",
       "target": ".claude/scripts/shared/",
@@ -34,7 +44,8 @@
         "sprint-retro.js",
         "end-sprint.js",
         "cleanup-release-assets.js",
-        "generate-changelog.js"
+        "generate-changelog.js",
+        "validate-helpers.js"
       ]
     },
     "lib": {

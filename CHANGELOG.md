@@ -8,6 +8,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.25.0] - 2026-01-14
+
+### Added
+- **#877** - New `audit.js` script for framework installation auditing
+  - Detects modified, outdated, untracked, and missing files across installations
+  - Validates `userScripts` entries in `framework-config.json`
+  - Interactive `--fix` mode for cleaning up orphaned references
+  - 24 unit tests covering all audit functionality
+- Extended installer manifest tracking to include commands, rules, and hooks checksums (not just scripts)
+
+### Fixed
+- **#875** - Restored framework scripts deployment and synced release tooling
+
+---
+
 ## [0.24.1] - 2026-01-13
 
 ### Fixed
@@ -46,10 +61,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Priority distribution validation for generated backlogs
 - **#847** - Tag format standardization
   - Commands now use versionless `<!-- EXTENSIBLE -->` / `<!-- MANAGED -->`
-  - Frontmatter uses `v0.24.1` placeholder instead of hardcoded versions
+  - Frontmatter uses `v0.25.0` placeholder instead of hardcoded versions
   - Installer regex updated for backward compatibility
 - **#840** - PRD directory structure: `PRD/Active/` and `PRD/Implemented/`
-- **#821** - README-DIST.md now uses `v0.24.1` placeholder
+- **#821** - README-DIST.md now uses `v0.25.0` placeholder
 
 ### Removed
 - **#842** - Deprecated IDPF-PRD framework removed
@@ -166,7 +181,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Infrastructure
 - **minimize-config.json** - Removed overly broad "Merge" pattern that excluded merge-branch.md
-- **Rules rebuild from minimized sources** - All rules now use v0.24.1 placeholder
+- **Rules rebuild from minimized sources** - All rules now use v0.25.0 placeholder
 
 ---
 
@@ -214,7 +229,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Internal
 - Integrated extensibility.js into deployment workflow
 - Lowered coverage thresholds to match actual coverage
-- Restored v0.24.1 placeholders to 209 framework source files
+- Restored v0.25.0 placeholders to 209 framework source files
 
 ---
 
@@ -282,12 +297,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.20.1] - 2026-01-02
 
 ### Fixed
-- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.24.1` placeholder in `Templates/framework-manifest.json`
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.25.0` placeholder in `Templates/framework-manifest.json`
 - **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
 
 ### Changed
 - **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
-- **Version placeholder standardized** - All version tokens now use `v0.24.1` format for consistent replacement
+- **Version placeholder standardized** - All version tokens now use `v0.25.0` format for consistent replacement
 
 ---
 
@@ -356,7 +371,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.24.1` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.25.0` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---

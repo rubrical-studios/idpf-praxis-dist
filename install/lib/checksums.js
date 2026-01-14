@@ -82,10 +82,43 @@ function isFileModified(filePath, expectedHash) {
   return currentHash !== expectedHash;
 }
 
+/**
+ * Update manifest with new entries for a category
+ * Creates manifest if it doesn't exist, merges entries if it does
+ *
+ * @param {string} projectDir - Project directory
+ * @param {string} category - Category name (e.g., 'commands', 'rules', 'hooks')
+ * @param {object} entries - Object with file keys and checksum data
+ * @param {string} version - Framework version
+ */
+function updateManifestEntries(projectDir, category, entries, version) {
+  const manifest = readManifest(projectDir) || {
+    version: version,
+    deployedAt: new Date().toISOString().split('T')[0],
+    scripts: {},
+  };
+
+  // Initialize category if not present
+  if (!manifest[category]) {
+    manifest[category] = {};
+  }
+
+  // Merge entries
+  Object.assign(manifest[category], entries);
+
+  // Update version if provided
+  if (version) {
+    manifest.version = version;
+  }
+
+  writeManifest(projectDir, manifest);
+}
+
 module.exports = {
   computeFileHash,
   computeContentHash,
   readManifest,
   writeManifest,
   isFileModified,
+  updateManifestEntries,
 };
