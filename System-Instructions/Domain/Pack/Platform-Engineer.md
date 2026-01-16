@@ -1,5 +1,5 @@
 # System Instructions: Platform Engineer
-**Version:** v0.25.0
+**Version:** v0.26.0
 **Source:** System-Instructions/Domain/Pack/Platform-Engineer.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Building internal developer platforms, tooling, infrastructure to improve team productivity and developer experience.

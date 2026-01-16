@@ -1,5 +1,5 @@
 # VPAT Generation Guide
-**Version:** v0.25.0
+**Version:** v0.26.0
 
 **Framework:** IDPF-Accessibility
 

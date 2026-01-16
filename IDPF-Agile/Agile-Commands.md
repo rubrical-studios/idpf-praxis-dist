@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Commands
-**Version:** v0.25.0
+**Version:** v0.26.0
 **Module:** Commands (loaded on-demand)
 **Source:** IDPF-Agile/Agile-Commands.md
 
@@ -91,13 +91,13 @@
 |---------|-------------|---------------|
 | `Create-Branch` | Create tracked branch with tracker issue | `/create-branch` |
 | `Prepare-Release` | Validate, merge, tag, close, cleanup | `/prepare-release` |
-| `Merge-Branch` | Gated merge (non-release branches) | `/merge-branch` |
+| `Merge-Branch` | Gated merge (without version tagging) | `/merge-branch` |
 | `Destroy-Branch` | Cancel/abandon branch with cleanup | `/destroy-branch` |
 
 ### Release Lifecycle Flow
 ```
 /create-branch release/v0.16.0 -> Creates branch, tracker, directory
--> Work on release branch -> gh pmu move [#] --release current
+-> Work on working branch -> gh pmu move [#] --release current
 -> /prepare-release (Phase 0-5: analysis, versions, validation, PR/merge/tag, verify, close)
 ```
 
@@ -113,7 +113,7 @@
 Phase 0: Commit analysis | Phase 1: Version updates | Phase 2: Validation | Phase 3: PR/merge/tag | Phase 4: Verify deployment | Phase 5: Close (notes, GitHub Release, tracker, branch cleanup)
 
 ### Merge-Branch Workflow
-For non-release branches (feature/, idpf/):
+For merging without version tag (any working branch):
 1. Run gates (clean directory, tests pass)
 2. Create PR, wait for approval, merge
 3. Close tracker, delete branch
