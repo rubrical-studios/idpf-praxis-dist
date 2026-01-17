@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.20.1
+// **Version:** 0.20.2
 /**
  * IDPF Framework Update Fetcher
  *
@@ -77,6 +77,32 @@ function readVersion(frameworkPath) {
   }
   try {
     const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    return manifest.version || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Read version with fresh file handle (bypasses Windows file cache)
+ * Used after file updates to ensure we read the newly written content.
+ * On Windows, fs.readFileSync can return stale cached data when reading
+ * a file immediately after it was written by copyFileSync.
+ */
+function readVersionFresh(frameworkPath) {
+  const manifestPath = path.join(frameworkPath, 'framework-manifest.json');
+  if (!fs.existsSync(manifestPath)) {
+    return null;
+  }
+  try {
+    // Force fresh read using explicit file descriptor operations
+    const fd = fs.openSync(manifestPath, 'r');
+    const stats = fs.fstatSync(fd);
+    const buffer = Buffer.alloc(stats.size);
+    fs.readSync(fd, buffer, 0, stats.size, 0);
+    fs.closeSync(fd);
+
+    const manifest = JSON.parse(buffer.toString('utf8'));
     return manifest.version || null;
   } catch {
     return null;
@@ -264,7 +290,8 @@ async function main() {
   removeDir(TEMP_DIR);
 
   // Verify the update by reading the new version
-  const newVersion = readVersion(frameworkPath);
+  // Use readVersionFresh to bypass Windows file system caching
+  const newVersion = readVersionFresh(frameworkPath);
   const expectedVersion = latestVersion.slice(1);
 
   if (newVersion !== expectedVersion) {

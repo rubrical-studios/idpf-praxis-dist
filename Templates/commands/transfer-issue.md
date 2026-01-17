@@ -1,5 +1,5 @@
 ---
-version: "v0.26.0"
+version: "v0.26.1"
 allowed-tools: Bash
 description: Transfer issue between releases/sprints (project)
 ---

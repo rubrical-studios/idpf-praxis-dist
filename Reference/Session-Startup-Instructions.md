@@ -1,5 +1,5 @@
 # Session Startup Instructions
-**Version:** v0.26.0
+**Version:** v0.26.1
 **Purpose:** Standard initialization procedure for AI assistant sessions
 ---
 ## Rules Auto-Loading (v2.9+)

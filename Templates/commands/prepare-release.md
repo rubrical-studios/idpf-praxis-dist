@@ -1,5 +1,5 @@
 ---
-version: "v0.26.0"
+version: "v0.26.1"
 description: Prepare framework release with version updates and validation (project)
 argument-hint: [options...] (phase:N, skip:*, audit:*, dry-run)
 ---

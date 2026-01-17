@@ -1,5 +1,5 @@
 # System Instructions: Technical Writer Specialist
-**Version:** v0.26.0
+**Version:** v0.26.1
 **Source:** System-Instructions/Domain/Pack/Technical-Writer-Specialist.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Technical documentation, docs-as-code workflows, API documentation, documentation engineering.

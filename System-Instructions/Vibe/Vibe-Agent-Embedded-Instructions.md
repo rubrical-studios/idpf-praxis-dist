@@ -1,5 +1,5 @@
 # Vibe Agent System Instructions (Embedded)
-**Version:** v0.26.0
+**Version:** v0.26.1
 **Source:** System-Instructions/Vibe/Vibe-Agent-Embedded-Instructions.md
 **Type:** Embedded Systems Agent Behaviors
 **Extends:** Vibe-Agent-Core-Instructions.md
