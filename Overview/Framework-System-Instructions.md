@@ -1,5 +1,5 @@
 # Framework System Instructions Reference
-**Version:** v0.26.1
+**Version:** v0.26.2
 **Purpose:** System Instructions reference
 ---
 ## Overview

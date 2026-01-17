@@ -1,5 +1,5 @@
 # OWASP Top 10 Remediation Guide
-**Version:** v0.26.1
+**Version:** v0.26.2
 
 **Framework:** IDPF-Security
 

@@ -44,7 +44,6 @@ const DOMAIN_SPECIALISTS = [
   'Mobile-Specialist',
   'Performance-Engineer',
   'Platform-Engineer',
-  'PRD-Analyst',
   'QA-Test-Engineer',
   'Security-Engineer',
   'SRE-Specialist',
