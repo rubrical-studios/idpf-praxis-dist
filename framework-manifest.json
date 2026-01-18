@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.26.2",
+  "version": "0.26.3",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -56,7 +56,8 @@
         "merge-branch.md",
         "destroy-branch.md",
         "charter.md",
-        "extensions.md"
+        "extensions.md",
+        "create-prd.md"
       ]
     },
     "scripts": {

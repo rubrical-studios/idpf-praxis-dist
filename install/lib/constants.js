@@ -111,6 +111,7 @@ const INSTALLED_FILES_MANIFEST = {
       (config) => config?.enableGitHubWorkflow ? 'destroy-branch.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'charter.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'extensions.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'create-prd.md' : null,
     ],
   },
   scripts: {

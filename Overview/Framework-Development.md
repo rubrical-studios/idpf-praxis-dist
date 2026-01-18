@@ -1,5 +1,5 @@
 # Framework Development Reference
-**Version:** v0.26.2
+**Version:** v0.26.3
 **Purpose:** IDPF development frameworks (2: Agile, Vibe)
 ---
 ## PRD Creation (Pre-Development)
