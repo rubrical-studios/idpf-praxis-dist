@@ -17,7 +17,7 @@ describe('extensibility.js', () => {
     describe('versionless tags (v0.24+)', () => {
       test('recognizes <!-- EXTENSIBLE --> without version', () => {
         const content = `---
-version: "0.26.3"
+version: "0.27.0"
 ---
 
 <!-- EXTENSIBLE -->
@@ -32,7 +32,7 @@ version: "0.26.3"
 
       test('recognizes <!-- MANAGED --> without version', () => {
         const content = `---
-version: "0.26.3"
+version: "0.27.0"
 ---
 
 <!-- MANAGED -->
@@ -152,7 +152,7 @@ No tags here.
     describe('real-world command files', () => {
       test('parses full EXTENSIBLE command file', () => {
         const content = `---
-version: "0.26.3"
+version: "0.27.0"
 description: Create a branch with tracker issue
 argument-hint: <branch-name>
 ---
@@ -178,7 +178,7 @@ Creates a new branch and associated tracker issue.
 
       test('parses full MANAGED command file', () => {
         const content = `---
-version: "0.26.3"
+version: "0.27.0"
 allowed-tools: Bash
 description: Run sprint retrospective
 ---

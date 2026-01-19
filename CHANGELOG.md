@@ -8,6 +8,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.27.0] - 2026-01-19
+
+### Added
+- **#904** - Consolidated `framework-manifest.json` to single source of truth
+  - Merged `Templates/framework-manifest.json` into root manifest
+  - All deployment configuration now in one file under `deploymentFiles.scripts`
+  - Eliminates sync issues between duplicate manifests
+- **#868** - Pre-upgrade validation for extensible files in `fetch-updates.js`
+  - Detects user modifications to extensible commands before overwriting
+  - Validates USER-EXTENSION blocks are preserved
+  - Prevents accidental loss of customizations during framework updates
+
+### Fixed
+- **#889** - Replaced deprecated `--release` flag with `--branch` in `assign-branch.js`
+  - Updated to use current gh-pmu API before deprecation period ends
+- **#900** - Fixed stale `frameworkVersion` in `framework-config.json`
+  - Changed hardcoded version to `v0.27.0` placeholder
+  - Added self-hosted config update step to `/prepare-release` Phase 3
+- **#899** - Standardized GitHub release page formatting
+  - `update-release-notes.js` now transforms CHANGELOG to formatted release pages
+  - Includes title, release date, auto-generated summary, and comparison link
+- Preserved blank lines around USER-EXTENSION tags in minimized templates
+- Corrected `gh pmu branch start` flag from `--branch` to `--name`
+
+### Changed
+- **#823** - Added executable copy commands to Phase 2d rules build documentation
+  - Clarified self-hosted only scope for rules directory build
+
+---
+
 ## [0.26.3] - 2026-01-17
 
 ### Fixed
@@ -34,7 +64,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.26.1] - 2026-01-17
 
 ### Fixed
-- **#887** - `framework-manifest.json` now uses `v0.26.3` placeholder for proper version injection during deployment
+- **#887** - `framework-manifest.json` now uses `v0.27.0` placeholder for proper version injection during deployment
   - Root cause of `fetch-updates.js` version verification failures on Windows
 
 ---
@@ -111,10 +141,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Priority distribution validation for generated backlogs
 - **#847** - Tag format standardization
   - Commands now use versionless `<!-- EXTENSIBLE -->` / `<!-- MANAGED -->`
-  - Frontmatter uses `v0.26.3` placeholder instead of hardcoded versions
+  - Frontmatter uses `v0.27.0` placeholder instead of hardcoded versions
   - Installer regex updated for backward compatibility
 - **#840** - PRD directory structure: `PRD/Active/` and `PRD/Implemented/`
-- **#821** - README-DIST.md now uses `v0.26.3` placeholder
+- **#821** - README-DIST.md now uses `v0.27.0` placeholder
 
 ### Removed
 - **#842** - Deprecated IDPF-PRD framework removed
@@ -231,7 +261,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Infrastructure
 - **minimize-config.json** - Removed overly broad "Merge" pattern that excluded merge-branch.md
-- **Rules rebuild from minimized sources** - All rules now use v0.26.3 placeholder
+- **Rules rebuild from minimized sources** - All rules now use v0.27.0 placeholder
 
 ---
 
@@ -279,7 +309,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Internal
 - Integrated extensibility.js into deployment workflow
 - Lowered coverage thresholds to match actual coverage
-- Restored v0.26.3 placeholders to 209 framework source files
+- Restored v0.27.0 placeholders to 209 framework source files
 
 ---
 
@@ -347,12 +377,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.20.1] - 2026-01-02
 
 ### Fixed
-- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.26.3` placeholder in `Templates/framework-manifest.json`
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.27.0` placeholder in `Templates/framework-manifest.json`
 - **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
 
 ### Changed
 - **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
-- **Version placeholder standardized** - All version tokens now use `v0.26.3` format for consistent replacement
+- **Version placeholder standardized** - All version tokens now use `v0.27.0` format for consistent replacement
 
 ---
 
@@ -421,7 +451,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.26.3` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.27.0` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---

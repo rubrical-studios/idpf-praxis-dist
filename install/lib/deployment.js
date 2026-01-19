@@ -19,10 +19,10 @@ const {
 } = require('./extensibility');
 
 /**
- * Copy file with 0.26.3 placeholder replacement
+ * Copy file with 0.27.0 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.26.3 with
+ * @param {string} version - Version string to replace 0.27.0 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
@@ -35,7 +35,7 @@ function copyFileWithVersion(src, dest, version) {
  *
  * @param {string} src - Source template file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.26.3 with
+ * @param {string} version - Version string to replace 0.27.0 with
  * @param {boolean} debug - Enable debug logging
  * @returns {{preserved: boolean, warnings: string[]}} Deployment result
  */
@@ -258,8 +258,8 @@ function deployFrameworkScripts(projectDir, frameworkPath) {
   const manifestEntries = {};
   const deployedAt = new Date().toISOString().split('T')[0];
 
-  // Read framework manifest
-  const manifestPath = path.join(frameworkPath, 'Templates', 'framework-manifest.json');
+  // Read framework manifest (consolidated at root level)
+  const manifestPath = path.join(frameworkPath, 'framework-manifest.json');
   if (!fs.existsSync(manifestPath)) {
     return { deployed, modified, manifest: {} };
   }
@@ -272,10 +272,11 @@ function deployFrameworkScripts(projectDir, frameworkPath) {
   const categories = ['framework', 'shared', 'lib', 'hooks'];
 
   for (const category of categories) {
-    const categoryConfig = frameworkManifest.scripts?.[category];
+    const categoryConfig = frameworkManifest.deploymentFiles?.scripts?.[category];
     if (!categoryConfig) continue;
 
-    const sourceDir = path.join(frameworkPath, 'Templates', categoryConfig.source);
+    // Source paths in manifest are relative to framework root (e.g., "Templates/scripts/framework/")
+    const sourceDir = path.join(frameworkPath, categoryConfig.source);
     const targetDir = path.join(projectDir, categoryConfig.target);
 
     // Ensure target directory exists
@@ -306,7 +307,7 @@ function deployFrameworkScripts(projectDir, frameworkPath) {
       manifestEntries[`${category}/${file}`] = {
         checksum,
         deployedAt,  // AC-3: deployedAt date
-        source: `Templates/${categoryConfig.source}${file}`
+        source: `${categoryConfig.source}${file}`
       };
     }
   }

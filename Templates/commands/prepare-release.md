@@ -1,5 +1,5 @@
 ---
-version: "v0.26.3"
+version: "v0.27.0"
 description: Prepare framework release with version updates and validation (project)
 argument-hint: [options...] (phase:N, skip:*, audit:*, dry-run)
 ---
@@ -16,8 +16,11 @@ Execute the full release preparation workflow.
 | `post-pr-create` | After PR creation | CI wait, PR validation |
 | `pre-tag` | Before Phase 4 | Final gate, sign-off |
 | `post-tag` | After Phase 4 | Deployment, notifications |
+| `checklist-before-tag` | Summary Checklist | Pre-tag verification |
+| `checklist-after-tag` | Summary Checklist | Post-tag verification |
 | `pre-close` | Before Phase 5 | Pre-close validation |
 | `post-close` | After Phase 5 | Post-release actions |
+| `checklist-close` | Summary Checklist | Close verification |
 ---
 ## Arguments
 | Usage | Behavior |
@@ -41,7 +44,7 @@ Record as `$BRANCH`.
 4. **If `--dry-run`:** Report "Would create branch: release/vX.Y.Z" and stop
 5. Create branch:
    ```bash
-   gh pmu branch start --branch "release/$VERSION"
+   gh pmu branch start --name "release/$VERSION"
    git checkout "release/$VERSION"
    git push -u origin "release/$VERSION"
    ```
@@ -71,12 +74,16 @@ git log vX.Y.Z..HEAD --oneline | wc -l
 | Bug Fix | "Fix *" | PATCH |
 ### Step 1.4: Determine Version
 **ASK USER:** Confirm version.
+
 <!-- USER-EXTENSION-START: post-analysis -->
 <!-- USER-EXTENSION-END: post-analysis -->
+
 ---
 ## Phase 2: Validation
+
 <!-- USER-EXTENSION-START: pre-validation -->
 <!-- USER-EXTENSION-END: pre-validation -->
+
 ### Step 2.1: Verify Working Directory
 ```bash
 git status --porcelain
@@ -85,8 +92,10 @@ git status --porcelain
 ```bash
 npm test 2>/dev/null || echo "No test script"
 ```
+
 <!-- USER-EXTENSION-START: post-validation -->
 <!-- USER-EXTENSION-END: post-validation -->
+
 **ASK USER:** Confirm validation passed.
 ---
 ## Phase 3: Prepare
@@ -96,13 +105,16 @@ npm test 2>/dev/null || echo "No test script"
 | `framework-manifest.json` | Update version |
 | `CHANGELOG.md` | Add new section |
 | `README.md` | Update version line |
+| `framework-config.json` | (Self-hosted only) Update `frameworkVersion`, `installedDate` |
 ### Step 3.2: Generate Release Artifacts
 ```bash
 mkdir -p "Releases/$TRACK/$VERSION"
 ```
 Create `release-notes.md` and `changelog.md`.
+
 <!-- USER-EXTENSION-START: post-prepare -->
 <!-- USER-EXTENSION-END: post-prepare -->
+
 ---
 ## Phase 4: Git Operations
 ### Step 4.1: Commit Release
@@ -117,6 +129,7 @@ Update acceptance criteria on release issues before PR.
 ```bash
 gh pr create --base main --head release/vX.Y.Z --title "Release vX.Y.Z"
 ```
+
 <!-- USER-EXTENSION-START: post-pr-create -->
 <!-- BUILT-IN: ci-wait (disabled by default)
 ### Wait for CI
@@ -126,6 +139,7 @@ node .claude/scripts/framework/wait-for-ci.js
 **If CI fails, STOP and report.**
 -->
 <!-- USER-EXTENSION-END: post-pr-create -->
+
 ### Step 4.4: Merge PR
 **ASK USER:** Approve and merge.
 ```bash
@@ -140,8 +154,10 @@ gh pmu branch close
 git checkout main
 git pull origin main
 ```
+
 <!-- USER-EXTENSION-START: pre-tag -->
 <!-- USER-EXTENSION-END: pre-tag -->
+
 ### Step 4.7: Tag Main
 **ASK USER:** Confirm ready to tag.
 ```bash
@@ -153,6 +169,7 @@ git push origin vX.Y.Z
 gh run list --limit 1
 gh run watch
 ```
+
 <!-- USER-EXTENSION-START: post-tag -->
 ### Wait for CI Workflow
 ```bash
@@ -164,10 +181,37 @@ node .claude/scripts/framework/wait-for-ci.js
 node .claude/scripts/framework/update-release-notes.js
 ```
 Updates GitHub Release with formatted notes from CHANGELOG.
+
 <!-- USER-EXTENSION-END: post-tag -->
+
 ---
+
+## Summary Checklist
+**Before tagging:**
+- [ ] Commits analyzed
+- [ ] Version confirmed
+- [ ] CHANGELOG updated
+- [ ] PR merged
+
+<!-- USER-EXTENSION-START: checklist-before-tag -->
+- [ ] Coverage gate passed (or `--skip-coverage`)
+- [ ] CI passing
+<!-- USER-EXTENSION-END: checklist-before-tag -->
+
+**After tagging:**
+- [ ] Tag pushed
+
+<!-- USER-EXTENSION-START: checklist-after-tag -->
+- [ ] All CI jobs completed
+- [ ] Release assets uploaded
+- [ ] Release notes updated
+<!-- USER-EXTENSION-END: checklist-after-tag -->
+
+---
+
 <!-- USER-EXTENSION-START: pre-close -->
 <!-- USER-EXTENSION-END: pre-close -->
+
 ## Phase 5: Close & Cleanup
 **ASK USER:** Confirm deployment verified.
 ### Step 5.1: Close Tracker Issue
@@ -183,9 +227,23 @@ git branch -d release/vX.Y.Z
 ```bash
 gh release create vX.Y.Z --title "Release vX.Y.Z" --notes-file "Releases/release/vX.Y.Z/release-notes.md"
 ```
+
 <!-- USER-EXTENSION-START: post-close -->
 <!-- USER-EXTENSION-END: post-close -->
+
 ---
+
+## Summary Checklist (Close)
+
+<!-- USER-EXTENSION-START: checklist-close -->
+- [ ] Tracker issue closed
+- [ ] Release closed in project
+- [ ] Working branch deleted
+- [ ] GitHub Release created
+<!-- USER-EXTENSION-END: checklist-close -->
+
+---
+
 ## Completion
 - ✅ Code merged to main
 - ✅ Tag created and pushed

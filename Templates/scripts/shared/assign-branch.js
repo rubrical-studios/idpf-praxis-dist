@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.26.3
+// **Version:** 0.27.0
 /**
  * assign-branch.js
  *
@@ -232,9 +232,9 @@ async function assignToRelease(issueNumber, release, useCurrent = false) {
         const releaseArg = useCurrent ? 'current' : `"${release}"`;
         const displayRelease = useCurrent ? `${release} (current)` : release;
         console.log(`  → Assigning #${issueNumber} to ${displayRelease}`);
-        const result = await execAsyncSafe(`gh pmu move ${issueNumber} --release ${releaseArg} 2>&1`);
+        const result = await execAsyncSafe(`gh pmu move ${issueNumber} --branch ${releaseArg} 2>&1`);
         if (result && result.includes('unknown flag')) {
-            console.log(`    (Note: gh pmu --release not yet supported, manual assignment needed)`);
+            console.log(`    (Note: gh pmu --branch not supported, manual assignment needed)`);
             return false;
         }
         return true;
@@ -464,7 +464,7 @@ async function main() {
         console.log('If this is too many, cancel and specify individual issue numbers.\n');
     }
 
-    // Step 7: Assign issues (use --release current when single release)
+    // Step 7: Assign issues (use --branch current when single release)
     let totalAssigned = 0;
     let epicCount = 0;
     let subIssueCount = 0;

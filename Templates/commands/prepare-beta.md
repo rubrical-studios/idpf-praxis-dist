@@ -1,5 +1,5 @@
 ---
-version: "v0.26.3"
+version: "v0.27.0"
 description: Tag beta from feature branch (no merge to main)
 argument-hint: [--skip-coverage] [--dry-run] [--help]
 ---
@@ -44,6 +44,7 @@ node .claude/scripts/create-branch/verify-config.js
 ```bash
 git log $(git describe --tags --abbrev=0)..HEAD --oneline
 ```
+
 <!-- USER-EXTENSION-START: post-analysis -->
 ### Analyze Commits
 ```bash
@@ -55,15 +56,19 @@ node .claude/scripts/framework/recommend-version.js
 ```
 Recommend beta version (e.g., `v1.0.0-beta.1`).
 <!-- USER-EXTENSION-END: post-analysis -->
+
 **ASK USER:** Confirm beta version before proceeding.
 ---
 ## Phase 2: Validation
+
 <!-- USER-EXTENSION-START: pre-validation -->
 <!-- Setup: prepare test environment for beta validation -->
 <!-- USER-EXTENSION-END: pre-validation -->
+
 ```bash
 go test ./...
 ```
+
 <!-- USER-EXTENSION-START: post-validation -->
 ### Coverage Gate (Optional)
 **If `--skip-coverage` was passed, skip this section.**
@@ -72,12 +77,15 @@ node .claude/scripts/prepare-release/coverage.js
 ```
 **If `success` is false, STOP.**
 <!-- USER-EXTENSION-END: post-validation -->
+
 **ASK USER:** Confirm validation passed before proceeding.
 ---
 ## Phase 3: Prepare
 Update CHANGELOG.md with beta section.
+
 <!-- USER-EXTENSION-START: post-prepare -->
 <!-- USER-EXTENSION-END: post-prepare -->
+
 ---
 ## Phase 4: Tag (No Merge)
 ### Step 4.1: Commit Changes
@@ -86,9 +94,11 @@ git add -A
 git commit -m "chore: prepare beta $VERSION"
 git push origin $(git branch --show-current)
 ```
+
 <!-- USER-EXTENSION-START: pre-tag -->
 <!-- Final gate: sign-off checks before beta tag -->
 <!-- USER-EXTENSION-END: pre-tag -->
+
 ### Step 4.2: Create Beta Tag
 **ASK USER:** Confirm ready to tag beta.
 ```bash
@@ -96,6 +106,7 @@ git tag -a $VERSION -m "Beta $VERSION"
 git push origin $VERSION
 ```
 **Note:** Beta tags feature branch. No merge to main.
+
 <!-- USER-EXTENSION-START: post-tag -->
 ### Wait for CI Workflow
 ```bash
@@ -103,7 +114,9 @@ node .claude/scripts/framework/wait-for-ci.js
 ```
 **If CI fails, STOP and report.**
 <!-- USER-EXTENSION-END: post-tag -->
+
 ---
+
 ## Next Step
 Beta is tagged. When ready for full release:
 1. Merge feature branch to main
@@ -117,13 +130,17 @@ Beta is tagged. When ready for full release:
 - [ ] Beta version confirmed
 - [ ] Tests passing
 - [ ] CHANGELOG updated
+
 <!-- USER-EXTENSION-START: checklist-before-tag -->
 - [ ] Coverage gate passed (or `--skip-coverage`)
 <!-- USER-EXTENSION-END: checklist-before-tag -->
+
 **After tagging:**
 - [ ] Beta tag pushed
+
 <!-- USER-EXTENSION-START: checklist-after-tag -->
 - [ ] Beta build monitored
 <!-- USER-EXTENSION-END: checklist-after-tag -->
+
 ---
 **End of Prepare Beta**

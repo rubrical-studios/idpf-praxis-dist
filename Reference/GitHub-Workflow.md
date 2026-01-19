@@ -1,5 +1,5 @@
 # GitHub Workflow Integration
-**Version:** v0.26.3
+**Version:** v0.27.0
 ---
 **MUST READ:** At session startup and after compaction.
 ## Project Configuration
@@ -65,9 +65,9 @@ Branch naming requires `{prefix}/{name}` format. Prefix is organizational conven
 **Multi-Issue:** `gh pmu move 42 43 44 --status in_progress` - more efficient than parallel calls
 **Deprecation:** `--release` flag deprecated, use `--branch` instead.
 **Microsprint:** `start`, `current`, `add [#]`, `remove [#]`, `close`, `list`, `resolve`
-**Branch:** `start --branch release/vX.Y.Z`, `current`, `reopen [name]`, `move [#] --branch current` (recommended), `remove [#]`, `close [--tag]`, `list`
+**Branch:** `start --name release/vX.Y.Z`, `current`, `reopen [name]`, `move [#] --branch current` (recommended), `remove [#]`, `close [--tag]`, `list`
 **Deprecation:** `gh pmu release` deprecated, use `gh pmu branch` instead.
-**Patch Releases:** Use `gh pmu branch` with `patch/` branch naming (e.g., `--branch patch/v1.1.5`)
+**Patch Releases:** Use `gh pmu branch` with `patch/` branch naming (e.g., `--name patch/v1.1.5`)
 **Auto-Close:** Default Kanban template auto-closes issues when moved to `done`. `gh issue close` only needed for close reason or comment.
 ## Slash Command Preference
 Prefer slash commands over raw `gh pmu` commands:
@@ -180,7 +180,7 @@ If yes: `gh issue edit [parent] --add-label "epic"`, add "story" to sub-issues
 ### 6.5. Branch Reopen Workflow
 `gh pmu branch reopen [branch-name]` - Reopen closed branch tracker (e.g., `release/v1.2.0`, `patch/v1.1.5`)
 ### 10-11. Release/Patch Workflow
-**Start:** `gh pmu branch start --branch "release/v1.2.0"` (or `patch/v1.1.5` for patches)
+**Start:** `gh pmu branch start --name "release/v1.2.0"` (or `patch/v1.1.5` for patches)
 **Add:** `gh pmu move [#] --branch current`
 **Close:** `gh pmu branch close [--tag]`
 **Artifacts:** `Releases/[release|patch]/vX.Y.Z/[release|patch]-notes.md`, `changelog.md`

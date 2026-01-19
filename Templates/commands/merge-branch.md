@@ -1,5 +1,5 @@
 ---
-version: "v0.26.3"
+version: "v0.27.0"
 description: Merge branch to main with gated checks
 argument-hint: [--skip-gates] [--dry-run]
 ---
@@ -33,9 +33,12 @@ Must NOT be on `main`.
 gh pmu release current --json tracker
 ```
 Will be closed at end if exists.
+
 ---
+
 <!-- USER-EXTENSION-START: pre-gate -->
 <!-- USER-EXTENSION-END: pre-gate -->
+
 ## Phase 1: Gate Checks
 **If `--skip-gates`, skip to Phase 2.**
 ### Default Gates
@@ -49,14 +52,18 @@ git status --porcelain
 npm test 2>/dev/null || echo "No test script configured"
 ```
 **FAIL if tests fail.**
+
 <!-- USER-EXTENSION-START: gates -->
 <!-- Custom gates: coverage, lint, security -->
 <!-- USER-EXTENSION-END: gates -->
+
 ### Gate Summary
 - ✅ Passed / ❌ Failed (with details)
 **If any fails, STOP.**
+
 <!-- USER-EXTENSION-START: post-gate -->
 <!-- USER-EXTENSION-END: post-gate -->
+
 ---
 ## Phase 2: Create and Merge PR
 ### Step 2.1: Push Branch
@@ -68,6 +75,7 @@ git push origin $(git branch --show-current)
 gh pr create --base main --head $(git branch --show-current) \
   --title "Merge: $(git branch --show-current)"
 ```
+
 <!-- USER-EXTENSION-START: post-pr-create -->
 <!-- BUILT-IN: ci-wait (disabled by default)
 ### Wait for CI
@@ -77,6 +85,7 @@ node .claude/scripts/framework/wait-for-ci.js
 **If CI fails, STOP and report.**
 -->
 <!-- USER-EXTENSION-END: post-pr-create -->
+
 ### Step 2.3: Wait for Approval
 **ASK USER:** Review and approve PR.
 ```bash
@@ -90,8 +99,10 @@ gh pr merge --merge
 git checkout main
 git pull origin main
 ```
+
 <!-- USER-EXTENSION-START: post-merge -->
 <!-- USER-EXTENSION-END: post-merge -->
+
 ---
 ## Phase 3: Cleanup
 ### Step 3.1: Close Tracker (if exists)
@@ -107,8 +118,10 @@ gh pmu release close 2>/dev/null || echo "No release to close"
 git push origin --delete $BRANCH
 git branch -d $BRANCH
 ```
+
 <!-- USER-EXTENSION-START: post-close -->
 <!-- USER-EXTENSION-END: post-close -->
+
 ---
 ## Completion
 - ✅ Gates passed

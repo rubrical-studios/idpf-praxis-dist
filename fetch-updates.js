@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.20.2
+// **Version:** 0.26.4
 /**
  * IDPF Framework Update Fetcher
  *
@@ -16,6 +16,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const readline = require('readline');
 
 // ======================================
 //  Configuration
@@ -163,13 +164,146 @@ function copyDir(src, dest) {
   }
 }
 
+// ======================================
+//  Extensibility Functions
+// ======================================
+
+/**
+ * Parse command file header to extract category (EXTENSIBLE or MANAGED)
+ * Inlined from install/lib/extensibility.js for standalone operation
+ */
+function parseCommandHeader(content) {
+  const headerRegex = /<!--\s*(EXTENSIBLE|MANAGED)(?::\s*v?([\d.]+))?\s*-->/i;
+  const match = content.match(headerRegex);
+  if (!match) return null;
+  return {
+    category: match[1].toUpperCase(),
+    version: match[2] || null
+  };
+}
+
+/**
+ * Extract all USER-EXTENSION blocks from content
+ * Returns Map of extension ID → content between markers
+ * Inlined from install/lib/extensibility.js for standalone operation
+ */
+function extractExtensionBlocks(content) {
+  const blocks = new Map();
+  const blockRegex = /<!--\s*USER-EXTENSION-START:\s*(\S+)\s*-->([\s\S]*?)<!--\s*USER-EXTENSION-END:\s*\1\s*-->/g;
+  let match;
+  while ((match = blockRegex.exec(content)) !== null) {
+    const id = match[1];
+    const innerContent = match[2].trim();
+    if (innerContent) {
+      blocks.set(id, innerContent);
+    }
+  }
+  return blocks;
+}
+
+/**
+ * Check if a file has non-empty user extensions
+ */
+function hasUserExtensions(filePath) {
+  if (!fs.existsSync(filePath)) return false;
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    const header = parseCommandHeader(content);
+    if (!header || header.category !== 'EXTENSIBLE') return false;
+    const blocks = extractExtensionBlocks(content);
+    return blocks.size > 0;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Scan for extensible files with user extensions in the target directory
+ * @param {string} frameworkPath - Path to check for extensible files
+ * @param {string} tempPath - Path to new template files
+ * @returns {Array<{file: string, extensions: string[]}>} Files with user extensions
+ */
+function scanForUserExtensions(frameworkPath, tempPath) {
+  const extensibleFiles = [];
+  const commandsDir = path.join(frameworkPath, 'Templates', 'commands');
+  const tempCommandsDir = path.join(tempPath, 'Templates', 'commands');
+
+  if (!fs.existsSync(commandsDir) || !fs.existsSync(tempCommandsDir)) {
+    return extensibleFiles;
+  }
+
+  const files = fs.readdirSync(tempCommandsDir).filter(f => f.endsWith('.md'));
+
+  for (const file of files) {
+    const existingPath = path.join(commandsDir, file);
+    const tempFilePath = path.join(tempCommandsDir, file);
+
+    // Check if new file is marked EXTENSIBLE
+    const tempContent = fs.readFileSync(tempFilePath, 'utf8');
+    const tempHeader = parseCommandHeader(tempContent);
+    if (!tempHeader || tempHeader.category !== 'EXTENSIBLE') continue;
+
+    // Check if existing file has user extensions
+    if (hasUserExtensions(existingPath)) {
+      const content = fs.readFileSync(existingPath, 'utf8');
+      const blocks = extractExtensionBlocks(content);
+      extensibleFiles.push({
+        file: `Templates/commands/${file}`,
+        extensions: Array.from(blocks.keys())
+      });
+    }
+  }
+
+  return extensibleFiles;
+}
+
+// ======================================
+//  User Prompt Functions
+// ======================================
+
+/**
+ * Prompt user for input (promise-based)
+ */
+function prompt(question) {
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer.trim().toLowerCase());
+    });
+  });
+}
+
+/**
+ * Create backup directory and copy files
+ */
+function createBackup(frameworkPath, files) {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  const backupDir = path.join(frameworkPath, '.backup', `pre-upgrade-${timestamp}`);
+  fs.mkdirSync(backupDir, { recursive: true });
+
+  for (const fileInfo of files) {
+    const srcPath = path.join(frameworkPath, fileInfo.file);
+    const destDir = path.join(backupDir, path.dirname(fileInfo.file));
+    fs.mkdirSync(destDir, { recursive: true });
+    fs.copyFileSync(srcPath, path.join(destDir, path.basename(fileInfo.file)));
+  }
+
+  return backupDir;
+}
+
 /**
  * Update framework files from temp directory
+ * @param {string} frameworkPath - Target framework directory
+ * @param {Map<string, string>|null} preservedExtensions - Map of file → preserved content (null = no preservation)
  * @returns {string[]} Array of files that failed to update (e.g., locked on Windows)
  */
-function updateFrameworkFiles(frameworkPath) {
+function updateFrameworkFiles(frameworkPath, preservedExtensions = null) {
   // Files/directories to preserve during update
-  const PRESERVE = ['.git', 'installed-projects.json'];
+  const PRESERVE = ['.git', 'installed-projects.json', '.backup'];
   const failedFiles = [];
 
   // Clear framework directory (except preserved items)
@@ -203,7 +337,63 @@ function updateFrameworkFiles(frameworkPath) {
     }
   }
 
+  // Restore preserved extensions if any
+  if (preservedExtensions && preservedExtensions.size > 0) {
+    log(colors.dim('Restoring user extensions...'));
+    for (const [filePath, preservedBlocks] of preservedExtensions) {
+      const fullPath = path.join(frameworkPath, filePath);
+      if (fs.existsSync(fullPath)) {
+        restoreExtensionsToFile(fullPath, preservedBlocks);
+      }
+    }
+  }
+
   return failedFiles;
+}
+
+/**
+ * Restore preserved extension blocks to a file
+ */
+function restoreExtensionsToFile(filePath, preservedBlocks) {
+  let content = fs.readFileSync(filePath, 'utf8');
+
+  for (const [id, userContent] of preservedBlocks) {
+    // Find the empty extension marker and replace with preserved content
+    const emptyMarkerRegex = new RegExp(
+      `(<!--\\s*USER-EXTENSION-START:\\s*${escapeRegex(id)}\\s*-->)[\\s\\S]*?(<!--\\s*USER-EXTENSION-END:\\s*${escapeRegex(id)}\\s*-->)`,
+      'g'
+    );
+    content = content.replace(emptyMarkerRegex, `$1\n${userContent}\n$2`);
+  }
+
+  fs.writeFileSync(filePath, content);
+}
+
+/**
+ * Escape special regex characters
+ */
+function escapeRegex(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Extract and store extension blocks for later restoration
+ */
+function extractExtensionsForPreservation(frameworkPath, filesWithExtensions) {
+  const preserved = new Map();
+
+  for (const fileInfo of filesWithExtensions) {
+    const filePath = path.join(frameworkPath, fileInfo.file);
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      const blocks = extractExtensionBlocks(content);
+      if (blocks.size > 0) {
+        preserved.set(fileInfo.file, blocks);
+      }
+    }
+  }
+
+  return preserved;
 }
 
 // ======================================
@@ -283,8 +473,63 @@ async function main() {
     process.exit(1);
   }
 
+  // Pre-upgrade validation: Check for user extensions
+  let preservedExtensions = null;
+  const filesWithExtensions = scanForUserExtensions(frameworkPath, TEMP_DIR);
+
+  if (filesWithExtensions.length > 0) {
+    log();
+    log(colors.yellow('⚠️  User Extensions Detected'));
+    log(colors.yellow('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+    log();
+    log('The following files contain user customizations:');
+    log();
+    for (const fileInfo of filesWithExtensions) {
+      log(`  ${colors.cyan(fileInfo.file)}`);
+      for (const ext of fileInfo.extensions) {
+        log(colors.dim(`    └─ ${ext}`));
+      }
+    }
+    log();
+    log('Options:');
+    log('  [p] Preserve - Keep your extensions (recommended)');
+    log('  [b] Backup   - Create backup, then overwrite');
+    log('  [o] Overwrite - Replace with new version (lose changes)');
+    log('  [a] Abort    - Cancel the update');
+    log();
+
+    const answer = await prompt('Choose an option [p/b/o/a]: ');
+
+    switch (answer) {
+      case 'p':
+        log(colors.dim('Preserving user extensions...'));
+        preservedExtensions = extractExtensionsForPreservation(frameworkPath, filesWithExtensions);
+        break;
+
+      case 'b':
+        const backupDir = createBackup(frameworkPath, filesWithExtensions);
+        log(colors.green(`✓ Backup created: ${backupDir}`));
+        break;
+
+      case 'o':
+        log(colors.dim('Proceeding without preservation...'));
+        break;
+
+      case 'a':
+        log(colors.yellow('Update aborted by user.'));
+        removeDir(TEMP_DIR);
+        process.exit(0);
+        break;
+
+      default:
+        log(colors.yellow('Invalid option. Defaulting to preserve.'));
+        preservedExtensions = extractExtensionsForPreservation(frameworkPath, filesWithExtensions);
+    }
+    log();
+  }
+
   // Update framework files
-  const failedFiles = updateFrameworkFiles(frameworkPath);
+  const failedFiles = updateFrameworkFiles(frameworkPath, preservedExtensions);
 
   // Cleanup
   removeDir(TEMP_DIR);

@@ -19,12 +19,13 @@ const path = require('path');
 
 /**
  * REQ-013: Parse and validate framework-manifest.json
+ * Note: Consolidated to root manifest as of v0.26.4
  *
  * @param {string} frameworkPath - Path to framework root directory
  * @returns {{success: boolean, manifest?: object, error?: string}} Parse result
  */
 function parseManifest(frameworkPath) {
-  const manifestPath = path.join(frameworkPath, 'Templates', 'framework-manifest.json');
+  const manifestPath = path.join(frameworkPath, 'framework-manifest.json');
 
   // AC-5: Error if manifest missing
   if (!fs.existsSync(manifestPath)) {
@@ -40,24 +41,9 @@ function parseManifest(frameworkPath) {
       return { success: false, error: 'Framework manifest missing required "version" field' };
     }
 
-    // Handle 0.26.3 placeholder - read actual version from root manifest
-    if (manifest.version === '0.26.3') {
-      const rootManifestPath = path.join(frameworkPath, 'framework-manifest.json');
-      if (fs.existsSync(rootManifestPath)) {
-        try {
-          const rootManifest = JSON.parse(fs.readFileSync(rootManifestPath, 'utf8'));
-          if (rootManifest.version) {
-            manifest.version = rootManifest.version;
-          }
-        } catch (_e) {
-          // Fall through - keep 0.26.3 if root manifest can't be read
-        }
-      }
-    }
-
-    // AC-3: Validate scripts categories exist
-    if (!manifest.scripts) {
-      return { success: false, error: 'Framework manifest missing required "scripts" field' };
+    // AC-3: Validate scripts categories exist (under deploymentFiles)
+    if (!manifest.deploymentFiles?.scripts) {
+      return { success: false, error: 'Framework manifest missing required "deploymentFiles.scripts" field' };
     }
 
     // AC-4: Validate command arrays exist (can be empty)

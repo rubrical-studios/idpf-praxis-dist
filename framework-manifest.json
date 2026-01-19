@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.26.3",
+  "version": "0.27.0",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -61,6 +61,16 @@
       ]
     },
     "scripts": {
+      "framework": {
+        "source": "Templates/scripts/framework/",
+        "target": ".claude/scripts/framework/",
+        "files": [
+          "analyze-commits.js",
+          "recommend-version.js",
+          "update-release-notes.js",
+          "wait-for-ci.js"
+        ]
+      },
       "shared": {
         "source": "Templates/scripts/shared/",
         "target": ".claude/scripts/shared/",
@@ -73,7 +83,8 @@
           "sprint-retro.js",
           "end-sprint.js",
           "cleanup-release-assets.js",
-          "generate-changelog.js"
+          "generate-changelog.js",
+          "validate-helpers.js"
         ]
       },
       "lib": {
@@ -85,14 +96,14 @@
           "output.js",
           "poll.js"
         ]
+      },
+      "hooks": {
+        "source": "Templates/hooks/",
+        "target": ".claude/hooks/",
+        "files": [
+          "workflow-trigger.js"
+        ]
       }
-    },
-    "hooks": {
-      "source": "Templates/hooks/",
-      "target": ".claude/hooks/",
-      "files": [
-        "workflow-trigger.js"
-      ]
     },
     "rules": {
       "always": [
@@ -106,5 +117,24 @@
         "windows": ["05-windows-shell.md"]
       }
     }
-  }
+  },
+  "extensibleCommands": [
+    "create-branch",
+    "prepare-release",
+    "prepare-beta",
+    "merge-branch",
+    "destroy-branch",
+    "create-prd"
+  ],
+  "managedCommands": [
+    "assign-branch",
+    "switch-branch",
+    "transfer-issue",
+    "plan-sprint",
+    "sprint-status",
+    "sprint-retro",
+    "end-sprint",
+    "charter",
+    "extensions"
+  ]
 }

@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Commands
-**Version:** v0.26.3
+**Version:** v0.27.0
 **Module:** Commands (loaded on-demand)
 **Source:** IDPF-Agile/Agile-Commands.md
 
@@ -104,7 +104,7 @@
 ### Create-Branch Workflow
 1. Validate `[prefix]/[name]` format (e.g., `release/v0.16.0`, `patch/v0.15.4`)
 2. Check no uncommitted changes
-3. `gh pmu release start --branch "$BRANCH"`
+3. `gh pmu branch start --name "$BRANCH"`
 4. `git checkout "$BRANCH"`
 5. `git push -u origin "$BRANCH"`
 6. `mkdir -p "Releases/$BRANCH"`

@@ -491,31 +491,33 @@ function validateDeploymentFiles() {
 }
 
 /**
- * Validate Templates/framework-manifest.json matches actual Templates/ contents
+ * Validate framework-manifest.json scripts match actual Templates/ contents
+ * Note: Consolidated to root manifest as of v0.26.4
  */
 function validateTemplatesManifest() {
-    log('\nValidating Templates/framework-manifest.json...');
+    log('\nValidating framework-manifest.json deployment scripts...');
 
-    const manifestPath = path.join(ROOT, 'Templates', 'framework-manifest.json');
+    const manifestPath = path.join(ROOT, 'framework-manifest.json');
     const manifest = readJSON(manifestPath);
 
     if (!manifest) {
-        fail('Could not read Templates/framework-manifest.json');
+        fail('Could not read framework-manifest.json');
         return;
     }
 
     let hasError = false;
 
-    // Validate scripts categories
-    for (const category of ['shared', 'lib', 'hooks']) {
-        const config = manifest.scripts?.[category];
+    // Validate scripts categories (under deploymentFiles.scripts)
+    for (const category of ['framework', 'shared', 'lib', 'hooks']) {
+        const config = manifest.deploymentFiles?.scripts?.[category];
         if (!config) continue;
 
-        const sourceDir = path.join(ROOT, 'Templates', config.source);
+        // Source paths include Templates/ prefix (e.g., "Templates/scripts/framework/")
+        const sourceDir = path.join(ROOT, config.source);
         for (const file of config.files || []) {
             const filePath = path.join(sourceDir, file);
             if (!fs.existsSync(filePath)) {
-                fail(`Templates manifest scripts.${category}: ${file} not found`);
+                fail(`Manifest deploymentFiles.scripts.${category}: ${file} not found`);
                 hasError = true;
             }
         }
@@ -531,16 +533,16 @@ function validateTemplatesManifest() {
     for (const cmd of allCommands) {
         const cmdPath = path.join(commandsDir, `${cmd}.md`);
         if (!fs.existsSync(cmdPath)) {
-            fail(`Templates manifest: command ${cmd}.md not found in Templates/commands/`);
+            fail(`Manifest: command ${cmd}.md not found in Templates/commands/`);
             hasError = true;
         }
     }
 
     if (!hasError) {
-        const scriptCount = Object.values(manifest.scripts || {})
+        const scriptCount = Object.values(manifest.deploymentFiles?.scripts || {})
             .reduce((sum, cat) => sum + (cat.files?.length || 0), 0);
         const cmdCount = allCommands.length;
-        success(`Templates/framework-manifest.json: ${cmdCount} commands, ${scriptCount} scripts validated`);
+        success(`framework-manifest.json: ${cmdCount} commands, ${scriptCount} scripts validated`);
     }
 }
 
@@ -626,7 +628,7 @@ Validations performed:
   - workflow-trigger.js vs Templates/hooks/workflow-trigger.js
   - minimize-config.json existence and validity
   - deploymentFiles in framework-manifest.json vs Templates/
-  - Templates/framework-manifest.json vs Templates/ contents
+  - framework-manifest.json scripts vs Templates/ contents
 
 Exit codes:
   0 - All validations passed
