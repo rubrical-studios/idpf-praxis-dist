@@ -440,8 +440,8 @@ describe('audit.js', () => {
   });
 
   describe('Version Handling', () => {
-    test('replaces 0.27.0 in source files before computing hash', () => {
-      const sourceWithPlaceholder = '// Version: 0.27.0\nconsole.log("test");';
+    test('replaces 0.28.0 in source files before computing hash', () => {
+      const sourceWithPlaceholder = '// Version: 0.28.0\nconsole.log("test");';
       const sourceWithVersion = '// Version: 1.0.0\nconsole.log("test");';
 
       const hashWithPlaceholder = computeHash(sourceWithPlaceholder);
@@ -456,7 +456,7 @@ describe('audit.js', () => {
     });
 
     test('correctly computes hash with version substitution', () => {
-      const content = '// Version: 0.27.0';
+      const content = '// Version: 0.28.0';
       const version = '2.5.0';
       const expected = computeHash('// Version: 2.5.0');
 

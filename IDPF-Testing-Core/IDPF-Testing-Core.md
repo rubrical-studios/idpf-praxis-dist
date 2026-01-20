@@ -1,5 +1,5 @@
 # IDPF-Testing-Core Framework
-**Version:** v0.27.0
+**Version:** v0.28.0
 **Framework-Debug:** True
 
 ## Overview

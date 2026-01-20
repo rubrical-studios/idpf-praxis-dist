@@ -403,11 +403,11 @@ function getAgileDetailedCommands() {
 
 ### Story Workflow
 
-| Command | Description |
+| Trigger | Description |
 |---------|-------------|
-| \`Start-Story [ID]\` | Begin work on story (In Progress + assign) |
-| \`Story-Status\` | Check progress on current story |
-| \`Story-Complete [ID]\` | Mark story as done |
+| \`work #N\` | Begin work on story (In Progress + assign) |
+| \`gh pmu view #N\` | Check story status directly |
+| \`done\` | Mark story as done |
 
 ---
 

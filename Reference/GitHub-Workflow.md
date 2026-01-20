@@ -1,5 +1,5 @@
 # GitHub Workflow Integration
-**Version:** v0.27.0
+**Version:** v0.28.0
 ---
 **MUST READ:** At session startup and after compaction.
 ## Project Configuration

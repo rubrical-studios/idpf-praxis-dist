@@ -8,6 +8,53 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.28.0] - 2026-01-20
+
+### Added
+- **#907** - New `/create-backlog` command with TDD test case integration
+  - Accepts PRD issue number to generate epics and stories
+  - Embeds test cases from approved Test Plan into story bodies
+  - Tech stack detection for language-appropriate test syntax
+  - Blocking gate requires test plan approval before backlog creation
+- **#906** - TDD test plan generation in `/create-prd`
+  - Automatically generates `Test-Plan-{name}.md` alongside PRD
+  - Creates approval issue with review checklist
+  - Blocks `/create-backlog` until test plan is approved
+- **#910** - New `/add-story` and `/split-story` commands
+  - Charter compliance checking for scope alignment
+  - Automatic epic detection and story linking
+  - Test plan update logic for new/split stories
+- **#911** - New `/emergency-bug` and `/pivot` commands
+  - `/emergency-bug` creates P0 issue with emergency label
+  - `/pivot` reviews stories for direction changes (keep/archive/close)
+- **#908** - Issue-driven mode for `/create-prd`
+  - Accepts proposal issue number argument (`123` or `#123`)
+  - Completes proposal lifecycle (moves to Implemented/, closes issue)
+  - Creates PRD tracking issue with `prd` label
+- **#913** - Todo list execution instructions for complex commands
+  - Added to `/prepare-release`, `/prepare-beta`, `/merge-branch`
+  - Ensures progress tracking and resumability after context compaction
+- **#867** - Testing framework question in `/charter` inception flow
+  - Triggers for testable project types, skipped for docs/config repos
+  - Populates `Test-Strategy.md` and `Tech-Stack.md`
+  - TDD philosophy stated as default per IDPF-Agile
+
+### Changed
+- **#911** - GitHub-Workflow.md now focused on rules/triggers only
+  - Command references moved to self-contained slash commands
+  - Agile-Commands.md updated to reference slash commands
+
+### Removed
+- **#909** - Redundant Story commands from documentation
+  - Removed: Start-Story, Story-Status, Story-Complete, Refine-Story
+  - Removed: Story-Growing, Estimate-Story, Story-Blocked, Archive-Story
+  - Functionality covered by `gh pmu` commands and slash commands
+
+### Fixed
+- **#867** - Added TDD workflow constraint to `Constraints.md` generation
+
+---
+
 ## [0.27.0] - 2026-01-19
 
 ### Added
@@ -24,7 +71,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **#889** - Replaced deprecated `--release` flag with `--branch` in `assign-branch.js`
   - Updated to use current gh-pmu API before deprecation period ends
 - **#900** - Fixed stale `frameworkVersion` in `framework-config.json`
-  - Changed hardcoded version to `v0.27.0` placeholder
+  - Changed hardcoded version to `v0.28.0` placeholder
   - Added self-hosted config update step to `/prepare-release` Phase 3
 - **#899** - Standardized GitHub release page formatting
   - `update-release-notes.js` now transforms CHANGELOG to formatted release pages
@@ -64,7 +111,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.26.1] - 2026-01-17
 
 ### Fixed
-- **#887** - `framework-manifest.json` now uses `v0.27.0` placeholder for proper version injection during deployment
+- **#887** - `framework-manifest.json` now uses `v0.28.0` placeholder for proper version injection during deployment
   - Root cause of `fetch-updates.js` version verification failures on Windows
 
 ---
@@ -141,10 +188,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Priority distribution validation for generated backlogs
 - **#847** - Tag format standardization
   - Commands now use versionless `<!-- EXTENSIBLE -->` / `<!-- MANAGED -->`
-  - Frontmatter uses `v0.27.0` placeholder instead of hardcoded versions
+  - Frontmatter uses `v0.28.0` placeholder instead of hardcoded versions
   - Installer regex updated for backward compatibility
 - **#840** - PRD directory structure: `PRD/Active/` and `PRD/Implemented/`
-- **#821** - README-DIST.md now uses `v0.27.0` placeholder
+- **#821** - README-DIST.md now uses `v0.28.0` placeholder
 
 ### Removed
 - **#842** - Deprecated IDPF-PRD framework removed
@@ -261,7 +308,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Infrastructure
 - **minimize-config.json** - Removed overly broad "Merge" pattern that excluded merge-branch.md
-- **Rules rebuild from minimized sources** - All rules now use v0.27.0 placeholder
+- **Rules rebuild from minimized sources** - All rules now use v0.28.0 placeholder
 
 ---
 
@@ -309,7 +356,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Internal
 - Integrated extensibility.js into deployment workflow
 - Lowered coverage thresholds to match actual coverage
-- Restored v0.27.0 placeholders to 209 framework source files
+- Restored v0.28.0 placeholders to 209 framework source files
 
 ---
 
@@ -377,12 +424,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.20.1] - 2026-01-02
 
 ### Fixed
-- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.27.0` placeholder in `Templates/framework-manifest.json`
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.28.0` placeholder in `Templates/framework-manifest.json`
 - **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
 
 ### Changed
 - **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
-- **Version placeholder standardized** - All version tokens now use `v0.27.0` format for consistent replacement
+- **Version placeholder standardized** - All version tokens now use `v0.28.0` format for consistent replacement
 
 ---
 
@@ -451,7 +498,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.27.0` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.28.0` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---
