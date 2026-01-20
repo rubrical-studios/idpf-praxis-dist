@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // **Version:** 0.26.4
 /**
- * @framework-script 0.28.0
+ * @framework-script 0.29.0
  * @description Extract CHANGELOG section and update GitHub Release page with formatted notes
  * @checksum sha256:placeholder
  *

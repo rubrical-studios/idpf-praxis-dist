@@ -69,6 +69,22 @@ function isFrameworkDirectory() {
 }
 
 /**
+ * Check if running from the -dist repository
+ * The -dist repo should not prompt about extensions - just overwrite files
+ */
+function isDistRepository() {
+  try {
+    const remoteUrl = execSync('git config --get remote.origin.url', {
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe']
+    }).trim();
+    return remoteUrl.includes('idpf-praxis-dist');
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Read version from framework-manifest.json
  */
 function readVersion(frameworkPath) {
@@ -474,8 +490,14 @@ async function main() {
   }
 
   // Pre-upgrade validation: Check for user extensions
+  // Skip extension prompts in -dist repo (it's the distribution source, not a user installation)
   let preservedExtensions = null;
-  const filesWithExtensions = scanForUserExtensions(frameworkPath, TEMP_DIR);
+  const isDistRepo = isDistRepository();
+  const filesWithExtensions = isDistRepo ? [] : scanForUserExtensions(frameworkPath, TEMP_DIR);
+
+  if (isDistRepo) {
+    log(colors.dim('Distribution repository detected - skipping extension checks'));
+  }
 
   if (filesWithExtensions.length > 0) {
     log();

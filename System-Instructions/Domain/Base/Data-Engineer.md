@@ -1,5 +1,5 @@
 # System Instructions: Data Engineer
-**Version:** v0.28.0
+**Version:** v0.29.0
 **Source:** System-Instructions/Domain/Base/Data-Engineer.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Data pipelines, ETL/ELT, data warehousing, analytics infrastructure.

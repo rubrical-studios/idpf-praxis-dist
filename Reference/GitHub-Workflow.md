@@ -1,5 +1,5 @@
 # GitHub Workflow Integration
-**Version:** v0.28.0
+**Version:** v0.29.0
 ---
 **MUST READ:** At session startup and after compaction.
 ## Project Configuration
@@ -105,14 +105,20 @@ Each sprint scoped to one branch tracker; `microsprint start` requires active br
 | IDPF-Agile | `epic` | `story` |
 **When user says "work #N":** `gh issue view [N] --repo {repository} --json labels --jq '.labels[].name'`
 **IDPF-Agile:** `epic` label? → Yes: EPIC WORKFLOW (Section 4) | No: STANDARD (Section 1)
+**Work Command Auto-Todo:**
+| Trigger | Todo Source |
+|---------|-------------|
+| `work #N` (story/bug) | Acceptance criteria checkboxes |
+| `work #N` (epic) | Sub-issues from `gh pmu sub list` |
+| `work all in [status]` | Issues matching status filter |
+Hook outputs `[AUTO-TODO: ...]` blocks for assistant to create TodoWrite list.
 **Trigger Words (Create Issue First):**
 | Trigger | Section |
 |---------|---------|
-| `bug:`, `finding:` | 1 (Standard) |
+| `bug:` | 1 (Standard) |
 | `enhancement:` | 1 (Standard) |
 | `idea:` | 2 (Proposal alias) |
 | `proposal:` | 2 (Proposal) |
-| `prd:` | 7 (PRD) |
 Create issue → Report number → **Wait for "work"**
 ## BLOCKING: Status Change Prerequisites
 **Before `--status in_review`:**

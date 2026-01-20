@@ -1,5 +1,5 @@
 # System Instructions: Cloud Solutions Architect
-**Version:** v0.28.0
+**Version:** v0.29.0
 **Source:** System-Instructions/Domain/Base/Cloud-Solutions-Architect.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Cloud-native architectures, system design, architectural patterns, infrastructure decisions.

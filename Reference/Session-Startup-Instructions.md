@@ -1,5 +1,5 @@
 # Session Startup Instructions
-**Version:** v0.28.0
+**Version:** v0.29.0
 **Purpose:** Standard initialization procedure for AI assistant sessions
 ---
 ## Rules Auto-Loading (v2.9+)
@@ -34,12 +34,6 @@ Provides: current versions/counts, framework selection matrix, skills registry, 
 ### 4. Confirm Initialization
 Report: Date, Framework version, Skill count, Specialists count, Process framework (if self-hosted), GitHub Workflow status, Charter status
 Ask user what they would like to work on.
-### 5. Check Open Releases
-```bash
-gh pmu release list
-```
-**If no releases:** "No open releases found. Create one to start working: `gh pmu release start --version "X.Y.Z"`"
-**If releases exist:** Display list with version and branch.
 ---
 ## Post-Compact Behavior
 **No re-reading required.** Rules in `.claude/rules/` auto-reload after compaction.
