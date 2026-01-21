@@ -152,7 +152,6 @@ const INSTALLED_FILES_MANIFEST = {
       (config) => config?.enableGitHubWorkflow ? 'gh.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'git.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'output.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'poll.js' : null,
     ],
   },
   hooks: {

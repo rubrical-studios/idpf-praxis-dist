@@ -1070,7 +1070,8 @@ async function main() {
       log('    Project setup (in your target directory):');
       log(`      4. Create GitHub repo if needed: ${colors.cyan('gh repo create')}`);
       log(`      5. Create GitHub project board: ${colors.cyan('https://github.com/users/YOUR_USERNAME/projects')}`);
-      log(`      6. Initialize gh-pmu: ${colors.cyan('gh pmu init')}`);
+      log(`      6. ${colors.yellow('Link repository to project:')} Project → Settings → Manage access → Link a repository`);
+      log(`      7. Initialize gh-pmu: ${colors.cyan('gh pmu init')}`);
       log();
     }
 

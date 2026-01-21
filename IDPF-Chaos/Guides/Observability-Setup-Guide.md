@@ -1,5 +1,5 @@
 # Observability Setup Guide for Chaos Engineering
-**Version:** v0.29.1
+**Version:** v0.29.2
 
 **Framework:** IDPF-Chaos
 

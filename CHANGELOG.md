@@ -8,6 +8,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.29.2] - 2026-01-21
+
+### Fixed
+- **#936** - Release→Branch field migration in workflow-trigger.js
+  - Updated field reference from `Release` to `Branch` in hook script
+  - Aligns with v0.29.1 field rename in GitHub Project
+- **#935** - Manifest key inconsistency (`lib` → `shared/lib`)
+  - Renamed category in `framework-manifest.json` to match filesystem path
+  - Updated `deployment.js` to use consistent category name
+  - Fixes "Untracked - File not in manifest" audit errors for lib files
+- **#933** - v0.29.2 tokens in 12 script files
+  - Replaced hardcoded version numbers with `v0.29.2` placeholder
+  - Enables automatic version stamping during deployment
+  - Affected: analyze-commits.js, recommend-version.js, wait-for-ci.js, and 9 others
+- **#934** - Audit scope detection for non-IDPF projects
+  - Added `NOT_IDPF_PROJECT` status to audit.js
+  - Early detection prevents false "missing file" errors in non-IDPF directories
+  - Checks for `framework-config.json` and `.claude/.manifest.json`
+- **#931** - Installer messaging for manual repo-project association
+  - Added warning in `displayGitHubSetupSuccess()` with manual step instruction
+  - Added step to manual setup instructions in `index.js`
+  - Addresses GitHub API limitation (cannot set default repository programmatically)
+
+### Changed
+- **#938** - Windows Shell Safety: Added backtick handling section
+  - New "Issue/PR Bodies with Backticks" section in documentation
+  - Documents `-F` temp file pattern for bodies with code blocks
+  - Updated Reference/, .min-mirror/, and .claude/rules/ copies
+
+### Removed
+- **#939** - Removed orphaned `poll.js` from Templates and installed copies
+  - File was never imported or used (dead code)
+  - Removed from `framework-manifest.json` and `constants.js`
+
+---
+
 ## [0.29.1] - 2026-01-20
 
 ### Added
@@ -15,6 +51,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Validates rules, commands, and scripts against `framework-manifest.json`
   - Checks static files and conditional patterns (platform, feature flags)
   - Shows remediation commands with `--fix` flag
+
+### Changed
+- **#926** - Rename GitHub Project text field from `Release` to `Branch`
+  - Field name change reflects semantic clarity: any branch can produce releases
+  - `gh pmu release` deprecated in favor of `gh pmu branch`
+  - `--release` flag deprecated in favor of `--branch`
+  - Updated all scripts, commands, and documentation
+  - Backwards compatible: old field/flag names work but show deprecation warnings
 
 ### Fixed
 - **#923** - Race condition in `update-release-notes.js`
@@ -37,12 +81,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Ensures progress tracking and resumability after context compaction
 
 ### Changed
-- **#926** - Rename GitHub Project text field from `Release` to `Branch`
-  - Field name change reflects semantic clarity: any branch can produce releases
-  - `gh pmu release` deprecated in favor of `gh pmu branch`
-  - `--release` flag deprecated in favor of `--branch`
-  - Updated all scripts, commands, and documentation
-  - Backwards compatible: old field/flag names work but show deprecation warnings
 - **#916** - Remove deprecated "Check Open Releases" from session startup
   - Step 5 removed from Session-Startup-Instructions.md
   - Users can check branches on-demand with `/switch-branch`
@@ -122,7 +160,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **#889** - Replaced deprecated `--release` flag with `--branch` in `assign-branch.js`
   - Updated to use current gh-pmu API before deprecation period ends
 - **#900** - Fixed stale `frameworkVersion` in `framework-config.json`
-  - Changed hardcoded version to `v0.29.1` placeholder
+  - Changed hardcoded version to `v0.29.2` placeholder
   - Added self-hosted config update step to `/prepare-release` Phase 3
 - **#899** - Standardized GitHub release page formatting
   - `update-release-notes.js` now transforms CHANGELOG to formatted release pages
@@ -162,7 +200,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.26.1] - 2026-01-17
 
 ### Fixed
-- **#887** - `framework-manifest.json` now uses `v0.29.1` placeholder for proper version injection during deployment
+- **#887** - `framework-manifest.json` now uses `v0.29.2` placeholder for proper version injection during deployment
   - Root cause of `fetch-updates.js` version verification failures on Windows
 
 ---
@@ -239,10 +277,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Priority distribution validation for generated backlogs
 - **#847** - Tag format standardization
   - Commands now use versionless `<!-- EXTENSIBLE -->` / `<!-- MANAGED -->`
-  - Frontmatter uses `v0.29.1` placeholder instead of hardcoded versions
+  - Frontmatter uses `v0.29.2` placeholder instead of hardcoded versions
   - Installer regex updated for backward compatibility
 - **#840** - PRD directory structure: `PRD/Active/` and `PRD/Implemented/`
-- **#821** - README-DIST.md now uses `v0.29.1` placeholder
+- **#821** - README-DIST.md now uses `v0.29.2` placeholder
 
 ### Removed
 - **#842** - Deprecated IDPF-PRD framework removed
@@ -359,7 +397,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Infrastructure
 - **minimize-config.json** - Removed overly broad "Merge" pattern that excluded merge-branch.md
-- **Rules rebuild from minimized sources** - All rules now use v0.29.1 placeholder
+- **Rules rebuild from minimized sources** - All rules now use v0.29.2 placeholder
 
 ---
 
@@ -407,7 +445,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Internal
 - Integrated extensibility.js into deployment workflow
 - Lowered coverage thresholds to match actual coverage
-- Restored v0.29.1 placeholders to 209 framework source files
+- Restored v0.29.2 placeholders to 209 framework source files
 
 ---
 
@@ -475,12 +513,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.20.1] - 2026-01-02
 
 ### Fixed
-- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.29.1` placeholder in `Templates/framework-manifest.json`
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.29.2` placeholder in `Templates/framework-manifest.json`
 - **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
 
 ### Changed
 - **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
-- **Version placeholder standardized** - All version tokens now use `v0.29.1` format for consistent replacement
+- **Version placeholder standardized** - All version tokens now use `v0.29.2` format for consistent replacement
 
 ---
 
@@ -549,7 +587,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.29.1` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.29.2` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---

@@ -19,10 +19,10 @@ const {
 } = require('./extensibility');
 
 /**
- * Copy file with 0.29.1 placeholder replacement
+ * Copy file with 0.29.2 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.29.1 with
+ * @param {string} version - Version string to replace 0.29.2 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
@@ -35,7 +35,7 @@ function copyFileWithVersion(src, dest, version) {
  *
  * @param {string} src - Source template file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.29.1 with
+ * @param {string} version - Version string to replace 0.29.2 with
  * @param {boolean} debug - Enable debug logging
  * @returns {{preserved: boolean, warnings: string[]}} Deployment result
  */
@@ -253,7 +253,7 @@ function createDirWithGitkeep(dirPath, created, existed) {
  * @returns {{deployed: object, modified: string[], manifest: object}} Deployment results
  */
 function deployFrameworkScripts(projectDir, frameworkPath) {
-  const deployed = { framework: [], shared: [], lib: [], hooks: [] };
+  const deployed = { framework: [], shared: [], 'shared/lib': [], hooks: [] };
   const modified = [];
   const manifestEntries = {};
   const deployedAt = new Date().toISOString().split('T')[0];
@@ -269,7 +269,7 @@ function deployFrameworkScripts(projectDir, frameworkPath) {
   const version = readFrameworkVersion(frameworkPath);
 
   // AC-1: Deploy scripts per category
-  const categories = ['framework', 'shared', 'lib', 'hooks'];
+  const categories = ['framework', 'shared', 'shared/lib', 'hooks'];
 
   for (const category of categories) {
     const categoryConfig = frameworkManifest.deploymentFiles?.scripts?.[category];
@@ -692,6 +692,12 @@ function displayGitHubSetupSuccess(repoUrl, projectUrl) {
   log();
   logSuccess('GitHub integration setup complete!');
   log();
+  if (projectUrl) {
+    log(colors.yellow('  ⚠ Manual step required:'));
+    log('    Set the default repository in your GitHub Project settings:');
+    log(`    ${projectUrl} → Settings → Manage access → Link a repository`);
+    log();
+  }
 }
 
 /**

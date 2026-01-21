@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * audit.js - IDPF Framework Installation Auditor
- * Version: 0.29.1
+ * Version: 0.29.2
  *
  * Audits all IDPF Framework installations to detect:
  * - Modified files (user changed managed files)
@@ -34,6 +34,7 @@ const STATUS = {
   UNTRACKED: '➕ Untracked',
   MISSING: '❓ Missing',
   CONFIG_MISMATCH: '⚠️  Config Mismatch',
+  NOT_IDPF_PROJECT: '⏭️  Not IDPF Project',
 };
 
 // Directories to audit within .claude/
@@ -50,7 +51,7 @@ function computeFileHash(filePath) {
 }
 
 /**
- * Compute hash of content string with 0.29.1 replaced
+ * Compute hash of content string with 0.29.2 replaced
  */
 function computeContentHashWithVersion(content, version) {
   const replaced = content.replace(/\{\{VERSION\}\}/g, version);
@@ -190,6 +191,19 @@ function auditProject(projectPath, frameworkPath, installedVersion) {
   // Read project configs
   const frameworkConfig = readJsonFile(path.join(projectPath, 'framework-config.json'));
   const manifest = readJsonFile(path.join(claudeDir, '.manifest.json'));
+
+  // Check if this is actually an IDPF-installed project
+  // Must have both framework-config.json AND .claude/.manifest.json
+  if (!frameworkConfig || !manifest) {
+    results.push({
+      status: STATUS.NOT_IDPF_PROJECT,
+      file: projectPath,
+      details: !frameworkConfig
+        ? 'Missing framework-config.json (not IDPF-installed)'
+        : 'Missing .claude/.manifest.json (not IDPF-installed)',
+    });
+    return results;
+  }
 
   // Configuration validation
   if (frameworkConfig && manifest) {
@@ -568,7 +582,7 @@ async function main() {
   }
 
   console.log(`IDPF Framework Audit`);
-  console.log(`Version: 0.29.1`);
+  console.log(`Version: 0.29.2`);
   console.log(`Mode: ${fixMode ? 'Fix' : 'Audit'}`);
   console.log(`Projects: ${projectsData.projects.length}`);
 

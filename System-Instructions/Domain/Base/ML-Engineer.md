@@ -1,5 +1,5 @@
 # System Instructions: ML Engineer
-**Version:** v0.29.1
+**Version:** v0.29.2
 **Source:** System-Instructions/Domain/Base/ML-Engineer.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** ML model development, training, deployment (MLOps), production systems.
