@@ -1,5 +1,5 @@
 # System Instructions: Accessibility Specialist
-**Version:** v0.29.2
+**Version:** v0.29.3
 **Source:** System-Instructions/Domain/Pack/Accessibility-Specialist.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Web accessibility, WCAG compliance, assistive technologies, inclusive design, remediation.
