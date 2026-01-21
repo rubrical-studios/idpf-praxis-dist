@@ -1,5 +1,5 @@
 # System Instructions: API & Integration Specialist
-**Version:** v0.29.0
+**Version:** v0.29.1
 **Source:** System-Instructions/Domain/Pack/API-Integration-Specialist.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** API design, microservices, system integrations, seamless communication between systems.

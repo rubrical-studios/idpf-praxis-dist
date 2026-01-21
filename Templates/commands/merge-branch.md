@@ -1,5 +1,5 @@
 ---
-version: "v0.29.0"
+version: "v0.29.1"
 description: Merge branch to main with gated checks (project)
 argument-hint: [--skip-gates] [--dry-run]
 ---
@@ -33,7 +33,7 @@ BRANCH=$(git branch --show-current)
 Must NOT be on `main`. Typical: `feature/*`, `fix/*`, `idpf/*`, `patch/*`, `release/*`.
 ### Check for Tracker Issue
 ```bash
-gh pmu release current --json tracker
+gh pmu branch current --json tracker
 ```
 
 <!-- USER-EXTENSION-START: pre-gate -->
@@ -93,9 +93,9 @@ git pull origin main
 ```bash
 gh issue close [TRACKER_NUMBER] --comment "Branch merged to main"
 ```
-### Step 3.2: Close Release in Project
+### Step 3.2: Close Branch in Project
 ```bash
-gh pmu release close 2>/dev/null || echo "No release to close"
+gh pmu branch close 2>/dev/null || echo "No branch to close"
 ```
 ### Step 3.3: Delete Branch
 ```bash

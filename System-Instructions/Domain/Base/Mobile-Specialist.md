@@ -1,5 +1,5 @@
 # System Instructions: Mobile Specialist
-**Version:** v0.29.0
+**Version:** v0.29.1
 **Source:** System-Instructions/Domain/Base/Mobile-Specialist.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Native and cross-platform mobile development for iOS and Android.

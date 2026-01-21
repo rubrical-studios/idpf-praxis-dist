@@ -1,5 +1,5 @@
 # Team Coordination Guide for Contract Testing
-**Version:** v0.29.0
+**Version:** v0.29.1
 
 **Framework:** IDPF-Contract-Testing
 

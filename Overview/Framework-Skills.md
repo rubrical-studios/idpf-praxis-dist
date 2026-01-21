@@ -1,5 +1,5 @@
 # Framework Skills Reference
-**Version:** v0.29.0
+**Version:** v0.29.1
 **Purpose:** Skills reference
 ---
 ## Skills Overview

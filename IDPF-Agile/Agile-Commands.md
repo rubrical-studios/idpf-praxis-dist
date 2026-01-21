@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Commands
-**Version:** v0.29.0
+**Version:** v0.29.1
 **Module:** Commands (loaded on-demand)
 **Source:** IDPF-Agile/Agile-Commands.md
 
@@ -97,7 +97,7 @@
 ### Release Lifecycle Flow
 ```
 /create-branch release/v0.16.0 -> Creates branch, tracker, directory
--> Work on working branch -> gh pmu move [#] --release current
+-> Work on working branch -> gh pmu move [#] --branch current
 -> /prepare-release (Phase 0-5: analysis, versions, validation, PR/merge/tag, verify, close)
 ```
 

@@ -1,5 +1,5 @@
 ---
-version: "v0.29.0"
+version: "v0.29.1"
 description: Safely delete branch with confirmation
 argument-hint: [branch-name] [--force]
 ---
@@ -67,7 +67,7 @@ User must type exactly: `$BRANCH`
 ## Phase 2: Close Tracker
 ### Step 2.1: Find Tracker Issue
 ```bash
-gh pmu release current --json tracker 2>/dev/null
+gh pmu branch current --json tracker 2>/dev/null
 ```
 ### Step 2.2: Close as Not Planned
 ```bash
@@ -75,9 +75,9 @@ gh issue close [TRACKER_NUMBER] \
   --reason "not planned" \
   --comment "Branch destroyed via /destroy-branch. Work abandoned."
 ```
-### Step 2.3: Close Release in Project
+### Step 2.3: Close Branch in Project
 ```bash
-gh pmu release close 2>/dev/null || echo "No release to close"
+gh pmu branch close 2>/dev/null || echo "No branch to close"
 ```
 ---
 ## Phase 3: Delete Artifacts

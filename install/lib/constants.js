@@ -89,6 +89,9 @@ const INSTALLED_FILES_MANIFEST = {
       '01-anti-hallucination.md',
       (config) => config?.enableGitHubWorkflow ? '02-github-workflow.md' : null,
       '03-startup.md',
+      '04-charter-enforcement.md',
+      (_config) => process.platform === 'win32' ? '05-windows-shell.md' : null,
+      '06-runtime-triggers.md',
     ],
   },
   commands: {
@@ -112,6 +115,11 @@ const INSTALLED_FILES_MANIFEST = {
       (config) => config?.enableGitHubWorkflow ? 'charter.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'extensions.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'create-prd.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'create-backlog.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'add-story.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'split-story.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'emergency-bug.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'pivot.md' : null,
     ],
   },
   scripts: {
@@ -126,6 +134,16 @@ const INSTALLED_FILES_MANIFEST = {
       (config) => config?.enableGitHubWorkflow ? 'end-sprint.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'cleanup-release-assets.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'generate-changelog.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'validate-helpers.js' : null,
+    ],
+  },
+  scriptsFramework: {
+    dir: '.claude/scripts/framework',
+    files: [
+      (config) => config?.enableGitHubWorkflow ? 'analyze-commits.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'recommend-version.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'update-release-notes.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'wait-for-ci.js' : null,
     ],
   },
   scriptsLib: {

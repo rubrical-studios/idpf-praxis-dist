@@ -1,5 +1,5 @@
 ---
-version: "v0.29.0"
+version: "v0.29.1"
 description: Prepare release with PR, merge to main, and tag
 argument-hint: [version] [--skip-coverage] [--dry-run] [--help]
 ---
@@ -48,7 +48,7 @@ gh pmu microsprint current
 Close open sprints before proceeding.
 ### Check for Incomplete Issues
 ```bash
-gh pmu release current --json issues | jq '.[] | select(.status != "done")'
+gh pmu branch current --json issues | jq '.[] | select(.status != "done")'
 ```
 ## Phase 1: Analysis
 ### Step 1.1: Analyze Changes

@@ -605,6 +605,199 @@ function validateProcessFrameworks() {
     }
 }
 
+/**
+ * Extract static file names from INSTALLED_FILES_MANIFEST
+ * Handles both string entries and conditional functions
+ * @param {Array} filesArray - Array of strings or functions from INSTALLED_FILES_MANIFEST
+ * @returns {Array} - Array of static string file names (excludes conditional functions)
+ */
+function extractStaticFiles(filesArray) {
+    return filesArray
+        .filter(f => typeof f === 'string')
+        .sort();
+}
+
+/**
+ * Extract conditional file patterns from INSTALLED_FILES_MANIFEST
+ * Returns info about what conditions each file depends on
+ * @param {Array} filesArray - Array from INSTALLED_FILES_MANIFEST
+ * @returns {Array} - Array of {pattern, condition} for conditional files
+ */
+function extractConditionalPatterns(filesArray) {
+    const patterns = [];
+    for (const f of filesArray) {
+        if (typeof f === 'function') {
+            const fnStr = f.toString();
+            // Extract the file name from patterns like: config?.enableGitHubWorkflow ? 'filename.md' : null
+            const match = fnStr.match(/['"]([^'"]+\.(md|js))['"]/);
+            if (match) {
+                const condition = fnStr.includes('enableGitHubWorkflow') ? 'enableGitHubWorkflow' :
+                    fnStr.includes('win32') ? 'windows' : 'unknown';
+                patterns.push({ file: match[1], condition });
+            }
+        }
+    }
+    return patterns;
+}
+
+/**
+ * Validate INSTALLED_FILES_MANIFEST against framework-manifest.json
+ * Ensures orphan cleanup won't remove valid files
+ */
+function validateInstalledFilesManifest() {
+    log('\nValidating INSTALLED_FILES_MANIFEST...');
+
+    const constantsPath = getInstallerConstantsPath();
+    const manifestPath = path.join(ROOT, 'framework-manifest.json');
+
+    // Read framework-manifest.json
+    const manifest = readJSON(manifestPath);
+    if (!manifest || !manifest.deploymentFiles) {
+        fail('Could not read deploymentFiles from framework-manifest.json');
+        return;
+    }
+
+    // Read constants.js and get INSTALLED_FILES_MANIFEST
+    let constants;
+    try {
+        // Clear require cache to get fresh version
+        delete require.cache[require.resolve(constantsPath)];
+        constants = require(constantsPath);
+    } catch (e) {
+        fail(`Could not load constants.js: ${e.message}`);
+        return;
+    }
+
+    const installed = constants.INSTALLED_FILES_MANIFEST;
+    if (!installed) {
+        fail('INSTALLED_FILES_MANIFEST not found in constants.js');
+        return;
+    }
+
+    const df = manifest.deploymentFiles;
+    let hasError = false;
+
+    // Validate rules
+    const manifestRulesAlways = df.rules?.always || [];
+    const manifestRulesConditional = Object.values(df.rules?.conditional || {}).flat();
+    const expectedRules = [...manifestRulesAlways, ...manifestRulesConditional].sort();
+
+    const installedRulesStatic = extractStaticFiles(installed.rules?.files || []);
+    const installedRulesConditional = extractConditionalPatterns(installed.rules?.files || []);
+    const installedRulesAll = [...installedRulesStatic, ...installedRulesConditional.map(p => p.file)].sort();
+
+    const missingRules = expectedRules.filter(r => !installedRulesAll.includes(r));
+    const extraRules = installedRulesAll.filter(r => !expectedRules.includes(r));
+
+    if (missingRules.length > 0) {
+        fail(`INSTALLED_FILES_MANIFEST.rules missing: ${missingRules.join(', ')}`,
+            'Add missing rules to install/lib/constants.js INSTALLED_FILES_MANIFEST.rules.files');
+        hasError = true;
+    }
+    if (extraRules.length > 0) {
+        warn(`INSTALLED_FILES_MANIFEST.rules has extra entries: ${extraRules.join(', ')}`);
+    }
+
+    // Validate commands
+    const manifestCmdsCore = df.commands?.core || [];
+    const manifestCmdsWorkflow = df.commands?.workflow || [];
+    const expectedCmds = [...manifestCmdsCore, ...manifestCmdsWorkflow].sort();
+
+    const installedCmdsStatic = extractStaticFiles(installed.commands?.files || []);
+    const installedCmdsConditional = extractConditionalPatterns(installed.commands?.files || []);
+    const installedCmdsAll = [...installedCmdsStatic, ...installedCmdsConditional.map(p => p.file)].sort();
+
+    const missingCmds = expectedCmds.filter(c => !installedCmdsAll.includes(c));
+    const extraCmds = installedCmdsAll.filter(c => !expectedCmds.includes(c));
+
+    if (missingCmds.length > 0) {
+        fail(`INSTALLED_FILES_MANIFEST.commands missing: ${missingCmds.join(', ')}`,
+            'Add missing commands to install/lib/constants.js INSTALLED_FILES_MANIFEST.commands.files');
+        hasError = true;
+    }
+    if (extraCmds.length > 0) {
+        warn(`INSTALLED_FILES_MANIFEST.commands has extra entries: ${extraCmds.join(', ')}`);
+    }
+
+    // Validate scripts (shared)
+    const expectedScriptsShared = (df.scripts?.shared?.files || []).sort();
+    const installedScriptsStatic = extractStaticFiles(installed.scripts?.files || []);
+    const installedScriptsConditional = extractConditionalPatterns(installed.scripts?.files || []);
+    const installedScriptsAll = [...installedScriptsStatic, ...installedScriptsConditional.map(p => p.file)].sort();
+
+    const missingScripts = expectedScriptsShared.filter(s => !installedScriptsAll.includes(s));
+    const extraScripts = installedScriptsAll.filter(s => !expectedScriptsShared.includes(s));
+
+    if (missingScripts.length > 0) {
+        fail(`INSTALLED_FILES_MANIFEST.scripts missing: ${missingScripts.join(', ')}`,
+            'Add missing scripts to install/lib/constants.js INSTALLED_FILES_MANIFEST.scripts.files');
+        hasError = true;
+    }
+    if (extraScripts.length > 0) {
+        warn(`INSTALLED_FILES_MANIFEST.scripts has extra entries: ${extraScripts.join(', ')}`);
+    }
+
+    // Validate scripts (framework)
+    const expectedScriptsFramework = (df.scripts?.framework?.files || []).sort();
+    const installedFrameworkStatic = extractStaticFiles(installed.scriptsFramework?.files || []);
+    const installedFrameworkConditional = extractConditionalPatterns(installed.scriptsFramework?.files || []);
+    const installedFrameworkAll = [...installedFrameworkStatic, ...installedFrameworkConditional.map(p => p.file)].sort();
+
+    const missingFramework = expectedScriptsFramework.filter(s => !installedFrameworkAll.includes(s));
+    const extraFramework = installedFrameworkAll.filter(s => !expectedScriptsFramework.includes(s));
+
+    if (missingFramework.length > 0) {
+        fail(`INSTALLED_FILES_MANIFEST.scriptsFramework missing: ${missingFramework.join(', ')}`,
+            'Add missing scripts to install/lib/constants.js INSTALLED_FILES_MANIFEST.scriptsFramework.files');
+        hasError = true;
+    }
+    if (extraFramework.length > 0) {
+        warn(`INSTALLED_FILES_MANIFEST.scriptsFramework has extra entries: ${extraFramework.join(', ')}`);
+    }
+
+    // Validate scripts (lib)
+    const expectedScriptsLib = (df.scripts?.lib?.files || []).sort();
+    const installedLibStatic = extractStaticFiles(installed.scriptsLib?.files || []);
+    const installedLibConditional = extractConditionalPatterns(installed.scriptsLib?.files || []);
+    const installedLibAll = [...installedLibStatic, ...installedLibConditional.map(p => p.file)].sort();
+
+    const missingLib = expectedScriptsLib.filter(s => !installedLibAll.includes(s));
+    const extraLib = installedLibAll.filter(s => !expectedScriptsLib.includes(s));
+
+    if (missingLib.length > 0) {
+        fail(`INSTALLED_FILES_MANIFEST.scriptsLib missing: ${missingLib.join(', ')}`,
+            'Add missing scripts to install/lib/constants.js INSTALLED_FILES_MANIFEST.scriptsLib.files');
+        hasError = true;
+    }
+    if (extraLib.length > 0) {
+        warn(`INSTALLED_FILES_MANIFEST.scriptsLib has extra entries: ${extraLib.join(', ')}`);
+    }
+
+    // Validate hooks
+    const expectedHooks = (df.scripts?.hooks?.files || []).sort();
+    const installedHooksStatic = extractStaticFiles(installed.hooks?.files || []);
+    const installedHooksConditional = extractConditionalPatterns(installed.hooks?.files || []);
+    const installedHooksAll = [...installedHooksStatic, ...installedHooksConditional.map(p => p.file)].sort();
+
+    const missingHooks = expectedHooks.filter(h => !installedHooksAll.includes(h));
+    const extraHooks = installedHooksAll.filter(h => !expectedHooks.includes(h));
+
+    if (missingHooks.length > 0) {
+        fail(`INSTALLED_FILES_MANIFEST.hooks missing: ${missingHooks.join(', ')}`,
+            'Add missing hooks to install/lib/constants.js INSTALLED_FILES_MANIFEST.hooks.files');
+        hasError = true;
+    }
+    if (extraHooks.length > 0) {
+        warn(`INSTALLED_FILES_MANIFEST.hooks has extra entries: ${extraHooks.join(', ')}`);
+    }
+
+    if (!hasError) {
+        const totalFiles = expectedRules.length + expectedCmds.length + expectedScriptsShared.length +
+            expectedScriptsFramework.length + expectedScriptsLib.length + expectedHooks.length;
+        success(`INSTALLED_FILES_MANIFEST: ${totalFiles} files validated against framework-manifest.json`);
+    }
+}
+
 // ============================================================================
 // MAIN
 // ============================================================================
@@ -625,6 +818,7 @@ Validations performed:
   - FRAMEWORK_SKILLS vs MAINTENANCE.md matrix
   - VIBE_VARIANT_SKILLS vs MAINTENANCE.md
   - PROCESS_FRAMEWORKS vs IDPF-*/ directories
+  - INSTALLED_FILES_MANIFEST vs framework-manifest.json (prevents orphan cleanup bugs)
   - workflow-trigger.js vs Templates/hooks/workflow-trigger.js
   - minimize-config.json existence and validity
   - deploymentFiles in framework-manifest.json vs Templates/
@@ -655,6 +849,7 @@ function main() {
     validateFrameworkSkills();
     validateVibeVariantSkills();
     validateProcessFrameworks();
+    validateInstalledFilesManifest();
     validateTemplateSync();
     validateMinimizeConfig();
     validateDeploymentFiles();

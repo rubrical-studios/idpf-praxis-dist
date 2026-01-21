@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // **Version:** 0.26.4
 /**
- * @framework-script 0.29.0
+ * @framework-script 0.29.1
  * @description Extract CHANGELOG section and update GitHub Release page with formatted notes
  * @checksum sha256:placeholder
  *
@@ -19,6 +19,82 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+
+/**
+ * Check if a GitHub release exists for the given version
+ * @param {string} version - The version tag (e.g., v1.0.0)
+ * @returns {boolean} - True if release exists, false otherwise
+ */
+function releaseExists(version) {
+    try {
+        execSync(`gh release view ${version} --json tagName`, {
+            encoding: 'utf8',
+            stdio: ['pipe', 'pipe', 'pipe']
+        });
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * Sleep for specified milliseconds
+ * @param {number} ms - Milliseconds to sleep
+ */
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Update or create a GitHub release with retry logic
+ * Handles race conditions where GitHub Actions may create the release
+ * @param {string} version - The version tag
+ * @param {string} notesFile - Path to the release notes file
+ * @param {number} maxRetries - Maximum number of retries (default: 3)
+ * @param {number} retryDelayMs - Delay between retries in ms (default: 2000)
+ */
+async function updateOrCreateRelease(version, notesFile, maxRetries = 3, retryDelayMs = 2000) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            if (releaseExists(version)) {
+                // Release exists - update it
+                execSync(`gh release edit ${version} --notes-file "${notesFile}"`, {
+                    encoding: 'utf8',
+                    stdio: ['pipe', 'pipe', 'pipe']
+                });
+                return { action: 'updated' };
+            } else {
+                // Release doesn't exist - create it
+                execSync(`gh release create ${version} --title "Release ${version}" --notes-file "${notesFile}"`, {
+                    encoding: 'utf8',
+                    stdio: ['pipe', 'pipe', 'pipe']
+                });
+                return { action: 'created' };
+            }
+        } catch (err) {
+            const errorMsg = err.message || '';
+
+            // If "already exists" error, the release was created between our check and create
+            // Retry with edit instead
+            if (errorMsg.includes('already exists') && attempt < maxRetries) {
+                await sleep(retryDelayMs);
+                continue;
+            }
+
+            // If "release not found" on edit, it may not have propagated yet
+            // Retry after delay
+            if (errorMsg.includes('release not found') && attempt < maxRetries) {
+                await sleep(retryDelayMs);
+                continue;
+            }
+
+            // Final attempt or unrecoverable error
+            if (attempt === maxRetries) {
+                throw new Error(`Failed after ${maxRetries} attempts: ${err.message}`);
+            }
+        }
+    }
+}
 
 /**
  * Get repository URL from git remote
@@ -232,21 +308,21 @@ async function main() {
         const notesFile = path.join(process.cwd(), '.tmp-release-notes.md');
         fs.writeFileSync(notesFile, notes);
 
+        let result;
         try {
-            execSync(`gh release edit ${version} --notes-file "${notesFile}"`, {
-                encoding: 'utf8'
-            });
+            result = await updateOrCreateRelease(version, notesFile);
         } finally {
             fs.unlinkSync(notesFile);
         }
 
         console.log(JSON.stringify({
             success: true,
-            message: `Updated release notes for ${version}`,
+            message: `${result.action === 'created' ? 'Created' : 'Updated'} release notes for ${version}`,
             data: {
                 version,
                 date,
                 previousTag,
+                action: result.action,
                 summary: generateSummary(countCategoryItems(rawContent))
             }
         }));
