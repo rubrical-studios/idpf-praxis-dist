@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.30.0
+// **Version:** 0.30.1
 /**
  * IDPF Framework Update Fetcher
  *

@@ -19,10 +19,10 @@ const {
 } = require('./extensibility');
 
 /**
- * Copy file with 0.30.0 placeholder replacement
+ * Copy file with 0.30.1 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.30.0 with
+ * @param {string} version - Version string to replace 0.30.1 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
@@ -35,7 +35,7 @@ function copyFileWithVersion(src, dest, version) {
  *
  * @param {string} src - Source template file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.30.0 with
+ * @param {string} version - Version string to replace 0.30.1 with
  * @param {boolean} debug - Enable debug logging
  * @returns {{preserved: boolean, warnings: string[]}} Deployment result
  */
@@ -530,50 +530,6 @@ function deployGitPrePushHook(projectDir, frameworkPath) {
 }
 
 /**
- * Deploy todo persistence hooks for compaction resume support
- * Copies track-todo-progress.js and compact-hook.js to .claude/hooks/
- * Story #969: Deploy Hooks to User Projects
- */
-function deployTodoHooks(projectDir, frameworkPath) {
-  const hooksDir = path.join(projectDir, '.claude', 'hooks');
-  fs.mkdirSync(hooksDir, { recursive: true });
-  const version = readFrameworkVersion(frameworkPath);
-  const deployedAt = new Date().toISOString().split('T')[0];
-  const hookChecksums = {};
-
-  const todoHooks = [
-    'track-todo-progress.js',
-    'compact-hook.js'
-  ];
-
-  const deployed = [];
-
-  for (const hookFile of todoHooks) {
-    const srcHook = path.join(frameworkPath, 'Templates', 'hooks', hookFile);
-    const destHook = path.join(hooksDir, hookFile);
-
-    if (fs.existsSync(srcHook)) {
-      copyFileWithVersion(srcHook, destHook, version);
-      deployed.push(hookFile);
-
-      // Track checksum in manifest
-      hookChecksums[hookFile] = {
-        checksum: computeFileHash(destHook),
-        deployedAt,
-        source: `Templates/hooks/${hookFile}`,
-      };
-    }
-  }
-
-  // Update manifest with hook checksums
-  if (Object.keys(hookChecksums).length > 0) {
-    updateManifestEntries(projectDir, 'hooks', hookChecksums, version);
-  }
-
-  return deployed;
-}
-
-/**
  * Deploy core commands that are always available (not tied to GitHub workflow)
  * Copies from Templates/commands/ to project .claude/commands/
  * v0.25.0+: Track command checksums in manifest for audit support
@@ -794,7 +750,6 @@ module.exports = {
   deployCoreCommands,
   deployWorkflowHook,
   deployGitPrePushHook,
-  deployTodoHooks,
   deployWorkflowCommands,
   displayGitHubSetupSuccess,
   cleanupRenamedCommands,

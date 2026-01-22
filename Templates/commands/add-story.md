@@ -1,5 +1,5 @@
 ---
-version: "v0.30.0"
+version: "v0.30.1"
 description: Add story to epic with charter compliance (project)
 argument-hint: "[epic-number]"
 ---

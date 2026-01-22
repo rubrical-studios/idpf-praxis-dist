@@ -105,9 +105,7 @@
         "source": "Templates/hooks/",
         "target": ".claude/hooks/",
         "files": [
-          "workflow-trigger.js",
-          "track-todo-progress.js",
-          "compact-hook.js"
+          "workflow-trigger.js"
         ]
       }
     },

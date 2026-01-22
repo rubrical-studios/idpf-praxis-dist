@@ -1,5 +1,5 @@
 # GitHub Workflow Integration
-**Version:** v0.30.0
+**Version:** v0.30.1
 ---
 **MUST READ:** At session startup and after compaction.
 ## Project Configuration
@@ -124,15 +124,27 @@ Create issue → Report number → **Wait for "work"**
 **Before `--status in_review`:**
 1. `gh pmu view [#] --body-file` (creates tmp/issue-[#].md)
 2. Review checkboxes, change `[ ]` to `[x]` for completed
-3. `gh pmu edit [#] -F tmp/issue-[#].md`
-4. `rm tmp/issue-[#].md`
-5. Verify: `gh issue view [#] --json body | grep -c "\[x\]"`
-6. Now: `gh pmu move [#] --status in_review`
-**Self-check:** If you find yourself running `gh pmu move --status in_review` without having just run `gh pmu edit -F`, STOP - you skipped steps 1-5.
+3. For UNCHECKED criteria requiring manual verification (QA, security, legal, docs):
+   - ASK USER: "Extract to verification issue? (yes/no)"
+   - If yes: Create linked issue with `*-required` label, mark original `[x]`
+4. `gh pmu edit [#] -F tmp/issue-[#].md`
+5. `rm tmp/issue-[#].md`
+6. Verify: `gh issue view [#] --json body | grep -c "\[x\]"`
+7. Now: `gh pmu move [#] --status in_review`
+**Self-check:** If you find yourself running `gh pmu move --status in_review` without having just run `gh pmu edit -F`, STOP - you skipped steps 1-6.
 **Before `--status done`:**
 1. `gh issue view [#] --json body | grep "\[ \]"`
 2. If ANY unchecked boxes → DO NOT PROCEED
 3. Now: `gh pmu move [#] --status done`
+### Manual Verification Extraction
+**Labels:** `qa-required`, `security-required`, `legal-required`, `docs-required`
+**When criteria require verification outside AI session:**
+1. Identify criteria with keywords: QA, security, legal, docs, manual, verify
+2. ASK USER: "Extract to verification issue?"
+3. If yes: `gh pmu create --title "[Verification] {criterion} (#{parent})" --label {*-required} --status backlog`
+4. Mark original criterion `[x]` after extraction
+**Creates linked issue (peer), not sub-issue.** Matches GitHub's "Convert to issue" behavior.
+**Feedback loop:** Human decides next steps when verification fails.
 ## Workflows
 ### 1. Standard Issue (Bug/Enhancement)
 **Step 1 (AUTO):**

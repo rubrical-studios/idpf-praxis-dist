@@ -737,13 +737,19 @@ async function main() {
 
     // REQ-008: Deploy framework scripts with checksum tracking
     const scriptsResult = deployFrameworkScripts(projectDir, frameworkPath);
-    if (scriptsResult.deployed.framework.length > 0) {
+    if (scriptsResult.deployed.framework?.length > 0) {
       logSuccess(`  ✓ Framework scripts (${scriptsResult.deployed.framework.length} files)`);
     }
-    if (scriptsResult.deployed.lib.length > 0) {
-      logSuccess(`  ✓ Shared library scripts (${scriptsResult.deployed.lib.length} files)`);
+    if (scriptsResult.deployed.shared?.length > 0) {
+      logSuccess(`  ✓ Shared scripts (${scriptsResult.deployed.shared.length} files)`);
     }
-    if (scriptsResult.modified.length > 0) {
+    if (scriptsResult.deployed['shared/lib']?.length > 0) {
+      logSuccess(`  ✓ Shared library scripts (${scriptsResult.deployed['shared/lib'].length} files)`);
+    }
+    if (scriptsResult.deployed.hooks?.length > 0) {
+      logSuccess(`  ✓ Hook scripts (${scriptsResult.deployed.hooks.length} files)`);
+    }
+    if (scriptsResult.modified?.length > 0) {
       logWarning(`  ⚠ User-modified scripts detected: ${scriptsResult.modified.join(', ')}`);
     }
 

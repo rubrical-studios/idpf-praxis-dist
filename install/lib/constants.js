@@ -158,8 +158,6 @@ const INSTALLED_FILES_MANIFEST = {
     dir: '.claude/hooks',
     files: [
       (config) => config?.enableGitHubWorkflow ? 'workflow-trigger.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'track-todo-progress.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'compact-hook.js' : null,
     ],
   },
 };

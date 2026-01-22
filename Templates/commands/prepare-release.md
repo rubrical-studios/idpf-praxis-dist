@@ -1,5 +1,5 @@
 ---
-version: "v0.30.0"
+version: "v0.30.1"
 description: Prepare release with PR, merge to main, and tag
 argument-hint: [version] [--skip-coverage] [--dry-run] [--help]
 ---
@@ -185,9 +185,9 @@ node .claude/scripts/framework/update-release-notes.js
 
 ## Phase 5: Close & Cleanup
 **ASK USER:** Confirm deployment verified.
-### Step 5.1: Close Tracker Issue
+### Step 5.1: Add Deployment Comment
 ```bash
-gh issue close [TRACKER_NUMBER] --comment "Release $VERSION deployed successfully"
+gh issue comment [TRACKER_NUMBER] --body "Release $VERSION deployed successfully"
 ```
 ### Step 5.2: Delete Working Branch
 ```bash
