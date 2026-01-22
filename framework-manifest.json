@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.29.3",
+  "version": "0.30.0",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -105,7 +105,9 @@
         "source": "Templates/hooks/",
         "target": ".claude/hooks/",
         "files": [
-          "workflow-trigger.js"
+          "workflow-trigger.js",
+          "track-todo-progress.js",
+          "compact-hook.js"
         ]
       }
     },

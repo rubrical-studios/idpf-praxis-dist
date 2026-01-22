@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.29.3
+// **Version:** 0.30.0
 /**
  * generate-changelog.js - Generate CHANGELOG entry from commits
  *

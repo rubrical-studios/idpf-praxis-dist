@@ -1,5 +1,5 @@
 # GitHub Workflow Integration
-**Version:** v0.29.3
+**Version:** v0.30.0
 ---
 **MUST READ:** At session startup and after compaction.
 ## Project Configuration
@@ -144,7 +144,9 @@ gh pmu create --repo {repository} --title "[Bug|Enhancement]: ..." --label [bug|
 **STOP:** Report and wait for "Done"
 **Step 4:** `gh pmu move --status done` (auto-closes)
 ### 2. Proposal Workflow
-**Step 1 (AUTO):** Create `Proposal/[Name].md` + issue via `gh pmu create --label proposal --assignee @me`
+**Step 1 (AUTO):** Create `Proposal/[Name].md` (with implementation criteria) + issue via `gh pmu create --label proposal --assignee @me`
+**Required Body Format:** Issue body MUST include `**File:** Proposal/[Name].md` for `/create-prd` integration.
+**Criteria Placement:** Issue = lifecycle only (reviewed, ready for PRD); File = implementation details; PRD = user stories
 **Step 2 (WAIT):** Wait for "implement the proposal", "work issue"
 **Step 3:** Implement → `git mv Proposal/[Name].md Proposal/Implemented/` → Check criteria → `--status in_review`
 **STOP:** Report and wait for "Done"

@@ -1,5 +1,5 @@
 ---
-version: "v0.29.3"
+version: "v0.30.0"
 description: Prepare release with PR, merge to main, and tag
 argument-hint: [version] [--skip-coverage] [--dry-run] [--help]
 ---
@@ -145,17 +145,18 @@ git pull origin main
 git tag -a $VERSION -m "Release $VERSION"
 git push origin $VERSION
 ```
-
-<!-- USER-EXTENSION-START: post-tag -->
-### Wait for CI
+### Step 4.6: Wait for CI Workflow
 ```bash
 node .claude/scripts/framework/wait-for-ci.js
 ```
 **If CI fails, STOP.**
-### Update Release Notes
+### Step 4.7: Update Release Notes
 ```bash
 node .claude/scripts/framework/update-release-notes.js
 ```
+
+<!-- USER-EXTENSION-START: post-tag -->
+<!-- Post-tag user customization: monitoring, notifications, asset verification -->
 <!-- USER-EXTENSION-END: post-tag -->
 
 ## Summary Checklist
@@ -172,11 +173,11 @@ node .claude/scripts/framework/update-release-notes.js
 
 **After tagging:**
 - [ ] Tag pushed
+- [ ] CI workflow completed
+- [ ] Release notes updated
 
 <!-- USER-EXTENSION-START: checklist-after-tag -->
-- [ ] All CI jobs completed
-- [ ] Release assets uploaded
-- [ ] Release notes updated
+- [ ] Release assets verified
 <!-- USER-EXTENSION-END: checklist-after-tag -->
 
 <!-- USER-EXTENSION-START: pre-close -->

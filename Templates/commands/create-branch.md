@@ -1,5 +1,5 @@
 ---
-version: "v0.29.3"
+version: "v0.30.0"
 description: Create a branch with tracker issue
 argument-hint: <branch-name> (e.g., release/v0.16.0, my-feature, bugfix-123)
 ---

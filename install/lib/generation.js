@@ -139,6 +139,30 @@ function generateSettingsLocal(projectDir, enableGitHubWorkflow) {
         ],
       },
     ],
+    PostToolUse: [
+      {
+        matcher: "TodoWrite",
+        hooks: [
+          {
+            type: "command",
+            command: "node .claude/hooks/track-todo-progress.js",
+            timeout: 10,
+          },
+        ],
+      },
+    ],
+    SessionStart: [
+      {
+        matcher: "compact",
+        hooks: [
+          {
+            type: "command",
+            command: "node .claude/hooks/compact-hook.js",
+            timeout: 5,
+          },
+        ],
+      },
+    ],
   };
 
   // If file exists, merge hooks config if needed
@@ -149,22 +173,49 @@ function generateSettingsLocal(projectDir, enableGitHubWorkflow) {
 
     try {
       const existing = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+      let modified = false;
 
-      // Check if hooks already configured
-      if (existing.hooks?.UserPromptSubmit) {
-        const hasWorkflowHook = existing.hooks.UserPromptSubmit.some(h =>
-          h.hooks?.some(hh => hh.command?.includes('workflow-trigger.js'))
-        );
-        if (hasWorkflowHook) {
-          return false; // Already configured
-        }
+      // Initialize hooks if needed
+      existing.hooks = existing.hooks || {};
+
+      // Merge UserPromptSubmit hooks
+      if (!existing.hooks.UserPromptSubmit?.some(h =>
+        h.hooks?.some(hh => hh.command?.includes('workflow-trigger.js'))
+      )) {
+        existing.hooks.UserPromptSubmit = [
+          ...(existing.hooks.UserPromptSubmit || []),
+          ...hooksConfig.UserPromptSubmit
+        ];
+        modified = true;
       }
 
-      // Merge hooks into existing settings
-      existing.hooks = existing.hooks || {};
-      existing.hooks.UserPromptSubmit = hooksConfig.UserPromptSubmit;
-      fs.writeFileSync(settingsPath, JSON.stringify(existing, null, 2));
-      return 'merged';
+      // Merge PostToolUse hooks (todo tracking)
+      if (!existing.hooks.PostToolUse?.some(h =>
+        h.matcher === 'TodoWrite' && h.hooks?.some(hh => hh.command?.includes('track-todo-progress.js'))
+      )) {
+        existing.hooks.PostToolUse = [
+          ...(existing.hooks.PostToolUse || []),
+          ...hooksConfig.PostToolUse
+        ];
+        modified = true;
+      }
+
+      // Merge SessionStart hooks (compact resume)
+      if (!existing.hooks.SessionStart?.some(h =>
+        h.matcher === 'compact' && h.hooks?.some(hh => hh.command?.includes('compact-hook.js'))
+      )) {
+        existing.hooks.SessionStart = [
+          ...(existing.hooks.SessionStart || []),
+          ...hooksConfig.SessionStart
+        ];
+        modified = true;
+      }
+
+      if (modified) {
+        fs.writeFileSync(settingsPath, JSON.stringify(existing, null, 2));
+        return 'merged';
+      }
+      return false; // Already configured
     } catch (_e) {
       // If we can't parse, leave it alone
       return false;
@@ -362,6 +413,35 @@ Would you like me to:
 `;
 }
 
+/**
+ * Add todo-resume.yml to .gitignore if not already present
+ * Story #969: Deploy Hooks to User Projects
+ */
+function addGitignoreEntry(projectDir) {
+  const gitignorePath = path.join(projectDir, '.gitignore');
+  const entry = '.claude/todo-resume.yml';
+  const comment = '# Todo resume state (session-scoped, auto-deleted after resume)';
+
+  try {
+    let content = '';
+    if (fs.existsSync(gitignorePath)) {
+      content = fs.readFileSync(gitignorePath, 'utf8');
+
+      // Check if entry already exists
+      if (content.includes('todo-resume.yml')) {
+        return false; // Already present
+      }
+    }
+
+    // Add entry with comment
+    const newEntry = `\n${comment}\n${entry}\n`;
+    fs.writeFileSync(gitignorePath, content + newEntry);
+    return true;
+  } catch (_e) {
+    return false;
+  }
+}
+
 module.exports = {
   getCoreFrameworkFileName,
   // generateFrameworkConfig removed in v0.16.1 - use createOrUpdateConfig from config.js
@@ -372,4 +452,5 @@ module.exports = {
   generateSettingsLocal,
   generatePrdReadme,
   generateStartupRules,
+  addGitignoreEntry,
 };

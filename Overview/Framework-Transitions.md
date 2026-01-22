@@ -1,5 +1,5 @@
 # Framework Transitions Reference
-**Version:** v0.29.3
+**Version:** v0.30.0
 **Purpose:** Transition rules, diagrams, hybrid usage
 ---
 ## Transition Matrix
