@@ -1,5 +1,5 @@
 # System Instructions: Embedded Systems Engineer
-**Version:** v0.30.2
+**Version:** v0.31.0
 **Source:** System-Instructions/Domain/Base/Embedded-Systems-Engineer.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Embedded systems, firmware, hardware interaction, real-time systems, IoT.

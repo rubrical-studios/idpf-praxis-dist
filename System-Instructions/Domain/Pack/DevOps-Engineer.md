@@ -1,5 +1,5 @@
 # System Instructions: DevOps Engineer
-**Version:** v0.30.2
+**Version:** v0.31.0
 **Source:** System-Instructions/Domain/Pack/DevOps-Engineer.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Deployment pipelines, infrastructure, automation, CI/CD, bridging development and operations.

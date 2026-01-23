@@ -1,4 +1,4 @@
-// **Version:** 0.30.2
+// **Version:** 0.31.0
 /**
  * lib/git.js - Git command utilities
  *

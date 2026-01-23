@@ -116,6 +116,7 @@ const INSTALLED_FILES_MANIFEST = {
       (config) => config?.enableGitHubWorkflow ? 'extensions.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'create-prd.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'create-backlog.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'complete-prd.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'add-story.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'split-story.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'emergency-bug.md' : null,

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// **Version:** 0.30.2
+// **Version:** 0.31.0
 /**
- * @framework-script 0.30.2
+ * @framework-script 0.31.0
  * @description Parse commits since last tag, categorize by type
  * @checksum sha256:placeholder
  *

@@ -1,5 +1,5 @@
 ---
-version: "v0.30.2"
+version: "v0.31.0"
 description: Tag beta from feature branch (no merge to main)
 argument-hint: [--skip-coverage] [--dry-run] [--help]
 ---
