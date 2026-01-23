@@ -1,5 +1,5 @@
 # IDPF-QA-Automation Framework
-**Version:** v0.30.1
+**Version:** v0.30.2
 **Extends:** IDPF-Testing-Core
 **Framework-Debug:** True
 

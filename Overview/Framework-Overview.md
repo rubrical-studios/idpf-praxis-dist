@@ -1,5 +1,5 @@
 # Framework Overview
-**Version:** v0.30.1
+**Version:** v0.30.2
 **Purpose:** Comprehensive reference for AI assistants and framework development
 ---
 ## Core Principle

@@ -101,6 +101,21 @@ function readVersion(frameworkPath) {
 }
 
 /**
+ * Flush file to disk (forces Windows to write cached data)
+ * This ensures copyFileSync writes are fully persisted before reading.
+ */
+function flushFile(filePath) {
+  try {
+    // Open with 'r+' to get a writable descriptor without truncating
+    const fd = fs.openSync(filePath, 'r+');
+    fs.fsyncSync(fd);
+    fs.closeSync(fd);
+  } catch {
+    // Ignore errors - file might be read-only or not exist
+  }
+}
+
+/**
  * Read version with fresh file handle (bypasses Windows file cache)
  * Used after file updates to ensure we read the newly written content.
  * On Windows, fs.readFileSync can return stale cached data when reading
@@ -112,6 +127,9 @@ function readVersionFresh(frameworkPath) {
     return null;
   }
   try {
+    // Force OS to flush any pending writes before reading
+    flushFile(manifestPath);
+
     // Force fresh read using explicit file descriptor operations
     const fd = fs.openSync(manifestPath, 'r');
     const stats = fs.fstatSync(fd);

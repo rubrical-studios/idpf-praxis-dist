@@ -1,5 +1,5 @@
 # System Instructions: Game Developer
-**Version:** v0.30.1
+**Version:** v0.30.2
 **Source:** System-Instructions/Domain/Base/Game-Developer.md
 Extends: Core-Developer-Instructions.md
 **Purpose:** Game development using Unity, Unreal, Godot, game patterns and optimization.

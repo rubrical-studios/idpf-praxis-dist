@@ -1,4 +1,4 @@
-// **Version:** 0.30.1
+// **Version:** 0.30.2
 /**
  * lib/output.js - Output formatting utilities
  *

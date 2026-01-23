@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.30.1
+// **Version:** 0.30.2
 /**
  * transfer-issue.js
  *

@@ -1,5 +1,5 @@
 # Vibe-to-Structured Development Framework (Core)
-**Version:** v0.30.1
+**Version:** v0.30.2
 **Type:** Core Framework (Platform-Agnostic)
 
 ## Terminology

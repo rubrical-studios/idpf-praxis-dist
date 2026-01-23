@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.30.1
+// **Version:** 0.30.2
 /**
  * IDPF Framework Update Fetcher
  *
@@ -77,6 +77,48 @@ function readVersion(frameworkPath) {
   }
   try {
     const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    return manifest.version || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Flush file to disk (forces Windows to write cached data)
+ * This ensures copyFileSync writes are fully persisted before reading.
+ */
+function flushFile(filePath) {
+  try {
+    // Open with 'r+' to get a writable descriptor without truncating
+    const fd = fs.openSync(filePath, 'r+');
+    fs.fsyncSync(fd);
+    fs.closeSync(fd);
+  } catch {
+    // Ignore errors - file might be read-only or not exist
+  }
+}
+
+/**
+ * Read version with fresh file handle (bypasses Windows file cache)
+ * Used after file updates to ensure we read the newly written content.
+ */
+function readVersionFresh(frameworkPath) {
+  const manifestPath = path.join(frameworkPath, 'framework-manifest.json');
+  if (!fs.existsSync(manifestPath)) {
+    return null;
+  }
+  try {
+    // Force OS to flush any pending writes before reading
+    flushFile(manifestPath);
+
+    // Force fresh read using explicit file descriptor operations
+    const fd = fs.openSync(manifestPath, 'r');
+    const stats = fs.fstatSync(fd);
+    const buffer = Buffer.alloc(stats.size);
+    fs.readSync(fd, buffer, 0, stats.size, 0);
+    fs.closeSync(fd);
+
+    const manifest = JSON.parse(buffer.toString('utf8'));
     return manifest.version || null;
   } catch {
     return null;
@@ -264,7 +306,8 @@ async function main() {
   removeDir(TEMP_DIR);
 
   // Verify the update by reading the new version
-  const newVersion = readVersion(frameworkPath);
+  // Use readVersionFresh to bypass Windows file system caching
+  const newVersion = readVersionFresh(frameworkPath);
   const expectedVersion = latestVersion.slice(1);
 
   if (newVersion !== expectedVersion) {
