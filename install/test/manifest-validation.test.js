@@ -6,7 +6,7 @@
  * was accidentally deleted from the manifest.
  *
  * Note: As of v0.26.4, the manifest is consolidated at the root level.
- * Scripts are under deploymentFiles.scripts with full paths (e.g., "Templates/scripts/framework/")
+ * Scripts are under deploymentFiles.scripts with full paths (e.g., "Templates/scripts/shared/")
  *
  * @see https://github.com/rubrical-studios/idpf-praxis/issues/875
  * @see https://github.com/rubrical-studios/idpf-praxis/issues/876
@@ -83,11 +83,11 @@ describe('Manifest Validation', () => {
     );
 
     (templatesDirExists && manifestExists ? test : test.skip)(
-      'framework category exists (regression test for #875)',
+      'shared category exists and has consolidated scripts (regression test for #875, updated for #1008)',
       () => {
-        expect(scripts.framework).toBeDefined();
-        expect(scripts.framework.source).toBe('Templates/scripts/framework/');
-        expect(scripts.framework.target).toBe('.claude/scripts/framework/');
+        expect(scripts.shared).toBeDefined();
+        expect(scripts.shared.source).toBe('Templates/scripts/shared/');
+        expect(scripts.shared.target).toBe('.claude/scripts/shared/');
       }
     );
   });
@@ -200,8 +200,9 @@ describe('Manifest Validation', () => {
     );
   });
 
-  describe('Framework scripts (prevent #875 regression)', () => {
-    const expectedFrameworkScripts = [
+  describe('Shared scripts (prevent #875 regression, updated for #1008)', () => {
+    // These scripts were previously in framework/ but moved to shared/ in #1008
+    const expectedSharedScripts = [
       'analyze-commits.js',
       'recommend-version.js',
       'update-release-notes.js',
@@ -209,20 +210,20 @@ describe('Manifest Validation', () => {
     ];
 
     (manifestExists ? test : test.skip)(
-      'framework category includes all expected scripts',
+      'shared category includes all expected scripts',
       () => {
-        const frameworkFiles = scripts.framework?.files || [];
+        const sharedFiles = scripts.shared?.files || [];
 
-        for (const script of expectedFrameworkScripts) {
-          expect(frameworkFiles).toContain(script);
+        for (const script of expectedSharedScripts) {
+          expect(sharedFiles).toContain(script);
         }
       }
     );
 
-    (templatesDirExists ? test : test.skip).each(expectedFrameworkScripts)(
-      'framework script %s exists on disk',
+    (templatesDirExists ? test : test.skip).each(expectedSharedScripts)(
+      'shared script %s exists on disk',
       (script) => {
-        const scriptPath = path.join(scriptsDir, 'framework', script);
+        const scriptPath = path.join(scriptsDir, 'shared', script);
         expect(fs.existsSync(scriptPath)).toBe(true);
       }
     );

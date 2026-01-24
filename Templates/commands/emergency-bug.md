@@ -1,5 +1,5 @@
 ---
-version: "v0.31.0"
+version: "v0.32.0"
 description: Create P0 emergency issue (project)
 argument-hint: "<description>"
 ---

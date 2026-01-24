@@ -1,5 +1,5 @@
 ---
-version: "v0.31.0"
+version: "v0.32.0"
 description: Split story into smaller stories (project)
 argument-hint: "<story-number>"
 ---
@@ -53,9 +53,17 @@ gh pmu create --repo {repository} \
 ## Story: {Title}
 ### Description
 As a {user type}, I want {capability} so that {benefit}.
+### Relevant Skills
+<!-- Read from framework-config.json projectSkills, lookup in .claude/metadata/skill-registry.json -->
+**If configured:** `- {skill-name} - {description}` | Load: `read Skills/{skill-name}/SKILL.md`
+**If not configured:** No project skills. Run `/charter` to set up.
 ### Acceptance Criteria
 - [ ] {Assigned criterion 1}
 - [ ] {Assigned criterion 2}
+### Documentation (if applicable)
+- [ ] Design decisions documented (update existing or create `Construction/Design-Decisions/YYYY-MM-DD-{topic}.md`)
+- [ ] Tech debt logged (update existing or create `Construction/Tech-Debt/YYYY-MM-DD-{topic}.md`)
+**Guidelines:** Skip trivial findings. Update existing docs rather than duplicating. For significant tech debt, create an enhancement issue.
 ### Origin
 Split from #{original_story_num}: {Original Story Title}
 ### TDD Test Cases

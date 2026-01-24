@@ -1,5 +1,5 @@
 # GitHub Workflow Integration
-**Version:** v0.31.0
+**Version:** v0.32.0
 ---
 **MUST READ:** At session startup and after compaction.
 ## Project Configuration
@@ -47,7 +47,12 @@ Branch naming requires `{prefix}/{name}` format. Prefix is organizational conven
 | `gh pmu edit [#] [-F body.md] [--body-stdin]` | `gh issue edit` |
 | `gh pmu list --status [value]` | - |
 | `gh pmu board` | - |
-**View/Edit flags:** `-b` exports body to file; `-c` shows comments; `-w` opens in browser; `-F` reads body from file; `--body-stdin` reads from stdin; `--body-stdout` outputs to stdout
+**View/Edit flags:** `-b` exports body to file; `-c` shows comments; `-w` opens in browser; `-F` reads body from file; `--body-stdin` reads from stdin; `--body-stdout` outputs to stdout; `--json=fields` outputs JSON (use `=` on Windows)
+**JSON output (use `=` syntax on Windows):**
+```bash
+gh pmu view 123 --json=status --jq='.status'
+gh pmu view 123 --json=number,title,status
+```
 **Sub-Issue Management:**
 | Command | Replaces |
 |---------|----------|

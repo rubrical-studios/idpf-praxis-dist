@@ -65,9 +65,9 @@ describe('audit.js', () => {
       const manifest = {
         version: '1.0.0',
         scripts: {
-          'framework/test.js': {
+          'shared/test.js': {
             checksum: hash,
-            source: 'Templates/scripts/framework/test.js',
+            source: 'Templates/scripts/shared/test.js',
           },
         },
       };
@@ -113,9 +113,9 @@ describe('audit.js', () => {
       const manifest = {
         version: '1.0.0',
         scripts: {
-          'framework/test.js': {
+          'shared/test.js': {
             checksum: originalHash,
-            source: 'Templates/scripts/framework/test.js',
+            source: 'Templates/scripts/shared/test.js',
           },
         },
       };
@@ -155,9 +155,9 @@ describe('audit.js', () => {
       const manifest = {
         version: '1.0.0',
         scripts: {
-          'framework/test.js': {
+          'shared/test.js': {
             checksum: oldHash,
-            source: 'Templates/scripts/framework/test.js',
+            source: 'Templates/scripts/shared/test.js',
           },
         },
       };
@@ -200,9 +200,9 @@ describe('audit.js', () => {
       const manifest = {
         version: '1.0.0',
         scripts: {
-          'framework/test.js': {
+          'shared/test.js': {
             checksum: originalHash,
-            source: 'Templates/scripts/framework/test.js',
+            source: 'Templates/scripts/shared/test.js',
           },
         },
       };
@@ -230,9 +230,9 @@ describe('audit.js', () => {
       const manifest = {
         version: '1.0.0',
         scripts: {
-          'framework/missing.js': {
+          'shared/missing.js': {
             checksum: 'abc123',
-            source: 'Templates/scripts/framework/missing.js',
+            source: 'Templates/scripts/shared/missing.js',
           },
         },
       };
@@ -440,8 +440,8 @@ describe('audit.js', () => {
   });
 
   describe('Version Handling', () => {
-    test('replaces 0.31.0 in source files before computing hash', () => {
-      const sourceWithPlaceholder = '// Version: 0.31.0\nconsole.log("test");';
+    test('replaces 0.32.0 in source files before computing hash', () => {
+      const sourceWithPlaceholder = '// Version: 0.32.0\nconsole.log("test");';
       const sourceWithVersion = '// Version: 1.0.0\nconsole.log("test");';
 
       const hashWithPlaceholder = computeHash(sourceWithPlaceholder);
@@ -456,7 +456,7 @@ describe('audit.js', () => {
     });
 
     test('correctly computes hash with version substitution', () => {
-      const content = '// Version: 0.31.0';
+      const content = '// Version: 0.32.0';
       const version = '2.5.0';
       const expected = computeHash('// Version: 2.5.0');
 

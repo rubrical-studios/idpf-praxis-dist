@@ -1,5 +1,5 @@
 # Framework Summary
-**Version:** v0.31.0
+**Version:** v0.32.0
 **Purpose:** Compact startup reference
 ---
 ## Quick Reference

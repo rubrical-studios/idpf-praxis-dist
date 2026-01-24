@@ -1,5 +1,5 @@
 ---
-version: "v0.31.0"
+version: "v0.32.0"
 description: Tag beta from feature branch (no merge to main)
 argument-hint: [--skip-coverage] [--dry-run] [--help]
 ---
@@ -12,6 +12,7 @@ Tag a beta release from feature branch without merging to main.
 | `post-analysis` | After Phase 1 | Commit analysis |
 | `pre-validation` | Before Phase 2 | Setup test environment |
 | `post-validation` | After Phase 2 | Beta validation |
+| `pre-commit` | Before Phase 4 commit | Generate beta artifacts |
 | `post-prepare` | After Phase 3 | Additional updates |
 | `pre-tag` | Before Phase 4 | Final gate |
 | `post-tag` | After Phase 4 | Beta monitoring |
@@ -35,20 +36,20 @@ BRANCH=$(git branch --show-current)
 if [ "$BRANCH" = "main" ]; then echo "Error: Cannot create beta from main."; exit 1; fi
 ```
 ## Phase 1: Analysis
+### Step 1.1: Analyze Changes
 ```bash
 git log $(git describe --tags --abbrev=0)..HEAD --oneline
 ```
-
-<!-- USER-EXTENSION-START: post-analysis -->
 ### Analyze Commits
 ```bash
-node .claude/scripts/framework/analyze-commits.js
+node .claude/scripts/shared/analyze-commits.js
 ```
 ### Recommend Version
 ```bash
-node .claude/scripts/framework/recommend-version.js
+node .claude/scripts/shared/recommend-version.js
 ```
-Recommend beta version (e.g., `v1.0.0-beta.1`).
+
+<!-- USER-EXTENSION-START: post-analysis -->
 <!-- USER-EXTENSION-END: post-analysis -->
 
 **ASK USER:** Confirm beta version.
@@ -57,17 +58,7 @@ Recommend beta version (e.g., `v1.0.0-beta.1`).
 <!-- USER-EXTENSION-START: pre-validation -->
 <!-- USER-EXTENSION-END: pre-validation -->
 
-```bash
-go test ./...
-```
-
 <!-- USER-EXTENSION-START: post-validation -->
-### Coverage Gate (Optional for Beta)
-**If `--skip-coverage`, skip.**
-```bash
-node .claude/scripts/prepare-release/coverage.js
-```
-**If `success` is false, STOP.**
 <!-- USER-EXTENSION-END: post-validation -->
 
 **ASK USER:** Confirm validation passed.
@@ -76,6 +67,9 @@ Update CHANGELOG.md with beta section.
 
 <!-- USER-EXTENSION-START: post-prepare -->
 <!-- USER-EXTENSION-END: post-prepare -->
+
+<!-- USER-EXTENSION-START: pre-commit -->
+<!-- USER-EXTENSION-END: pre-commit -->
 
 ## Phase 4: Tag (No Merge)
 ### Step 4.1: Commit Changes
@@ -97,16 +91,15 @@ git push origin $VERSION
 **Note:** Beta tags feature branch. No merge to main.
 ### Step 4.3: Wait for CI Workflow
 ```bash
-node .claude/scripts/framework/wait-for-ci.js
+node .claude/scripts/shared/wait-for-ci.js
 ```
 **If CI fails, STOP.**
 ### Step 4.4: Update Release Notes
 ```bash
-node .claude/scripts/framework/update-release-notes.js
+node .claude/scripts/shared/update-release-notes.js
 ```
 
 <!-- USER-EXTENSION-START: post-tag -->
-<!-- Post-tag user customization: beta monitoring, notifications -->
 <!-- USER-EXTENSION-END: post-tag -->
 
 ## Next Step
@@ -122,7 +115,6 @@ When ready for full release:
 - [ ] CHANGELOG updated
 
 <!-- USER-EXTENSION-START: checklist-before-tag -->
-- [ ] Coverage gate passed (or `--skip-coverage`)
 <!-- USER-EXTENSION-END: checklist-before-tag -->
 
 **After tagging:**
@@ -131,7 +123,6 @@ When ready for full release:
 - [ ] Release notes updated
 
 <!-- USER-EXTENSION-START: checklist-after-tag -->
-- [ ] Beta build monitored
 <!-- USER-EXTENSION-END: checklist-after-tag -->
 
 **End of Prepare Beta**

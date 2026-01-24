@@ -1,5 +1,5 @@
 ---
-version: "v0.31.0"
+version: "v0.32.0"
 description: View, create, or manage project charter
 argument-hint: "[update|refresh|validate]"
 ---
@@ -72,6 +72,21 @@ Ask 1-2 complexity questions max based on triggers in user answers.
 4. Create Transition/ templates (Deployment-Guide, Runbook, User-Documentation)
 5. Use "TBD" for sections without answers
 6. Commit all artifacts
+## Project Skills Selection
+After charter creation, suggest relevant skills based on tech stack:
+**Step 1:** Load `.claude/metadata/skill-registry.json`
+**Step 2:** Match charter content against skill triggers (case-insensitive)
+**Step 3:** Present matches:
+```
+Based on your charter, these skills may be relevant:
+- electron-development (matched: electron, vite, playwright)
+- playwright-setup (E2E testing in scope)
+Include these skills? (yes/no/edit list)
+```
+**Step 4:** If confirmed, store in `framework-config.json`:
+```json
+{ "projectSkills": ["electron-development", "playwright-setup"] }
+```
 ### /charter update
 **Step 1:** Read current CHARTER.md and Inception/Charter-Details.md
 **Step 2:** Ask what to update (Vision, Focus, Tech Stack, Scope, Milestones)

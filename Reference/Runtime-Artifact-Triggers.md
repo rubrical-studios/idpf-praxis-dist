@@ -1,5 +1,5 @@
 # Runtime Artifact Triggers
-**Version:** v0.31.0
+**Version:** v0.32.0
 **Purpose:** Define when to offer artifact creation/update during development
 ---
 ## Overview

@@ -1,5 +1,5 @@
 ---
-version: "v0.31.0"
+version: "v0.32.0"
 description: Transform proposal into Agile PRD
 argument-hint: "<issue-number> | extract [<directory>]"
 ---
@@ -156,4 +156,25 @@ Prompt: "1. From proposal issue, 2. From existing code"
 - [ ] Technical Notes separated
 - [ ] Out of scope stated
 - [ ] PRD is Create-Backlog compatible
+## Technical Skills Mapping
+After PRD generation, check for additional skills:
+**Step 1:** Load `.claude/metadata/skill-registry.json` and `framework-config.json`
+**Step 2:** Extract technical requirements from PRD (Tech Requirements, AC terms, NFRs)
+**Step 3:** Match PRD content against skill triggers:
+| PRD Content | Matched Skill |
+|-------------|---------------|
+| "CI/CD pipeline" | `ci-cd-pipeline-design` |
+| "E2E tests" | `playwright-setup` |
+| "API versioning" | `api-versioning` |
+**Step 4:** Filter out existing projectSkills
+**Step 5:** Present new skills to user:
+```
+PRD mentions technical requirements suggesting additional skills:
+- ci-cd-pipeline-design (CI/CD in NFRs)
+Add to project skills? (yes/no/edit)
+```
+**Step 6:** If confirmed, update `framework-config.json`:
+```javascript
+config.projectSkills = [...existingSkills, ...newSkills];
+```
 **End of /create-prd Command**

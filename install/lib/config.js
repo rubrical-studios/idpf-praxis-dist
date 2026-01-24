@@ -274,7 +274,9 @@ function createOrUpdateConfig(projectDir, manifest, options = {}) {
     userScripts,                // AC-6
     projectType,                // AC-7
     // Preserve frameworkPath for backward compatibility
-    frameworkPath: existingConfig?.frameworkPath || options.frameworkPath
+    frameworkPath: existingConfig?.frameworkPath || options.frameworkPath,
+    // Preserve projectSkills (set by /charter or /create-prd)
+    ...(existingConfig?.projectSkills && { projectSkills: existingConfig.projectSkills })
   };
 
   // AC-1: Write config to project root

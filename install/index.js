@@ -80,6 +80,7 @@ const {
   createExtensibilityStructure,
   deployFrameworkScripts,
   cleanupRenamedCommands,
+  deployMetadataFiles,
 } = require('./lib/deployment');
 
 const {
@@ -727,6 +728,14 @@ async function main() {
     }
     if (rulesResult.runtimeTriggers) {
       logSuccess('  ✓ .claude/rules/06-runtime-triggers.md');
+    }
+
+    // Deploy metadata files (skill-registry.json, extension-recipes.json)
+    const metadataResult = deployMetadataFiles(projectDir, frameworkPath);
+    if (metadataResult.deployed.length > 0) {
+      for (const file of metadataResult.deployed) {
+        logSuccess(`  ✓ .claude/metadata/${file}`);
+      }
     }
 
     // REQ-007: Create extensibility directory structure

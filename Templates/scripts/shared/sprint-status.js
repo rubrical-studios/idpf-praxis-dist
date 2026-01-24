@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// **Version:** 0.31.0
+// **Version:** 0.32.0
 /**
  * sprint-status.js
  *

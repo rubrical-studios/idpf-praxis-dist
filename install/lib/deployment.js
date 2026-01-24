@@ -19,10 +19,10 @@ const {
 } = require('./extensibility');
 
 /**
- * Copy file with 0.31.0 placeholder replacement
+ * Copy file with 0.32.0 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.31.0 with
+ * @param {string} version - Version string to replace 0.32.0 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
@@ -31,11 +31,62 @@ function copyFileWithVersion(src, dest, version) {
 }
 
 /**
+ * Clear archive directory before upgrade
+ * Called at start of upgrade to remove stale archives from previous versions
+ * @param {string} projectDir - Project root directory
+ */
+function clearArchiveDirectory(projectDir) {
+  const archiveDir = path.join(projectDir, '.claude', 'archive');
+  if (fs.existsSync(archiveDir)) {
+    fs.rmSync(archiveDir, { recursive: true, force: true });
+  }
+}
+
+/**
+ * Archive a file before overwriting due to rogue edits
+ * @param {string} projectDir - Project root directory
+ * @param {string} filePath - Original file path being overwritten
+ * @param {string} content - Content to archive
+ * @returns {string} Archive path
+ */
+function archiveRogueEditFile(projectDir, filePath, content) {
+  const archiveDir = path.join(projectDir, '.claude', 'archive', 'commands');
+
+  // Create archive directory if needed
+  if (!fs.existsSync(archiveDir)) {
+    fs.mkdirSync(archiveDir, { recursive: true });
+  }
+
+  // Generate timestamped filename: {command}-{YYYY-MM-DD}.md
+  const basename = path.basename(filePath, '.md');
+  const date = new Date().toISOString().split('T')[0];
+  const archiveFilename = `${basename}-${date}.md`;
+  let finalPath = path.join(archiveDir, archiveFilename);
+
+  // Handle multiple archives on same day: {command}-{YYYY-MM-DD}-{n}.md
+  let counter = 1;
+  while (fs.existsSync(finalPath)) {
+    finalPath = path.join(archiveDir, `${basename}-${date}-${counter}.md`);
+    counter++;
+  }
+
+  // Write archive with header comment
+  const archiveContent = `<!-- Archived: ${new Date().toISOString()} -->
+<!-- Original: ${filePath} -->
+<!-- Reason: Rogue edits detected outside USER-EXTENSION blocks -->
+
+${content}`;
+
+  fs.writeFileSync(finalPath, archiveContent);
+  return finalPath;
+}
+
+/**
  * Deploy an extensible command file, preserving user extensions
  *
  * @param {string} src - Source template file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.31.0 with
+ * @param {string} version - Version string to replace 0.32.0 with
  * @param {boolean} debug - Enable debug logging
  * @returns {{preserved: boolean, warnings: string[]}} Deployment result
  */
@@ -119,11 +170,17 @@ function deployExtensibleCommand(src, dest, version, debug = false) {
   // Detect rogue edits (changes outside extension markers)
   const rogueCheck = detectRogueEdits(existingContent, templateContent);
   if (rogueCheck.hasRogueEdits) {
+    // Archive the file before overwriting
+    // Derive projectDir from dest: .claude/commands/file.md -> project root
+    const projectDir = path.dirname(path.dirname(path.dirname(dest)));
+    const archivePath = archiveRogueEditFile(projectDir, dest, existingContent);
+    const relativeArchivePath = path.relative(projectDir, archivePath);
+
     if (debug) {
       logDebug(`  ⚠️  Rogue edits detected outside extension markers`);
-      logDebug(`  Changes will be lost (use extension markers to preserve)`);
+      logDebug(`  Archived to: ${relativeArchivePath}`);
     }
-    warnings.push(`${filename}: Changes outside extension markers will be lost`);
+    warnings.push(`${filename}: Changes outside extension markers archived to ${relativeArchivePath}`);
     for (const detail of rogueCheck.details) {
       warnings.push(`  - ${detail}`);
     }
@@ -173,11 +230,12 @@ function deployExtensibleCommand(src, dest, version, debug = false) {
  *
  * Creates the complete directory structure for extensible commands:
  * - .claude/extensions/ (for .md files referenced by commands)
- * - .claude/scripts/framework/ (framework-provided scripts)
  * - .claude/scripts/shared/ (shared utility scripts)
  * - .claude/scripts/shared/lib/ (library modules)
  * - .claude/scripts/{command}/ (user scripts per extensible command)
  * - .claude/hooks/ (framework hooks)
+ *
+ * Note: .claude/scripts/framework/ is no longer created for user projects (#1008)
  *
  * @param {string} projectDir - Target project directory
  * @param {string[]} extensibleCommands - List of extensible command names
@@ -191,19 +249,15 @@ function createExtensibilityStructure(projectDir, extensibleCommands = []) {
   const extensionsDir = path.join(projectDir, '.claude', 'extensions');
   createDirWithGitkeep(extensionsDir, created, existed);
 
-  // AC-2: .claude/scripts/framework/
-  const frameworkScriptsDir = path.join(projectDir, '.claude', 'scripts', 'framework');
-  createDir(frameworkScriptsDir, created, existed);
-
-  // AC-3: .claude/scripts/shared/
+  // AC-2: .claude/scripts/shared/
   const sharedScriptsDir = path.join(projectDir, '.claude', 'scripts', 'shared');
   createDirWithGitkeep(sharedScriptsDir, created, existed);
 
-  // AC-4: .claude/scripts/shared/lib/
+  // AC-3: .claude/scripts/shared/lib/
   const libDir = path.join(projectDir, '.claude', 'scripts', 'shared', 'lib');
   createDir(libDir, created, existed);
 
-  // AC-5: .claude/scripts/{command}/ for each extensible command
+  // AC-4: .claude/scripts/{command}/ for each extensible command
   const defaultCommands = ['create-branch', 'prepare-release', 'prepare-beta', 'merge-branch', 'destroy-branch', 'switch-branch', 'assign-branch'];
   const commandsToCreate = extensibleCommands.length > 0 ? extensibleCommands : defaultCommands;
 
@@ -212,7 +266,7 @@ function createExtensibilityStructure(projectDir, extensibleCommands = []) {
     createDirWithGitkeep(cmdDir, created, existed);
   }
 
-  // AC-6: .claude/hooks/
+  // AC-5: .claude/hooks/
   const hooksDir = path.join(projectDir, '.claude', 'hooks');
   createDir(hooksDir, created, existed);
 
@@ -275,7 +329,7 @@ function deployFrameworkScripts(projectDir, frameworkPath) {
     const categoryConfig = frameworkManifest.deploymentFiles?.scripts?.[category];
     if (!categoryConfig) continue;
 
-    // Source paths in manifest are relative to framework root (e.g., "Templates/scripts/framework/")
+    // Source paths in manifest are relative to framework root (e.g., "Templates/scripts/shared/")
     const sourceDir = path.join(frameworkPath, categoryConfig.source);
     const targetDir = path.join(projectDir, categoryConfig.target);
 
@@ -585,6 +639,9 @@ function deployCoreCommands(projectDir, frameworkPath) {
 function deployWorkflowCommands(projectDir, frameworkPath, debug = false) {
   const { logWarning, logDebug } = require('./ui');
 
+  // Clear old archives before creating new ones (each upgrade starts fresh)
+  clearArchiveDirectory(projectDir);
+
   if (debug) {
     logDebug('Deploying workflow commands with extensibility support...');
   }
@@ -743,7 +800,51 @@ function cleanupRenamedCommands(projectDir) {
   return { removed, notFound };
 }
 
+/**
+ * Deploy metadata files to user project
+ * Copies .claude/metadata/*.json from framework to user project
+ *
+ * @param {string} projectDir - Target project directory
+ * @param {string} frameworkPath - Framework source directory
+ * @returns {{deployed: string[], skipped: string[]}} Deployment results
+ */
+function deployMetadataFiles(projectDir, frameworkPath) {
+  const metadataDir = path.join(projectDir, '.claude', 'metadata');
+  const sourceDir = path.join(frameworkPath, '.claude', 'metadata');
+
+  const deployed = [];
+  const skipped = [];
+
+  // Check if source directory exists
+  if (!fs.existsSync(sourceDir)) {
+    return { deployed, skipped: ['Source metadata directory not found'] };
+  }
+
+  // Create target directory
+  fs.mkdirSync(metadataDir, { recursive: true });
+
+  // Metadata files to deploy
+  const metadataFiles = ['skill-registry.json', 'extension-recipes.json'];
+
+  for (const file of metadataFiles) {
+    const src = path.join(sourceDir, file);
+    const dest = path.join(metadataDir, file);
+
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, dest);
+      deployed.push(file);
+    } else {
+      skipped.push(file);
+    }
+  }
+
+  return { deployed, skipped };
+}
+
 module.exports = {
+  clearArchiveDirectory,
+  archiveRogueEditFile,
+  deployExtensibleCommand,
   createExtensibilityStructure,
   deployFrameworkScripts,
   deployRules,
@@ -753,4 +854,5 @@ module.exports = {
   deployWorkflowCommands,
   displayGitHubSetupSuccess,
   cleanupRenamedCommands,
+  deployMetadataFiles,
 };

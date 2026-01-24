@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -39,8 +39,10 @@
   ],
   "deploymentFiles": {
     "commands": {
+      "source": ".claude/commands/",
       "core": [
-        "change-domain-expert.md"
+        "change-domain-expert.md",
+        "playwright-check.md"
       ],
       "workflow": [
         "assign-branch.md",
@@ -67,30 +69,23 @@
       ]
     },
     "scripts": {
-      "framework": {
-        "source": "Templates/scripts/framework/",
-        "target": ".claude/scripts/framework/",
-        "files": [
-          "analyze-commits.js",
-          "recommend-version.js",
-          "update-release-notes.js",
-          "wait-for-ci.js"
-        ]
-      },
       "shared": {
         "source": "Templates/scripts/shared/",
         "target": ".claude/scripts/shared/",
         "files": [
+          "analyze-commits.js",
           "assign-branch.js",
+          "cleanup-release-assets.js",
+          "end-sprint.js",
+          "generate-changelog.js",
+          "plan-sprint.js",
+          "recommend-version.js",
+          "sprint-retro.js",
+          "sprint-status.js",
           "switch-branch.js",
           "transfer-issue.js",
-          "plan-sprint.js",
-          "sprint-status.js",
-          "sprint-retro.js",
-          "end-sprint.js",
-          "cleanup-release-assets.js",
-          "generate-changelog.js",
-          "validate-helpers.js"
+          "update-release-notes.js",
+          "wait-for-ci.js"
         ]
       },
       "shared/lib": {

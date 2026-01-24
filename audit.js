@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * audit.js - IDPF Framework Installation Auditor
- * Version: 0.31.0
+ * Version: 0.32.0
  *
  * Audits all IDPF Framework installations to detect:
  * - Modified files (user changed managed files)
@@ -51,7 +51,7 @@ function computeFileHash(filePath) {
 }
 
 /**
- * Compute hash of content string with 0.31.0 replaced
+ * Compute hash of content string with 0.32.0 replaced
  */
 function computeContentHashWithVersion(content, version) {
   const replaced = content.replace(/\{\{VERSION\}\}/g, version);
@@ -582,7 +582,7 @@ async function main() {
   }
 
   console.log(`IDPF Framework Audit`);
-  console.log(`Version: 0.31.0`);
+  console.log(`Version: 0.32.0`);
   console.log(`Mode: ${fixMode ? 'Fix' : 'Audit'}`);
   console.log(`Projects: ${projectsData.projects.length}`);
 

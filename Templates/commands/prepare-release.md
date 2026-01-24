@@ -1,5 +1,5 @@
 ---
-version: "v0.31.0"
+version: "v0.32.0"
 description: Prepare release with PR, merge to main, and tag
 argument-hint: [version] [--skip-coverage] [--dry-run] [--help]
 ---
@@ -12,6 +12,7 @@ Validate, create PR to main, merge, and tag for deployment.
 | `post-analysis` | After Phase 1 | Commit analysis, version recommendation |
 | `pre-validation` | Before Phase 2 | Setup, fixtures, containers |
 | `post-validation` | After Phase 2 | Coverage gates, build verification |
+| `pre-commit` | Before Phase 3 commit | Generate release artifacts |
 | `post-prepare` | After Phase 3 | Documentation updates |
 | `post-pr-create` | After PR creation | CI wait, PR validation |
 | `pre-tag` | Before Phase 4 tagging | Final gate, sign-off |
@@ -41,30 +42,25 @@ git branch --show-current
 Record as `$BRANCH`.
 ### Auto-Create Release Branch (if on main)
 If on `main`: Analyze commits → recommend version → **ASK USER** → create `release/$VERSION` branch → update `$BRANCH`
-### Check for Open Sprints
-```bash
-gh pmu microsprint current
-```
-Close open sprints before proceeding.
 ### Check for Incomplete Issues
 ```bash
-gh pmu branch current --json issues | jq '.[] | select(.status != "done")'
+gh pmu list --branch current --status backlog,in_progress,in_review
 ```
 ## Phase 1: Analysis
 ### Step 1.1: Analyze Changes
 ```bash
 git log $(git describe --tags --abbrev=0)..HEAD --oneline
 ```
-
-<!-- USER-EXTENSION-START: post-analysis -->
 ### Analyze Commits
 ```bash
-node .claude/scripts/framework/analyze-commits.js
+node .claude/scripts/shared/analyze-commits.js
 ```
 ### Recommend Version
 ```bash
-node .claude/scripts/framework/recommend-version.js
+node .claude/scripts/shared/recommend-version.js
 ```
+
+<!-- USER-EXTENSION-START: post-analysis -->
 <!-- USER-EXTENSION-END: post-analysis -->
 
 **ASK USER:** Confirm version.
@@ -73,18 +69,7 @@ node .claude/scripts/framework/recommend-version.js
 <!-- USER-EXTENSION-START: pre-validation -->
 <!-- USER-EXTENSION-END: pre-validation -->
 
-### Step 2.1: Run Tests
-```bash
-go test ./...
-```
-
 <!-- USER-EXTENSION-START: post-validation -->
-### Coverage Gate
-**If `--skip-coverage`, skip.**
-```bash
-node .claude/scripts/prepare-release/coverage.js
-```
-**If `success` is false, STOP.**
 <!-- USER-EXTENSION-END: post-validation -->
 
 **ASK USER:** Confirm validation passed.
@@ -96,6 +81,10 @@ node .claude/scripts/prepare-release/coverage.js
 | `README.md` | Update version |
 | `README-DIST.md` | Verify counts, license |
 | `framework-config.json` | (Self-hosted) Update version and date |
+
+<!-- USER-EXTENSION-START: pre-commit -->
+<!-- USER-EXTENSION-END: pre-commit -->
+
 ### Step 3.2: Commit Preparation
 ```bash
 git add CHANGELOG.md README.md README-DIST.md docs/
@@ -104,11 +93,6 @@ git push
 ```
 
 <!-- USER-EXTENSION-START: post-prepare -->
-### Wait for CI
-```bash
-node .claude/scripts/framework/wait-for-ci.js
-```
-**If CI fails, STOP.**
 <!-- USER-EXTENSION-END: post-prepare -->
 
 **CRITICAL:** Do not proceed until CI passes.
@@ -147,16 +131,15 @@ git push origin $VERSION
 ```
 ### Step 4.6: Wait for CI Workflow
 ```bash
-node .claude/scripts/framework/wait-for-ci.js
+node .claude/scripts/shared/wait-for-ci.js
 ```
 **If CI fails, STOP.**
 ### Step 4.7: Update Release Notes
 ```bash
-node .claude/scripts/framework/update-release-notes.js
+node .claude/scripts/shared/update-release-notes.js
 ```
 
 <!-- USER-EXTENSION-START: post-tag -->
-<!-- Post-tag user customization: monitoring, notifications, asset verification -->
 <!-- USER-EXTENSION-END: post-tag -->
 
 ## Summary Checklist
@@ -167,8 +150,6 @@ node .claude/scripts/framework/update-release-notes.js
 - [ ] PR merged
 
 <!-- USER-EXTENSION-START: checklist-before-tag -->
-- [ ] Coverage gate passed (or `--skip-coverage`)
-- [ ] CI passing
 <!-- USER-EXTENSION-END: checklist-before-tag -->
 
 **After tagging:**
@@ -177,7 +158,6 @@ node .claude/scripts/framework/update-release-notes.js
 - [ ] Release notes updated
 
 <!-- USER-EXTENSION-START: checklist-after-tag -->
-- [ ] Release assets verified
 <!-- USER-EXTENSION-END: checklist-after-tag -->
 
 <!-- USER-EXTENSION-START: pre-close -->
@@ -205,10 +185,6 @@ gh release create $VERSION --title "Release $VERSION" --notes-file CHANGELOG.md
 ## Summary Checklist (Close)
 
 <!-- USER-EXTENSION-START: checklist-close -->
-- [ ] Tracker issue closed
-- [ ] Release closed in project
-- [ ] Working branch deleted
-- [ ] GitHub Release created
 <!-- USER-EXTENSION-END: checklist-close -->
 
 ## Completion

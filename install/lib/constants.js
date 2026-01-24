@@ -100,6 +100,7 @@ const INSTALLED_FILES_MANIFEST = {
       // switch-role.md removed in v0.17.0 - single specialist model
       // add-role.md removed in v0.17.0 - single specialist model
       'change-domain-expert.md',  // Core command (always deployed)
+      'playwright-check.md',      // Core command (always deployed)
       (config) => config?.enableGitHubWorkflow ? 'assign-branch.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'switch-branch.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'transfer-issue.md' : null,
@@ -126,23 +127,17 @@ const INSTALLED_FILES_MANIFEST = {
   scripts: {
     dir: '.claude/scripts/shared',
     files: [
+      (config) => config?.enableGitHubWorkflow ? 'analyze-commits.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'assign-branch.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'cleanup-release-assets.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'end-sprint.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'generate-changelog.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'plan-sprint.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'recommend-version.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'sprint-retro.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'sprint-status.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'switch-branch.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'transfer-issue.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'plan-sprint.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'sprint-status.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'sprint-retro.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'end-sprint.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'cleanup-release-assets.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'generate-changelog.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'validate-helpers.js' : null,
-    ],
-  },
-  scriptsFramework: {
-    dir: '.claude/scripts/framework',
-    files: [
-      (config) => config?.enableGitHubWorkflow ? 'analyze-commits.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'recommend-version.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'update-release-notes.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'wait-for-ci.js' : null,
     ],
@@ -159,6 +154,13 @@ const INSTALLED_FILES_MANIFEST = {
     dir: '.claude/hooks',
     files: [
       (config) => config?.enableGitHubWorkflow ? 'workflow-trigger.js' : null,
+    ],
+  },
+  metadata: {
+    dir: '.claude/metadata',
+    files: [
+      'skill-registry.json',      // Pre-generated skill registry for /charter and /create-prd
+      'extension-recipes.json',   // Common patterns for /extensions recipes
     ],
   },
 };
@@ -203,13 +205,15 @@ const ALL_SKILLS = [
   'ci-cd-pipeline-design',
   'codebase-analysis',
   'common-errors',
+  'create-prd',
+  'electron-development',
   'error-handling-patterns',
   'extract-prd',
   'flask-setup',
   'migration-patterns',
   'mutation-testing',
+  'playwright-setup',
   'postgresql-integration',
-  'create-prd',
   'property-based-testing',
   'sinatra-setup',
   'sqlite-integration',

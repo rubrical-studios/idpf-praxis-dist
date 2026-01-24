@@ -184,6 +184,28 @@ const MIGRATIONS = [
       }
     }
   },
+  {
+    version: '0.32.0',
+    description: 'Remove .claude/scripts/framework/ (scripts consolidated to shared/)',
+    migrate: (projectDir, _frameworkPath, _config) => {
+      // Scripts previously in framework/ were moved to shared/ in #1008
+      // User projects no longer need .claude/scripts/framework/
+      const frameworkScriptsDir = path.join(projectDir, '.claude', 'scripts', 'framework');
+      if (fs.existsSync(frameworkScriptsDir)) {
+        // Check if directory has any files
+        const files = fs.readdirSync(frameworkScriptsDir);
+        if (files.length > 0) {
+          fs.rmSync(frameworkScriptsDir, { recursive: true, force: true });
+          logSuccess(`  ✓ Removed .claude/scripts/framework/ (${files.length} stale scripts)`);
+        } else {
+          fs.rmdirSync(frameworkScriptsDir);
+          logSuccess('  ✓ Removed empty .claude/scripts/framework/');
+        }
+      } else {
+        logSuccess('  ⊘ .claude/scripts/framework/ not found, skipping');
+      }
+    }
+  },
   // Future migrations added here
 ];
 

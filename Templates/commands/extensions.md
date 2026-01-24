@@ -1,5 +1,5 @@
 ---
-version: "v0.31.0"
+version: "v0.32.0"
 description: Discover, view, and manage extension points in release commands
 argument-hint: <subcommand> [options]
 ---
@@ -15,6 +15,8 @@ Unified management of extension points across release commands.
 | `edit X:Y` | Edit extension Y in command X |
 | `validate` | Check all extension blocks are properly formatted |
 | `matrix` | Show cross-command comparison |
+| `recipes` | Show common patterns for extension points |
+| `recipes <category>` | Show recipes for category (ci, coverage, etc.) |
 ---
 ## Target Commands
 | Command | Path |
@@ -86,11 +88,28 @@ pre-validation       |   -    |    ○    |  ○   |
 Legend: ● = has content, ○ = empty, - = not applicable
 ```
 ---
+## Subcommand: recipes
+**Usage:** `/extensions recipes [category]`
+Browse common patterns for extension points from `.claude/metadata/extension-recipes.json`.
+**No category:** List available categories (ci, coverage, notifications, docs, security)
+**With category:** Show recipes with template, prerequisites, and applicable extension points
+```
+CI Recipes
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Recipe: ci-gate-before-merge
+Purpose: Block merge/tag until CI passes
+Template: [markdown content to paste]
+Prerequisites: wait-for-ci.js
+Apply to: /extensions edit prepare-release:post-pr-create
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+---
 ## Naming Convention
 | Pattern | Purpose |
 |---------|---------|
 | `pre-*` | Before workflow phase |
 | `post-*` | After workflow phase |
+| `pre-commit` | Generate artifacts before commit |
 | `checklist` | Single verification |
 | `checklist-before-*` | Pre-action verification |
 | `checklist-after-*` | Post-action verification |
