@@ -1,7 +1,11 @@
 # Tech Stack: {project-name}
+
 **Last Updated:** {date}
+
 ---
+
 ## Core Stack
+
 | Layer | Technology | Version | Rationale |
 |-------|------------|---------|-----------|
 | Language | | | |
@@ -9,8 +13,11 @@
 | Framework | | | |
 | Database | | | |
 | Cache | | | |
+
 ---
+
 ## Development Tools
+
 | Tool | Version | Purpose |
 |------|---------|---------|
 | Package Manager | | |
@@ -18,33 +25,52 @@
 | Linter | | |
 | Formatter | | |
 | Test Framework | | |
+
 ---
+
 ## Infrastructure
+
 | Component | Technology | Environment |
 |-----------|------------|-------------|
 | Hosting | | |
 | CI/CD | | |
 | Container | | |
 | Orchestration | | |
+
 ---
+
 ## Key Dependencies
-### Production
+
+### Production Dependencies
+
 | Package | Version | Purpose |
 |---------|---------|---------|
 | | | |
-### Development
+| | | |
+
+### Development Dependencies
+
 | Package | Version | Purpose |
 |---------|---------|---------|
 | | | |
+| | | |
+
 ---
+
 ## Version Constraints
+
 | Dependency | Constraint | Reason |
 |------------|------------|--------|
 | | | |
+
 ---
+
 ## Upgrade Plan
+
 | Dependency | Current | Target | Timeline |
 |------------|---------|--------|----------|
 | | | | |
+
 ---
-*See: Architecture.md, Constraints.md*
+
+*See also: Architecture.md, Constraints.md*

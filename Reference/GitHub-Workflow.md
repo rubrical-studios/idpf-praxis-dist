@@ -1,5 +1,5 @@
 # GitHub Workflow Integration
-**Version:** v0.32.0
+**Version:** v0.32.1
 ---
 **MUST READ:** At session startup and after compaction.
 ## Project Configuration
@@ -29,11 +29,11 @@ gh extension install rubrical-studios/gh-pmu
 Branch naming requires `{prefix}/{name}` format. Prefix is organizational convention, not functional:
 | Prefix | Convention | Can Release? |
 |--------|------------|--------------|
-| `release/` | Version releases | ✅ |
-| `patch/` | Hotfixes | ✅ |
-| `idpf/` | Framework dev | ✅ |
-| `feature/` | Feature work | ✅ |
-| `hotfix/` | Urgent fixes | ✅ |
+| `release/` | Version releases | Yes |
+| `patch/` | Hotfixes | Yes |
+| `idpf/` | Framework dev | Yes |
+| `feature/` | Feature work | Yes |
+| `hotfix/` | Urgent fixes | Yes |
 **Invalid:** Branch names without prefix (e.g., `my-branch`) fail validation.
 **`main` branch:** Protected (no direct pushes), PR-only, tag source after merge.
 **Working branch:** Any non-main branch. Term "release branch" avoided—all working branches can produce releases.

@@ -1,127 +1,44 @@
 ---
-version: "v0.32.0"
+version: "v0.32.1"
 description: Add story to epic with charter compliance (project)
 argument-hint: "[epic-number]"
 ---
-<!-- MANAGED -->
 # /add-story
-Add a new story to an epic with charter compliance validation and automatic test plan updates.
+Add a new story to an epic with charter compliance validation.
 ## Arguments
 | Argument | Description |
 |----------|-------------|
 | `[epic-number]` | Parent epic issue number (e.g., `42` or `#42`). Optional - prompts if not specified. |
 ## Execution Instructions
-**REQUIRED:** Before executing:
-1. **Create Todo List:** Use `TodoWrite` to create todos from steps below
-2. **Track Progress:** Mark todos `in_progress` → `completed`
-3. **Resume Point:** If interrupted, todos show where to continue
+Use `TodoWrite` to create todos from the phases below and track progress.
 ## Phase 1: Validate Epic and Gather Story Details
-**Step 1:** Parse epic number (strip leading # if present)
-**Step 2:** If no epic specified:
-```bash
-gh issue list --label "epic" --state open --json number,title
-```
-**ASK USER:** Which epic should this story be added to?
-**Step 3:** Validate epic has `epic` label
-**Step 4:** **ASK USER:** Describe the new story:
-- What should the user be able to do?
-- What is the benefit/value?
-- Key acceptance criteria?
-**Step 5:** Transform to story format:
-| User Input | Story Field |
-|------------|-------------|
-| User action | **I want** clause |
-| Benefit | **So that** clause |
-| Criteria | Checkbox list |
+**Step 1:** Parse epic number (accept `42` or `#42` format)
+**Step 2:** If no epic specified, list open epics and prompt user
+**Step 3:** Validate epic exists with `epic` label
+**Step 4:** ASK USER for story details (user action, benefit, acceptance criteria)
+**Step 5:** Transform to story format (As a... I want... So that...)
 ## Phase 2: Charter Compliance Check
-**Step 1:** Load charter context:
-| File | Required | Purpose |
-|------|----------|---------|
-| `CHARTER.md` | Recommended | Vision, goals, scope |
-| `Inception/Scope-Boundaries.md` | Optional | In/out boundaries |
-| `Inception/Constraints.md` | Optional | Constraints |
-**If no charter:** `⚠️ No CHARTER.md found. Skipping compliance check.`
-**Step 2:** Validate story against charter (vision, goals, scope, constraints)
-**Step 3:** Report compliance - **ASK USER** if concerns found
+**Step 1:** Load `CHARTER.md`, `Inception/Scope-Boundaries.md`, `Inception/Constraints.md`
+**Step 2:** Validate story against charter scope
+**Step 3:** Report compliance or flag concerns
 ## Phase 3: Create Story Issue
-**Step 1:** **ASK USER:** Priority? (P0=must-have, P1=important, P2=nice-to-have)
-**Step 2:** Create issue:
+**Step 1:** ASK USER for priority (P0/P1/P2)
+**Step 2:** Create story:
 ```bash
-gh pmu create --repo {repository} \
-  --title "Story: {Story Title}" \
-  --label "story" \
-  --body "{story_body}" \
-  --status backlog \
-  --priority {priority} \
-  --assignee @me
-```
-### Story Body Template
-```markdown
-## Story: {Title}
-### Description
-As a {user type}, I want {capability} so that {benefit}.
-### Relevant Skills
-<!-- Read from framework-config.json projectSkills, lookup in .claude/metadata/skill-registry.json -->
-**If configured:** `- {skill-name} - {description}` | Load: `read Skills/{skill-name}/SKILL.md`
-**If not configured:** No project skills. Run `/charter` to set up.
-### Acceptance Criteria
-- [ ] {Criterion 1}
-- [ ] {Criterion 2}
-### Documentation (if applicable)
-- [ ] Design decisions documented (update existing or create `Construction/Design-Decisions/YYYY-MM-DD-{topic}.md`)
-- [ ] Tech debt logged (update existing or create `Construction/Tech-Debt/YYYY-MM-DD-{topic}.md`)
-**Guidelines:** Skip trivial findings. Update existing docs rather than duplicating. For significant tech debt, create an enhancement issue.
-### TDD Test Cases
-**Note:** Test cases added when story work begins.
-### Definition of Done
-- [ ] All acceptance criteria met
-- [ ] TDD test cases pass
-- [ ] Code reviewed
-- [ ] No regressions
-**Priority:** {P0|P1|P2}
-**Parent Epic:** #{epic_num}
+gh pmu create --repo {repository} --title "Story: {Title}" --label "story" --body "{body}" --status backlog --priority {priority} --assignee @me
 ```
 **Step 3:** Link to parent: `gh pmu sub add {epic_num} {story_num}`
 ## Phase 4: Update Test Plan
-**Step 1:** Find test plan via epic's PRD reference:
-```bash
-gh issue view $epic_num --json body --jq '.body' | grep -oE "PRD/[A-Za-z0-9_-]+/PRD-[A-Za-z0-9_-]+\.md"
-```
-Derive: `PRD/{name}/PRD-{name}.md → PRD/{name}/Test-Plan-{name}.md`
-**If no test plan:** Skip to Phase 5 with note
-**Step 2:** Generate test cases from acceptance criteria
-**Step 3:** Update test plan with new story section
-**Step 4:** Commit test plan changes
-## Phase 5: Update PRD Tracker (if applicable)
-Check for PRD Tracker in epic body:
-```bash
-gh issue view $epic_num --json body --jq '.body' | grep -oE "\*\*PRD Tracker:\*\* #[0-9]+"
-```
-**If found:** Add comment to PRD tracker:
-```bash
-gh issue comment $prd_num --body "📝 **Story Added**
-Story #{story_num}: {Story Title}
-Epic: #{epic_num}
-Added via \`/add-story\`"
-```
-**If not found:** Skip (not PRD-derived)
+Find PRD test plan from epic reference, generate test cases from acceptance criteria, commit updates.
+## Phase 5: Update PRD Tracker
+Add comment to PRD tracker issue if exists.
 ## Phase 6: Report Completion
-```
-Story created: #{story_num}
-Story: {Title}
-Epic: #{epic_num} - {Epic Title}
-Priority: {P0|P1|P2}
-Charter compliance: ✅ Aligned (or ⚠️ Proceeded with warning)
-Test plan: {Updated|Not applicable}
-PRD tracker: {Updated #{prd_num}|Not PRD-derived}
-Next steps:
-1. Work the story: work #{story_num}
-2. View epic progress: gh pmu sub list #{epic_num}
-```
+Report story number, charter compliance status, test plan status, next steps.
 ## Error Handling
 | Situation | Response |
 |-----------|----------|
 | Epic not found | "Issue #N not found" |
 | Issue not an epic | "Issue #N does not have 'epic' label" |
 | Charter concern, user declines | "Story creation cancelled" |
+---
 **End of /add-story Command**

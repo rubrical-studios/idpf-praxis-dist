@@ -1,4 +1,5 @@
 /**
+ * @framework-script 0.32.1
  * deployment.js - Rules, hooks, and commands deployment for IDPF Framework Installer
  * @module install/lib/deployment
  */
@@ -19,10 +20,10 @@ const {
 } = require('./extensibility');
 
 /**
- * Copy file with 0.32.0 placeholder replacement
+ * Copy file with 0.32.1 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.32.0 with
+ * @param {string} version - Version string to replace 0.32.1 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
@@ -86,7 +87,7 @@ ${content}`;
  *
  * @param {string} src - Source template file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.32.0 with
+ * @param {string} version - Version string to replace 0.32.1 with
  * @param {boolean} debug - Enable debug logging
  * @returns {{preserved: boolean, warnings: string[]}} Deployment result
  */
@@ -596,7 +597,8 @@ function deployCoreCommands(projectDir, frameworkPath) {
   const commandChecksums = {};
 
   const coreCommands = [
-    'change-domain-expert'
+    'change-domain-expert',
+    'playwright-check'
   ];
 
   const deployed = [];

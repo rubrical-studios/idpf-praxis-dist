@@ -200,6 +200,92 @@ describe('Manifest Validation', () => {
     );
   });
 
+  describe('Core commands (prevent #1017 regression)', () => {
+    const commandsDir = path.join(rootDir, '.claude', 'commands');
+    const commandsDirExists = fs.existsSync(commandsDir);
+
+    const expectedCoreCommands = [
+      'change-domain-expert.md',
+      'playwright-check.md'
+    ];
+
+    (manifestExists ? test : test.skip)(
+      'manifest lists core commands',
+      () => {
+        const coreCommands = manifest.deploymentFiles?.commands?.core || [];
+        expect(coreCommands.length).toBeGreaterThan(0);
+        for (const cmd of expectedCoreCommands) {
+          expect(coreCommands).toContain(cmd);
+        }
+      }
+    );
+
+    (commandsDirExists ? test : test.skip).each(expectedCoreCommands)(
+      'core command %s exists in source',
+      (cmd) => {
+        const cmdPath = path.join(commandsDir, cmd);
+        expect(fs.existsSync(cmdPath)).toBe(true);
+      }
+    );
+  });
+
+  describe('@framework-script tag (prevent #1019 regression)', () => {
+    // All framework JS files must have @framework-script 0.32.1 tag
+    const jsDirectories = [
+      { path: 'Templates/scripts/shared', description: 'Templates shared scripts' },
+      { path: 'Templates/scripts/shared/lib', description: 'Templates shared lib' },
+      { path: 'Templates/hooks', description: 'Templates hooks' },
+      { path: '.claude/scripts/shared', description: 'Self-hosted shared scripts' },
+      { path: '.claude/scripts/shared/lib', description: 'Self-hosted shared lib' },
+      { path: '.claude/hooks', description: 'Self-hosted hooks' },
+      { path: 'install/lib', description: 'Installer lib' },
+    ];
+
+    const rootJsFiles = [
+      'install.js',
+      'install/index.js',
+      'fetch-updates.js',
+      'audit.js',
+      'Templates/fetch-updates.js',
+    ];
+
+    test.each(jsDirectories)(
+      'all .js files in $description have @framework-script tag',
+      ({ path: dirPath }) => {
+        const fullPath = path.join(rootDir, dirPath);
+        if (!fs.existsSync(fullPath)) return; // Skip if directory doesn't exist
+
+        const jsFiles = fs.readdirSync(fullPath).filter(f => f.endsWith('.js'));
+        const missingTag = [];
+
+        for (const file of jsFiles) {
+          const content = fs.readFileSync(path.join(fullPath, file), 'utf8');
+          if (!content.includes('@framework-script')) {
+            missingTag.push(`${dirPath}/${file}`);
+          }
+        }
+
+        if (missingTag.length > 0) {
+          throw new Error(
+            `Files missing @framework-script 0.32.1 tag:\n  ${missingTag.join('\n  ')}\n` +
+            `Add: @framework-script 0.32.1 as first line in JSDoc block.`
+          );
+        }
+      }
+    );
+
+    test.each(rootJsFiles)(
+      'root file %s has @framework-script tag',
+      (file) => {
+        const filePath = path.join(rootDir, file);
+        if (!fs.existsSync(filePath)) return; // Skip if file doesn't exist
+
+        const content = fs.readFileSync(filePath, 'utf8');
+        expect(content).toContain('@framework-script');
+      }
+    );
+  });
+
   describe('Shared scripts (prevent #875 regression, updated for #1008)', () => {
     // These scripts were previously in framework/ but moved to shared/ in #1008
     const expectedSharedScripts = [

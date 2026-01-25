@@ -1,5 +1,5 @@
 # Session Startup Instructions
-**Version:** v0.32.0
+**Version:** v0.32.1
 **Purpose:** Standard initialization procedure for AI assistant sessions
 ---
 ## Rules Auto-Loading (v2.9+)
@@ -33,7 +33,7 @@ Provides: current versions/counts, framework selection matrix, skills registry, 
 **Token budget:** Only CHARTER.md loaded at startup (~150-200 tokens). Inception/ artifacts loaded on-demand.
 ### 3b. Report Project Skills (User Projects)
 **Note:** Applies to user projects with `framework-config.json`.
-If `projectSkills` array exists and is non-empty, report: "🎯 Project Skills: {skill-list}"
+If `projectSkills` array exists and is non-empty, report: "Project Skills: {skill-list}"
 ### 4. Confirm Initialization
 Report: Date, Framework version, Skill count, Specialists count, Process framework (if self-hosted), GitHub Workflow status, Charter status, Project skills (if configured)
 Ask user what they would like to work on.

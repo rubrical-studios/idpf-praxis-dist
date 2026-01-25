@@ -1,78 +1,30 @@
 ---
-version: "v0.32.0"
+version: "v0.32.1"
 description: Verify and close PRD tracker (project)
 argument-hint: "<prd-issue-number>"
 ---
-<!-- MANAGED -->
 # /complete-prd
-Verify all epics and stories derived from a PRD are complete, then close the PRD tracker issue.
+Verify all epics and stories from a PRD are complete, then close the PRD tracker.
 ## Arguments
 | Argument | Description |
 |----------|-------------|
-| `<prd-issue-number>` | PRD tracker issue number (e.g., `151` or `#151`) |
-## Prerequisites
-- PRD tracker issue with `prd` label
-- PRD created via `/create-backlog` (has linked epics)
+| `<prd-issue-number>` | PRD tracker issue number |
 ## Workflow
 ### Step 1: Validate PRD Issue
-Parse issue number, verify `prd` label:
-```bash
-gh issue view $issue_num --json labels -q '.labels[].name' | grep -q "prd"
-```
+Parse issue number, verify `prd` label exists.
 ### Step 2: Find Linked Epics
-Find epics containing `**PRD Tracker:** #{issue_num}` in body:
 ```bash
 gh issue list --label "epic" --state all --json number,title,body,state
 ```
+Filter to epics with `**PRD Tracker:** #{issue_num}` in body.
 ### Step 3: Check Epic Completion
-For each linked epic, check state:
-```bash
-gh issue view #{epic} --json state -q '.state'
-```
-Collect: total epics, closed epics, open epics list
+For each epic: `gh issue view #{epic} --json state -q '.state'`
 ### Step 4: Check Story Completion
-For each epic, get sub-issues:
-```bash
-gh pmu sub list #{epic} --json
-```
-Collect: total stories, closed stories, open stories list
+For each epic: `gh pmu sub list #{epic} --json`
 ### Step 5: Report Status
-**If all complete:**
-```
-✅ PRD #{issue_num} Verification Complete
-Epics: {closed}/{total} complete
-Stories: {closed}/{total} complete
-All work items complete. Closing PRD tracker.
-```
-Then close:
-```bash
-gh pmu move $issue_num --status done
-gh issue comment $issue_num --body "## PRD Complete ✅
-All epics and stories completed.
-PRD closed by \`/complete-prd\` on {date}."
-```
-**If incomplete:**
-```
-⚠️ PRD #{issue_num} Not Ready for Closure
-## Incomplete Work
-### Open Epics ({count})
-- #{epic}: {title}
-### Open Stories ({count})
-- #{story}: {title} (Epic: #{epic})
-Complete above items before running /complete-prd again.
-```
-**Do NOT close** if incomplete.
+**If all complete:** Close PRD with summary comment
+**If incomplete:** List open epics/stories, do NOT close
 ## Verification Logic
-| Epics | Stories | Result |
-|-------|---------|--------|
-| All closed | All closed | ✅ Close PRD |
-| Any open | Any state | ❌ Report incomplete |
-| All closed | Any open | ❌ Report incomplete |
-## Error Handling
-| Situation | Response |
-|-----------|----------|
-| PRD not found | "Issue #N not found" |
-| Missing prd label | "Issue #N does not have 'prd' label" |
-| No linked epics | Warning + suggest manual verification |
-| PRD already closed | "PRD #{N} is already closed" |
+PRD Complete = (ALL epics CLOSED) AND (ALL stories CLOSED)
+---
 **End of /complete-prd Command**

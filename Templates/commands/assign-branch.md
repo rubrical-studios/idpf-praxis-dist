@@ -1,21 +1,18 @@
 ---
-version: "v0.32.0"
+version: "v0.32.1"
 allowed-tools: Bash, AskUserQuestion
-description: Assign issues to a branch (project)
+description: "Assign issues to a branch: [#issue...] [branch/...] [--all] (project)"
 ---
-<!-- MANAGED -->
 Assign issues to a branch.
+Run the assign-branch script:
 ```bash
 node .claude/scripts/shared/assign-branch.js "$ARGUMENTS"
 ```
-## Handling "NO_RELEASE_FOUND"
-If script outputs `NO_RELEASE_FOUND`, no open branches exist. Script also outputs:
-1. **CONTEXT:** - Info about last version, labels, input
-2. **SUGGESTIONS:** - Formatted as `number|branch|description`
-When you see this:
-1. Parse SUGGESTIONS for branch options
-2. Use `AskUserQuestion` to let user select (recommended first, descriptions included, Other for custom)
-3. Create branch: `gh pmu branch start --name "<selected>"`
-4. Re-run original assign-branch command
+## Handling "NO_RELEASE_FOUND" Output
+If script outputs `NO_RELEASE_FOUND`:
+1. Parse SUGGESTIONS lines for branch options
+2. Use `AskUserQuestion` to let user select
+3. Create branch: `gh pmu branch start --name "<selected-branch>"`
+4. Re-run assign-branch command
 ## Normal Output
 If branches exist, report result directly.

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// **Version:** 0.32.0
 /**
+ * @framework-script 0.32.1
  * plan-sprint.js
  *
  * Plan a sprint by selecting epics to include.

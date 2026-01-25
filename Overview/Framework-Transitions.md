@@ -1,36 +1,44 @@
 # Framework Transitions Reference
-**Version:** v0.32.0
-**Purpose:** Transition rules, diagrams, hybrid usage
----
-## Transition Matrix
+**Version:** v0.32.1
+**Purpose:** Framework transition rules, diagrams, and hybrid usage patterns
+## Framework Transition Matrix
 ### Workflow Diagram
 ```
-  VIBE ─────────────► AGILE (Terminal)
-  Exploration         Sprint-Based Development
-  - Rapid prototyping - User Stories
-  - Requirements emerge- Sprints + Velocity
+┌─────────────────────────────────────────────────────────────────────────┐
+│                                                                         │
+│   ┌───────┐                   ┌───────────┐                             │
+│   │ VIBE  │──────────────────►│   AGILE   │                             │
+│   │       │                   │ (Terminal)│                             │
+│   └───────┘                   └───────────┘                             │
+│                                                                         │
+│   Exploration                 Sprint-Based Development                  │
+│   - Conversational dev        - User Stories                            │
+│   - Rapid prototyping         - Sprints + Velocity                      │
+│   - Requirements emerge       - Formal workflows                        │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
-### Valid Transitions
+**Invalid Transition:**
+```
+AGILE ──── X ────► VIBE
+Rationale: Quality standards should never decrease.
+```
+## Valid Transitions
 | From | To | When |
-|------|----|----- |
-| Vibe | Agile | Exploration complete, requirements understood |
-### Invalid Transitions
-**Never:** Agile -> Vibe
-**Rationale:** Quality standards should never decrease.
----
+|------|----|----|
+| **Vibe** | **Agile** | Exploration complete, requirements understood |
 ## Transition Principles
-### Always Preserved
-- All code and tests
-- Git repository and history
-- TDD methodology (RED-GREEN-REFACTOR)
-- Testing framework and suite
+### Preserved Across Transitions
+- Code and tests
+- Git history
+- TDD methodology
 - Architecture decisions
-- Dependencies and configurations
+- Dependencies
 ### What Changes
-- Documentation format (informal -> User Stories)
-- Workflow structure (conversational -> Sprints)
-- Planning granularity (ad-hoc -> Stories/Epics)
-- Progress tracking (informal -> Velocity)
+- Documentation format (informal → User Stories)
+- Workflow structure (conversational → Sprints)
+- Planning granularity (ad-hoc → Stories/Epics)
+- Progress tracking (informal → Velocity)
 ### Best Practices
 1. Complete current work before transitioning
 2. Ensure all tests pass (100% green)
@@ -38,12 +46,12 @@
 4. Create transition documentation
 5. Archive old workflow artifacts
 6. Generate new framework artifacts (backlog)
-7. Communicate transition to stakeholders
----
+## Invalid Transitions
+- **Agile → Vibe:** Defeats structured discipline, quality standards should never decrease
 ## Framework-Specific Transitions
-### Vibe -> Agile
+### Vibe → Agile
 **Preserves:** Code, tests, Git history
-**Changes:** Informal -> User Stories, Ad-hoc -> Sprints, Add velocity tracking
+**Changes:** Informal dev → User Stories, Ad-hoc → Sprints, Add velocity tracking
 **Steps:**
 1. Document discovered requirements
 2. Create initial backlog with epics
@@ -53,48 +61,33 @@
 ### Agile as Terminal State
 - No transitions FROM Agile
 - Projects continue until completion
-- Maintenance continues in Agile
----
+- New projects can start with Vibe or directly with Agile
 ## Simultaneous Framework Usage
 ### Valid Hybrid Scenarios
-**Example 1: Exploration + Production**
-- New feature: IDPF-Vibe (separate branch)
-- Main product: IDPF-Agile
-**Example 2: Multiple Products**
-- Product A: IDPF-Agile
-- Product B (exploration): IDPF-Vibe
-- Separate repositories
+- New feature exploration (Vibe) + Main product development (Agile)
+- Multiple products at different stages
 ### Guidelines
 - Document which framework governs which concern
-- Separate documentation per framework scope
-- Maintain clear boundaries
-- Never mix frameworks for same feature
----
+- Maintain clear boundaries between contexts
+- Never mix frameworks for same concern
 ## Integration Architecture
-### Hierarchy
+### Dependency Hierarchy
 ```
-System Instructions (WHO + EXPERTISE)
-    |
-Framework Selection (WHAT process)
-    |
-Skills (TOOLS)
-    |
-Assistant Guidelines (HOW WELL)
+System Instructions → Framework Selection → Skills → Assistant Guidelines
 ```
 ### Selection Criteria
 **IDPF-Agile:** Evolving requirements, iterative delivery, velocity tracking, team collaboration
-**IDPF-Vibe:** Unclear requirements, exploration needed, prototyping, evolves to Agile
+**IDPF-Vibe:** Unclear requirements, exploration needed, prototyping, requirements emerge
 ### Common Elements
-**TDD:** RED-GREEN-REFACTOR across all frameworks
-**Communication:** Single code block format, complete runnable code, exact paths
-**Context:** Full awareness, cumulative conversation, session continuity
-**Git:** GitFlow, GitHub Flow, trunk-based, Conventional Commits
----
-## Selection Matrix
-| Project Type | Starting Point | Evolution |
-|--------------|---------------|-----------|
+- TDD methodology (RED-GREEN-REFACTOR)
+- Claude Code communication (single code block format)
+- Context preservation
+- Git workflows
+## Framework Selection Matrix
+| Project Type | Starting Point | Evolution Path |
+|--------------|---------------|----------------|
 | Evolving requirements | IDPF-Agile | Terminal |
-| Unclear requirements | IDPF-Vibe | -> Agile |
+| Unclear requirements | IDPF-Vibe | → Agile |
 | Separate test repo | IDPF-Testing-Core | Use Agile |
 ---
 **End of Framework Transitions Reference**

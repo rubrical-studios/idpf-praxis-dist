@@ -1,24 +1,22 @@
 # Framework Summary
-**Version:** v0.32.0
-**Purpose:** Compact startup reference
----
+**Version:** v0.32.1
+**Purpose:** Compact startup reference for framework developers
 ## Quick Reference
 | Component | Count | Location |
 |-----------|-------|----------|
 | Development Frameworks | 2 | IDPF-Agile, IDPF-Vibe (7 variants) |
 | Testing Frameworks | 7 | IDPF-Testing-Core + 6 specialized |
-| Domain Specialists | 23 | 12 Base + 10 Pack + 1 PRD |
+| Domain Specialists | 22 | 12 Base + 10 Pack |
 | Core Instructions | 2 | Core-Developer-Instructions + Domain-Selection-Guide |
-| Skills | 22 | Skills/ |
+| Skills | 25 | Skills/ |
 | Assistant Guidelines | 4 | Assistant/ |
----
 ## Current Versions
 ### Development Frameworks
 | Framework | Revision | Type |
 |-----------|----------|------|
 | IDPF-Agile | 3 | Sprint-Based Development |
-| IDPF-Vibe (Core) | 4.0 | Exploratory to Agile |
-> **Note:** IDPF-PRD deprecated v0.24; use `create-prd` skill.
+| IDPF-Vibe (Core) | 4.0 | Exploratory → Agile |
+> **Note:** IDPF-PRD deprecated in v0.24, replaced by `create-prd` skill.
 ### Testing Frameworks
 | Framework | Revision | Extends |
 |-----------|----------|---------|
@@ -54,34 +52,33 @@
 | api-versioning | Architecture |
 | error-handling-patterns | Architecture |
 | ci-cd-pipeline-design | DevOps |
----
+| playwright-setup | Testing Setup |
+| codebase-analysis | Code Quality |
+| electron-development | Desktop |
 ## Framework Selection Matrix
 | Project Type | Starting Point | Evolution Path |
 |--------------|---------------|----------------|
 | Evolving requirements, sprints | IDPF-Agile | Terminal |
-| Unclear requirements, exploration | IDPF-Vibe | Agile |
+| Unclear requirements, exploration | IDPF-Vibe | → Agile |
 | Separate test repository | IDPF-Testing-Core | Use Agile |
----
 ## Core Principle
-- **System Instructions**: WHO the assistant is
-- **Frameworks**: WHAT process to follow
-- **Skills**: Reusable capabilities
-- **Assistant Guidelines**: Accuracy and quality
----
+**System Instructions** define WHO the assistant is
+**Frameworks** define WHAT process to follow
+**Skills** provide reusable capabilities
+**Assistant Guidelines** ensure accuracy and quality
 ## Valid Framework Transitions
 ```
-VIBE --> AGILE (Terminal)
+VIBE ──► AGILE (Terminal)
 ```
-**Invalid:** Agile to Vibe (quality standards never decrease)
----
+**Invalid:** Agile → Vibe (quality standards should never decrease)
 ## Detailed Documentation
 | File | Content |
 |------|---------|
-| Framework-Development.md | Agile, Vibe details, create-prd |
-| Framework-Testing.md | Testing-Core + 6 specialized |
-| Framework-System-Instructions.md | Core + 23 Domain Specialists |
-| Framework-Skills.md | All 22 skills |
-| Framework-Transitions.md | Transition matrix, hybrid usage |
-| Framework-Overview.md | Complete reference |
+| Framework-Development.md | IDPF-Agile, Vibe details, create-prd skill |
+| Framework-Testing.md | Testing-Core + 6 specialized frameworks |
+| Framework-System-Instructions.md | Core + 22 Domain Specialists |
+| Framework-Skills.md | All 25 skills with descriptions |
+| Framework-Transitions.md | Transition matrix, diagrams, hybrid usage |
+| Framework-Overview.md | Complete reference (all sections) |
 ---
 **End of Framework Summary**

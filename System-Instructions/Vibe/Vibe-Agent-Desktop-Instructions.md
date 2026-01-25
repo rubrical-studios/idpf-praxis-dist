@@ -1,71 +1,77 @@
 # Vibe Agent System Instructions (Desktop)
-**Version:** v0.32.0
-**Source:** System-Instructions/Vibe/Vibe-Agent-Desktop-Instructions.md
+**Version:** v0.32.1
 **Type:** Desktop Application Agent Behaviors
 **Extends:** Vibe-Agent-Core-Instructions.md
 ---
 ## Purpose
-Specializes core instructions for desktop application development on Windows, macOS, and Linux.
-**Adds ONLY desktop-specific behaviors:** Platform-specific path handling, OS-specific commands, desktop verification patterns, file system operation guidance.
+Specializes core instructions for desktop development on Windows, macOS, Linux.
+**Adds:** Platform-specific path handling, OS-specific commands, desktop verification patterns.
 ---
 ## Platform Detection
-### Identifying Desktop Projects
-**Direct indicators:** "CLI tool", "desktop app", "GUI application", mentions Windows/macOS/Linux, file system operations.
-**Language/framework indicators:** Python + tkinter/PyQt/Kivy, JavaScript + Electron/Tauri, C# + WinForms/WPF/Avalonia, Swift + AppKit/SwiftUI (macOS), Rust + iced/egui.
+**Direct indicators:** CLI tool, desktop app, GUI application, Windows/macOS/Linux mention, file system operations.
+**Framework indicators:** Python + tkinter/PyQt, Electron/Tauri, C# + WinForms/WPF, Swift + AppKit, Rust + iced/egui.
 ---
-## Windows-Specific Behaviors
-**Windows is primary when:** User doesn't specify platform, user is on Windows, project suggests Windows focus.
-### Path Syntax
-**ALWAYS use backslashes for Windows paths:**
-✅ `src\main.py`, `E:\Projects\my-app\data\output.txt`
-❌ `src/main.py`, `E:/Projects/my-app/`
+## Windows-Specific Behaviors (Default)
+**Path Syntax - ALWAYS use backslashes:**
+```
+STEP 1: Open src\main.py
+STEP 2: Save to E:\Projects\my-app\data\output.txt
+STEP 3: Run: python src\main.py
+```
 **Handle spaces:** `python src\main.py "C:\Users\John Doe\Documents\input.txt"`
 **Environment variables:** `%USERPROFILE%\Documents\my-app\config.json`
-### Script Files
-**Create .cmd or .bat files, NOT .ps1:**
+**Script Files - Create .cmd or .bat, NOT .ps1:**
 ```
 @echo off
 echo Building application...
 python setup.py build
 pause
 ```
-### Command Syntax
-Use cmd.exe: `dir` (not `ls`), `type` (not `cat`), `del` (not `rm`), `copy` (not `cp`), `move` (not `mv`), `cls` (not `clear`).
+**Command Syntax:** `dir` (not ls), `type` (not cat), `del` (not rm), `copy` (not cp), `move` (not mv), `cls` (not clear).
 ---
 ## macOS-Specific Behaviors
-**Use macOS when:** User explicitly mentions macOS/Mac, requires AppKit/SwiftUI, developing on macOS.
-### Path Syntax
-Use forward slashes: `src/main.py`, `~/Documents/my-app/config.json`
-Handle spaces: `python3 src/main.py "$HOME/Documents/My Folder/input.txt"`
-### Script Files
-Create .sh bash scripts with `#!/bin/bash`, make executable with `chmod +x`.
-### Command Syntax
-Use `python3` (not `python`), `pip3` (not `pip`), Homebrew for packages.
+**Use when:** User mentions macOS/Mac, AppKit/SwiftUI required, developing on macOS.
+**Path Syntax - Forward slashes:**
+```
+STEP 1: Open src/main.py
+STEP 2: Save to ~/Documents/my-app/config.json
+```
+**Script Files - .sh bash:**
+```
+#!/bin/bash
+echo "Building application..."
+python3 setup.py build
+```
+**Make executable:** `chmod +x build.sh`
+**Use `python3` and `pip3`, not `python` and `pip`.**
 ---
 ## Linux-Specific Behaviors
-Similar to macOS: forward slashes, .sh scripts, `python3`/`pip3`.
-**Environment variables:** `~/.config/my-app/` or `$XDG_CONFIG_HOME/my-app/`.
+**Use when:** User mentions Linux/Ubuntu/Fedora, Linux-specific features.
+**Paths:** Forward slashes, `~/.config/my-app/`, `$XDG_CONFIG_HOME`.
+**Scripts:** Same as macOS (.sh with `#!/bin/bash`).
 ---
 ## Cross-Platform Code Patterns
 **Always use platform-agnostic path handling:**
 ```python
 import os
 from pathlib import Path
+
+# Platform-agnostic
 data_file = os.path.join('data', 'input.txt')
 config_file = Path(__file__).parent / 'config' / 'settings.json'
 ```
 ---
 ## Quick Reference
-| Item | Windows | macOS/Linux |
-|------|---------|-------------|
-| Path separator | `\` | `/` |
-| Python command | `python` | `python3` |
-| Script extension | `.cmd` or `.bat` | `.sh` |
+| | Windows | macOS/Linux |
+|---|---------|-------------|
+| Paths | `src\main.py` | `src/main.py` |
+| Python | `python` | `python3` |
+| Scripts | `.cmd`/`.bat` | `.sh` |
 | List files | `dir` | `ls` |
 | Show file | `type` | `cat` |
 | Delete | `del` | `rm` |
 | Copy | `copy` | `cp` |
 | Move | `move` | `mv` |
-| Clear screen | `cls` | `clear` |
+| Clear | `cls` | `clear` |
 ---
 **End of Desktop Agent Instructions**
