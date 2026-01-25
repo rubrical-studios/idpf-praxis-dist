@@ -1,7 +1,7 @@
 ---
-version: "v0.32.1"
+version: "v0.33.0"
 description: Split story into smaller stories (project)
-argument-hint: "<story-number>"
+argument-hint: "<story-number> (e.g., 123)"
 ---
 # /split-story
 Split a story into smaller stories with charter compliance and test plan integrity.

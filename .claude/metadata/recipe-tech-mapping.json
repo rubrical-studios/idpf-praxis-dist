@@ -1,0 +1,113 @@
+{
+  "version": "1.0.0",
+  "description": "Maps tech stack indicators to relevant extension recipes for /charter suggestions",
+  "techMappings": {
+    "package.json": {
+      "recipes": ["nodejs-tests", "dependency-audit"],
+      "description": "Node.js project"
+    },
+    "go.mod": {
+      "recipes": ["go-tests"],
+      "description": "Go module"
+    },
+    "Cargo.toml": {
+      "recipes": ["rust-tests"],
+      "description": "Rust project"
+    },
+    "pom.xml": {
+      "recipes": ["java-maven-tests", "dependency-audit"],
+      "description": "Java Maven project"
+    },
+    "build.gradle": {
+      "recipes": ["java-gradle-tests", "dependency-audit"],
+      "description": "Java Gradle project"
+    },
+    "requirements.txt": {
+      "recipes": ["python-pytest", "dependency-audit"],
+      "description": "Python project"
+    },
+    "pyproject.toml": {
+      "recipes": ["python-pytest", "dependency-audit"],
+      "description": "Python project (modern)"
+    },
+    "setup.py": {
+      "recipes": ["python-pytest"],
+      "description": "Python package"
+    },
+    "Gemfile": {
+      "recipes": ["ruby-rspec-tests", "dependency-audit"],
+      "description": "Ruby project"
+    },
+    "composer.json": {
+      "recipes": ["php-phpunit-tests", "dependency-audit"],
+      "description": "PHP project"
+    },
+    "*.csproj": {
+      "recipes": ["dotnet-tests"],
+      "description": ".NET project"
+    },
+    "*.sln": {
+      "recipes": ["dotnet-tests"],
+      "description": ".NET solution"
+    },
+    ".github/workflows/": {
+      "recipes": ["ci-gate-before-merge", "ci-status-check"],
+      "description": "GitHub Actions CI"
+    },
+    ".gitlab-ci.yml": {
+      "recipes": ["ci-status-check"],
+      "description": "GitLab CI"
+    },
+    "codecov.yml": {
+      "recipes": ["coverage-gate", "coverage-report"],
+      "description": "Codecov integration"
+    },
+    ".nycrc": {
+      "recipes": ["coverage-gate", "coverage-report"],
+      "description": "NYC/Istanbul coverage"
+    },
+    ".nycrc.json": {
+      "recipes": ["coverage-gate", "coverage-report"],
+      "description": "NYC/Istanbul coverage (JSON)"
+    },
+    ".coveragerc": {
+      "recipes": ["coverage-gate", "coverage-report"],
+      "description": "Python coverage.py"
+    },
+    "jest.config.js": {
+      "recipes": ["coverage-gate"],
+      "description": "Jest with coverage"
+    },
+    "jest.config.ts": {
+      "recipes": ["coverage-gate"],
+      "description": "Jest with coverage (TS)"
+    }
+  },
+  "universalRecipes": {
+    "description": "Recipes that apply to any project type",
+    "recipes": ["auto-changelog", "test-plan-generator"],
+    "condition": "conventionalCommits"
+  },
+  "groupMappings": {
+    "ci": {
+      "description": "CI/CD integration recipes",
+      "indicators": [".github/workflows/", ".gitlab-ci.yml", ".circleci/", "azure-pipelines.yml", "Jenkinsfile"],
+      "recipes": ["ci-gate-before-merge"]
+    },
+    "coverage": {
+      "description": "Test coverage recipes",
+      "indicators": ["codecov.yml", ".nycrc", ".nycrc.json", ".coveragerc", "coverage/"],
+      "recipes": ["coverage-gate", "coverage-report"]
+    }
+  },
+  "_schema": {
+    "description": "Schema documentation for recipe-tech-mapping.json",
+    "techMappings": "Map of tech indicator (file/dir) to recipe suggestions",
+    "techMapping": {
+      "recipes": "Array of recipe names from extension-recipes.json",
+      "description": "Human-readable description of this tech indicator"
+    },
+    "universalRecipes": "Recipes suggested for all projects regardless of tech stack",
+    "groupMappings": "Higher-level groupings for related tech indicators"
+  }
+}

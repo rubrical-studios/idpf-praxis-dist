@@ -1,7 +1,7 @@
 ---
-version: "v0.32.1"
+version: "v0.33.0"
 description: Verify and close PRD tracker (project)
-argument-hint: "<prd-issue-number>"
+argument-hint: "<issue-number> (e.g., 151)"
 ---
 # /complete-prd
 Verify all epics and stories from a PRD are complete, then close the PRD tracker.

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-25T04:33:48.490Z",
+  "generatedAt": "2026-01-25T19:48:14.057Z",
   "version": "1.0.0",
   "categories": {
     "ci": {
@@ -305,6 +305,23 @@
             "prepare-release:pre-validation",
             "prepare-beta:pre-validation",
             "merge-branch:pre-gate"
+          ]
+        },
+        {
+          "name": "test-plan-generator",
+          "description": "Generate test plan skeleton from branch issues",
+          "extensionPoints": [
+            "pre-tag"
+          ],
+          "template": "### Generate Test Plan\n\n```bash\nnode .claude/scripts/shared/generate-test-plan.js\n```\n\nCreates `Construction/Test-Plans/{version}-test-plan.md` with:\n- Test cases derived from branch issues\n- Acceptance criteria extracted as expected results\n- Test execution tracking table\n\n**Review the generated test plan and complete TODO items.**",
+          "prerequisites": [
+            "generate-test-plan.js (included with framework)",
+            "gh pmu extension installed",
+            "Issues assigned to branch"
+          ],
+          "appliesTo": [
+            "prepare-release:pre-tag",
+            "prepare-beta:pre-tag"
           ]
         }
       ]

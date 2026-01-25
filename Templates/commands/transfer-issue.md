@@ -1,7 +1,8 @@
 ---
-version: "v0.32.1"
+version: "v0.33.0"
 allowed-tools: Bash
 description: Transfer issue between releases/sprints (project)
+argument-hint: "<issue-number> [--to branch]"
 ---
 Transfer an issue between releases or sprints.
 ```bash

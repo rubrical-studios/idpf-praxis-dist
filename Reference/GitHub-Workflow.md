@@ -1,5 +1,5 @@
 # GitHub Workflow Integration
-**Version:** v0.32.1
+**Version:** v0.33.0
 ---
 **MUST READ:** At session startup and after compaction.
 ## Project Configuration
@@ -19,7 +19,6 @@ fields:
 Use alias (left side) in commands: `gh pmu move 90 --status in_progress`
 **If missing:** Run `gh pmu init`
 **Framework config (optional):** `framework: IDPF-Agile` enables workflow restrictions.
-**Microsprint config:** `microsprint: stale_threshold_hours: 24`
 ## Prerequisites
 ```bash
 gh extension install rubrical-studios/gh-pmu
@@ -66,10 +65,9 @@ gh pmu view 123 --json=number,title,status
 - `gh pmu move [#] --recursive --dry-run` - Preview recursive changes
 - `gh pmu triage --query "..." --apply status:backlog` - Bulk update
 - `gh pmu intake --apply` - Add untracked issues
-**Move Flags:** `--status`, `--branch` (replaces `--release`), `--microsprint`, `--backlog` (clear fields), `--recursive`, `--dry-run`, `--depth N`, `-f/--force`, `--yes`
+**Move Flags:** `--status`, `--branch` (replaces `--release`), `--backlog` (clear fields), `--recursive`, `--dry-run`, `--depth N`, `-f/--force`, `--yes`
 **Multi-Issue:** `gh pmu move 42 43 44 --status in_progress` - more efficient than parallel calls
 **Deprecation:** `--release` flag deprecated, use `--branch` instead.
-**Microsprint:** `start`, `current`, `add [#]`, `remove [#]`, `close`, `list`, `resolve`
 **Branch:** `start --name release/vX.Y.Z`, `current`, `reopen [name]`, `move [#] --branch current` (recommended), `remove [#]`, `close [--tag]`, `list`
 **Deprecation:** `gh pmu release` deprecated, use `gh pmu branch` instead.
 **Patch Releases:** Use `gh pmu branch` with `patch/` branch naming (e.g., `--name patch/v1.1.5`)
@@ -83,7 +81,6 @@ Prefer slash commands over raw `gh pmu` commands:
 | `gh pmu branch close` (releases) | `/prepare-release` |
 | `gh pmu branch close` (features) | `/merge-branch` |
 | `gh pmu move [#] --branch` | `/assign-branch` |
-| `gh pmu microsprint start/current/close` | `/plan-sprint`, `/sprint-status`, `/end-sprint` |
 **Use raw commands for:** debugging, uncovered operations, user request, complex bulk ops.
 ## Critical Rules
 - **Issues close ONLY when user says "Done"** - Never close automatically, skip STOP checkpoint, or close because code shipped
@@ -97,12 +94,10 @@ Prefer slash commands over raw `gh pmu` commands:
 | In Progress / In Review | `Refs #XXX`, `Part of #XXX` | `Fixes`, `Closes`, `Resolves` |
 | After "Done" | `Fixes #XXX` | — |
 ## Framework Applicability
-| Framework | Microsprint | Release | Patch |
-|-----------|:-----------:|:-------:|:-----:|
-| IDPF-Agile | Primary | Optional | Optional |
-| IDPF-Vibe | Optional | - | - |
-## Sprint-Release Binding
-Each sprint scoped to one branch tracker; `microsprint start` requires active branch; sprint issues must match branch assignment; work on working branch (not main).
+| Framework | Release | Patch |
+|-----------|:-------:|:-----:|
+| IDPF-Agile | ● | ● |
+| IDPF-Vibe | — | — |
 ## Workflow Routing (CRITICAL)
 **Step 1: Determine Framework** from `.gh-pmu.yml` or labels:
 | Framework | Parent Label | Child Labels |
@@ -195,21 +190,19 @@ If yes: `gh issue edit [parent] --add-label "epic"`, add "story" to sub-issues
 1. Verify all linked issues are Done
 2. Update PRD status to Complete
 3. `git mv PRD/PRD-[Name].md PRD/Implemented/`
-### 9. Microsprint Workflow
-**Start:** `gh pmu microsprint start [--name "theme"]`
-**Add:** `gh pmu microsprint add [#]` or `gh pmu move [#] --microsprint current`
-**Close:** `gh pmu microsprint close [--skip-retro] [--commit]`
-**Artifacts:** `Microsprints/[name]/review.md`, `retro.md`
-**Team model:** One active microsprint shared by team. Join/Wait/Cancel prompt if another is active.
-**Stale detection:** >24h old prompts Close/Abandon/Resume
-### 6.5. Branch Reopen Workflow
-`gh pmu branch reopen [branch-name]` - Reopen closed branch tracker (e.g., `release/v1.2.0`, `patch/v1.1.5`)
-### 10-11. Release/Patch Workflow
-**Start:** `gh pmu branch start --name "release/v1.2.0"` (or `patch/v1.1.5` for patches)
+### 9. Release Workflow
+**Start:** `gh pmu branch start --name "release/v1.2.0"`
 **Add:** `gh pmu move [#] --branch current`
 **Close:** `gh pmu branch close [--tag]`
-**Artifacts:** `Releases/[release|patch]/vX.Y.Z/[release|patch]-notes.md`, `changelog.md`
-### 12. PR-Only Main Merges
+**Artifacts:** `Releases/release/vX.Y.Z/release-notes.md`, `changelog.md`
+### 6.5. Branch Reopen Workflow
+`gh pmu branch reopen [branch-name]` - Reopen closed branch tracker (e.g., `release/v1.2.0`, `patch/v1.1.5`)
+### 10. Patch Workflow
+**Start:** `gh pmu branch start --name "patch/v1.1.5"`
+**Add:** `gh pmu move [#] --branch current`
+**Close:** `gh pmu branch close [--tag]`
+**Artifacts:** `Releases/patch/vX.Y.Z/patch-notes.md`, `changelog.md`
+### 11. PR-Only Main Merges
 All work via PRs to main. Never push directly.
 1. `gh pr create --base main --head release/vX.Y.Z`
 2. Wait for review/approval

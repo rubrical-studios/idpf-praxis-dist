@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.32.1
+ * @framework-script 0.33.0
  * constants.js - Configuration data for IDPF Framework Installer
  * @module install/lib/constants
  */
@@ -101,14 +101,11 @@ const INSTALLED_FILES_MANIFEST = {
       // switch-role.md removed in v0.17.0 - single specialist model
       // add-role.md removed in v0.17.0 - single specialist model
       'change-domain-expert.md',  // Core command (always deployed)
+      'install-skill.md',         // Core command (always deployed)
       'playwright-check.md',      // Core command (always deployed)
       (config) => config?.enableGitHubWorkflow ? 'assign-branch.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'switch-branch.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'transfer-issue.md' : null,
-      (config) => config?.enableGitHubWorkflow ? 'plan-sprint.md' : null,
-      (config) => config?.enableGitHubWorkflow ? 'sprint-status.md' : null,
-      (config) => config?.enableGitHubWorkflow ? 'sprint-retro.md' : null,
-      (config) => config?.enableGitHubWorkflow ? 'end-sprint.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'create-branch.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'prepare-release.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'prepare-beta.md' : null,
@@ -128,15 +125,13 @@ const INSTALLED_FILES_MANIFEST = {
   scripts: {
     dir: '.claude/scripts/shared',
     files: [
+      'install-skill.js',  // Core script (always deployed)
       (config) => config?.enableGitHubWorkflow ? 'analyze-commits.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'assign-branch.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'cleanup-release-assets.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'end-sprint.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'generate-changelog.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'plan-sprint.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'generate-test-plan.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'recommend-version.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'sprint-retro.js' : null,
-      (config) => config?.enableGitHubWorkflow ? 'sprint-status.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'switch-branch.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'transfer-issue.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'update-release-notes.js' : null,
@@ -162,6 +157,8 @@ const INSTALLED_FILES_MANIFEST = {
     files: [
       'skill-registry.json',      // Pre-generated skill registry for /charter and /create-prd
       'extension-recipes.json',   // Common patterns for /extensions recipes
+      'skill-keywords.json',      // Keyword-to-skill mappings for /create-backlog and /add-story
+      'recipe-tech-mapping.json', // Tech stack to recipe mappings for /charter suggestions
     ],
   },
 };

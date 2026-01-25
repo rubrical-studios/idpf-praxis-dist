@@ -1,5 +1,5 @@
 # Windows Shell Safety for Claude Code
-**Version:** v0.32.1
+**Version:** v0.33.0
 ---
 **MUST READ:** Auto-loaded on Windows at session startup.
 ## Shell Environment
@@ -40,11 +40,11 @@ rm .tmp-body.md
 ## gh pmu Body Flags
 **Prefer `--body-stdout` / `--body-stdin`** for cleaner workflows.
 ```bash
-# Export body, edit, update (preferred - no tmp/ directory)
-gh pmu view 123 --body-stdout > .tmp-body.md
-gh pmu edit 123 -F .tmp-body.md && rm .tmp-body.md
+# Export body, edit, update (use issue-specific temp file name)
+gh pmu view 123 --body-stdout > .tmp-123.md
+gh pmu edit 123 -F .tmp-123.md && rm .tmp-123.md
 
-# Creating issues with body from file
+# Creating issues with body from file (new issue, no number yet)
 gh pmu create --title "Bug: ..." -F .tmp-body.md --status backlog
 
 # Alternative: Body-File Pattern (uses tmp/ directory)
@@ -66,6 +66,7 @@ cd "$USERPROFILE/My Projects"
 1. **Use relative paths** for temp files (`.tmp-*`) - absolute paths get backslashes stripped
 2. **Use Write tool** instead of `cat`, `echo >`, or heredocs
 3. **Clean up** immediately after use
+4. **Use unique names** when editing multiple issues - include issue number (`.tmp-123.md`)
 ```bash
 # Pattern: Write tool creates file, Bash uses it
 gh issue create --body-file .tmp-body.md
@@ -174,7 +175,7 @@ rm -rf out
 | Backslash paths | No | Forward slashes |
 | Absolute paths in Bash args | No | Relative paths (`.tmp-*`) |
 | `--body "..."` multi-line | Unreliable | `--body-file` |
-| `--body-stdout` / `--body-stdin` | Yes | - |
+| `--body-stdout` / `--body-stdin` | Yes | Use `.tmp-{issue#}.md` for edits |
 | `--flag value` (string flags) | Unreliable | `--flag=value` |
 | JSON inline | No | `--input` or temp file |
 | Pipes `\|` | Yes | - |

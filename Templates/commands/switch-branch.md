@@ -1,7 +1,8 @@
 ---
-version: "v0.32.1"
+version: "v0.33.0"
 allowed-tools: Bash
 description: Switch branch/sprint context (project)
+argument-hint: "[branch-name]"
 ---
 Switch between branch and sprint contexts.
 ```bash

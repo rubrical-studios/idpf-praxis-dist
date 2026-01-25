@@ -1,5 +1,5 @@
 # Runtime Artifact Triggers
-**Version:** v0.32.1
+**Version:** v0.33.0
 **Purpose:** Define when to offer artifact creation/update during development and transition phases.
 **Key Principle:** Offer, don't force. Users can decline any artifact creation.
 ## Construction/ Artifacts
@@ -20,9 +20,6 @@
 | Coverage discussion | "We need unit tests for...", "Integration tests should cover..." |
 | Test data | "Edge cases to test..." |
 **Offer:** "Would you like me to capture this test plan in Construction/Test-Plans/?"
-### Sprint-Retros/
-**Trigger:** After `/microsprint close` command
-**Auto-generated:** No user prompt needed - generated from conversation during microsprint
 ### Tech-Debt/
 **Trigger:** User defers work or notes shortcuts
 | Pattern | Examples |

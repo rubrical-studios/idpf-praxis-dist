@@ -1,8 +1,13 @@
 {
-  "generatedAt": "2026-01-25T04:33:42.241Z",
+  "generatedAt": "2026-01-25T19:46:51.682Z",
   "version": "1.0.0",
-  "skillCount": 20,
+  "skillCount": 25,
   "skills": [
+    {
+      "name": "anti-pattern-analysis",
+      "description": "Systematic detection of anti-patterns during code review with actionable refactoring guidance",
+      "triggers": []
+    },
     {
       "name": "api-versioning",
       "description": "Guide developers through API versioning strategies, deprecation workflows, and backward compatibility patterns",
@@ -24,8 +29,18 @@
       "triggers": []
     },
     {
-      "name": "common-beginner-coding-errors",
+      "name": "codebase-analysis",
+      "description": "Analyze existing codebases to extract structure, tech stack, and patterns",
+      "triggers": []
+    },
+    {
+      "name": "common-errors",
       "description": "Diagnose and solve common beginner programming mistakes in Flask or Sinatra development with detailed explanations",
+      "triggers": []
+    },
+    {
+      "name": "create-prd",
+      "description": "Transform proposals into detailed PRD documents using Inception/ context",
       "triggers": []
     },
     {
@@ -48,7 +63,12 @@
       "triggers": []
     },
     {
-      "name": "flask-setup-for-beginners",
+      "name": "extract-prd",
+      "description": "Extract lifecycle artifacts from existing codebases",
+      "triggers": []
+    },
+    {
+      "name": "flask-setup",
       "description": "Set up Python Flask development environment for beginners with step-by-step guidance, virtual environment creation, and troubleshooting",
       "triggers": []
     },
@@ -86,12 +106,12 @@
       "triggers": []
     },
     {
-      "name": "sinatra-setup-for-beginners",
+      "name": "sinatra-setup",
       "description": "Set up Ruby Sinatra development environment for beginners with step-by-step guidance, Bundler setup, and troubleshooting",
       "triggers": []
     },
     {
-      "name": "sqlite-integration-for-beginners",
+      "name": "sqlite-integration",
       "description": "Add SQLite database to Flask or Sinatra app with beginner-friendly code examples and teaching comments",
       "triggers": []
     },
@@ -118,6 +138,11 @@
     {
       "name": "test-writing-patterns",
       "description": "Guide experienced developers on test structure, patterns, assertions, and test doubles for effective test-driven development",
+      "triggers": []
+    },
+    {
+      "name": "uml-generation",
+      "description": "Generate UML diagrams from project source code using PlantUML with online rendering",
       "triggers": []
     }
   ]

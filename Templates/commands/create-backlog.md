@@ -1,7 +1,7 @@
 ---
-version: "v0.32.1"
+version: "v0.33.0"
 description: Create GitHub epics/stories from PRD (project)
-argument-hint: "<prd-issue-number>"
+argument-hint: "<issue-number> (e.g., 151)"
 ---
 # /create-backlog
 Create GitHub epics and stories from an approved PRD with embedded TDD test cases.
@@ -33,7 +33,15 @@ gh pmu sub add {epic_number} {story_number}
 ```
 ## Phase 7: Update PRD Status
 Update PRD document status, add summary to tracking issue, move to in_progress.
+## Phase 8: Skill Suggestions (Optional)
+**Skip if:** `framework-config.json` has `"skillSuggestions": false`
+1. Load `.claude/metadata/skill-keywords.json`
+2. Match keywords against all story titles + acceptance criteria (case-insensitive)
+3. Filter out already-installed skills (from `projectSkills`)
+4. Display matched skills table with stories that triggered each match
+5. **ASK USER:** Install suggested skills? (y/n/select)
+6. Install selected: `node .claude/scripts/shared/install-skill.js {skills...}`
 ## Output Summary
-Report epics created, stories created, test cases embedded.
+Report epics created, stories created, test cases embedded, skills suggested.
 ---
 **End of /create-backlog Command**

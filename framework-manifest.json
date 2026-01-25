@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.32.1",
+  "version": "0.33.0",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -42,16 +42,13 @@
       "source": ".claude/commands/",
       "core": [
         "change-domain-expert.md",
+        "install-skill.md",
         "playwright-check.md"
       ],
       "workflow": [
         "assign-branch.md",
         "switch-branch.md",
         "transfer-issue.md",
-        "plan-sprint.md",
-        "sprint-status.md",
-        "sprint-retro.md",
-        "end-sprint.md",
         "create-branch.md",
         "prepare-release.md",
         "prepare-beta.md",
@@ -76,12 +73,9 @@
           "analyze-commits.js",
           "assign-branch.js",
           "cleanup-release-assets.js",
-          "end-sprint.js",
           "generate-changelog.js",
-          "plan-sprint.js",
+          "install-skill.js",
           "recommend-version.js",
-          "sprint-retro.js",
-          "sprint-status.js",
           "switch-branch.js",
           "transfer-issue.js",
           "update-release-notes.js",
@@ -130,11 +124,8 @@
     "assign-branch",
     "switch-branch",
     "transfer-issue",
-    "plan-sprint",
-    "sprint-status",
-    "sprint-retro",
-    "end-sprint",
     "charter",
-    "extensions"
+    "extensions",
+    "install-skill"
   ]
 }

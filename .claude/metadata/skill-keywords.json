@@ -1,0 +1,205 @@
+{
+  "generatedAt": "2026-01-25T12:00:00.000Z",
+  "version": "1.0.0",
+  "description": "Keyword-to-skill mappings for automatic skill suggestions in /create-backlog and /add-story",
+  "skillKeywords": {
+    "anti-pattern-analysis": [
+      "anti-pattern",
+      "code smell",
+      "technical debt",
+      "code review",
+      "design pattern violation"
+    ],
+    "api-versioning": [
+      "api version",
+      "versioning",
+      "backward compatible",
+      "deprecate api",
+      "api migration",
+      "api compatibility"
+    ],
+    "bdd-writing": [
+      "bdd",
+      "behavior-driven",
+      "gherkin",
+      "cucumber",
+      "feature file",
+      "given-when-then",
+      "acceptance test"
+    ],
+    "beginner-testing": [
+      "learn testing",
+      "testing basics",
+      "first test",
+      "intro to testing"
+    ],
+    "ci-cd-pipeline-design": [
+      "ci/cd",
+      "cicd",
+      "pipeline",
+      "github actions",
+      "jenkins",
+      "gitlab ci",
+      "continuous integration",
+      "continuous deployment",
+      "build automation"
+    ],
+    "codebase-analysis": [
+      "analyze codebase",
+      "code analysis",
+      "architecture review",
+      "understand codebase",
+      "code audit"
+    ],
+    "common-errors": [
+      "troubleshoot",
+      "common error",
+      "fix error",
+      "error message",
+      "debugging guide"
+    ],
+    "create-prd": [
+      "prd",
+      "product requirements",
+      "requirements document",
+      "write requirements"
+    ],
+    "electron-development": [
+      "electron",
+      "desktop app",
+      "desktop application",
+      "ipc",
+      "main process",
+      "renderer process",
+      "cross-platform desktop",
+      "native desktop"
+    ],
+    "error-handling-patterns": [
+      "error handling",
+      "exception handling",
+      "retry logic",
+      "circuit breaker",
+      "fallback",
+      "error recovery",
+      "graceful degradation"
+    ],
+    "extract-prd": [
+      "extract requirements",
+      "reverse engineer requirements",
+      "document existing code",
+      "legacy documentation"
+    ],
+    "flask-setup": [
+      "flask",
+      "python web",
+      "werkzeug",
+      "jinja2",
+      "flask app"
+    ],
+    "migration-patterns": [
+      "database migration",
+      "schema migration",
+      "flyway",
+      "alembic",
+      "prisma migrate",
+      "db migration",
+      "schema change"
+    ],
+    "mutation-testing": [
+      "mutation testing",
+      "mutant",
+      "test quality",
+      "stryker",
+      "mutmut",
+      "pit mutation"
+    ],
+    "playwright-setup": [
+      "playwright",
+      "e2e test",
+      "e2e testing",
+      "end-to-end test",
+      "browser test",
+      "browser automation",
+      "ui test"
+    ],
+    "postgresql-integration": [
+      "postgres",
+      "postgresql",
+      "pg_",
+      "psql",
+      "postgres database"
+    ],
+    "property-based-testing": [
+      "property-based",
+      "property based testing",
+      "hypothesis",
+      "quickcheck",
+      "fast-check",
+      "generative testing"
+    ],
+    "sinatra-setup": [
+      "sinatra",
+      "ruby web",
+      "rack app",
+      "sinatra app"
+    ],
+    "sqlite-integration": [
+      "sqlite",
+      "sqlite3",
+      "embedded database",
+      "local database"
+    ],
+    "tdd-failure-recovery": [
+      "test failure",
+      "failing test recovery",
+      "test rollback",
+      "broken test"
+    ],
+    "tdd-green-phase": [
+      "green phase",
+      "make test pass",
+      "minimal implementation",
+      "pass the test"
+    ],
+    "tdd-red-phase": [
+      "red phase",
+      "failing test first",
+      "write test first",
+      "test first"
+    ],
+    "tdd-refactor-phase": [
+      "refactor phase",
+      "refactoring",
+      "clean up code",
+      "improve design"
+    ],
+    "test-writing-patterns": [
+      "test pattern",
+      "aaa pattern",
+      "arrange act assert",
+      "test double",
+      "mock object",
+      "stub",
+      "spy",
+      "test fixture"
+    ],
+    "uml-generation": [
+      "uml",
+      "class diagram",
+      "sequence diagram",
+      "plantuml",
+      "architecture diagram",
+      "component diagram"
+    ]
+  },
+  "groupKeywords": {
+    "tdd": {
+      "keywords": ["tdd", "test-driven", "test driven development", "red-green-refactor"],
+      "skills": ["tdd-red-phase", "tdd-green-phase", "tdd-refactor-phase", "tdd-failure-recovery", "test-writing-patterns"]
+    }
+  },
+  "_schema": {
+    "skillKeywords": "Map of skill-name to array of keywords that indicate the skill is relevant",
+    "groupKeywords": "Keywords that suggest multiple related skills as a group"
+  }
+}

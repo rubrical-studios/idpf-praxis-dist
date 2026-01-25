@@ -1,7 +1,7 @@
 ---
-version: "v0.32.1"
+version: "v0.33.0"
 description: Discover, view, and manage extension points in release commands
-argument-hint: <subcommand> [options]
+argument-hint: "list|view|edit|validate|matrix|recipes [args]"
 ---
 # /extensions
 Unified management of extension points across release commands.

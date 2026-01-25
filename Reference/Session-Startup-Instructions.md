@@ -1,5 +1,5 @@
 # Session Startup Instructions
-**Version:** v0.32.1
+**Version:** v0.33.0
 **Purpose:** Standard initialization procedure for AI assistant sessions
 ---
 ## Rules Auto-Loading (v2.9+)
@@ -27,9 +27,12 @@ Provides: current versions/counts, framework selection matrix, skills registry, 
 ### 3. Check Project Charter (User Projects)
 **Note:** Applies to user projects, not idpf-praxis framework repository.
 1. Check for opt-out: `test -f .no-charter` - if exists, bypass charter prompting
-2. Check for CHARTER.md:
-   - **If exists:** Read and display brief summary (vision, current focus)
-   - **If not exists:** Prompt with options: (1) Create charter now, (2) Skip for session, (3) Never ask again
+2. Detect brand new install: `framework-config.json` exists AND no source code directories (`src/`, `lib/`, `app/`)
+   **Framework exclusions:** `.claude/**`, `Inception/**`, `Construction/**`, `Transition/**`, `PRD/**`, `Proposal/**`, framework files
+3. Check CHARTER.md:
+   - **Filled:** Display brief summary (vision, current focus)
+   - **Template + brand new install:** Prompt: (1) Create now (Recommended), (2) Create later, (3) Skip (creates .no-charter)
+   - **Not exists:** Prompt: (1) Create charter now, (2) Skip for session, (3) Never ask again
 **Token budget:** Only CHARTER.md loaded at startup (~150-200 tokens). Inception/ artifacts loaded on-demand.
 ### 3b. Report Project Skills (User Projects)
 **Note:** Applies to user projects with `framework-config.json`.

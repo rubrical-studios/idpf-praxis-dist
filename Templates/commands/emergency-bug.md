@@ -1,7 +1,7 @@
 ---
-version: "v0.32.1"
+version: "v0.33.0"
 description: Create P0 emergency issue (project)
-argument-hint: "<description>"
+argument-hint: "<description> (e.g., \"API 500 errors\")"
 ---
 # /emergency-bug
 Create a P0 emergency issue for critical bugs.

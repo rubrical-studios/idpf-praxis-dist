@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Transitions
-**Version:** v0.32.1
+**Version:** v0.33.0
 **Module:** Transitions (loaded on-demand)
 ## When to Use Agile
 - Evolving requirements
@@ -16,9 +16,9 @@
 - Exploration phase
 - Prototyping
 ## Agile to Structured
-**When:** Scope narrows, solo developer, sprint overhead outweighs benefits, requirements fixed
+**When:** Scope narrows, solo developer, overhead outweighs benefits, requirements fixed
 **How:**
-1. Complete current sprint
+1. Complete in-progress work and close open issues
 2. Ensure "Done" stories committed
 3. Move incomplete to Backlog
 4. Convert stories to PRD
@@ -28,8 +28,8 @@
 ## Agile to LTS
 **When:** Production maintenance mode, development complete, only bug fixes needed
 **How:**
-1. Complete final sprint
-2. Archive backlog and sprint history
+1. Complete in-progress work
+2. Validate all stories are Done
 3. Run full test suite (100% pass)
 4. Create documentation
 5. Tag final version

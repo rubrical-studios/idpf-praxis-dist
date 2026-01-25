@@ -1,7 +1,8 @@
 ---
-version: "v0.32.1"
+version: "v0.33.0"
 allowed-tools: Bash, AskUserQuestion
 description: "Assign issues to a branch: [#issue...] [branch/...] [--all] (project)"
+argument-hint: "[#issue...] [branch/name] [--all]"
 ---
 Assign issues to a branch.
 Run the assign-branch script:

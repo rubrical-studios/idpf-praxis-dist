@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Commands
-**Version:** v0.32.1
+**Version:** v0.33.0
 **Module:** Commands (loaded on-demand)
 ## Backlog Management
 | Command | Description | Slash Command |
@@ -29,13 +29,6 @@
 |--------|---------|----------|
 | Start | `work #N` | Status to In Progress, display, begin TDD |
 | Complete | `done` | Verify, test, status to Done |
-## Sprint Commands
-| Command | Slash Command |
-|---------|---------------|
-| `Plan-Sprint` | `/plan-sprint` |
-| `Sprint-Status` | `/sprint-status` |
-| `Sprint-Retro` | `/sprint-retro` |
-| `End-Sprint` | `/end-sprint` |
 ## Release Lifecycle
 | Command | Slash Command |
 |---------|---------------|

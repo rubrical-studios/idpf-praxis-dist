@@ -1,5 +1,5 @@
 # IDPF-Chaos Framework
-**Version:** v0.32.1
+**Version:** v0.33.0
 **Extends:** IDPF-Testing-Core
 ## Overview
 Framework for chaos engineering experiments: resilience testing, fault injection, failure scenario validation.
