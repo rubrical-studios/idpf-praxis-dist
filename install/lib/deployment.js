@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.33.0
+ * @framework-script 0.33.1
  * deployment.js - Rules, hooks, and commands deployment for IDPF Framework Installer
  * @module install/lib/deployment
  */
@@ -20,10 +20,10 @@ const {
 } = require('./extensibility');
 
 /**
- * Copy file with 0.33.0 placeholder replacement
+ * Copy file with 0.33.1 placeholder replacement
  * @param {string} src - Source file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.33.0 with
+ * @param {string} version - Version string to replace 0.33.1 with
  */
 function copyFileWithVersion(src, dest, version) {
   let content = fs.readFileSync(src, 'utf8');
@@ -87,7 +87,7 @@ ${content}`;
  *
  * @param {string} src - Source template file path
  * @param {string} dest - Destination file path
- * @param {string} version - Version string to replace 0.33.0 with
+ * @param {string} version - Version string to replace 0.33.1 with
  * @param {boolean} debug - Enable debug logging
  * @returns {{preserved: boolean, warnings: string[]}} Deployment result
  */
@@ -752,9 +752,13 @@ function displayGitHubSetupSuccess(repoUrl, projectUrl) {
   logSuccess('GitHub integration setup complete!');
   log();
   if (projectUrl) {
-    log(colors.yellow('  ⚠ Manual step required:'));
-    log('    Set the default repository in your GitHub Project settings:');
-    log(`    ${projectUrl} → Settings → Manage access → Link a repository`);
+    log(colors.yellow('  ⚠ IMPORTANT: Set the default repository for your project:'));
+    log('    1. Open your project settings (link above + /settings)');
+    log('    2. Click "Settings" in the project sidebar');
+    log('    3. Under "Default repository", select your repository');
+    log('    4. This ensures new issues are created in the correct repo');
+    log();
+    log(colors.dim('    Without this setting, issues created via gh pmu may go to the wrong repository.'));
     log();
   }
 }

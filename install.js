@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.33.0
+ * @framework-script 0.33.1
  * IDPF Framework Installer
  * Unified cross-platform installer for Windows, macOS, and Linux
  *

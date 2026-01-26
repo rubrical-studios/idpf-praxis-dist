@@ -1,5 +1,5 @@
 # GitHub Workflow Integration
-**Version:** v0.33.0
+**Version:** v0.33.1
 ---
 **MUST READ:** At session startup and after compaction.
 ## Project Configuration
@@ -18,6 +18,7 @@ fields:
 ```
 Use alias (left side) in commands: `gh pmu move 90 --status in_progress`
 **If missing:** Run `gh pmu init`
+**After project creation:** Set default repository in project settings (Settings → Default repository). Without this, issues may go to wrong repo.
 **Framework config (optional):** `framework: IDPF-Agile` enables workflow restrictions.
 ## Prerequisites
 ```bash

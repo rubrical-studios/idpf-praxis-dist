@@ -1,5 +1,5 @@
 # Session Startup Instructions
-**Version:** v0.33.0
+**Version:** v0.33.1
 **Purpose:** Standard initialization procedure for AI assistant sessions
 ---
 ## Rules Auto-Loading (v2.9+)
@@ -12,33 +12,46 @@ Essential rules auto-load from `.claude/rules/`:
 **Benefits:** No explicit file reads at startup, rules persist after compaction, simplified initialization.
 ---
 ## Startup Sequence
-### 1. Acknowledge the Date
-State the date from environment information and proceed. If user corrects, use their provided date.
+### 1. Gather Session Information
+| Field | Source |
+|-------|--------|
+| Date | Environment/system date |
+| Repository | `basename $(git rev-parse --show-toplevel)` |
+| Branch | `git branch --show-current` + clean/dirty status |
+| Process Framework | `framework-config.json` → `processFramework` |
+| Framework Version | `framework-manifest.json` → `version` |
+| Active Role | `framework-config.json` → `domainSpecialist` |
+| Charter Status | `Active` or `Pending` |
+| GitHub Workflow | `gh pmu --version` |
 ### 2. Read Framework Summary (On-Demand)
 ```
 Overview/Framework-Summary.md
 ```
-Provides: current versions/counts, framework selection matrix, skills registry, on-demand file references.
 ### 2a. Load Process Framework (Self-Hosted)
 **Applies when:** `framework-config.json` contains `selfHosted: true`
 1. Read `framework-config.json` for `processFramework` value
 2. Load core file: `IDPF-Agile` → `.min-mirror/IDPF-Agile/Agile-Core.md`, `IDPF-Vibe` → `.min-mirror/IDPF-Vibe/Vibe-Core.md`
-3. Report: "Process Framework: {name} (self-hosted)"
 ### 3. Check Project Charter (User Projects)
-**Note:** Applies to user projects, not idpf-praxis framework repository.
-1. Check for opt-out: `test -f .no-charter` - if exists, bypass charter prompting
-2. Detect brand new install: `framework-config.json` exists AND no source code directories (`src/`, `lib/`, `app/`)
-   **Framework exclusions:** `.claude/**`, `Inception/**`, `Construction/**`, `Transition/**`, `PRD/**`, `Proposal/**`, framework files
-3. Check CHARTER.md:
-   - **Filled:** Display brief summary (vision, current focus)
-   - **Template + brand new install:** Prompt: (1) Create now (Recommended), (2) Create later, (3) Skip (creates .no-charter)
-   - **Not exists:** Prompt: (1) Create charter now, (2) Skip for session, (3) Never ask again
-**Token budget:** Only CHARTER.md loaded at startup (~150-200 tokens). Inception/ artifacts loaded on-demand.
-### 3b. Report Project Skills (User Projects)
-**Note:** Applies to user projects with `framework-config.json`.
-If `projectSkills` array exists and is non-empty, report: "Project Skills: {skill-list}"
-### 4. Confirm Initialization
-Report: Date, Framework version, Skill count, Specialists count, Process framework (if self-hosted), GitHub Workflow status, Charter status, Project skills (if configured)
+**Charter is mandatory.**
+1. Check CHARTER.md exists
+2. Check for template placeholders: `/{[a-z][a-z0-9-]*}/`
+3. Charter Status:
+   - **Active** (exists, no placeholders): Proceed
+   - **Pending** (missing or template): Auto-run `/charter` command
+**BLOCKING:** Session startup does not complete until charter is configured.
+### 4. Display Session Initialized Block
+**Date appears ONLY here.** Format:
+```
+Session Initialized
+- Date: {date}
+- Repository: {repo-name}
+- Branch: {branch} ({clean|dirty})
+- Process Framework: {framework}
+- Framework Version: {version}
+- Active Role: {specialist}
+- Charter Status: {Active|Pending}
+- GitHub Workflow: Active via gh pmu {version}
+```
 Ask user what they would like to work on.
 ---
 ## Post-Compact Behavior
@@ -55,18 +68,5 @@ Ask user what they would like to work on.
 | Complete reference | `Overview/Framework-Overview.md` |
 | Skill creation rules | `Assistant/Anti-Hallucination-Rules-for-Skill-Creation.md` |
 | PRD work | `Assistant/Anti-Hallucination-Rules-for-PRD-Work.md` |
----
-## Token Reduction Summary
-| Startup Type | Approach | Estimated Tokens |
-|--------------|----------|------------------|
-| Old (v2.8) | Explicit file reads | ~1500 |
-| New (v2.9) | Rules auto-load | ~800 |
-| Reduction | | ~47% |
----
-## Note for Maintainers
-`.claude/rules/` built from source files at release time:
-- Source files in `Assistant/` and `Reference/`
-- Rules built in `/prepare-release` Phase 2d
-- Source files are single source of truth
 ---
 **End of Session Startup Instructions**
