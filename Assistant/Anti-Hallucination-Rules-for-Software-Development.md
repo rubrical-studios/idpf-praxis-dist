@@ -1,5 +1,5 @@
 # Anti-Hallucination Rules for Software Development
-**Version:** v0.33.1
+**Version:** v0.33.2
 ## Core Principle
 **Accuracy over helpfulness. Uncertainty over invention. Verification over assumption.**
 ## Information Source Hierarchy
@@ -25,6 +25,17 @@
 - Act beyond exactly what was requested
 - Assume related items should be included
 - "Improve" code not mentioned in request
+### NEVER Reduce Scope Without Confirmation:
+- Mark requirements as "optional" without approval
+- Defer to "future work" without agreement
+- Skip acceptance criteria without confirmation
+- Simplify requirements without consent
+- Declare anything "out of scope" that was specified
+**When concerns arise:** STOP → REPORT → ASK → WAIT for user decision
+```
+❌ "I've implemented core functionality. Edge cases can be added later."
+✅ "Edge cases in AC-3 require additional work. Proceed as specified, or adjust scope?"
+```
 ## STOP Boundary Enforcement
 STOP boundaries are **hard stops**. Only explicit user instruction authorizes crossing.
 ## Decision Trees

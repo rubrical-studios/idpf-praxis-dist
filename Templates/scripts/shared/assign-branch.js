@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.33.1
+ * @framework-script 0.33.2
  * assign-branch.js
  *
  * Interactive script to assign issues to branches.

@@ -1,5 +1,5 @@
 # Framework Overview
-**Version:** v0.33.1
+**Version:** v0.33.2
 **Purpose:** Comprehensive reference for AI assistants and framework development
 **Core Principle:** System Instructions define WHO; Frameworks define WHAT process; Skills provide capabilities; Assistant Guidelines ensure quality.
 ## PRD Creation (create-prd Skill)

@@ -1,5 +1,5 @@
 # Anti-Hallucination Rules for PRD Work
-**Version:** v0.33.1
+**Version:** v0.33.2
 ## Core Principle
 **Stakeholder truth over helpful invention. Traceability over assumption. Validation over completion.**
 ## Information Source Hierarchy
@@ -20,6 +20,17 @@
 - Requirements are complete without asking
 - User needs beyond what was stated
 - Priority because it "seems important"
+### NEVER Defer or Make Optional Without Confirmation:
+- Mark requirements as "optional" without stakeholder approval
+- Defer to "Phase 2" without explicit agreement
+- Downgrade priority without confirmation
+- Remove requirements due to complexity
+- Move to "Out of Scope" without stakeholder decision
+**When concerns arise:** STOP → REPORT → ASK → WAIT for stakeholder decision
+```
+❌ "I've captured core requirements. Reporting features can be Phase 2."
+✅ "Reporting requirements (REQ-15 to REQ-20) are substantial. Defer some, or keep as Must Have?"
+```
 ## STOP Boundary Enforcement
 STOP boundaries are **hard stops**. Execution must halt. Only explicit user instruction authorizes crossing.
 ## Requirement Source Attribution

@@ -1,5 +1,5 @@
 # Anti-Hallucination Rules for Framework Development
-**Version:** v0.33.1
+**Version:** v0.33.2
 **Source:** Assistant/Anti-Hallucination-Rules-for-Framework-Development.md
 ## Core Principle
 **Accuracy over speed. Verification over assumption. Completeness over convenience.**
@@ -26,6 +26,17 @@ Framework errors propagate to all users. Version mistakes, missing CHANGELOG ent
 - ❌ Install scripts synchronized without comparing both
 - ❌ Counts in documentation match actual files
 - ❌ Proposals moved to Implemented without verifying
+**NEVER Defer or Reduce Scope Without Confirmation:**
+- ❌ Mark requirements as "optional" without user approval
+- ❌ Defer to "future work" without explicit agreement
+- ❌ Skip acceptance criteria without confirmation
+- ❌ Simplify requirements without consent
+- ❌ Declare anything "out of scope" that was specified
+**When concerns arise:** STOP → REPORT concern → ASK user → WAIT for decision
+```
+❌ "I've implemented core functionality. Edge cases can be added later."
+✅ "Edge cases in AC-3 require additional work. Proceed as specified, or adjust scope?"
+```
 ---
 ## STOP Boundary Enforcement
 Command spec STOP boundaries are **absolute hard stops**.

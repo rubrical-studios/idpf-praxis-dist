@@ -1,5 +1,5 @@
 # Anti-Hallucination Rules for Skill Creation
-**Version:** v0.33.1
+**Version:** v0.33.2
 ## Core Principle
 **Accuracy over helpfulness. Precision over assumption. Verification over invention.**
 Preserve original intent and structure rather than "improve" with invented additions.
@@ -22,6 +22,16 @@ Preserve original intent and structure rather than "improve" with invented addit
 - Examples need to be added
 - Additional context would be helpful
 - Source is incomplete
+### NEVER Defer or Omit Source Content Without Confirmation:
+- Skip sections because they seem "less important"
+- Mark content as "future enhancement" without approval
+- Omit parts difficult to format
+- Simplify by removing source material
+**When concerns arise:** STOP → REPORT → ASK → WAIT for user decision
+```
+❌ "I've converted main sections. Appendices can be added later."
+✅ "Source includes appendices A-C. Include as resources, or handle differently?"
+```
 ## STOP Boundary Enforcement
 STOP boundaries are **hard stops**. Only explicit user instruction authorizes crossing.
 ## Decision Trees
