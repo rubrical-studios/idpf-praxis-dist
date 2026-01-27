@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.33.2
+ * @framework-script 0.33.3
  * config.js - Configuration management for IDPF Framework Installer
  *
  * Implements:

@@ -8,6 +8,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.33.3] - 2026-01-27
+
+### Added
+- **#1056** - Analysis mode detection guardrails for workflow-trigger hook
+  - Detects analysis keywords (evaluate, analyze, assess, review, investigate, check, verify) + issue references
+  - Injects STOP reminder to prevent accidental side effects during analysis
+  - 14 new tests for analysis mode detection logic
+
+### Fixed
+- **#1057** - Orphan detection false positives for path-remapped files
+  - `minimize-helper.js orphans` now correctly handles `.claude/commands/` → `Templates/commands/` remapping
+  - Files in remapped directories no longer reported as orphans
+  - 3 new integration tests for orphan detection
+
+### Documentation
+- Split Test Automation Distribution proposal into three focused parts
+- Added PRD for Test Automation Foundation
+
+---
+
 ## [0.33.2] - 2026-01-26
 
 ### Added
@@ -114,7 +134,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 - **#1019** - Standardized JS versioning with `@framework-script` tag
-  - All 52 framework JS files now use `@framework-script v0.33.2` pattern
+  - All 52 framework JS files now use `@framework-script v0.33.3` pattern
   - Added regression test to catch future non-compliant JS files
   - Replaces inconsistent `// **Version:** X.X.X` comments
 - Updated skill counts in documentation (22 → 25)
@@ -222,7 +242,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Moved CI wait and release notes from user extension to core steps in `/prepare-release`
 
 ### Fixed
-- **#951** - Replace hardcoded versions with `v0.33.2` placeholder
+- **#951** - Replace hardcoded versions with `v0.33.3` placeholder
 - **#956** - Clarify proposal acceptance criteria placement in documentation
 - `gh pmu sub list --json` flag usage (boolean flag, not field selector)
 - Workflow scripts: explicit JSON fields and safe parsing
@@ -253,8 +273,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Renamed category in `framework-manifest.json` to match filesystem path
   - Updated `deployment.js` to use consistent category name
   - Fixes "Untracked - File not in manifest" audit errors for lib files
-- **#933** - v0.33.2 tokens in 12 script files
-  - Replaced hardcoded version numbers with `v0.33.2` placeholder
+- **#933** - v0.33.3 tokens in 12 script files
+  - Replaced hardcoded version numbers with `v0.33.3` placeholder
   - Enables automatic version stamping during deployment
   - Affected: analyze-commits.js, recommend-version.js, wait-for-ci.js, and 9 others
 - **#934** - Audit scope detection for non-IDPF projects
@@ -395,7 +415,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **#889** - Replaced deprecated `--release` flag with `--branch` in `assign-branch.js`
   - Updated to use current gh-pmu API before deprecation period ends
 - **#900** - Fixed stale `frameworkVersion` in `framework-config.json`
-  - Changed hardcoded version to `v0.33.2` placeholder
+  - Changed hardcoded version to `v0.33.3` placeholder
   - Added self-hosted config update step to `/prepare-release` Phase 3
 - **#899** - Standardized GitHub release page formatting
   - `update-release-notes.js` now transforms CHANGELOG to formatted release pages
@@ -435,7 +455,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.26.1] - 2026-01-17
 
 ### Fixed
-- **#887** - `framework-manifest.json` now uses `v0.33.2` placeholder for proper version injection during deployment
+- **#887** - `framework-manifest.json` now uses `v0.33.3` placeholder for proper version injection during deployment
   - Root cause of `fetch-updates.js` version verification failures on Windows
 
 ---
@@ -512,10 +532,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Priority distribution validation for generated backlogs
 - **#847** - Tag format standardization
   - Commands now use versionless `<!-- EXTENSIBLE -->` / `<!-- MANAGED -->`
-  - Frontmatter uses `v0.33.2` placeholder instead of hardcoded versions
+  - Frontmatter uses `v0.33.3` placeholder instead of hardcoded versions
   - Installer regex updated for backward compatibility
 - **#840** - PRD directory structure: `PRD/Active/` and `PRD/Implemented/`
-- **#821** - README-DIST.md now uses `v0.33.2` placeholder
+- **#821** - README-DIST.md now uses `v0.33.3` placeholder
 
 ### Removed
 - **#842** - Deprecated IDPF-PRD framework removed
@@ -632,7 +652,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Infrastructure
 - **minimize-config.json** - Removed overly broad "Merge" pattern that excluded merge-branch.md
-- **Rules rebuild from minimized sources** - All rules now use v0.33.2 placeholder
+- **Rules rebuild from minimized sources** - All rules now use v0.33.3 placeholder
 
 ---
 
@@ -680,7 +700,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Internal
 - Integrated extensibility.js into deployment workflow
 - Lowered coverage thresholds to match actual coverage
-- Restored v0.33.2 placeholders to 209 framework source files
+- Restored v0.33.3 placeholders to 209 framework source files
 
 ---
 
@@ -748,12 +768,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.20.1] - 2026-01-02
 
 ### Fixed
-- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.33.2` placeholder in `Templates/framework-manifest.json`
+- **Version placeholder handling** - `parseManifest()` now correctly handles `v0.33.3` placeholder in `Templates/framework-manifest.json`
 - **Skill count documentation** - Updated skill count from 21 to 22 across all documentation (Framework-Overview.md, Framework-Summary.md, Framework-Skills.md, README.md) to include `promote-to-prd` skill
 
 ### Changed
 - **Installer charter support** - Charter feature files (Charter-Enforcement.md, Runtime-Artifact-Triggers.md) now deployed by installer
-- **Version placeholder standardized** - All version tokens now use `v0.33.2` format for consistent replacement
+- **Version placeholder standardized** - All version tokens now use `v0.33.3` format for consistent replacement
 
 ---
 
@@ -822,7 +842,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`gh pmu --body-file` flags** (#620) - Documented `-F/--body-file` support across `gh pmu create`, `gh pmu view`, and `gh pmu edit` commands
 
 ### Fixed
-- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.33.2` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
+- **Template version placeholders** (#627) - Fixed 35+ Template files missing `v0.33.3` placeholder. Commands, scripts, and shell scripts now properly receive version during installation.
 - **Release branch prefix** (#625) - Fixed `/open-release` incorrectly prefixing branch names with `release/release/`
 
 ---
