@@ -1,5 +1,5 @@
 # Framework Testing Reference
-**Version:** v0.34.0
+**Version:** v0.34.1
 **Purpose:** Reference for IDPF testing frameworks
 ## IDPF-Testing-Core Framework
 **Location:** `IDPF-Testing-Core/` | **Type:** Foundational Testing Framework
