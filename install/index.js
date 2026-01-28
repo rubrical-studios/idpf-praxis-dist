@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.33.3
+ * @framework-script 0.34.0
  * IDPF Framework Installer - Main Entry Point
  * Unified cross-platform installer for Windows, macOS, and Linux
  *
@@ -91,6 +91,14 @@ const {
   updateTrackedProjects,
 } = require('./lib/update');
 
+const {
+  handleEarlyExitFlags,
+} = require('./lib/cli');
+
+const {
+  createTestProject,
+} = require('./lib/test-deployment');
+
 // Module-level prompts variable (assigned in main() after dependency check)
 let prompts;
 
@@ -101,7 +109,12 @@ let prompts;
 async function main() {
   // Check for command-line flags
   const args = process.argv.slice(2);
+
+  // Handle early-exit flags (--help, --version) before interactive flow
+  handleEarlyExitFlags(args);
+
   const migrateMode = args.includes('--migrate');
+  const withTests = args.includes('--with-tests');
   const skipGitHub = args.includes('--skip-github'); // REQ-009: Skip GitHub setup
   const forceInstall = args.includes('--force'); // Allow install on non-main branches
   const debugMode = args.includes('--debug') || args.includes('-d'); // Debug logging for EXTENSIBLE files
@@ -137,6 +150,67 @@ async function main() {
   try {
     // Clear screen
     console.clear();
+
+    // --with-tests mode: Create dedicated test project
+    if (withTests) {
+      const frameworkPath = process.cwd();
+      const manifestPath = path.join(frameworkPath, 'framework-manifest.json');
+
+      if (!fs.existsSync(manifestPath)) {
+        logError('ERROR: Must run --with-tests from the framework directory.');
+        logError('Navigate to the framework directory and run: node install.js --with-tests');
+        process.exit(1);
+      }
+
+      const version = readFrameworkVersion(frameworkPath);
+      logCyan('╔══════════════════════════════════════╗');
+      logCyan('║   IDPF Framework Test Installer      ║');
+      logCyan('╚══════════════════════════════════════╝');
+      log();
+      log(`  Framework: ${colors.cyan(frameworkPath)}`);
+      log(`  Version:   ${colors.green(version)}`);
+      log();
+
+      // Prompt for test project directory
+      const { testDir } = await prompts({
+        type: 'text',
+        name: 'testDir',
+        message: 'Enter the FULL path for the test project directory:',
+        validate: (value) => value.trim() ? true : 'Path cannot be empty',
+      }, { onCancel });
+
+      const testProjectDir = path.resolve(testDir);
+
+      // Validate it's not inside framework directory
+      if (testProjectDir.startsWith(frameworkPath)) {
+        logError('ERROR: Test project directory cannot be inside the framework directory');
+        log(`  Framework: ${frameworkPath}`);
+        log(`  Target:    ${testProjectDir}`);
+        process.exit(1);
+      }
+
+      log();
+      log(colors.dim('Creating test project...'));
+      log();
+
+      const result = createTestProject(testProjectDir, frameworkPath);
+
+      if (result.success) {
+        logSuccess('Test project created successfully!');
+        log();
+        log(`  ${colors.dim('Test Project:')}   ${testProjectDir}`);
+        log(`  ${colors.dim('Files:')}          ${result.files.join(', ')}`);
+        log();
+        logCyan('  Next steps:');
+        log(`    1. cd ${testProjectDir}`);
+        log('    2. npm install');
+        log('    3. npm run test:framework');
+        log();
+        log(colors.dim('  Or use /run-fw-tests in a Claude session'));
+      }
+
+      return;
+    }
 
     // Migration mode (deprecated - now handled automatically)
     if (migrateMode) {

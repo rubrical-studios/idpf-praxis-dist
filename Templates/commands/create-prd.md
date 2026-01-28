@@ -1,5 +1,5 @@
 ---
-version: "v0.33.3"
+version: "v0.34.0"
 description: Transform proposal into Agile PRD
 argument-hint: "<issue-number> | extract [<directory>]"
 ---

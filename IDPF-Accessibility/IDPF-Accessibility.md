@@ -1,5 +1,5 @@
 # IDPF-Accessibility Framework
-**Version:** v0.33.3
+**Version:** v0.34.0
 **Extends:** IDPF-Testing-Core
 ## Overview
 Framework for accessibility testing: WCAG compliance, automated a11y scanning, manual audits, assistive technology testing.

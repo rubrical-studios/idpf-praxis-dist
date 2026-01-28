@@ -1,5 +1,5 @@
 ---
-version: "v0.33.3"
+version: "v0.34.0"
 description: Add story to epic with charter compliance (project)
 argument-hint: "[epic-number] (e.g., 42 or #42)"
 ---
@@ -246,6 +246,12 @@ gh pmu create --repo {repository} \
 ```
 
 **Story Body Template:**
+
+> **⚠️ ATOMIC TEMPLATE — All sections below are REQUIRED.**
+> Every story must include ALL sections. No section may be omitted.
+> If a section is not applicable, include it with "N/A" rather than removing it.
+> Callers (including `/create-backlog`) must apply the complete template.
+> This is the **canonical definition** — other commands reference this template, not duplicate it.
 
 ```markdown
 ## Story: {Title}

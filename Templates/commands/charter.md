@@ -1,5 +1,5 @@
 ---
-version: "v0.33.3"
+version: "v0.34.0"
 description: View, create, or manage project charter
 argument-hint: "[update|refresh|validate]"
 ---

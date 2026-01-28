@@ -1,5 +1,5 @@
 ---
-version: "v0.33.3"
+version: "v0.34.0"
 description: Create GitHub epics/stories from PRD (project)
 argument-hint: "<issue-number> (e.g., 151)"
 ---
@@ -224,40 +224,27 @@ gh pmu sub add {epic_number} {story_number}
 
 ### Story Body Template
 
+**DEPENDENCY:** This phase uses the **Story Body Template** defined in `/add-story` Phase 3.
+That template is **atomic** — all sections must be included. Any structural changes to the story
+body must be made in `/add-story`, not here.
+
+**Apply the canonical `/add-story` Story Body Template with these inputs:**
+
+| Template Section | Source |
+|-----------------|--------|
+| **Description** | PRD user story (As a / I want / So that) |
+| **Relevant Skills** | `framework-config.json` → `projectSkills` array |
+| **Acceptance Criteria** | PRD acceptance criteria (checkbox list) |
+| **Documentation** | Standard checkboxes (always included per atomic template) |
+| **TDD Test Cases** | ⬇️ EXTENDED below (replaces placeholder) |
+| **Definition of Done** | ⬇️ EXTENDED below (replaces base checklist) |
+| **Priority** | PRD priority (P0/P1/P2) |
+
+#### TDD Test Cases Extension
+
+Replace the `/add-story` TDD placeholder with actual test skeletons from the approved test plan:
+
 ```markdown
-## Story: {Title}
-
-### Description
-
-As a {user}, I want {goal} so that {benefit}.
-
-### Relevant Skills
-
-<!-- Read from framework-config.json projectSkills array -->
-<!-- For each skill, lookup description from .claude/metadata/skill-registry.json -->
-
-**If projectSkills configured:**
-- {skill-name} - {description from skill-registry.json}
-- {skill-name} - {description}
-
-Load skill: `read Skills/{skill-name}/SKILL.md`
-
-**If no projectSkills:**
-No project skills configured. Run `/charter` to set up project-specific skills.
-
-### Acceptance Criteria
-
-- [ ] {Criterion 1}
-- [ ] {Criterion 2}
-- [ ] {Criterion 3}
-
-### Documentation (if applicable)
-
-- [ ] Design decisions documented (update existing or create `Construction/Design-Decisions/YYYY-MM-DD-{topic}.md`)
-- [ ] Tech debt logged (update existing or create `Construction/Tech-Debt/YYYY-MM-DD-{topic}.md`)
-
-**Guidelines:** Skip trivial findings. Update existing docs rather than duplicating. For significant tech debt, create an enhancement issue.
-
 ### TDD Test Cases
 
 **Source:** [Test-Plan-{name}.md](PRD/{name}/Test-Plan-{name}.md#epic-story-section)
@@ -289,7 +276,13 @@ test('{criterion 1} rejects invalid input', () => {
 - [ ] Empty/null input handling
 - [ ] Boundary values
 - [ ] Error recovery
+```
 
+#### Definition of Done Extension
+
+Replace the `/add-story` base Definition of Done with TDD-specific checklist:
+
+```markdown
 ### Definition of Done
 
 - [ ] All TDD test cases pass
@@ -297,8 +290,6 @@ test('{criterion 1} rejects invalid input', () => {
 - [ ] No skipped tests
 - [ ] Edge cases handled
 - [ ] Acceptance criteria verified
-
-**Priority:** {P0|P1|P2}
 ```
 
 ---
