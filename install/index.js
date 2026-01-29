@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.34.1
+ * @framework-script 0.34.2
  * IDPF Framework Installer - Main Entry Point
  * Unified cross-platform installer for Windows, macOS, and Linux
  *
@@ -632,78 +632,9 @@ async function main() {
       }
     }
 
-    // Lifecycle directories (DAD-aligned structure)
-    // Create Inception/, Construction/, Transition/ directories
-    const lifecycleDirs = [
-      'Inception',
-      'Construction/Test-Plans',
-      'Construction/Design-Decisions',
-      'Construction/Sprint-Retros',
-      'Construction/Tech-Debt',
-      'Transition',
-    ];
-
-    for (const dir of lifecycleDirs) {
-      const fullPath = path.join(projectDir, dir);
-      if (!fs.existsSync(fullPath)) {
-        fs.mkdirSync(fullPath, { recursive: true });
-      }
-    }
-    logSuccess('  ✓ Lifecycle directories (Inception/, Construction/, Transition/)');
-
-    // Copy lifecycle templates
-    const lifecycleTemplatesDir = path.join(frameworkPath, 'Templates', 'Lifecycle');
-    if (fs.existsSync(lifecycleTemplatesDir)) {
-      // Copy Inception templates
-      const inceptionSrc = path.join(lifecycleTemplatesDir, 'Inception');
-      const inceptionDest = path.join(projectDir, 'Inception');
-      if (fs.existsSync(inceptionSrc)) {
-        const inceptionFiles = fs.readdirSync(inceptionSrc).filter(f => f.endsWith('.md'));
-        for (const file of inceptionFiles) {
-          const destFile = path.join(inceptionDest, file);
-          if (!fs.existsSync(destFile)) {
-            fs.copyFileSync(path.join(inceptionSrc, file), destFile);
-          }
-        }
-        if (inceptionFiles.length > 0) {
-          logSuccess(`  ✓ Inception/ templates (${inceptionFiles.length} files)`);
-        }
-      }
-
-      // Copy Construction README
-      const constructionReadme = path.join(lifecycleTemplatesDir, 'Construction', 'README.md');
-      if (fs.existsSync(constructionReadme)) {
-        const destReadme = path.join(projectDir, 'Construction', 'README.md');
-        if (!fs.existsSync(destReadme)) {
-          fs.copyFileSync(constructionReadme, destReadme);
-          logSuccess('  ✓ Construction/README.md');
-        }
-      }
-
-      // Copy Transition templates
-      const transitionSrc = path.join(lifecycleTemplatesDir, 'Transition');
-      const transitionDest = path.join(projectDir, 'Transition');
-      if (fs.existsSync(transitionSrc)) {
-        const transitionFiles = fs.readdirSync(transitionSrc).filter(f => f.endsWith('.md'));
-        for (const file of transitionFiles) {
-          const destFile = path.join(transitionDest, file);
-          if (!fs.existsSync(destFile)) {
-            fs.copyFileSync(path.join(transitionSrc, file), destFile);
-          }
-        }
-        if (transitionFiles.length > 0) {
-          logSuccess(`  ✓ Transition/ templates (${transitionFiles.length} files)`);
-        }
-      }
-
-      // Copy CHARTER.md template (optional - only if it doesn't exist)
-      const charterTemplate = path.join(lifecycleTemplatesDir, 'CHARTER.md');
-      const charterDest = path.join(projectDir, 'CHARTER.md');
-      if (fs.existsSync(charterTemplate) && !fs.existsSync(charterDest)) {
-        fs.copyFileSync(charterTemplate, charterDest);
-        logSuccess('  ✓ CHARTER.md template');
-      }
-    }
+    // Lifecycle directories and CHARTER.md are created by /charter command
+    // This avoids Write tool "read-before-write" conflicts with pre-installed templates
+    // See: https://github.com/rubrical-studios/idpf-praxis/issues/1088
 
     // CLAUDE.md
     generateClaudeMd(projectDir, frameworkPath, processFramework, domainSpecialist, domainSpecialist, projectInstructions);

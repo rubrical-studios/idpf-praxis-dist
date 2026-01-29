@@ -1,5 +1,5 @@
 # Rollback Procedure Guide
-**Version:** v0.34.1
+**Version:** v0.34.2
 
 **Framework:** IDPF-Chaos
 
