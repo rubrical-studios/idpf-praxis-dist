@@ -1,5 +1,5 @@
 # Test Environment Setup Guide
-**Version:** v0.35.0
+**Version:** v0.35.1
 
 **Framework:** IDPF-Testing-Core
 
