@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.35.5
+ * @framework-script 0.35.6
  * IDPF New Project Installer
  * Creates a new project directory with full IDPF integration.
  *
@@ -129,7 +129,7 @@ function setupProjectSymlinks(projectPath, hubPath) {
   const claudeDir = path.join(projectPath, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
 
-  const results = { commands: false, rules: false, hooks: false, scripts: false, metadata: false };
+  const results = { commands: false, rules: false, hooks: false, scripts: false, metadata: false, skills: false };
 
   // Commands symlink
   const commandsTarget = path.join(hubPath, '.claude', 'commands');
@@ -168,6 +168,13 @@ function setupProjectSymlinks(projectPath, hubPath) {
     results.metadata = createSymlink(metadataTarget, metadataLink);
   }
 
+  // Skills symlink (extracted skill packages)
+  const skillsTarget = path.join(hubPath, '.claude', 'skills');
+  const skillsLink = path.join(claudeDir, 'skills');
+  if (fs.existsSync(skillsTarget)) {
+    results.skills = createSymlink(skillsTarget, skillsLink);
+  }
+
   // Check for critical failures
   if (!results.commands || !results.rules) {
     logError('Failed to create critical symlinks for .claude/');
@@ -179,6 +186,61 @@ function setupProjectSymlinks(projectPath, hubPath) {
   }
 
   return results;
+}
+
+/**
+ * Update .gitignore to exclude symlinked directories
+ * These point to hub-specific paths and should not be committed
+ */
+function updateGitignore(projectPath) {
+  const gitignorePath = path.join(projectPath, '.gitignore');
+  const entriesToAdd = [
+    '# IDPF hub symlinks and scripts (machine-specific, do not commit)',
+    '.claude/commands',
+    '.claude/hooks',
+    '.claude/metadata',
+    '.claude/rules',
+    '.claude/scripts/shared',
+    '.claude/skills',
+    'run_claude.cmd',
+    'run_claude.sh',
+    'runp_claude.cmd',
+    'runp_claude.sh',
+  ];
+
+  let content = '';
+  let existingEntries = new Set();
+
+  // Read existing .gitignore if it exists
+  if (fs.existsSync(gitignorePath)) {
+    content = fs.readFileSync(gitignorePath, 'utf8');
+    // Track existing entries (trimmed, non-empty, non-comment lines)
+    for (const line of content.split('\n')) {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        existingEntries.add(trimmed);
+      }
+    }
+  }
+
+  // Determine which entries need to be added
+  const newEntries = entriesToAdd.filter(entry => {
+    if (entry.startsWith('#')) return true; // Always include comments for context
+    return !existingEntries.has(entry);
+  });
+
+  // Skip if all entries already exist (except comment)
+  const nonCommentNew = newEntries.filter(e => !e.startsWith('#'));
+  if (nonCommentNew.length === 0) {
+    return { updated: false, entriesAdded: 0 };
+  }
+
+  // Append new entries
+  const suffix = content.endsWith('\n') || content === '' ? '' : '\n';
+  const addition = newEntries.join('\n') + '\n';
+  fs.writeFileSync(gitignorePath, content + suffix + addition);
+
+  return { updated: true, entriesAdded: nonCommentNew.length };
 }
 
 /**
@@ -728,6 +790,13 @@ async function main() {
   if (symlinkResults.hooks) logSuccess('  ✓ Created .claude/hooks symlink');
   if (symlinkResults.scripts) logSuccess('  ✓ Created .claude/scripts/shared symlink');
   if (symlinkResults.metadata) logSuccess('  ✓ Created .claude/metadata symlink');
+  if (symlinkResults.skills) logSuccess('  ✓ Created .claude/skills symlink');
+
+  // Update .gitignore to exclude symlinked directories
+  const gitignoreResult = updateGitignore(targetPath);
+  if (gitignoreResult.updated) {
+    logSuccess(`  ✓ Updated .gitignore (${gitignoreResult.entriesAdded} entries added)`);
+  }
 
   // Copy launcher scripts
   const launcherResults = copyLauncherScripts(targetPath, hubPath);

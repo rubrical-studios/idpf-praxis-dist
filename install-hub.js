@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.35.5
+ * @framework-script 0.35.6
  * IDPF Hub Installer
  * Creates a central IDPF installation that can serve multiple projects.
  *
@@ -13,6 +13,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 // ======================================
 //  Console UI (reused from install/lib/ui.js)
@@ -82,6 +83,24 @@ function copyFile(src, dest) {
     return true;
   }
   return false;
+}
+
+/**
+ * Extract a zip file to a destination directory
+ * Uses PowerShell on Windows, unzip on Unix
+ */
+function extractZip(zipPath, destDir) {
+  try {
+    fs.mkdirSync(destDir, { recursive: true });
+    if (process.platform === 'win32') {
+      execSync(`powershell -Command "Expand-Archive -Path '${zipPath}' -DestinationPath '${destDir}' -Force"`, { stdio: 'pipe' });
+    } else {
+      execSync(`unzip -q -o "${zipPath}" -d "${destDir}"`, { stdio: 'pipe' });
+    }
+    return true;
+  } catch (_err) {
+    return false;
+  }
 }
 
 /**
@@ -299,7 +318,7 @@ function findComponentSource(hubPath, component) {
  * Handles both dist repo (Templates/) and dev repo (.claude/) structures
  */
 function setupClaudeStructure(hubPath, version) {
-  const results = { commands: false, hooks: false, scripts: false, rules: [] };
+  const results = { commands: false, hooks: false, scripts: false, skills: 0, rules: [] };
 
   // Create .claude directory if needed
   const claudeDir = path.join(hubPath, '.claude');
@@ -358,6 +377,28 @@ function setupClaudeStructure(hubPath, version) {
     }
   } else if (fs.existsSync(scriptsDest)) {
     results.scripts = true;
+  }
+
+  // Skills: Extract all skill packages to .claude/skills/
+  const skillsDir = path.join(claudeDir, 'skills');
+  const skillPackagesDir = path.join(hubPath, 'Skills', 'Packaged');
+  if (fs.existsSync(skillPackagesDir)) {
+    // Clear and rebuild skills directory
+    if (fs.existsSync(skillsDir)) {
+      fs.rmSync(skillsDir, { recursive: true, force: true });
+    }
+    fs.mkdirSync(skillsDir, { recursive: true });
+
+    // Extract each skill package
+    const zipFiles = fs.readdirSync(skillPackagesDir).filter(f => f.endsWith('.zip'));
+    for (const zipFile of zipFiles) {
+      const skillName = zipFile.replace('.zip', '');
+      const zipPath = path.join(skillPackagesDir, zipFile);
+      const skillDir = path.join(skillsDir, skillName);
+      if (extractZip(zipPath, skillDir)) {
+        results.skills++;
+      }
+    }
   }
 
   // Generate rules (always regenerate to ensure consistency)
@@ -564,6 +605,12 @@ function installHub(sourcePath, targetPath) {
     logSuccess('    ✓ .claude/scripts/shared/ (copied from Templates/)');
   } else {
     logWarning('    ⊘ .claude/scripts/shared/ (failed)');
+  }
+
+  if (claudeResults.skills > 0) {
+    logSuccess(`    ✓ .claude/skills/ (${claudeResults.skills} skills extracted)`);
+  } else {
+    logWarning('    ⊘ .claude/skills/ (no skills extracted)');
   }
 
   if (claudeResults.rules.length > 0) {
