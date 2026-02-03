@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.35.1
+ * @framework-script 0.35.2
  * IDPF Existing Project Installer
  * Adds IDPF integration to an existing codebase.
  *
@@ -72,6 +72,29 @@ function readFrameworkVersion(hubPath) {
     return manifest.version || 'unknown';
   }
   return 'unknown';
+}
+
+/**
+ * Read domain specialists from manifest
+ * Falls back to a minimal list if manifest is missing or malformed
+ */
+function readDomainSpecialists(hubPath) {
+  const manifestPath = path.join(hubPath, 'framework-manifest.json');
+  const fallback = ['Full-Stack-Developer', 'Backend-Specialist', 'Frontend-Specialist'];
+
+  try {
+    if (fs.existsSync(manifestPath)) {
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+      if (Array.isArray(manifest.domainSpecialists) && manifest.domainSpecialists.length > 0) {
+        return manifest.domainSpecialists;
+      }
+    }
+  } catch (err) {
+    logWarning(`Warning: Could not read domain specialists from manifest: ${err.message}`);
+  }
+
+  logWarning('Using fallback domain specialists list');
+  return fallback;
 }
 
 // ======================================
@@ -194,16 +217,6 @@ function registerProject(hubPath, projectPath, config) {
 // ======================================
 
 const FRAMEWORKS = ['IDPF-Agile', 'IDPF-Vibe'];
-const DOMAIN_SPECIALISTS = [
-  'Full-Stack-Developer',
-  'Frontend-Developer',
-  'Backend-Developer',
-  'DevOps-Engineer',
-  'QA-Engineer',
-  'Security-Engineer',
-  'Data-Engineer',
-  'Mobile-Developer',
-];
 
 /**
  * Create readline interface
@@ -250,7 +263,7 @@ async function selectFromList(rl, prompt, options) {
 /**
  * Prompt for project configuration
  */
-async function promptConfiguration(rl, defaultName) {
+async function promptConfiguration(rl, defaultName, hubPath) {
   divider();
   log(colors.cyan('  Project Configuration'));
   divider();
@@ -267,11 +280,12 @@ async function promptConfiguration(rl, defaultName) {
     FRAMEWORKS
   );
 
-  // Domain specialist selection
+  // Domain specialist selection (read from manifest)
+  const domainSpecialists = readDomainSpecialists(hubPath);
   const domainSpecialist = await selectFromList(
     rl,
     '  Select domain specialist:',
-    DOMAIN_SPECIALISTS
+    domainSpecialists
   );
 
   return { name, framework, domainSpecialist };
@@ -459,7 +473,7 @@ async function main() {
   } else {
     // Interactive configuration
     const defaultName = path.basename(targetPath);
-    const userConfig = await promptConfiguration(rl, defaultName);
+    const userConfig = await promptConfiguration(rl, defaultName, hubPath);
 
     config = {
       name: userConfig.name,
