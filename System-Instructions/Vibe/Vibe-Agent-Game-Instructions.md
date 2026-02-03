@@ -1,5 +1,5 @@
 # Vibe Agent System Instructions (Game)
-**Version:** v0.35.3
+**Version:** v0.35.4
 **Type:** Game Development Agent Behaviors
 **Extends:** Vibe-Agent-Core-Instructions.md
 ---

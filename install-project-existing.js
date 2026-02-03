@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.35.3
+ * @framework-script 0.35.4
  * IDPF Existing Project Installer
  * Adds IDPF integration to an existing codebase.
  *
@@ -129,16 +129,19 @@ function handleExistingClaude(projectPath) {
   const claudeDir = path.join(projectPath, '.claude');
 
   if (fs.existsSync(claudeDir)) {
-    // Check if commands/ and rules/ exist
-    const commandsPath = path.join(claudeDir, 'commands');
-    const rulesPath = path.join(claudeDir, 'rules');
+    // Paths to replace
+    const pathsToReplace = [
+      path.join(claudeDir, 'commands'),
+      path.join(claudeDir, 'rules'),
+      path.join(claudeDir, 'hooks'),
+      path.join(claudeDir, 'scripts', 'shared'),
+    ];
 
     // Remove existing directories/symlinks (will be replaced)
-    if (fs.existsSync(commandsPath)) {
-      fs.rmSync(commandsPath, { recursive: true, force: true });
-    }
-    if (fs.existsSync(rulesPath)) {
-      fs.rmSync(rulesPath, { recursive: true, force: true });
+    for (const p of pathsToReplace) {
+      if (fs.existsSync(p)) {
+        fs.rmSync(p, { recursive: true, force: true });
+      }
     }
 
     return true; // Had existing .claude/
@@ -149,19 +152,47 @@ function handleExistingClaude(projectPath) {
 
 /**
  * Setup .claude directory with symlinks to hub
+ * Creates symlinks for: commands, rules, hooks, scripts/shared
  */
 function setupProjectSymlinks(projectPath, hubPath) {
   const claudeDir = path.join(projectPath, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
 
+  const results = { commands: false, rules: false, hooks: false, scripts: false };
+
+  // Commands symlink
   const commandsTarget = path.join(hubPath, '.claude', 'commands');
   const commandsLink = path.join(claudeDir, 'commands');
+  if (fs.existsSync(commandsTarget)) {
+    results.commands = createSymlink(commandsTarget, commandsLink);
+  }
 
+  // Rules symlink
   const rulesTarget = path.join(hubPath, '.claude', 'rules');
   const rulesLink = path.join(claudeDir, 'rules');
+  if (fs.existsSync(rulesTarget)) {
+    results.rules = createSymlink(rulesTarget, rulesLink);
+  }
 
-  if (!createSymlink(commandsTarget, commandsLink)) {
-    logError('Failed to create symlink for .claude/commands');
+  // Hooks symlink
+  const hooksTarget = path.join(hubPath, '.claude', 'hooks');
+  const hooksLink = path.join(claudeDir, 'hooks');
+  if (fs.existsSync(hooksTarget)) {
+    results.hooks = createSymlink(hooksTarget, hooksLink);
+  }
+
+  // Scripts/shared symlink
+  const scriptsDir = path.join(claudeDir, 'scripts');
+  fs.mkdirSync(scriptsDir, { recursive: true });
+  const scriptsTarget = path.join(hubPath, '.claude', 'scripts', 'shared');
+  const scriptsLink = path.join(scriptsDir, 'shared');
+  if (fs.existsSync(scriptsTarget)) {
+    results.scripts = createSymlink(scriptsTarget, scriptsLink);
+  }
+
+  // Check for critical failures
+  if (!results.commands || !results.rules) {
+    logError('Failed to create critical symlinks for .claude/');
     logError('');
     logError('On Windows, either:');
     logError('  1. Enable Developer Mode (Settings > Privacy & Security > For developers)');
@@ -169,16 +200,52 @@ function setupProjectSymlinks(projectPath, hubPath) {
     process.exit(1);
   }
 
-  if (!createSymlink(rulesTarget, rulesLink)) {
-    logError('Failed to create symlink for .claude/rules');
-    logError('');
-    logError('On Windows, either:');
-    logError('  1. Enable Developer Mode (Settings > Privacy & Security > For developers)');
-    logError('  2. Run as Administrator');
-    process.exit(1);
+  return results;
+}
+
+/**
+ * Copy launcher scripts to project root
+ * Platform-specific: .cmd for Windows, .sh for Unix
+ */
+function copyLauncherScripts(projectPath, hubPath) {
+  const results = { run: false, runp: false };
+  const templatesDir = path.join(hubPath, 'Templates');
+
+  if (process.platform === 'win32') {
+    // Windows: copy .cmd files
+    const runSrc = path.join(templatesDir, 'run_claude.cmd');
+    const runDest = path.join(projectPath, 'run_claude.cmd');
+    if (fs.existsSync(runSrc)) {
+      fs.copyFileSync(runSrc, runDest);
+      results.run = true;
+    }
+
+    const runpSrc = path.join(templatesDir, 'runp_claude.cmd');
+    const runpDest = path.join(projectPath, 'runp_claude.cmd');
+    if (fs.existsSync(runpSrc)) {
+      fs.copyFileSync(runpSrc, runpDest);
+      results.runp = true;
+    }
+  } else {
+    // Unix: copy .sh files and make executable
+    const runSrc = path.join(templatesDir, 'run_claude.sh');
+    const runDest = path.join(projectPath, 'run_claude.sh');
+    if (fs.existsSync(runSrc)) {
+      fs.copyFileSync(runSrc, runDest);
+      fs.chmodSync(runDest, '755');
+      results.run = true;
+    }
+
+    const runpSrc = path.join(templatesDir, 'runp_claude.sh');
+    const runpDest = path.join(projectPath, 'runp_claude.sh');
+    if (fs.existsSync(runpSrc)) {
+      fs.copyFileSync(runpSrc, runpDest);
+      fs.chmodSync(runpDest, '755');
+      results.runp = true;
+    }
   }
 
-  return true;
+  return results;
 }
 
 // ======================================
@@ -680,10 +747,24 @@ async function main() {
     logSuccess('  ✓ Replaced existing .claude/ with symlinks');
   }
 
-  // Setup symlinks
-  setupProjectSymlinks(targetPath, hubPath);
-  logSuccess('  ✓ Created .claude/commands symlink');
-  logSuccess('  ✓ Created .claude/rules symlink');
+  // Setup symlinks to hub's .claude/ structure
+  const symlinkResults = setupProjectSymlinks(targetPath, hubPath);
+  if (symlinkResults.commands) logSuccess('  ✓ Created .claude/commands symlink');
+  if (symlinkResults.rules) logSuccess('  ✓ Created .claude/rules symlink');
+  if (symlinkResults.hooks) logSuccess('  ✓ Created .claude/hooks symlink');
+  if (symlinkResults.scripts) logSuccess('  ✓ Created .claude/scripts/shared symlink');
+
+  // Copy launcher scripts (skip if they exist)
+  const runScriptName = process.platform === 'win32' ? 'run_claude.cmd' : 'run_claude.sh';
+  const runpScriptName = process.platform === 'win32' ? 'runp_claude.cmd' : 'runp_claude.sh';
+  if (!fs.existsSync(path.join(targetPath, runScriptName))) {
+    const launcherResults = copyLauncherScripts(targetPath, hubPath);
+    if (launcherResults.run) logSuccess(`  ✓ Copied ${runScriptName}`);
+    if (launcherResults.runp) logSuccess(`  ✓ Copied ${runpScriptName}`);
+  } else {
+    logSuccess(`  ✓ ${runScriptName} (preserved)`);
+    logSuccess(`  ✓ ${runpScriptName} (preserved)`);
+  }
 
   // Create readline interface for interactive prompts
   const rl = createInterface();

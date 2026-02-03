@@ -1,5 +1,5 @@
 # Async/Event-Driven Contract Testing Guide
-**Version:** v0.35.3
+**Version:** v0.35.4
 
 **Framework:** IDPF-Contract-Testing
 

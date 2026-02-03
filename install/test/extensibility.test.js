@@ -17,7 +17,7 @@ describe('extensibility.js', () => {
     describe('versionless tags (v0.24+)', () => {
       test('recognizes <!-- EXTENSIBLE --> without version', () => {
         const content = `---
-version: "0.35.3"
+version: "0.35.4"
 ---
 
 <!-- EXTENSIBLE -->
@@ -32,7 +32,7 @@ version: "0.35.3"
 
       test('recognizes <!-- MANAGED --> without version', () => {
         const content = `---
-version: "0.35.3"
+version: "0.35.4"
 ---
 
 <!-- MANAGED -->
@@ -152,7 +152,7 @@ No tags here.
     describe('real-world command files', () => {
       test('parses full EXTENSIBLE command file', () => {
         const content = `---
-version: "0.35.3"
+version: "0.35.4"
 description: Create a branch with tracker issue
 argument-hint: <branch-name>
 ---
@@ -178,7 +178,7 @@ Creates a new branch and associated tracker issue.
 
       test('parses full MANAGED command file', () => {
         const content = `---
-version: "0.35.3"
+version: "0.35.4"
 allowed-tools: Bash
 description: Run sprint retrospective
 ---
@@ -432,7 +432,7 @@ describe('deployExtensibleCommand with rogue edit archiving', () => {
   test('archives file when rogue edits detected', () => {
     // Create template
     const templateContent = `---
-version: "0.35.3"
+version: "0.35.4"
 ---
 
 <!-- EXTENSIBLE -->
@@ -481,7 +481,7 @@ User's custom content (this is fine)
     // Create template - use multi-line extension block format
     // Note: We use the same version in both to avoid false positive from version mismatch
     const templateContent = `---
-version: "0.35.3"
+version: "0.35.4"
 ---
 
 <!-- EXTENSIBLE -->

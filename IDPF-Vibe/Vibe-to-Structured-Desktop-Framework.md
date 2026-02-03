@@ -1,5 +1,5 @@
 # Vibe-to-Structured Development Framework (Desktop)
-**Version:** v0.35.3
+**Version:** v0.35.4
 **Type:** Desktop Application Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md
 ## Purpose

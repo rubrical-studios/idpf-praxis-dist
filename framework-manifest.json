@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.35.3",
+  "version": "0.35.4",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -107,8 +107,12 @@
         "06-runtime-triggers.md"
       ],
       "conditional": {
-        "enableGitHubWorkflow": ["02-github-workflow.md"],
-        "windows": ["05-windows-shell.md"]
+        "enableGitHubWorkflow": [
+          "02-github-workflow.md"
+        ],
+        "windows": [
+          "05-windows-shell.md"
+        ]
       }
     }
   },

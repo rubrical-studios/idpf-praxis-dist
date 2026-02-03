@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.35.3
+ * @framework-script 0.35.4
  * migrations.js - Version migrations for IDPF Framework Installer
  * @module install/lib/migrations
  */

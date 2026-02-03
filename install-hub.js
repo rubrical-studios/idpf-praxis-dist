@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.35.3
+ * @framework-script 0.35.4
  * IDPF Hub Installer
  * Creates a central IDPF installation that can serve multiple projects.
  *
@@ -103,6 +103,267 @@ function readFrameworkVersion(frameworkPath) {
     return manifest.version || 'unknown';
   }
   return 'unknown';
+}
+
+/**
+ * Copy a rule file with Source reference injection
+ */
+function copyRuleFile(src, dest, sourcePath) {
+  if (fs.existsSync(src)) {
+    const content = fs.readFileSync(src, 'utf8');
+    const withSource = content.replace(
+      /(\*\*Version:\*\* .+)/,
+      `$1\n**Source:** ${sourcePath}`
+    );
+    fs.writeFileSync(dest, withSource);
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Generate startup rules for hub (generic, not project-specific)
+ */
+function generateHubStartupRules(hubPath, version) {
+  return `# Session Startup (Hub)
+
+**Version:** ${version}
+**Type:** Central Hub
+
+---
+
+## Startup Sequence
+
+When starting a new session:
+
+1. **Gather Information**: Collect session data (see table below)
+2. **Charter Detection**: Check project charter status
+3. **Display Session Initialized**: Show consolidated status block
+4. **Ask**: What would you like to work on?
+
+### Session Information Sources
+
+| Field | Source |
+|-------|--------|
+| Date | Environment/system date |
+| Repository | \`basename $(git rev-parse --show-toplevel)\` |
+| Branch | \`git branch --show-current\` + clean/dirty status |
+| Process Framework | \`framework-config.json\` → \`processFramework\` |
+| Framework Version | \`framework-manifest.json\` → \`version\` |
+| Active Role | \`framework-config.json\` → \`domainSpecialist\` |
+| Charter Status | \`Active\` or \`Pending\` |
+| GitHub Workflow | \`gh pmu --version\` |
+
+---
+
+## Charter Detection (Mandatory)
+
+**Charter is mandatory.** Check for project charter at startup:
+
+1. Check CHARTER.md exists: \`test -f CHARTER.md\`
+2. Check for template placeholders: \`/{[a-z][a-z0-9-]*}/\`
+
+### Charter Status
+
+- **Active** (exists, no placeholders): Proceed to display
+- **Pending** (missing or template): Auto-run \`/charter\` command
+
+**BLOCKING:** Session startup does not complete until charter is configured.
+
+---
+
+## Display Session Initialized Block
+
+**Date appears ONLY here.** Format:
+
+\`\`\`
+Session Initialized
+- Date: {date}
+- Repository: {repo-name}
+- Branch: {branch} ({clean|dirty})
+- Process Framework: {framework}
+- Framework Version: {version}
+- Active Role: {specialist}
+- Charter Status: {Active|Pending}
+- GitHub Workflow: Active via gh pmu {version}
+\`\`\`
+
+If Charter Status is Pending, display blocking message and run \`/charter\`.
+
+---
+
+## On-Demand Loading
+
+| When Needed | Load From |
+|-------------|-----------|
+| Framework workflow | \`${hubPath}/{framework}/\` |
+| Domain specialist | \`${hubPath}/System-Instructions/Domain/Base/{specialist}.md\` |
+| Skill usage | \`.claude/skills/{skill-name}/SKILL.md\` |
+| Charter management | Run \`/charter\` command |
+
+---
+
+**End of Session Startup**
+`;
+}
+
+/**
+ * Generate rules in hub's .claude/rules/ directory
+ * Hub always has all rules enabled (GitHub workflow, Windows shell on Windows)
+ */
+function generateHubRules(hubPath, version) {
+  const rulesDir = path.join(hubPath, '.claude', 'rules');
+
+  // Clean existing rules directory to avoid duplicates from dev repo copy
+  if (fs.existsSync(rulesDir)) {
+    fs.rmSync(rulesDir, { recursive: true, force: true });
+  }
+  fs.mkdirSync(rulesDir, { recursive: true });
+
+  const results = [];
+
+  // 01-anti-hallucination.md
+  const ahSrc = path.join(hubPath, 'Assistant', 'Anti-Hallucination-Rules-for-Software-Development.md');
+  const ahDest = path.join(rulesDir, '01-anti-hallucination.md');
+  if (copyRuleFile(ahSrc, ahDest, 'Assistant/Anti-Hallucination-Rules-for-Software-Development.md')) {
+    results.push('01-anti-hallucination.md');
+  }
+
+  // 02-github-workflow.md (always enabled for hub)
+  const ghSrc = path.join(hubPath, 'Reference', 'GitHub-Workflow.md');
+  const ghDest = path.join(rulesDir, '02-github-workflow.md');
+  if (copyRuleFile(ghSrc, ghDest, 'Reference/GitHub-Workflow.md')) {
+    results.push('02-github-workflow.md');
+  }
+
+  // 03-startup.md (generated)
+  const startupContent = generateHubStartupRules(hubPath, version);
+  const startupDest = path.join(rulesDir, '03-startup.md');
+  fs.writeFileSync(startupDest, startupContent);
+  results.push('03-startup.md');
+
+  // 04-charter-enforcement.md
+  const ceSrc = path.join(hubPath, 'Reference', 'Charter-Enforcement.md');
+  const ceDest = path.join(rulesDir, '04-charter-enforcement.md');
+  if (copyRuleFile(ceSrc, ceDest, 'Reference/Charter-Enforcement.md')) {
+    results.push('04-charter-enforcement.md');
+  }
+
+  // 05-windows-shell.md (Windows only)
+  if (process.platform === 'win32') {
+    const wsSrc = path.join(hubPath, 'Reference', 'Windows-Shell-Safety.md');
+    const wsDest = path.join(rulesDir, '05-windows-shell.md');
+    if (copyRuleFile(wsSrc, wsDest, 'Reference/Windows-Shell-Safety.md')) {
+      results.push('05-windows-shell.md');
+    }
+  }
+
+  // 06-runtime-triggers.md
+  const rtSrc = path.join(hubPath, 'Reference', 'Runtime-Artifact-Triggers.md');
+  const rtDest = path.join(rulesDir, '06-runtime-triggers.md');
+  if (copyRuleFile(rtSrc, rtDest, 'Reference/Runtime-Artifact-Triggers.md')) {
+    results.push('06-runtime-triggers.md');
+  }
+
+  return results;
+}
+
+/**
+ * Find the best source path for a hub component
+ * Checks Templates/ first (dist repo), falls back to .claude/ (dev repo)
+ */
+function findComponentSource(hubPath, component) {
+  // Dist repo structure: Templates/commands, Templates/hooks, etc.
+  const templatePath = path.join(hubPath, 'Templates', component);
+  if (fs.existsSync(templatePath)) {
+    return templatePath;
+  }
+
+  // Dev repo structure: .claude/commands, .claude/hooks, etc.
+  const claudePath = path.join(hubPath, '.claude', component);
+  if (fs.existsSync(claudePath)) {
+    return claudePath;
+  }
+
+  return null;
+}
+
+/**
+ * Setup .claude/ structure with symlinks for project installers
+ * Creates:
+ *   .claude/commands/  -> Templates/commands/ or preserves existing
+ *   .claude/hooks/     -> Templates/hooks/ or preserves existing
+ *   .claude/scripts/shared/ -> Templates/scripts/shared/ or preserves existing
+ *   .claude/rules/     (generated from source files)
+ *
+ * Handles both dist repo (Templates/) and dev repo (.claude/) structures
+ */
+function setupClaudeStructure(hubPath, version) {
+  const results = { commands: false, hooks: false, scripts: false, rules: [] };
+
+  // Create .claude directory if needed
+  const claudeDir = path.join(hubPath, '.claude');
+  fs.mkdirSync(claudeDir, { recursive: true });
+
+  // Commands: Copy from Templates/commands (dist) or preserve .claude/commands (dev)
+  const commandsDest = path.join(claudeDir, 'commands');
+  const commandsSource = path.join(hubPath, 'Templates', 'commands');
+  if (fs.existsSync(commandsSource)) {
+    // Dist repo: copy from Templates/commands to .claude/commands
+    try {
+      if (fs.existsSync(commandsDest)) {
+        fs.rmSync(commandsDest, { recursive: true, force: true });
+      }
+      copyDir(commandsSource, commandsDest);
+      results.commands = true;
+    } catch (err) {
+      logError(`    Failed to copy commands: ${err.message}`);
+    }
+  } else if (fs.existsSync(commandsDest)) {
+    // Dev repo: .claude/commands already exists from copy, keep it
+    results.commands = true;
+  }
+
+  // Hooks: Copy from Templates/hooks (dist) or preserve .claude/hooks (dev)
+  const hooksDest = path.join(claudeDir, 'hooks');
+  const hooksSource = path.join(hubPath, 'Templates', 'hooks');
+  if (fs.existsSync(hooksSource)) {
+    try {
+      if (fs.existsSync(hooksDest)) {
+        fs.rmSync(hooksDest, { recursive: true, force: true });
+      }
+      copyDir(hooksSource, hooksDest);
+      results.hooks = true;
+    } catch (err) {
+      logError(`    Failed to copy hooks: ${err.message}`);
+    }
+  } else if (fs.existsSync(hooksDest)) {
+    results.hooks = true;
+  }
+
+  // Scripts/shared: Copy from Templates/scripts/shared
+  const scriptsDir = path.join(claudeDir, 'scripts');
+  fs.mkdirSync(scriptsDir, { recursive: true });
+  const scriptsDest = path.join(scriptsDir, 'shared');
+  const scriptsSource = path.join(hubPath, 'Templates', 'scripts', 'shared');
+  if (fs.existsSync(scriptsSource)) {
+    try {
+      if (fs.existsSync(scriptsDest)) {
+        fs.rmSync(scriptsDest, { recursive: true, force: true });
+      }
+      copyDir(scriptsSource, scriptsDest);
+      results.scripts = true;
+    } catch (err) {
+      logError(`    Failed to copy scripts/shared: ${err.message}`);
+    }
+  } else if (fs.existsSync(scriptsDest)) {
+    results.scripts = true;
+  }
+
+  // Generate rules (always regenerate to ensure consistency)
+  results.rules = generateHubRules(hubPath, version);
+
+  return results;
 }
 
 // ======================================
@@ -282,7 +543,36 @@ function installHub(sourcePath, targetPath) {
     logWarning('    ⊘ install-project-existing.js (not found)');
   }
 
-  // Step 7: Create/restore projects registry
+  // Step 7: Setup .claude/ structure for project symlinks
+  log();
+  log(colors.dim('  Setting up .claude/ structure for project symlinks...'));
+  const claudeResults = setupClaudeStructure(targetPath, version);
+
+  if (claudeResults.commands) {
+    logSuccess('    ✓ .claude/commands/ (copied from Templates/)');
+  } else {
+    logWarning('    ⊘ .claude/commands/ (failed)');
+  }
+
+  if (claudeResults.hooks) {
+    logSuccess('    ✓ .claude/hooks/ (copied from Templates/)');
+  } else {
+    logWarning('    ⊘ .claude/hooks/ (failed)');
+  }
+
+  if (claudeResults.scripts) {
+    logSuccess('    ✓ .claude/scripts/shared/ (copied from Templates/)');
+  } else {
+    logWarning('    ⊘ .claude/scripts/shared/ (failed)');
+  }
+
+  if (claudeResults.rules.length > 0) {
+    logSuccess(`    ✓ .claude/rules/ (${claudeResults.rules.length} rules generated)`);
+  } else {
+    logWarning('    ⊘ .claude/rules/ (no rules generated)');
+  }
+
+  // Step 8: Create/restore projects registry
   log();
   if (restoreProjectsRegistry(targetPath, backupPath)) {
     logSuccess('  ✓ Restored projects.json');
@@ -292,7 +582,7 @@ function installHub(sourcePath, targetPath) {
     logSuccess('  ✓ .projects/projects.json (preserved)');
   }
 
-  // Step 8: Success message
+  // Step 9: Success message
   log();
   logCyan('╔══════════════════════════════════════╗');
   logCyan('║       Hub Installation Complete!     ║');

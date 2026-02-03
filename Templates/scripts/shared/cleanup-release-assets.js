@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.35.3
+ * @framework-script 0.35.4
  * cleanup-release-assets.js - Clean up old release assets
  *
  * Deletes binary assets from older GitHub releases, keeping only the
