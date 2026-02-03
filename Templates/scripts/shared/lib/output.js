@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.35.4
+ * @framework-script 0.35.5
  * lib/output.js - Output formatting utilities
  *
  * Provides consistent output formatting for all scripts.

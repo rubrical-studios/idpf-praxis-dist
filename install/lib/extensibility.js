@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.35.4
+ * @framework-script 0.35.5
  * extensibility.js - Extensible command handling for IDPF Framework Installer
  *
  * Implements extensibility features from PRD #559:

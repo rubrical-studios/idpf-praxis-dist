@@ -1,5 +1,5 @@
 ---
-version: "v0.35.4"
+version: "v0.35.5"
 allowed-tools: Bash
 description: Transfer issue between releases/sprints (project)
 argument-hint: "<issue-number> [--to branch]"

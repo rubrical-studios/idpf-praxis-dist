@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.35.4
+ * @framework-script 0.35.5
  * checksums.js - SHA256 checksum utilities for IDPF Framework Installer
  *
  * Implements NFR-002 from PRD #559:

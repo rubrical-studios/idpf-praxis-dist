@@ -1,5 +1,5 @@
 # IDPF-Performance Framework
-**Version:** v0.35.4
+**Version:** v0.35.5
 **Extends:** IDPF-Testing-Core
 ## Overview
 Framework for performance tests: load, stress, endurance, capacity planning.

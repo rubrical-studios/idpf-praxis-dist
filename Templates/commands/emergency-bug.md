@@ -1,5 +1,5 @@
 ---
-version: "v0.35.4"
+version: "v0.35.5"
 description: Create P0 emergency issue (project)
 argument-hint: "<description> (e.g., \"API 500 errors\")"
 ---

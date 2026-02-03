@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.35.4
+ * @framework-script 0.35.5
  * IDPF Existing Project Installer
  * Adds IDPF integration to an existing codebase.
  *
@@ -158,7 +158,7 @@ function setupProjectSymlinks(projectPath, hubPath) {
   const claudeDir = path.join(projectPath, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
 
-  const results = { commands: false, rules: false, hooks: false, scripts: false };
+  const results = { commands: false, rules: false, hooks: false, scripts: false, metadata: false };
 
   // Commands symlink
   const commandsTarget = path.join(hubPath, '.claude', 'commands');
@@ -188,6 +188,13 @@ function setupProjectSymlinks(projectPath, hubPath) {
   const scriptsLink = path.join(scriptsDir, 'shared');
   if (fs.existsSync(scriptsTarget)) {
     results.scripts = createSymlink(scriptsTarget, scriptsLink);
+  }
+
+  // Metadata symlink (skill-registry.json, extension-recipes.json)
+  const metadataTarget = path.join(hubPath, '.claude', 'metadata');
+  const metadataLink = path.join(claudeDir, 'metadata');
+  if (fs.existsSync(metadataTarget)) {
+    results.metadata = createSymlink(metadataTarget, metadataLink);
   }
 
   // Check for critical failures
@@ -753,6 +760,7 @@ async function main() {
   if (symlinkResults.rules) logSuccess('  ✓ Created .claude/rules symlink');
   if (symlinkResults.hooks) logSuccess('  ✓ Created .claude/hooks symlink');
   if (symlinkResults.scripts) logSuccess('  ✓ Created .claude/scripts/shared symlink');
+  if (symlinkResults.metadata) logSuccess('  ✓ Created .claude/metadata symlink');
 
   // Copy launcher scripts (skip if they exist)
   const runScriptName = process.platform === 'win32' ? 'run_claude.cmd' : 'run_claude.sh';
