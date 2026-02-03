@@ -1,5 +1,5 @@
 # Vibe-to-Structured Development Framework (Mobile)
-**Version:** v0.34.2
+**Version:** v0.35.0
 **Type:** Mobile App Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md
 ## Purpose

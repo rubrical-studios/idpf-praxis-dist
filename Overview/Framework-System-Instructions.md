@@ -1,5 +1,5 @@
 # Framework System Instructions Reference
-**Version:** v0.34.2
+**Version:** v0.35.0
 **Purpose:** Reference for System Instructions
 **Critical:** System Instructions REQUIRED for all framework operation.
 ## Domain Specialization Architecture

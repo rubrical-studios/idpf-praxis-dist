@@ -1,5 +1,5 @@
 ---
-version: "v0.34.2"
+version: "v0.35.0"
 description: Review stories for direction change (project)
 argument-hint: "[epic-number|prd-name]"
 ---
