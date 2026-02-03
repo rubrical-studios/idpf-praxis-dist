@@ -1,5 +1,5 @@
 # ARIA Authoring Guide
-**Version:** v0.35.2
+**Version:** v0.35.3
 
 **Framework:** IDPF-Accessibility
 

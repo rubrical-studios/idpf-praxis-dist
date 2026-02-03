@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.35.2
+ * @framework-script 0.35.3
  * IDPF New Project Installer
  * Creates a new project directory with full IDPF integration.
  *
@@ -265,12 +265,17 @@ async function promptConfiguration(rl, defaultName, hubPath) {
   return { name, framework, domainSpecialist };
 }
 
+// ======================================
+//  Git & GitHub Setup (matches install.js)
+// ======================================
+
 /**
- * Check if gh pmu is available
+ * Check if a command is available
  */
-function isGhPmuAvailable() {
+function checkCommand(cmd) {
   try {
-    execSync('gh pmu --version', { stdio: 'pipe' });
+    const checkCmd = process.platform === 'win32' ? `where ${cmd}` : `which ${cmd}`;
+    execSync(checkCmd, { stdio: 'pipe' });
     return true;
   } catch {
     return false;
@@ -278,86 +283,318 @@ function isGhPmuAvailable() {
 }
 
 /**
- * Run gh pmu init interactively
+ * Check git remote status
  */
-function runGhPmuInit(projectPath) {
+function checkGitRemote(projectPath) {
+  const gitDir = path.join(projectPath, '.git');
+  if (!fs.existsSync(gitDir)) {
+    return { hasGit: false, hasRemote: false };
+  }
   try {
-    execSync('gh pmu init', {
-      cwd: projectPath,
-      stdio: 'inherit',
+    const result = execSync('git remote -v', { cwd: projectPath, stdio: 'pipe' }).toString();
+    return { hasGit: true, hasRemote: result.trim().length > 0 };
+  } catch {
+    return { hasGit: true, hasRemote: false };
+  }
+}
+
+/**
+ * Check GitHub CLI prerequisites
+ */
+function checkGhCliPrerequisites() {
+  const issues = [];
+
+  if (!checkCommand('gh')) {
+    issues.push({
+      message: 'GitHub CLI (gh) is not installed',
+      remediation: 'Install from: https://cli.github.com/',
     });
-    return true;
-  } catch {
-    return false;
+    return { ready: false, issues };
   }
-}
 
-/**
- * Check if git is available
- */
-function isGitAvailable() {
-  try {
-    execSync('git --version', { stdio: 'pipe' });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Check if gh CLI is available and authenticated
- */
-function isGhAvailable() {
   try {
     execSync('gh auth status', { stdio: 'pipe' });
-    return true;
   } catch {
-    return false;
-  }
-}
-
-/**
- * Initialize git repository
- */
-function initGitRepo(projectPath) {
-  try {
-    execSync('git init', { cwd: projectPath, stdio: 'pipe' });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Create initial commit
- */
-function createInitialCommit(projectPath) {
-  try {
-    execSync('git add .', { cwd: projectPath, stdio: 'pipe' });
-    execSync('git commit -m "Initial commit via IDPF installer"', {
-      cwd: projectPath,
-      stdio: 'pipe',
+    issues.push({
+      message: 'GitHub CLI is not authenticated',
+      remediation: 'Run: gh auth login',
     });
-    return true;
+    return { ready: false, issues };
+  }
+
+  // Auto-install gh-pmu extension if missing
+  try {
+    const extensions = execSync('gh extension list', { stdio: 'pipe' }).toString();
+    if (!extensions.includes('gh-pmu')) {
+      log(colors.dim('  Installing gh-pmu extension...'));
+      try {
+        execSync('gh extension install rubrical-studios/gh-pmu', { stdio: 'pipe' });
+        logSuccess('  ✓ Installed gh-pmu extension');
+      } catch {
+        issues.push({
+          message: 'Failed to install gh-pmu extension',
+          remediation: 'Run: gh extension install rubrical-studios/gh-pmu',
+        });
+      }
+    }
   } catch {
-    return false;
+    // Try to install anyway
+    try {
+      execSync('gh extension install rubrical-studios/gh-pmu', { stdio: 'pipe' });
+    } catch {
+      issues.push({
+        message: 'Failed to install gh-pmu extension',
+        remediation: 'Run: gh extension install rubrical-studios/gh-pmu',
+      });
+    }
+  }
+
+  return { ready: issues.length === 0, issues };
+}
+
+/**
+ * Get current GitHub username
+ */
+function getGitHubUsername() {
+  try {
+    return execSync('gh api user --jq ".login"', { stdio: 'pipe' }).toString().trim();
+  } catch {
+    return null;
   }
 }
 
 /**
- * Create GitHub remote repository and push
+ * Create GitHub repository
  */
-function createGitHubRepo(projectPath, projectName) {
+function createGitHubRepo(projectPath, repoName, visibility) {
   try {
-    // Create repo (private by default, prompts for visibility)
-    execSync(`gh repo create "${projectName}" --source=. --push`, {
-      cwd: projectPath,
-      stdio: 'inherit',
-    });
-    return true;
-  } catch {
-    return false;
+    const visFlag = visibility === 'public' ? '--public' : '--private';
+    const result = execSync(
+      `gh repo create "${repoName}" ${visFlag} --source="${projectPath}" --push`,
+      { cwd: projectPath, stdio: 'pipe' }
+    ).toString();
+    const urlMatch = result.match(/https:\/\/github\.com\/[^\s]+/);
+    return { success: true, repoUrl: urlMatch ? urlMatch[0] : `https://github.com/${repoName}` };
+  } catch (err) {
+    return { success: false, error: err.message };
   }
+}
+
+/**
+ * Copy project board template
+ */
+function copyProjectBoard(templateNumber, projectTitle, targetOwner) {
+  try {
+    const result = execSync(
+      `gh project copy ${templateNumber} --source-owner rubrical-studios --target-owner ${targetOwner} --title "${projectTitle}" --format json`,
+      { stdio: 'pipe' }
+    ).toString();
+    const projectData = JSON.parse(result);
+    return { success: true, projectNumber: projectData.number, projectUrl: projectData.url };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+/**
+ * Link project board to repository
+ */
+function linkProjectBoard(projectNumber, owner, repoName) {
+  try {
+    execSync(`gh project link ${projectNumber} --owner ${owner} --repo ${repoName}`, { stdio: 'pipe' });
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+/**
+ * Generate .gh-pmu.yml configuration
+ */
+function generateGhPmuConfig(projectPath, projectTitle, projectNumber, owner, repoName) {
+  const config = `# gh-pmu configuration
+# Generated by IDPF installer
+
+project:
+  owner: ${owner}
+  number: ${projectNumber}
+
+repositories:
+  - ${owner}/${repoName}
+
+fields:
+  status:
+    values:
+      - backlog
+      - in_progress
+      - in_review
+      - done
+  priority:
+    values:
+      - p0
+      - p1
+      - p2
+`;
+  fs.writeFileSync(path.join(projectPath, '.gh-pmu.yml'), config);
+}
+
+/**
+ * Integrated GitHub setup flow (matches install.js)
+ */
+async function setupGitHubIntegration(rl, projectPath, projectName) {
+  const result = { repoUrl: null, projectUrl: null, skipped: false, gitStatus: 'none' };
+
+  // Check git status
+  const gitStatus = checkGitRemote(projectPath);
+
+  // Skip if remote already exists
+  if (gitStatus.hasRemote) {
+    log(colors.dim('  Git remote already configured - skipping GitHub setup'));
+    result.skipped = true;
+    result.gitStatus = 'existing';
+    return result;
+  }
+
+  // Check prerequisites
+  const ghPrereqs = checkGhCliPrerequisites();
+  if (!ghPrereqs.ready) {
+    logWarning('  GitHub setup skipped - prerequisites not met:');
+    for (const issue of ghPrereqs.issues) {
+      log(`    ${colors.yellow('⚠')} ${issue.message}`);
+      log(`      ${colors.cyan(issue.remediation)}`);
+    }
+    result.skipped = true;
+    return result;
+  }
+
+  // Single prompt for GitHub integration
+  log();
+  divider();
+  logCyan('  GitHub Repository Setup');
+  divider();
+  log();
+  log('  Would you like to set up GitHub integration?');
+  log(colors.dim('  This will create a GitHub repository and project board.'));
+  log();
+
+  const setupGitHub = await ask(rl, '  Set up GitHub integration? [Y/n]: ');
+  if (setupGitHub.toLowerCase() === 'n') {
+    logWarning('  GitHub setup skipped.');
+    result.skipped = true;
+
+    // Offer local git only
+    if (!gitStatus.hasGit && checkCommand('git')) {
+      const initLocal = await ask(rl, '  Initialize local git repository? [Y/n]: ');
+      if (initLocal.toLowerCase() !== 'n') {
+        try {
+          execSync('git init', { cwd: projectPath, stdio: 'pipe' });
+          execSync('git add .', { cwd: projectPath, stdio: 'pipe' });
+          execSync('git commit -m "Initial commit via IDPF installer"', { cwd: projectPath, stdio: 'pipe' });
+          logSuccess('  ✓ Initialized local git repository');
+          result.gitStatus = 'local';
+        } catch {
+          logWarning('  ⊘ Failed to initialize git');
+        }
+      }
+    }
+    return result;
+  }
+
+  // Get configuration
+  const ghUsername = getGitHubUsername();
+  if (!ghUsername) {
+    logWarning('  ⊘ Could not determine GitHub username');
+    result.skipped = true;
+    return result;
+  }
+
+  const repoNameAnswer = await ask(rl, `  Repository name [${projectName}]: `);
+  const repoName = repoNameAnswer || projectName;
+
+  const visibilityAnswer = await ask(rl, '  Repository visibility (1=Private, 2=Public) [1]: ');
+  const visibility = visibilityAnswer === '2' ? 'public' : 'private';
+
+  const templateAnswer = await ask(rl, '  Project template number [30]: ');
+  const templateNumber = parseInt(templateAnswer, 10) || 30;
+
+  const projectTitleAnswer = await ask(rl, `  Project board title [${repoName}]: `);
+  const projectTitle = projectTitleAnswer || repoName;
+
+  log();
+  log(colors.dim('  Creating GitHub resources...'));
+  log();
+
+  // Initialize git if needed
+  if (!gitStatus.hasGit) {
+    try {
+      execSync('git init', { cwd: projectPath, stdio: 'pipe' });
+      logSuccess('  ✓ Initialized git repository');
+    } catch (err) {
+      logError(`  ✗ Failed to initialize git: ${err.message}`);
+    }
+  }
+
+  // Create initial commit
+  try {
+    execSync('git rev-parse HEAD', { cwd: projectPath, stdio: 'pipe' });
+  } catch {
+    try {
+      execSync('git add -A', { cwd: projectPath, stdio: 'pipe' });
+      execSync('git commit -m "Initial commit via IDPF installer"', { cwd: projectPath, stdio: 'pipe' });
+      logSuccess('  ✓ Created initial commit');
+    } catch (err) {
+      logWarning(`  ⚠ Could not create initial commit: ${err.message}`);
+    }
+  }
+
+  // Create GitHub repository
+  const repoResult = createGitHubRepo(projectPath, repoName, visibility);
+  if (repoResult.success) {
+    logSuccess(`  ✓ Created repository: ${repoResult.repoUrl}`);
+    result.repoUrl = repoResult.repoUrl;
+    result.gitStatus = 'pushed';
+  } else {
+    logError(`  ✗ Failed to create repository: ${repoResult.error}`);
+    result.gitStatus = 'local';
+  }
+
+  // Copy project board
+  const projectResult = copyProjectBoard(templateNumber, projectTitle, ghUsername);
+  if (projectResult.success) {
+    logSuccess(`  ✓ Copied project board: ${projectResult.projectUrl || `#${projectResult.projectNumber}`}`);
+    result.projectUrl = projectResult.projectUrl;
+
+    // Link project to repository
+    if (repoResult.success && projectResult.projectNumber) {
+      const linkResult = linkProjectBoard(projectResult.projectNumber, ghUsername, repoName);
+      if (linkResult.success) {
+        logSuccess('  ✓ Linked project board to repository');
+      } else {
+        logWarning(`  ⚠ Could not link project: ${linkResult.error}`);
+      }
+    }
+
+    // Generate .gh-pmu.yml
+    if (projectResult.projectNumber) {
+      generateGhPmuConfig(projectPath, projectTitle, projectResult.projectNumber, ghUsername, repoName);
+      logSuccess('  ✓ Generated .gh-pmu.yml');
+
+      // Commit and push config
+      try {
+        execSync('git add .gh-pmu.yml', { cwd: projectPath, stdio: 'pipe' });
+        execSync('git commit -m "Add gh-pmu configuration"', { cwd: projectPath, stdio: 'pipe' });
+        execSync('git push', { cwd: projectPath, stdio: 'pipe' });
+        logSuccess('  ✓ Committed and pushed .gh-pmu.yml');
+      } catch (err) {
+        logWarning(`  ⚠ Could not push config: ${err.message}`);
+      }
+    }
+  } else {
+    logWarning(`  ⚠ Could not copy project board: ${projectResult.error}`);
+    log(colors.dim('    You can create a project board manually and run: gh pmu init'));
+  }
+
+  return result;
 }
 
 // ======================================
@@ -459,66 +696,8 @@ async function main() {
     logSuccess('  ✓ Created CHARTER.md template');
   }
 
-  // GitHub project setup via gh pmu init
-  log();
-  const ghPmuPath = path.join(targetPath, '.gh-pmu.yml');
-  if (isGhPmuAvailable()) {
-    const runInit = await ask(rl, '  Run gh pmu init for GitHub project setup? [Y/n]: ');
-    if (runInit.toLowerCase() !== 'n') {
-      log();
-      if (runGhPmuInit(targetPath)) {
-        logSuccess('  ✓ Created .gh-pmu.yml via gh pmu init');
-      } else {
-        logWarning('  ⊘ gh pmu init failed - run manually later');
-      }
-    } else {
-      logWarning('  ⊘ Skipped gh pmu init - run: gh pmu init');
-    }
-  } else {
-    logWarning('  ⊘ gh pmu not found - install: gh extension install rubrical-studios/gh-pmu');
-  }
-
-  // Optional git repository setup
-  log();
-  let gitStatus = 'skipped';
-  if (isGitAvailable()) {
-    const initGit = await ask(rl, '  Initialize git repository? [Y/n]: ');
-    if (initGit.toLowerCase() !== 'n') {
-      if (initGitRepo(targetPath)) {
-        logSuccess('  ✓ Initialized git repository');
-        gitStatus = 'initialized';
-
-        // Create initial commit
-        if (createInitialCommit(targetPath)) {
-          logSuccess('  ✓ Created initial commit');
-        }
-
-        // Ask about GitHub remote
-        if (isGhAvailable()) {
-          const createRemote = await ask(rl, '  Create GitHub remote repository? [y/N]: ');
-          if (createRemote.toLowerCase() === 'y') {
-            log();
-            if (createGitHubRepo(targetPath, config.name)) {
-              logSuccess('  ✓ Created GitHub repository and pushed');
-              gitStatus = 'pushed';
-            } else {
-              logWarning('  ⊘ GitHub repo creation failed - create manually');
-            }
-          } else {
-            logSuccess('  ✓ Local repository only (no remote)');
-          }
-        } else {
-          logWarning('  ⊘ GitHub CLI not authenticated - skipping remote setup');
-        }
-      } else {
-        logWarning('  ⊘ git init failed');
-      }
-    } else {
-      logSuccess('  ✓ Skipped git initialization');
-    }
-  } else {
-    logWarning('  ⊘ git not found - skipping repository setup');
-  }
+  // GitHub integration (single integrated flow matching install.js)
+  const githubResult = await setupGitHubIntegration(rl, targetPath, config.name);
 
   // Close readline interface
   rl.close();
@@ -536,7 +715,7 @@ async function main() {
   log(`  ${colors.dim('Project:')}     ${targetPath}`);
   log(`  ${colors.dim('Framework:')}   ${colors.green(config.framework)}`);
   log(`  ${colors.dim('Specialist:')}  ${colors.green(config.domainSpecialist)}`);
-  log(`  ${colors.dim('Git Status:')}  ${colors.green(gitStatus)}`);
+  log(`  ${colors.dim('Git Status:')}  ${colors.green(githubResult.gitStatus)}`);
   log();
 
   logCyan('  Next steps:');
