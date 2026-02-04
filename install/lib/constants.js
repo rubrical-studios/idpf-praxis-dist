@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.36.0
+ * @framework-script 0.36.1
  * constants.js - Configuration data for IDPF Framework Installer
  * @module install/lib/constants
  */

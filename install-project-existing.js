@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.36.0
+ * @framework-script 0.36.1
  * IDPF Existing Project Installer
  * Adds IDPF integration to an existing codebase.
  *
@@ -587,6 +587,14 @@ function registerProject(hubPath, projectPath, config) {
 
 const FRAMEWORKS = ['IDPF-Agile', 'IDPF-Vibe'];
 
+// TDD skills to include by default in all projects
+const TDD_SKILLS = [
+  'tdd-red-phase',
+  'tdd-green-phase',
+  'tdd-refactor-phase',
+  'tdd-failure-recovery'
+];
+
 /**
  * Create readline interface
  */
@@ -1123,6 +1131,29 @@ async function main() {
     };
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
     logSuccess('  ✓ Created .idpf-project.json');
+  }
+
+  // Create or update framework-config.json with TDD skills
+  const frameworkConfigPath = path.join(targetPath, 'framework-config.json');
+  if (fs.existsSync(frameworkConfigPath)) {
+    // Update existing config - merge TDD skills with existing projectSkills
+    const existingConfig = JSON.parse(fs.readFileSync(frameworkConfigPath, 'utf8'));
+    const existingSkills = existingConfig.projectSkills || [];
+    const mergedSkills = [...new Set([...existingSkills, ...TDD_SKILLS])].sort();
+    existingConfig.projectSkills = mergedSkills;
+    fs.writeFileSync(frameworkConfigPath, JSON.stringify(existingConfig, null, 2) + '\n');
+    logSuccess('  ✓ framework-config.json (merged TDD skills)');
+  } else {
+    // Create new framework-config.json
+    const frameworkConfig = {
+      frameworkVersion: readFrameworkVersion(hubPath),
+      installedDate: new Date().toISOString().split('T')[0],
+      processFramework: config.framework,
+      frameworkPath: config.hub,
+      projectSkills: [...TDD_SKILLS]
+    };
+    fs.writeFileSync(frameworkConfigPath, JSON.stringify(frameworkConfig, null, 2) + '\n');
+    logSuccess('  ✓ Created framework-config.json');
   }
 
   // Create CHARTER.md (skip if exists)

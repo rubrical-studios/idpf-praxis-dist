@@ -1,5 +1,5 @@
 # IDPF-Testing-Core Framework
-**Version:** v0.36.0
+**Version:** v0.36.1
 ## Overview
 Foundational framework for all testing-focused development. Establishes common architecture, terminology, workflows, and integration patterns.
 **Core Principle:** "Test automation is software development. Same tools, skills, practices."

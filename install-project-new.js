@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.36.0
+ * @framework-script 0.36.1
  * IDPF New Project Installer
  * Creates a new project directory with full IDPF integration.
  *
@@ -469,6 +469,14 @@ function registerProject(hubPath, projectPath, config) {
 // ======================================
 
 const FRAMEWORKS = ['IDPF-Agile', 'IDPF-Vibe'];
+
+// TDD skills to include by default in all projects
+const TDD_SKILLS = [
+  'tdd-red-phase',
+  'tdd-green-phase',
+  'tdd-refactor-phase',
+  'tdd-failure-recovery'
+];
 
 /**
  * Create readline interface
@@ -976,6 +984,18 @@ async function main() {
   const configPath = path.join(targetPath, '.idpf-project.json');
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
   logSuccess('  ✓ Created .idpf-project.json');
+
+  // Create framework-config.json with TDD skills
+  const frameworkConfigPath = path.join(targetPath, 'framework-config.json');
+  const frameworkConfig = {
+    frameworkVersion: readFrameworkVersion(hubPath),
+    installedDate: new Date().toISOString().split('T')[0],
+    processFramework: config.framework,
+    frameworkPath: config.hub,
+    projectSkills: [...TDD_SKILLS]
+  };
+  fs.writeFileSync(frameworkConfigPath, JSON.stringify(frameworkConfig, null, 2) + '\n');
+  logSuccess('  ✓ Created framework-config.json');
 
   // Create CHARTER.md placeholder
   const charterPath = path.join(targetPath, 'CHARTER.md');
