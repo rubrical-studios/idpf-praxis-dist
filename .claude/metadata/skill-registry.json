@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-04T22:49:57.107Z",
+  "generatedAt": "2026-02-04T23:35:16.106Z",
   "version": "1.0.0",
-  "skillCount": 25,
+  "skillCount": 23,
   "skills": [
     {
       "name": "anti-pattern-analysis",
@@ -36,11 +36,6 @@
     {
       "name": "common-errors",
       "description": "Diagnose and solve common beginner programming mistakes in Flask or Sinatra development with detailed explanations",
-      "triggers": []
-    },
-    {
-      "name": "create-prd",
-      "description": "Transform proposals into detailed PRD documents using Inception/ context",
       "triggers": []
     },
     {
@@ -138,11 +133,6 @@
     {
       "name": "test-writing-patterns",
       "description": "Guide experienced developers on test structure, patterns, assertions, and test doubles for effective test-driven development",
-      "triggers": []
-    },
-    {
-      "name": "uml-generation",
-      "description": "Generate UML diagrams from project source code using PlantUML with online rendering",
       "triggers": []
     }
   ]

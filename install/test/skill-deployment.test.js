@@ -15,14 +15,9 @@ describe('Skill Deployment', () => {
       expect(ALL_SKILLS).toContain('codebase-analysis');
     });
 
-    test('includes create-prd skill', () => {
-      expect(ALL_SKILLS).toContain('create-prd');
-    });
-
-    test('does not include promote-to-prd (never existed, not renamed)', () => {
-      // Clarification: The skill was always named create-prd.
-      // promote-to-prd was a proposed name that was never used.
-      expect(ALL_SKILLS).not.toContain('promote-to-prd');
+    test('does not include create-prd (consolidated into command)', () => {
+      // Note: create-prd was removed in v0.36.2 - functionality lives in /create-prd command
+      expect(ALL_SKILLS).not.toContain('create-prd');
     });
 
     test('all skills are unique (no duplicates)', () => {
@@ -54,18 +49,9 @@ describe('Skill Deployment', () => {
       expect(fs.existsSync(skillMd)).toBe(true);
     });
 
-    (skillsDirExists ? test : test.skip)('create-prd directory exists', () => {
+    (skillsDirExists ? test : test.skip)('create-prd directory does not exist (consolidated to command)', () => {
+      // Note: create-prd was removed in v0.36.2 - functionality lives in /create-prd command
       const skillPath = path.join(skillsDir, 'create-prd');
-      expect(fs.existsSync(skillPath)).toBe(true);
-    });
-
-    (skillsDirExists ? test : test.skip)('create-prd has SKILL.md', () => {
-      const skillMd = path.join(skillsDir, 'create-prd', 'SKILL.md');
-      expect(fs.existsSync(skillMd)).toBe(true);
-    });
-
-    (skillsDirExists ? test : test.skip)('promote-to-prd directory does not exist', () => {
-      const skillPath = path.join(skillsDir, 'promote-to-prd');
       expect(fs.existsSync(skillPath)).toBe(false);
     });
 
@@ -104,9 +90,9 @@ describe('Skill Deployment', () => {
 
   describe('Core skills verification', () => {
     // Core skills that must be present for basic functionality
+    // Note: create-prd removed in v0.36.2 (consolidated into command)
     const coreSkills = [
       'codebase-analysis',
-      'create-prd',
       'tdd-red-phase',
       'tdd-green-phase',
       'tdd-refactor-phase'

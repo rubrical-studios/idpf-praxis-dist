@@ -1,6 +1,6 @@
 # IDPF Framework - AI-Assisted Development
 
-**Current Version:** v0.36.1
+**Current Version:** v0.36.2
 
 A comprehensive ecosystem for AI-assisted software development with Claude.
 
@@ -51,7 +51,7 @@ The installer will:
 
 **Advanced Testing:** property-based-testing, mutation-testing
 
-**Analysis:** uml-generation, anti-pattern-analysis, bdd-writing, codebase-analysis, create-prd, extract-prd
+**Analysis:** anti-pattern-analysis, bdd-writing, codebase-analysis, extract-prd
 
 **DevOps:** ci-cd-pipeline-design
 

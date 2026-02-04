@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.36.1
+ * @framework-script 0.36.2
  * constants.js - Configuration data for IDPF Framework Installer
  * @module install/lib/constants
  */
@@ -203,7 +203,6 @@ const ALL_SKILLS = [
   'ci-cd-pipeline-design',
   'codebase-analysis',
   'common-errors',
-  'create-prd',
   'electron-development',
   'error-handling-patterns',
   'extract-prd',
@@ -220,7 +219,6 @@ const ALL_SKILLS = [
   'tdd-red-phase',
   'tdd-refactor-phase',
   'test-writing-patterns',
-  'uml-generation',
 ];
 
 module.exports = {

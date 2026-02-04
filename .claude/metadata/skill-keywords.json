@@ -58,12 +58,6 @@
       "error message",
       "debugging guide"
     ],
-    "create-prd": [
-      "prd",
-      "product requirements",
-      "requirements document",
-      "write requirements"
-    ],
     "electron-development": [
       "electron",
       "desktop app",
@@ -182,14 +176,6 @@
       "stub",
       "spy",
       "test fixture"
-    ],
-    "uml-generation": [
-      "uml",
-      "class diagram",
-      "sequence diagram",
-      "plantuml",
-      "architecture diagram",
-      "component diagram"
     ]
   },
   "groupKeywords": {
