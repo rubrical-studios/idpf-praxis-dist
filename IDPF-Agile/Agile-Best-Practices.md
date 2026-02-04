@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Best Practices
-**Version:** v0.35.6
+**Version:** v0.36.0
 **Module:** Best Practices (loaded on-demand)
 ## Story Writing
 **DO:** As a/I want/So that format, focus on user value, keep small (1-3 days), clear acceptance criteria, relative estimates

@@ -1,5 +1,5 @@
 # QA Automation Tool Selection Guide
-**Version:** v0.35.6
+**Version:** v0.36.0
 
 **Purpose:** Help teams select the appropriate automation tools for their QA testing needs.
 

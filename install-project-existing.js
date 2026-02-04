@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.35.6
+ * @framework-script 0.36.0
  * IDPF Existing Project Installer
  * Adds IDPF integration to an existing codebase.
  *
@@ -121,17 +121,214 @@ function createSymlink(target, linkPath) {
   }
 }
 
+// ======================================
+//  Extensible Commands Handling
+// ======================================
+
+/**
+ * Check if a command file is extensible (vs managed)
+ * Extensible commands have <!-- EXTENSIBLE --> marker
+ * Managed commands have <!-- MANAGED --> marker
+ */
+function isExtensibleCommand(content) {
+  return content.includes('<!-- EXTENSIBLE -->');
+}
+
+/**
+ * Strip FRAMEWORK-ONLY content from command file
+ * Removes content between <!-- FRAMEWORK-ONLY-START --> and <!-- FRAMEWORK-ONLY-END -->
+ */
+function stripFrameworkOnlyContent(content) {
+  // Use regex to remove FRAMEWORK-ONLY blocks (including the markers)
+  const regex = /<!-- FRAMEWORK-ONLY-START -->[\s\S]*?<!-- FRAMEWORK-ONLY-END -->/g;
+  return content.replace(regex, '');
+}
+
+/**
+ * Extract extension blocks from content
+ * Returns a map of extension name -> content
+ */
+function extractExtensionBlocks(content) {
+  const blocks = {};
+  const regex = /<!-- USER-EXTENSION-START: ([a-z][a-z0-9-]*) -->([\s\S]*?)<!-- USER-EXTENSION-END: \1 -->/g;
+  let match;
+  while ((match = regex.exec(content)) !== null) {
+    const name = match[1];
+    const blockContent = match[2];
+    // Only store if there's actual content (not just whitespace/empty)
+    if (blockContent.trim()) {
+      blocks[name] = blockContent;
+    }
+  }
+  return blocks;
+}
+
+/**
+ * Merge extension blocks from existing file into new content
+ * Preserves user customizations while updating the command structure
+ */
+function mergeExtensionBlocks(existingContent, newContent) {
+  // Extract blocks from existing file
+  const existingBlocks = extractExtensionBlocks(existingContent);
+
+  // If no existing blocks with content, just return new content
+  if (Object.keys(existingBlocks).length === 0) {
+    return newContent;
+  }
+
+  // Replace empty extension blocks in new content with existing content
+  let mergedContent = newContent;
+  for (const [name, blockContent] of Object.entries(existingBlocks)) {
+    // Find the extension block in new content and replace its content
+    const blockRegex = new RegExp(
+      `(<!-- USER-EXTENSION-START: ${name} -->)[\\s\\S]*?(<!-- USER-EXTENSION-END: ${name} -->)`,
+      'g'
+    );
+    mergedContent = mergedContent.replace(blockRegex, `$1${blockContent}$2`);
+  }
+
+  return mergedContent;
+}
+
+// ======================================
+//  Extension Directory Management
+// ======================================
+
+/**
+ * Commands that support user extension points
+ * These get dedicated directories under .claude/scripts/{command}/
+ */
+const EXTENSIBLE_COMMANDS = [
+  // Existing extensible commands
+  'create-branch',
+  'prepare-release',
+  'prepare-beta',
+  'merge-branch',
+  'destroy-branch',
+  'create-prd',
+  // New extensible commands (per #1080)
+  'work',
+  'done',
+  'bug',
+  'enhancement',
+  'proposal',
+  'review-proposal',
+  'review-prd',
+  'review-issue'
+];
+
+/**
+ * Create project-owned extension directories
+ * These directories are NOT symlinked and survive hub reinstalls
+ *
+ * Structure:
+ *   .claude/extensions/           - General extension point
+ *   .claude/scripts/{command}/    - Per-command extension scripts
+ *
+ * Returns: { extensions: boolean, commands: string[] }
+ */
+function createExtensionDirectories(projectPath) {
+  const results = { extensions: false, commands: [] };
+  const claudeDir = path.join(projectPath, '.claude');
+
+  // Create .claude/extensions/ with .gitkeep
+  const extensionsDir = path.join(claudeDir, 'extensions');
+  if (!fs.existsSync(extensionsDir)) {
+    fs.mkdirSync(extensionsDir, { recursive: true });
+    fs.writeFileSync(path.join(extensionsDir, '.gitkeep'), '');
+    results.extensions = true;
+  } else if (!fs.existsSync(path.join(extensionsDir, '.gitkeep'))) {
+    // Directory exists but no .gitkeep - add it
+    fs.writeFileSync(path.join(extensionsDir, '.gitkeep'), '');
+    results.extensions = true;
+  }
+
+  // Create .claude/scripts/{command}/ directories with .gitkeep
+  const scriptsDir = path.join(claudeDir, 'scripts');
+  fs.mkdirSync(scriptsDir, { recursive: true });
+
+  for (const command of EXTENSIBLE_COMMANDS) {
+    const commandDir = path.join(scriptsDir, command);
+    if (!fs.existsSync(commandDir)) {
+      fs.mkdirSync(commandDir, { recursive: true });
+      fs.writeFileSync(path.join(commandDir, '.gitkeep'), '');
+      results.commands.push(command);
+    } else if (!fs.existsSync(path.join(commandDir, '.gitkeep'))) {
+      // Directory exists but no .gitkeep - add it
+      fs.writeFileSync(path.join(commandDir, '.gitkeep'), '');
+      results.commands.push(command);
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Copy extensible commands to project, preserving existing extensions
+ * Managed commands are skipped (will be accessed via symlink to hub)
+ *
+ * Returns: { copied: string[], skipped: string[], preserved: string[] }
+ */
+function copyExtensibleCommands(hubPath, projectPath) {
+  const results = { copied: [], skipped: [], preserved: [] };
+
+  const hubCommandsDir = path.join(hubPath, '.claude', 'commands');
+  const projectCommandsDir = path.join(projectPath, '.claude', 'commands');
+
+  // Create project commands directory if needed
+  fs.mkdirSync(projectCommandsDir, { recursive: true });
+
+  // Get list of command files from hub
+  if (!fs.existsSync(hubCommandsDir)) {
+    return results;
+  }
+
+  const commandFiles = fs.readdirSync(hubCommandsDir).filter(f => f.endsWith('.md'));
+
+  for (const file of commandFiles) {
+    const hubFilePath = path.join(hubCommandsDir, file);
+    const projectFilePath = path.join(projectCommandsDir, file);
+    const hubContent = fs.readFileSync(hubFilePath, 'utf8');
+
+    if (isExtensibleCommand(hubContent)) {
+      // Extensible command: copy with FRAMEWORK-ONLY stripped, preserve extensions
+      let newContent = stripFrameworkOnlyContent(hubContent);
+
+      // Check if project already has this file with customizations
+      if (fs.existsSync(projectFilePath)) {
+        const existingContent = fs.readFileSync(projectFilePath, 'utf8');
+        const existingBlocks = extractExtensionBlocks(existingContent);
+
+        if (Object.keys(existingBlocks).length > 0) {
+          // Has customizations - merge them
+          newContent = mergeExtensionBlocks(existingContent, newContent);
+          results.preserved.push(file);
+        }
+      }
+
+      fs.writeFileSync(projectFilePath, newContent);
+      results.copied.push(file);
+    } else {
+      // Managed command: copy as-is (no customization expected)
+      fs.copyFileSync(hubFilePath, projectFilePath);
+      results.skipped.push(file);
+    }
+  }
+
+  return results;
+}
+
 /**
  * Handle existing .claude directory
- * Replaces real files or old symlinks with new symlinks
+ * Replaces symlinked content with fresh symlinks
+ * Preserves commands directory (handled separately by copyExtensibleCommands)
  */
 function handleExistingClaude(projectPath) {
   const claudeDir = path.join(projectPath, '.claude');
 
   if (fs.existsSync(claudeDir)) {
-    // Paths to replace
+    // Paths to replace with symlinks (NOT commands - those are copied/preserved)
     const pathsToReplace = [
-      path.join(claudeDir, 'commands'),
       path.join(claudeDir, 'rules'),
       path.join(claudeDir, 'hooks'),
       path.join(claudeDir, 'scripts', 'shared'),
@@ -139,10 +336,25 @@ function handleExistingClaude(projectPath) {
       path.join(claudeDir, 'skills'),
     ];
 
-    // Remove existing directories/symlinks (will be replaced)
+    // Remove existing directories/symlinks (will be replaced with symlinks)
     for (const p of pathsToReplace) {
       if (fs.existsSync(p)) {
         fs.rmSync(p, { recursive: true, force: true });
+      }
+    }
+
+    // Check if commands is a symlink - if so, remove it (will be replaced with copies)
+    const commandsPath = path.join(claudeDir, 'commands');
+    if (fs.existsSync(commandsPath)) {
+      try {
+        const stats = fs.lstatSync(commandsPath);
+        if (stats.isSymbolicLink()) {
+          // Remove symlink - will be replaced with copied commands
+          fs.rmSync(commandsPath, { recursive: true, force: true });
+        }
+        // If it's a real directory, leave it (extensions will be preserved)
+      } catch (err) {
+        // Ignore stat errors
       }
     }
 
@@ -153,21 +365,27 @@ function handleExistingClaude(projectPath) {
 }
 
 /**
- * Setup .claude directory with symlinks to hub
- * Creates symlinks for: commands, rules, hooks, scripts/shared
+ * Setup .claude directory with symlinks to hub and copied commands
+ * Symlinks: rules, hooks, scripts/shared, metadata, skills
+ * Copies: commands (extensible commands with FRAMEWORK-ONLY stripped)
  */
 function setupProjectSymlinks(projectPath, hubPath) {
   const claudeDir = path.join(projectPath, '.claude');
   fs.mkdirSync(claudeDir, { recursive: true });
 
-  const results = { commands: false, rules: false, hooks: false, scripts: false, metadata: false, skills: false };
+  const results = {
+    commands: { copied: [], skipped: [], preserved: [] },
+    rules: false,
+    hooks: false,
+    scripts: false,
+    metadata: false,
+    skills: false,
+    extensionDirs: { extensions: false, commands: [] }
+  };
 
-  // Commands symlink
-  const commandsTarget = path.join(hubPath, '.claude', 'commands');
-  const commandsLink = path.join(claudeDir, 'commands');
-  if (fs.existsSync(commandsTarget)) {
-    results.commands = createSymlink(commandsTarget, commandsLink);
-  }
+  // Commands: COPY (not symlink) - extensible commands with FRAMEWORK-ONLY stripped
+  // Existing extension blocks are preserved
+  results.commands = copyExtensibleCommands(hubPath, projectPath);
 
   // Rules symlink
   const rulesTarget = path.join(hubPath, '.claude', 'rules');
@@ -206,13 +424,25 @@ function setupProjectSymlinks(projectPath, hubPath) {
     results.skills = createSymlink(skillsTarget, skillsLink);
   }
 
-  // Check for critical failures
-  if (!results.commands || !results.rules) {
-    logError('Failed to create critical symlinks for .claude/');
+  // Extension directories (project-owned, not symlinked)
+  // These provide locations for per-command pre/post hooks
+  results.extensionDirs = createExtensionDirectories(projectPath);
+
+  // Check for critical failures (rules must be symlinked, commands must have files)
+  const commandsCopied = results.commands.copied.length + results.commands.skipped.length;
+  if (commandsCopied === 0 || !results.rules) {
+    logError('Failed to setup .claude/ directory');
     logError('');
-    logError('On Windows, either:');
-    logError('  1. Enable Developer Mode (Settings > Privacy & Security > For developers)');
-    logError('  2. Run as Administrator');
+    if (commandsCopied === 0) {
+      logError('  No commands were copied from hub');
+    }
+    if (!results.rules) {
+      logError('  Failed to create rules symlink');
+      logError('');
+      logError('On Windows, either:');
+      logError('  1. Enable Developer Mode (Settings > Privacy & Security > For developers)');
+      logError('  2. Run as Administrator');
+    }
     process.exit(1);
   }
 
@@ -222,12 +452,13 @@ function setupProjectSymlinks(projectPath, hubPath) {
 /**
  * Update .gitignore to exclude symlinked directories
  * These point to hub-specific paths and should not be committed
+ * NOTE: .claude/commands is NOT excluded - it's project-owned (copied, not symlinked)
  */
 function updateGitignore(projectPath) {
   const gitignorePath = path.join(projectPath, '.gitignore');
   const entriesToAdd = [
-    '# IDPF hub symlinks and scripts (machine-specific, do not commit)',
-    '.claude/commands',
+    '# IDPF hub symlinks (machine-specific, do not commit)',
+    '# NOTE: .claude/commands is committed (project-owned, not symlinked)',
     '.claude/hooks',
     '.claude/metadata',
     '.claude/rules',
@@ -815,17 +1046,41 @@ async function main() {
   // Handle existing .claude/ directory
   const hadExisting = handleExistingClaude(targetPath);
   if (hadExisting) {
-    logSuccess('  ✓ Replaced existing .claude/ with symlinks');
+    logSuccess('  ✓ Processed existing .claude/ directory');
   }
 
-  // Setup symlinks to hub's .claude/ structure
-  const symlinkResults = setupProjectSymlinks(targetPath, hubPath);
-  if (symlinkResults.commands) logSuccess('  ✓ Created .claude/commands symlink');
-  if (symlinkResults.rules) logSuccess('  ✓ Created .claude/rules symlink');
-  if (symlinkResults.hooks) logSuccess('  ✓ Created .claude/hooks symlink');
-  if (symlinkResults.scripts) logSuccess('  ✓ Created .claude/scripts/shared symlink');
-  if (symlinkResults.metadata) logSuccess('  ✓ Created .claude/metadata symlink');
-  if (symlinkResults.skills) logSuccess('  ✓ Created .claude/skills symlink');
+  // Setup .claude/ structure: copy commands, symlink everything else
+  const setupResults = setupProjectSymlinks(targetPath, hubPath);
+
+  // Report command copy results
+  const cmdResults = setupResults.commands;
+  const totalCmds = cmdResults.copied.length + cmdResults.skipped.length;
+  const extensibleCount = cmdResults.copied.length - cmdResults.preserved.length;
+  if (cmdResults.preserved.length > 0) {
+    logSuccess(`  ✓ Copied ${totalCmds} commands (${extensibleCount} extensible, ${cmdResults.preserved.length} with preserved extensions)`);
+  } else {
+    logSuccess(`  ✓ Copied ${totalCmds} commands (${cmdResults.copied.length} extensible)`);
+  }
+
+  // Report symlink results
+  if (setupResults.rules) logSuccess('  ✓ Created .claude/rules symlink');
+  if (setupResults.hooks) logSuccess('  ✓ Created .claude/hooks symlink');
+  if (setupResults.scripts) logSuccess('  ✓ Created .claude/scripts/shared symlink');
+  if (setupResults.metadata) logSuccess('  ✓ Created .claude/metadata symlink');
+  if (setupResults.skills) logSuccess('  ✓ Created .claude/skills symlink');
+
+  // Report extension directory results
+  const extDirs = setupResults.extensionDirs;
+  if (extDirs.extensions || extDirs.commands.length > 0) {
+    const extCount = extDirs.commands.length;
+    if (extDirs.extensions && extCount > 0) {
+      logSuccess(`  ✓ Created extension directories (.claude/extensions + ${extCount} command dirs)`);
+    } else if (extDirs.extensions) {
+      logSuccess('  ✓ Created .claude/extensions directory');
+    } else if (extCount > 0) {
+      logSuccess(`  ✓ Created ${extCount} command extension directories`);
+    }
+  }
 
   // Update .gitignore to exclude symlinked directories
   const gitignoreResult = updateGitignore(targetPath);
