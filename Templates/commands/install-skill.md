@@ -1,5 +1,5 @@
 ---
-version: "v0.36.2"
+version: "v0.36.3"
 description: Install skills from the framework to your project
 argument-hint: "<skill-name> | --list [--installed]"
 ---
@@ -7,7 +7,7 @@ argument-hint: "<skill-name> | --list [--installed]"
 <!-- MANAGED -->
 # /install-skill
 
-Install skills from the IDPF framework to your project for use in development sessions.
+Enable skills from the IDPF framework hub for use in development sessions.
 
 ---
 
@@ -15,8 +15,8 @@ Install skills from the IDPF framework to your project for use in development se
 
 | Command | Description |
 |---------|-------------|
-| `/install-skill <skill-name>` | Install a specific skill |
-| `/install-skill <skill1> <skill2>` | Install multiple skills |
+| `/install-skill <skill-name>` | Enable a specific skill |
+| `/install-skill <skill1> <skill2>` | Enable multiple skills |
 | `/install-skill --list` | List available skills |
 | `/install-skill --list --installed` | Show installation status |
 
@@ -24,7 +24,7 @@ Install skills from the IDPF framework to your project for use in development se
 
 ## Prerequisites
 
-- Framework must be installed (`framework-config.json` with `frameworkPath`)
+- Framework must be installed (`framework-config.json`)
 - Skill registry must exist (`.claude/metadata/skill-registry.json`)
 
 ---
@@ -33,29 +33,38 @@ Install skills from the IDPF framework to your project for use in development se
 
 ### List Mode (`--list`)
 
+**Step 1: Load skill registry**
+
 ```bash
-# Load skill registry
 cat .claude/metadata/skill-registry.json
 ```
 
-**Display Format:**
+**Step 2: Load projectSkills from config**
+
+```bash
+node -e "const c=JSON.parse(require('fs').readFileSync('framework-config.json')); console.log(JSON.stringify(c.projectSkills || []))"
+```
+
+**Step 3: Display Format**
 
 ```
 Available Skills:
 
 Name                          Description                                          Status
 ────────────────────────────────────────────────────────────────────────────────────────────────────
-electron-development          Patterns and solutions for Electron app development  Installed
+electron-development          Patterns and solutions for Electron app development  Enabled
 playwright-setup              Installation verification and troubleshooting        Available
 postgresql-integration        Guide through PostgreSQL setup and best practices    Available
 
-Total: 25 skills
-Installed: 1
+Total: 23 skills
+Enabled (in projectSkills): 6
 ```
 
-**If `--installed` flag specified:** Include Status column showing Installed/Available.
+**Status values:**
+- `Enabled` - In `projectSkills` array (will appear in story templates)
+- `Available` - In registry, not yet in `projectSkills`
 
-**To check installation:** Look for `.claude/skills/{skill-name}/SKILL.md`.
+**If `--installed` flag specified:** Always include Status column.
 
 ---
 
@@ -64,54 +73,18 @@ Installed: 1
 **Step 1: Validate Prerequisites**
 
 ```bash
-# Check framework-config.json exists and has frameworkPath
 test -f framework-config.json || { echo "ERROR: framework-config.json not found"; exit 1; }
 ```
 
-Read `frameworkPath` from config. If missing:
-```
-Error: Cannot install skills - frameworkPath not set in framework-config.json.
-Run the framework installer to set up your project.
-```
-
-**Step 2: Install Each Skill**
-
-For each skill name provided:
+**Step 2: Verify skill exists in registry**
 
 ```bash
-# Use shared installation script
-node .claude/scripts/shared/install-skill.js <skill-names...>
+node -e "const r=JSON.parse(require('fs').readFileSync('.claude/metadata/skill-registry.json')); const s=r.skills.find(x=>x.name==='{skill}'); console.log(s ? 'FOUND' : 'NOT_FOUND')"
 ```
-
-**Or manually:**
-
-1. Check if already installed:
-   ```bash
-   test -f .claude/skills/{skill}/SKILL.md && echo "ALREADY_INSTALLED"
-   ```
-
-2. Locate package:
-   ```bash
-   test -f {frameworkPath}/Skills/Packaged/{skill}.zip || echo "NOT_FOUND"
-   ```
-
-3. Extract package:
-   ```bash
-   # Windows
-   powershell -Command "Expand-Archive -Path '{frameworkPath}/Skills/Packaged/{skill}.zip' -DestinationPath '.claude/skills/{skill}' -Force"
-
-   # Unix
-   unzip -q -o "{frameworkPath}/Skills/Packaged/{skill}.zip" -d ".claude/skills/{skill}"
-   ```
-
-4. Verify extraction:
-   ```bash
-   test -f .claude/skills/{skill}/SKILL.md || echo "EXTRACTION_FAILED"
-   ```
 
 **Step 3: Update framework-config.json**
 
-Add installed skills to `projectSkills` array:
+Add skill to `projectSkills` array:
 
 ```javascript
 const config = JSON.parse(fs.readFileSync('framework-config.json'));
@@ -126,14 +99,14 @@ fs.writeFileSync('framework-config.json', JSON.stringify(config, null, 2));
 **Step 4: Report Results**
 
 ```
-Installing skills...
+Enabling skills...
 
-✓ electron-development - Installed (12 resources)
-✓ playwright-setup - Installed (2 resources)
-⊘ tdd-red-phase - Already installed (skipped)
-✗ nonexistent-skill - Package not found
+✓ electron-development - Enabled (12 resources)
+✓ playwright-setup - Enabled (2 resources)
+⊘ tdd-red-phase - Already enabled (skipped)
+✗ nonexistent-skill - Not found in registry
 
-Installed: 2  Skipped: 1  Failed: 1
+Enabled: 2  Skipped: 1  Failed: 1
 ```
 
 ---
@@ -142,9 +115,14 @@ Installed: 2  Skipped: 1  Failed: 1
 
 | Symbol | Meaning |
 |--------|---------|
-| ✓ | Successfully installed |
-| ⊘ | Already installed (skipped) |
-| ✗ | Installation failed |
+| ✓ | Successfully enabled |
+| ⊘ | Already enabled (skipped) |
+| ✗ | Failed (not found) |
+
+**Messages:**
+- `✓ {skill} - Enabled (n resources)` - Skill added to projectSkills
+- `⊘ {skill} - Already enabled (skipped)` - Skill already in projectSkills
+- `✗ {skill} - Not found in registry` - Skill doesn't exist
 
 ---
 
@@ -153,58 +131,55 @@ Installed: 2  Skipped: 1  Failed: 1
 | Scenario | Handling |
 |----------|----------|
 | `framework-config.json` missing | Error: "Run framework installer first" |
-| `frameworkPath` not set | Error: "frameworkPath not configured" |
-| Skill package not found | Error: "Package not found" (continue with others) |
-| Skill already installed | Skip with message (not an error) |
-| `.claude/skills/` doesn't exist | Create directory automatically |
-| Extraction fails | Error with details, continue with others |
+| Skill not in registry | Error: "Not found in registry" (continue with others) |
+| Already enabled | Skip with message (not an error) |
 
 ---
 
 ## Examples
 
-### Install Single Skill
+### Enable Single Skill
 
 ```
 > /install-skill electron-development
 
-Installing skills...
+Enabling skills...
 
-✓ electron-development - Installed (12 resources)
+✓ electron-development - Enabled (12 resources)
 
-Installed: 1  Skipped: 0  Failed: 0
+Enabled: 1  Skipped: 0  Failed: 0
 ```
 
-### Install Multiple Skills
+### Enable Multiple Skills
 
 ```
 > /install-skill playwright-setup postgresql-integration error-handling-patterns
 
-Installing skills...
+Enabling skills...
 
-✓ playwright-setup - Installed (2 resources)
-✓ postgresql-integration - Installed (3 resources)
-✓ error-handling-patterns - Installed (1 resources)
+✓ playwright-setup - Enabled (2 resources)
+✓ postgresql-integration - Enabled (3 resources)
+✓ error-handling-patterns - Enabled (1 resources)
 
-Installed: 3  Skipped: 0  Failed: 0
+Enabled: 3  Skipped: 0  Failed: 0
 ```
 
 ### List Available Skills
 
 ```
-> /install-skill --list --installed
+> /install-skill --list
 
 Available Skills:
 
 Name                          Description                                          Status
 ────────────────────────────────────────────────────────────────────────────────────────────────────
 api-versioning                Guide through API versioning strategies              Available
-electron-development          Patterns for Electron app development                Installed
-playwright-setup              Playwright installation and troubleshooting          Installed
+electron-development          Patterns for Electron app development                Enabled
+tdd-red-phase                 Guide through RED phase of TDD cycle                 Enabled
 ...
 
-Total: 25 skills
-Installed: 2
+Total: 23 skills
+Enabled (in projectSkills): 6
 ```
 
 ---

@@ -1,5 +1,5 @@
 ---
-version: "v0.36.2"
+version: "v0.36.3"
 description: Change domain specialist for this project
 argument-hint: [specialist-name] (optional)
 ---
