@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Templates
-**Version:** v0.36.3
+**Version:** v0.37.0
 **Module:** Templates (loaded on-demand)
 ## Product Backlog Format
 ```markdown

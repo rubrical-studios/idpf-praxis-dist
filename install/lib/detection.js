@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.36.3
+ * @framework-script 0.37.0
  * detection.js - Project detection and tracking for IDPF Framework Installer
  * @module install/lib/detection
  */

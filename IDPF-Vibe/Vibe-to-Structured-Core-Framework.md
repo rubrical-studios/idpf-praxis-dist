@@ -1,5 +1,5 @@
 # Vibe-to-Structured Development Framework (Core)
-**Version:** v0.36.3
+**Version:** v0.37.0
 **Type:** Core Framework (Platform-Agnostic)
 ## Purpose
 Core framework defining Vibe-to-Structured methodology. Platform-agnostic, applies to all project types.

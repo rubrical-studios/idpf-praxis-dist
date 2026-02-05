@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.36.3
+ * @framework-script 0.37.0
  * generation.js - File generation for IDPF Framework Installer
  * @module install/lib/generation
  */

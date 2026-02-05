@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.36.3
+ * @framework-script 0.37.0
  * validation.js - Validation utilities for IDPF Framework Installer
  * @module install/lib/validation
  */
