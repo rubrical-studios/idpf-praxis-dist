@@ -1,6 +1,6 @@
 # IDPF Framework - AI-Assisted Development
 
-**Current Version:** v0.37.0
+**Current Version:** v0.37.1
 
 A comprehensive ecosystem for AI-assisted software development with Claude.
 
@@ -25,7 +25,7 @@ The installer will:
 
 | Framework | Use When |
 |-----------|----------|
-| **IDPF-Agile** | Sprint-based development with user stories |
+| **IDPF-Agile** | Story-based development with TDD |
 | **IDPF-Vibe** | Exploration phase, unclear requirements → evolves to Agile |
 
 ### Testing Frameworks

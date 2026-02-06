@@ -1,5 +1,5 @@
 # Vibe Agent System Instructions (Newbie)
-**Version:** v0.37.0
+**Version:** v0.37.1
 **Type:** Beginner-Friendly Agent Behaviors
 **Extends:** Vibe-Agent-Core-Instructions.md
 ---

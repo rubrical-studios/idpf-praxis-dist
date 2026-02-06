@@ -1,5 +1,5 @@
 # GraphQL Contract Testing Guide
-**Version:** v0.37.0
+**Version:** v0.37.1
 
 **Framework:** IDPF-Contract-Testing
 

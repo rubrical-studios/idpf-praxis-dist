@@ -1,5 +1,5 @@
 ---
-version: "v0.37.0"
+version: "v0.37.1"
 description: View, create, or manage project charter
 argument-hint: "[update|refresh|validate]"
 ---
@@ -91,7 +91,7 @@ grep -E '\{[a-z][a-z0-9-]*\}' CHARTER.md
 **Generation Process:**
 1. Create lifecycle directory structure:
    ```bash
-   mkdir -p Inception Construction/Test-Plans Construction/Design-Decisions Construction/Sprint-Retros Construction/Tech-Debt Transition
+   mkdir -p Inception Construction/Test-Plans Construction/Design-Decisions Construction/Tech-Debt Transition
    ```
 2. Generate CHARTER.md (Vision, Tech Stack, In Scope, Status: Draft)
 3. Generate Inception/ artifacts (Charter-Details, Tech-Stack, Scope-Boundaries, Constraints, Architecture, Test-Strategy, Milestones)
