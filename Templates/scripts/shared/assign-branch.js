@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.37.1
+ * @framework-script 0.37.2
  * assign-branch.js
  *
  * Interactive script to assign issues to branches.
@@ -136,7 +136,7 @@ function generateBranchSuggestions(lastVersion, userInput, labels) {
         });
     }
 
-    if (userInput && !userInput.startsWith('release/') && !userInput.startsWith('patch/')) {
+    if (userInput && !userInput.includes('/')) {
         const cleanName = userInput.replace(/^v/, '').replace(/[^a-zA-Z0-9.-]/g, '-');
         if (hasBugLabel) {
             suggestions.push({ branch: `patch/${cleanName}`, description: `Your input with patch prefix` });
@@ -145,7 +145,7 @@ function generateBranchSuggestions(lastVersion, userInput, labels) {
         }
     }
 
-    if (userInput && (userInput.startsWith('release/') || userInput.startsWith('patch/'))) {
+    if (userInput && userInput.includes('/')) {
         suggestions.unshift({ branch: userInput, description: `Your specified branch`, recommended: true });
     }
 
@@ -227,28 +227,28 @@ async function getIssuesByStatus(status = 'backlog') {
     return [];
 }
 
-async function assignToRelease(issueNumber, release, useCurrent = false) {
+async function assignToBranch(issueNumber, branch, useCurrent = false) {
     try {
-        const releaseArg = useCurrent ? 'current' : `"${release}"`;
-        const displayRelease = useCurrent ? `${release} (current)` : release;
-        console.log(`  → Assigning #${issueNumber} to ${displayRelease}`);
-        const result = await execAsyncSafe(`gh pmu move ${issueNumber} --branch ${releaseArg} 2>&1`);
+        const branchArg = useCurrent ? 'current' : `"${branch}"`;
+        const displayBranch = useCurrent ? `${branch} (current)` : branch;
+        console.log(`  → Assigning #${issueNumber} to ${displayBranch}`);
+        const result = await execAsyncSafe(`gh pmu move ${issueNumber} --branch ${branchArg} 2>&1`);
         if (result && result.includes('unknown flag')) {
             console.log(`    (Note: gh pmu --branch not supported, manual assignment needed)`);
             return false;
         }
         return true;
     } catch (err) {
-        if (showTiming) console.log(`  ⚠ assignToRelease(${issueNumber}) failed: ${err.message}`);
+        if (showTiming) console.log(`  ⚠ assignToBranch(${issueNumber}) failed: ${err.message}`);
         return false;
     }
 }
 
 /**
- * Assign all sub-issues of an epic to a release
+ * Assign all sub-issues of an epic to a branch
  * @returns {number} Count of successfully assigned sub-issues
  */
-async function assignSubIssuesToRelease(issueNumber, release, useCurrent) {
+async function assignSubIssuesToBranch(issueNumber, branch, useCurrent) {
     const subResult = await execAsyncSafe(`gh pmu sub list ${issueNumber} --json`);
     if (!subResult) return 0;
 
@@ -256,7 +256,7 @@ async function assignSubIssuesToRelease(issueNumber, release, useCurrent) {
         const subData = JSON.parse(subResult);
         const children = subData.children || [];
         const results = await Promise.all(
-            children.map(sub => assignToRelease(sub.number || sub, release, useCurrent))
+            children.map(sub => assignToBranch(sub.number || sub, branch, useCurrent))
         );
         return results.filter(Boolean).length;
     } catch (err) {
@@ -286,21 +286,21 @@ async function main() {
         process.exit(1);
     }
 
-    // Auto-detect: arguments starting with # are issues, release/patch/hotfix prefixes are releases
-    let release = args.find(a => a.startsWith('release/') || a.startsWith('patch/') || a.startsWith('hotfix/'));
+    // Auto-detect: arguments starting with # are issues, prefix/name patterns are branches
+    let branch = args.find(a => !a.startsWith('-') && !a.match(/^#?\d+$/) && a.includes('/'));
     let issueNumbers = args.filter(a => a.match(/^#?\d+$/)).map(a => parseInt(a.replace('#', ''), 10));
-    const userInput = args.find(a => !a.startsWith('-') && !a.startsWith('release/') && !a.startsWith('patch/') && !a.startsWith('hotfix/') && !a.match(/^#?\d+$/));
+    const userInput = args.find(a => !a.startsWith('-') && !a.includes('/') && !a.match(/^#?\d+$/));
 
     console.log('=== Assign-Branch ===\n');
     startTimer('total');
 
-    // Step 1: Get releases (gh pmu handles caching internally)
-    const releases = await getOpenBranches();
-    const currentBranch = releases.length === 1 ? releases[0].version : null;
+    // Step 1: Get open branches (gh pmu handles caching internally)
+    const branches = await getOpenBranches();
+    const currentBranch = branches.length === 1 ? branches[0].version : null;
 
-    // Step 2: Handle no releases case
-    if (releases.length === 0) {
-        console.log('NO_RELEASE_FOUND');
+    // Step 2: Handle no branches case
+    if (branches.length === 0) {
+        console.log('NO_BRANCH_FOUND');
         console.log('');
 
         const lastVersion = getLastVersion();
@@ -338,32 +338,32 @@ async function main() {
         return;
     }
 
-    // Step 3: Single-release shortcut - if only one release and issues/flags provided, use current
-    if (!release && currentBranch && (issueNumbers.length > 0 || addReady || assignAll)) {
-        release = currentBranch;
-        console.log(`Using current release: ${release}\n`);
+    // Step 3: Single-branch shortcut - if only one branch and issues/flags provided, use current
+    if (!branch && currentBranch && (issueNumbers.length > 0 || addReady || assignAll)) {
+        branch = currentBranch;
+        console.log(`Using current branch: ${branch}\n`);
     }
 
-    // Step 4: Show help if no release determined
-    if (!release) {
-        console.log('Open Releases:');
-        releases.forEach((r, i) => {
+    // Step 4: Show help if no branch determined
+    if (!branch) {
+        console.log('Open Branches:');
+        branches.forEach((r, i) => {
             const name = r.name || r.version || r;
-            const currentMarker = (releases.length === 1) ? ' (current)' : '';
+            const currentMarker = (branches.length === 1) ? ' (current)' : '';
             console.log(`  ${i + 1}. ${name}${currentMarker}`);
         });
         console.log('');
         console.log('Usage:');
-        if (releases.length === 1) {
-            // Show quick workflow first when there's a current release
+        if (branches.length === 1) {
+            // Show quick workflow first when there's a current branch
             console.log('  /assign-branch --add-ready         # Quick: assign all ready issues');
             console.log('  /assign-branch #issue              # Assign single issue');
             console.log('  /assign-branch #issue #issue ...   # Assign multiple issues');
         } else {
             console.log('  /assign-branch --add-ready         # Assign all ready issues to current');
         }
-        console.log('  /assign-branch release/... #issue  # Assign to specific release');
-        console.log('  /assign-branch release/... --all   # Assign all backlog issues');
+        console.log('  /assign-branch prefix/name #issue  # Assign to specific branch');
+        console.log('  /assign-branch prefix/name --all   # Assign all backlog issues');
         console.log('');
         console.log('Examples:');
         if (currentBranch) {
@@ -371,8 +371,8 @@ async function main() {
             console.log(`  /assign-branch #123`);
             console.log(`  /assign-branch #123 #124 #125`);
         }
-        console.log(`  /assign-branch ${releases[0].version} #123`);
-        console.log(`  /assign-branch ${releases[0].version} --all\n`);
+        console.log(`  /assign-branch ${branches[0].version} #123`);
+        console.log(`  /assign-branch ${branches[0].version} --all\n`);
         endTimer('total');
         return;
     }
@@ -390,7 +390,7 @@ async function main() {
             }
 
             issueNumbers = ready.map(i => i.number);
-            console.log(`Assigning all ${issueNumbers.length} ready issues to ${release}...\n`);
+            console.log(`Assigning all ${issueNumbers.length} ready issues to ${branch}...\n`);
         } else {
             // Handle backlog issues (--all or listing)
             const backlog = await getIssuesByStatus('backlog');
@@ -403,7 +403,7 @@ async function main() {
 
             if (assignAll) {
                 issueNumbers = backlog.map(i => i.number);
-                console.log(`Assigning all ${issueNumbers.length} unassigned backlog issues to ${release}...\n`);
+                console.log(`Assigning all ${issueNumbers.length} unassigned backlog issues to ${branch}...\n`);
             } else {
                 // Group by type for display
                 const epics = backlog.filter(i => i.labels?.includes('epic'));
@@ -450,8 +450,8 @@ async function main() {
                 }
 
                 console.log('\n---');
-                console.log(`To assign specific issues: /assign-branch ${release} #N #M ...`);
-                console.log(`To assign all: /assign-branch ${release} --all`);
+                console.log(`To assign specific issues: /assign-branch ${branch} #N #M ...`);
+                console.log(`To assign all: /assign-branch ${branch} --all`);
                 endTimer('total');
                 return;
             }
@@ -460,19 +460,19 @@ async function main() {
 
     // Step 6: Confirm if large selection
     if (issueNumbers.length >= LARGE_SELECTION_THRESHOLD) {
-        console.log(`WARNING: About to assign ${issueNumbers.length} issues to ${release}.`);
+        console.log(`WARNING: About to assign ${issueNumbers.length} issues to ${branch}.`);
         console.log('If this is too many, cancel and specify individual issue numbers.\n');
     }
 
-    // Step 7: Assign issues (use --branch current when single release)
+    // Step 7: Assign issues (use --branch current when single branch)
     let totalAssigned = 0;
     let epicCount = 0;
     let subIssueCount = 0;
 
     const shouldCheckEpic = checkEpic || issueNumbers.length > 1 || assignAll || addReady;
-    const useCurrent = (currentBranch && release === currentBranch);
+    const useCurrent = (currentBranch && branch === currentBranch);
 
-    console.log(`Assigning to ${release}${useCurrent ? ' (current)' : ''}:\n`);
+    console.log(`Assigning to ${branch}${useCurrent ? ' (current)' : ''}:\n`);
 
     // For parallel assignment (when multiple issues)
     if (issueNumbers.length > PARALLEL_THRESHOLD) {
@@ -487,9 +487,9 @@ async function main() {
                         isEpic = labels.includes('epic');
                     }
 
-                    const subAssigned = isEpic ? await assignSubIssuesToRelease(num, release, useCurrent) : 0;
+                    const subAssigned = isEpic ? await assignSubIssuesToBranch(num, branch, useCurrent) : 0;
 
-                    const assigned = await assignToRelease(num, release, useCurrent);
+                    const assigned = await assignToBranch(num, branch, useCurrent);
                     return { num, isEpic, assigned, subAssigned };
                 })
             );
@@ -516,18 +516,18 @@ async function main() {
 
             if (isEpic) {
                 epicCount++;
-                const assigned = await assignSubIssuesToRelease(num, release, useCurrent);
+                const assigned = await assignSubIssuesToBranch(num, branch, useCurrent);
                 subIssueCount += assigned;
                 totalAssigned += assigned;
             }
 
-            if (await assignToRelease(num, release, useCurrent)) {
+            if (await assignToBranch(num, branch, useCurrent)) {
                 totalAssigned++;
             }
         }
     }
 
-    console.log(`\n✓ ${totalAssigned} issues assigned to ${release}${useCurrent ? ' (current)' : ''}`);
+    console.log(`\n✓ ${totalAssigned} issues assigned to ${branch}${useCurrent ? ' (current)' : ''}`);
     if (epicCount > 0) {
         console.log(`  (${epicCount} epics with ${subIssueCount} sub-issues)`);
     }
@@ -550,8 +550,8 @@ module.exports = {
     getSubIssueCountAsync,
     getOpenBranches,
     getIssuesByStatus,
-    assignToRelease,
-    assignSubIssuesToRelease,
+    assignToBranch,
+    assignSubIssuesToBranch,
     main,
     // Export helpers for testing
     execSyncSafe,

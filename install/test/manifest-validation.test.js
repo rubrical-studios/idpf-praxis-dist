@@ -230,7 +230,7 @@ describe('Manifest Validation', () => {
   });
 
   describe('@framework-script tag (prevent #1019 regression)', () => {
-    // All framework JS files must have @framework-script 0.37.1 tag
+    // All framework JS files must have @framework-script 0.37.2 tag
     const jsDirectories = [
       { path: 'Templates/scripts/shared', description: 'Templates shared scripts' },
       { path: 'Templates/scripts/shared/lib', description: 'Templates shared lib' },
@@ -267,8 +267,8 @@ describe('Manifest Validation', () => {
 
         if (missingTag.length > 0) {
           throw new Error(
-            `Files missing @framework-script 0.37.1 tag:\n  ${missingTag.join('\n  ')}\n` +
-            `Add: @framework-script 0.37.1 as first line in JSDoc block.`
+            `Files missing @framework-script 0.37.2 tag:\n  ${missingTag.join('\n  ')}\n` +
+            `Add: @framework-script 0.37.2 as first line in JSDoc block.`
           );
         }
       }

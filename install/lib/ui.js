@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.37.1
+ * @framework-script 0.37.2
  * ui.js - Console UI helpers for IDPF Framework Installer
  * @module install/lib/ui
  */

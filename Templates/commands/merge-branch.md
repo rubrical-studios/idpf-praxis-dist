@@ -1,5 +1,5 @@
 ---
-version: "v0.37.1"
+version: "v0.37.2"
 description: Merge branch to main with gated checks (project)
 argument-hint: [--skip-gates] [--dry-run]
 ---
