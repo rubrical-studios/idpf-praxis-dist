@@ -17,7 +17,7 @@ describe('extensibility.js', () => {
     describe('versionless tags (v0.24+)', () => {
       test('recognizes <!-- EXTENSIBLE --> without version', () => {
         const content = `---
-version: "0.37.2"
+version: "0.38.0"
 ---
 
 <!-- EXTENSIBLE -->
@@ -32,7 +32,7 @@ version: "0.37.2"
 
       test('recognizes <!-- MANAGED --> without version', () => {
         const content = `---
-version: "0.37.2"
+version: "0.38.0"
 ---
 
 <!-- MANAGED -->
@@ -152,7 +152,7 @@ No tags here.
     describe('real-world command files', () => {
       test('parses full EXTENSIBLE command file', () => {
         const content = `---
-version: "0.37.2"
+version: "0.38.0"
 description: Create a branch with tracker issue
 argument-hint: <branch-name>
 ---
@@ -178,7 +178,7 @@ Creates a new branch and associated tracker issue.
 
       test('parses full MANAGED command file', () => {
         const content = `---
-version: "0.37.2"
+version: "0.38.0"
 allowed-tools: Bash
 description: Run sprint retrospective
 ---
@@ -432,7 +432,7 @@ describe('deployExtensibleCommand with rogue edit archiving', () => {
   test('archives file when rogue edits detected', () => {
     // Create template
     const templateContent = `---
-version: "0.37.2"
+version: "0.38.0"
 ---
 
 <!-- EXTENSIBLE -->
@@ -481,7 +481,7 @@ User's custom content (this is fine)
     // Create template - use multi-line extension block format
     // Note: We use the same version in both to avoid false positive from version mismatch
     const templateContent = `---
-version: "0.37.2"
+version: "0.38.0"
 ---
 
 <!-- EXTENSIBLE -->
@@ -533,5 +533,163 @@ User's legitimate custom content
     // Clear and verify
     clearArchiveDirectory(testDir);
     expect(fs.existsSync(archiveDir)).toBe(false);
+  });
+});
+
+describe('/work command extension point preservation (#1196)', () => {
+  const { deployExtensibleCommand } = require('../lib/deployment');
+  const { extractExtensionBlocks, restoreBlocks } = require('../lib/extensibility');
+  const fs = require('fs');
+  const path = require('path');
+  const os = require('os');
+
+  let testDir;
+  let srcDir;
+
+  // Simulates the work.md template (new version from hub)
+  const workTemplate = `---
+version: "0.38.0"
+description: Start working on issues
+argument-hint: "#issue [#issue...] | all in <status>"
+---
+
+<!-- EXTENSIBLE -->
+# /work
+
+Start working on one or more issues.
+
+## Workflow
+
+### Step 3: Validate Branch Assignment
+
+<!-- USER-EXTENSION-START: pre-work -->
+<!-- USER-EXTENSION-END: pre-work -->
+
+### Step 5: Move to in_progress
+
+<!-- USER-EXTENSION-START: post-work-start -->
+<!-- USER-EXTENSION-END: post-work-start -->
+
+### Step 8: Framework Methodology Dispatch
+
+<!-- USER-EXTENSION-START: pre-framework-dispatch -->
+<!-- USER-EXTENSION-END: pre-framework-dispatch -->
+
+**End of /work Command**
+`;
+
+  // Simulates a user's project copy with custom extensions
+  const workWithCustomExtensions = `---
+version: "0.37.0"
+description: Start working on issues
+argument-hint: "#issue [#issue...] | all in <status>"
+---
+
+<!-- EXTENSIBLE -->
+# /work
+
+Start working on one or more issues.
+
+## Workflow
+
+### Step 3: Validate Branch Assignment
+
+<!-- USER-EXTENSION-START: pre-work -->
+
+### Pre-Work: Environment Setup
+\`\`\`bash
+npm run check-deps
+docker compose up -d test-db
+\`\`\`
+
+<!-- USER-EXTENSION-END: pre-work -->
+
+### Step 5: Move to in_progress
+
+<!-- USER-EXTENSION-START: post-work-start -->
+
+### Post-Start: Slack Notification
+\`\`\`bash
+node scripts/notify-slack.js --started
+\`\`\`
+
+<!-- USER-EXTENSION-END: post-work-start -->
+
+### Step 8: Framework Methodology Dispatch
+
+<!-- USER-EXTENSION-START: pre-framework-dispatch -->
+
+### Custom Methodology Override
+Load team-specific methodology from \`.team/methodology.md\` instead.
+
+<!-- USER-EXTENSION-END: pre-framework-dispatch -->
+
+**End of /work Command**
+`;
+
+  beforeEach(() => {
+    testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'idpf-work-ext-test-'));
+    srcDir = fs.mkdtempSync(path.join(os.tmpdir(), 'idpf-work-src-test-'));
+    fs.mkdirSync(path.join(testDir, '.claude', 'commands'), { recursive: true });
+  });
+
+  afterEach(() => {
+    fs.rmSync(testDir, { recursive: true, force: true });
+    fs.rmSync(srcDir, { recursive: true, force: true });
+  });
+
+  test('extractExtensionBlocks finds all 3 work command extension points', () => {
+    const blocks = extractExtensionBlocks(workWithCustomExtensions);
+    expect(blocks.size).toBe(3);
+    expect(blocks.has('pre-work')).toBe(true);
+    expect(blocks.has('post-work-start')).toBe(true);
+    expect(blocks.has('pre-framework-dispatch')).toBe(true);
+  });
+
+  test('custom pre-work content is preserved after hub update', () => {
+    const blocks = extractExtensionBlocks(workWithCustomExtensions);
+    const { content } = restoreBlocks(workTemplate, blocks);
+
+    expect(content).toContain('npm run check-deps');
+    expect(content).toContain('docker compose up -d test-db');
+  });
+
+  test('custom post-work-start content is preserved after hub update', () => {
+    const blocks = extractExtensionBlocks(workWithCustomExtensions);
+    const { content } = restoreBlocks(workTemplate, blocks);
+
+    expect(content).toContain('node scripts/notify-slack.js --started');
+  });
+
+  test('custom pre-framework-dispatch content is preserved after hub update', () => {
+    const blocks = extractExtensionBlocks(workWithCustomExtensions);
+    const { content } = restoreBlocks(workTemplate, blocks);
+
+    expect(content).toContain('Custom Methodology Override');
+    expect(content).toContain('.team/methodology.md');
+  });
+
+  test('full deployExtensibleCommand preserves all 3 extension blocks', () => {
+    // Write template (new version from hub)
+    const srcPath = path.join(srcDir, 'work.md');
+    fs.writeFileSync(srcPath, workTemplate);
+
+    // Write existing project copy with custom extensions
+    const destPath = path.join(testDir, '.claude', 'commands', 'work.md');
+    fs.writeFileSync(destPath, workWithCustomExtensions);
+
+    // Deploy new version over existing
+    const result = deployExtensibleCommand(srcPath, destPath, '0.38.0', false);
+
+    // Read deployed file
+    const deployed = fs.readFileSync(destPath, 'utf8');
+
+    // All 3 custom extension contents preserved
+    expect(deployed).toContain('npm run check-deps');
+    expect(deployed).toContain('node scripts/notify-slack.js --started');
+    expect(deployed).toContain('Custom Methodology Override');
+
+    // Version change in frontmatter triggers archive (expected behavior)
+    // The important assertion is that extension content is preserved above
   });
 });

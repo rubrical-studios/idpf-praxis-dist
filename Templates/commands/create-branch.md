@@ -1,5 +1,5 @@
 ---
-version: "v0.37.2"
+version: "v0.38.0"
 description: Create a branch with tracker issue (project)
 argument-hint: <branch-name> (e.g., release/v0.16.0, my-feature, bugfix-123)
 ---
@@ -36,6 +36,12 @@ git status --porcelain
 3. Continue with branch creation (do NOT block)
 
 <!-- USER-EXTENSION-START: pre-create -->
+### Verify Config File Clean
+Ensure `.gh-pmu.yml` is not modified by tests:
+```bash
+git status --porcelain .gh-pmu.yml
+```
+**If modified, STOP and restore before proceeding.**
 <!-- USER-EXTENSION-END: pre-create -->
 
 ### Step 3: Create Branch with Tracker
@@ -71,10 +77,10 @@ Uncommitted changes carried over:
 ?? path/to/untracked-file.txt
 ```
 **Conditional Commit Prompt:**
-If staged changes exist (lines starting with `A`, `M`, `R`, `C`, or `D` in index column):
-**ASK USER:** "Commit staged changes to new branch now? (y/n)"
-- **Yes:** Request commit message, run `git commit -m "<message>"`, report success
-- **No:** Continue without committing
+If any changes exist (staged, unstaged, or untracked — i.e., `git status --porcelain` output is non-empty):
+**ASK USER:** "Stage and commit all changes to new branch? (y/n)"
+- **Yes:** Request commit message, run `git add -A && git commit -m "<message>"`, report success
+- **No:** Continue without modifying working tree
 **Always end with:**
 ```
 Next steps:

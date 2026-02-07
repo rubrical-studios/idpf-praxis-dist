@@ -1,5 +1,5 @@
 ---
-version: "v0.37.2"
+version: "v0.38.0"
 description: Prepare release with PR, merge to main, and tag
 argument-hint: [version] [--skip-coverage] [--dry-run] [--help]
 ---
@@ -100,6 +100,8 @@ Record the current branch name as `$BRANCH` for use in subsequent steps.
 ```bash
  gh pmu list --branch current --status backlog,in_progress,in_review
 ```
+
+**Do not add `--json`** — `status` is not a valid JSON field for `gh pmu list`. Use the text output directly.
 
 ---
 

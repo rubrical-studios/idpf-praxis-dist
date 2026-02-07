@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.37.2",
+  "version": "0.38.0",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -61,7 +61,9 @@
         "complete-prd.md",
         "add-story.md",
         "split-story.md",
-        "pivot.md"
+        "pivot.md",
+        "work.md",
+        "done.md"
       ]
     },
     "scripts": {
@@ -113,15 +115,44 @@
           "05-windows-shell.md"
         ]
       }
+    },
+    "metadata": {
+      "source": ".claude/metadata/",
+      "target": ".claude/metadata/",
+      "registries": [
+        {
+          "name": "skill-registry",
+          "source": ".claude/metadata/skill-registry.json",
+          "description": "Skill registry for /install-skill command"
+        },
+        {
+          "name": "extension-recipes",
+          "source": ".claude/metadata/extension-recipes.json",
+          "description": "Extension recipes for /extensions recipes command"
+        },
+        {
+          "name": "extension-points",
+          "source": ".claude/metadata/extension-points.json",
+          "description": "Extension point registry for command introspection"
+        }
+      ]
     }
   },
   "extensibleCommands": [
+    "bug",
     "create-branch",
-    "prepare-release",
-    "prepare-beta",
-    "merge-branch",
+    "create-prd",
     "destroy-branch",
-    "create-prd"
+    "done",
+    "enhancement",
+    "merge-branch",
+    "prepare-beta",
+    "prepare-release",
+    "proposal",
+    "review-issue",
+    "review-prd",
+    "review-proposal",
+    "work"
   ],
   "managedCommands": [
     "assign-branch",

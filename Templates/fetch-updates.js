@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.37.2
+ * @framework-script 0.38.0
  * IDPF Framework Update Fetcher
  *
  * Updates the framework installation from the distribution repository.
@@ -213,7 +213,7 @@ function updateFrameworkFiles(frameworkPath) {
       } else {
         fs.copyFileSync(srcPath, destPath);
       }
-    } catch (err) {
+    } catch (_err) {
       // File might be locked on Windows (e.g., this script itself)
       failedFiles.push(entry);
     }

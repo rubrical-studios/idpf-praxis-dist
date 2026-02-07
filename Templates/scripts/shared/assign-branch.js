@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.37.2
+ * @framework-script 0.38.0
  * assign-branch.js
  *
  * Interactive script to assign issues to branches.
  * Used by /assign-branch slash command.
  *
- * Implements: REQ-007 (Assign-Release Command)
- * Source: PRD/PRD-Release-and-Sprint-Workflow.md
+ * Implements: REQ-007 (Assign-Branch Command)
  *
  * Usage:
  *   node assign-branch.js                     # Interactive mode
@@ -65,6 +64,25 @@ async function execAsyncSafe(cmd) {
     try {
         const { stdout } = await execAsync(cmd, { encoding: 'utf-8' });
         return stdout.trim();
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Safely parse JSON response, returning null if invalid
+ * Validates response looks like JSON before parsing to catch
+ * gh-pmu help text output (which starts with "Specify one or more...")
+ */
+function safeJsonParse(str) {
+    if (!str || typeof str !== 'string') return null;
+    const trimmed = str.trim();
+    // JSON must start with { or [
+    if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) {
+        return null;
+    }
+    try {
+        return JSON.parse(trimmed);
     } catch {
         return null;
     }
@@ -160,18 +178,13 @@ function generateBranchSuggestions(lastVersion, userInput, labels) {
  * Get sub-issue count - async version for parallel fetching
  */
 async function getSubIssueCountAsync(issueNumber) {
-    try {
-        const result = await execAsyncSafe(`gh pmu sub list ${issueNumber} --json`);
-        if (result) {
-            const data = JSON.parse(result);
-            if (data.children) return data.children.length;
-            if (Array.isArray(data)) return data.length;
-        }
-        return 0;
-    } catch (err) {
-        if (showTiming) console.log(`  ⚠ getSubIssueCountAsync(${issueNumber}) failed: ${err.message}`);
-        return 0;
-    }
+    // Note: gh pmu sub list uses --json as boolean flag, not field selector
+    const result = await execAsyncSafe(`gh pmu sub list ${issueNumber} --json`);
+    const data = safeJsonParse(result);
+    if (!data) return 0;
+    if (data.children) return data.children.length;
+    if (Array.isArray(data)) return data.length;
+    return 0;
 }
 
 /**
@@ -206,22 +219,54 @@ async function getOpenBranches() {
 }
 
 /**
+ * Check if an issue has a branch/release field assigned
+ * Checks multiple field names for compatibility across projects
+ */
+function hasBranchAssigned(issue) {
+    const fv = issue.fieldValues;
+    if (!fv) return false;
+    // Check common field names (case-sensitive as returned by GitHub)
+    return !!(fv.Branch || fv.Release || fv.branch || fv.release);
+}
+
+/**
  * Get issues by status (gh pmu handles caching internally)
  * @param {string} status - Status to query (default: 'backlog')
  */
 async function getIssuesByStatus(status = 'backlog') {
     startTimer(`getIssuesByStatus(${status})`);
-    try {
-        const result = await execAsyncSafe(`gh pmu list --status ${status} --json`);
-        if (result) {
-            const data = JSON.parse(result);
-            const items = data.items || data || [];
-            const filtered = items.filter(i => !i.fieldValues?.Branch);
-            endTimer(`getIssuesByStatus(${status})`);
-            return filtered;
+    const cmd = `gh pmu list --status ${status} --json=number,title,fieldValues`;
+    const result = await execAsyncSafe(cmd);
+
+    if (showTiming) {
+        console.log(`  📋 Command: ${cmd}`);
+        console.log(`  📋 Result length: ${result ? result.length : 'null'}`);
+        if (result && result.length < 500) {
+            console.log(`  📋 Result preview: ${result.substring(0, 200)}...`);
         }
-    } catch {
-        console.error(`Error fetching ${status} issues`);
+    }
+
+    const data = safeJsonParse(result);
+
+    if (showTiming) {
+        console.log(`  📋 Parsed data: ${data ? 'success' : 'null/failed'}`);
+    }
+
+    if (data) {
+        const items = data.items || data || [];
+        if (showTiming) {
+            console.log(`  📋 Items found: ${items.length}`);
+        }
+        const filtered = items.filter(i => !hasBranchAssigned(i));
+        if (showTiming) {
+            console.log(`  📋 After filtering (no branch): ${filtered.length}`);
+        }
+        endTimer(`getIssuesByStatus(${status})`);
+        return filtered;
+    }
+
+    if (showTiming) {
+        console.log(`  ⚠️ No data returned from gh pmu list`);
     }
     endTimer(`getIssuesByStatus(${status})`);
     return [];
@@ -249,20 +294,16 @@ async function assignToBranch(issueNumber, branch, useCurrent = false) {
  * @returns {number} Count of successfully assigned sub-issues
  */
 async function assignSubIssuesToBranch(issueNumber, branch, useCurrent) {
+    // Note: gh pmu sub list uses --json as boolean flag, not field selector
     const subResult = await execAsyncSafe(`gh pmu sub list ${issueNumber} --json`);
-    if (!subResult) return 0;
+    const subData = safeJsonParse(subResult);
+    if (!subData) return 0;
 
-    try {
-        const subData = JSON.parse(subResult);
-        const children = subData.children || [];
-        const results = await Promise.all(
-            children.map(sub => assignToBranch(sub.number || sub, branch, useCurrent))
-        );
-        return results.filter(Boolean).length;
-    } catch (err) {
-        if (showTiming) console.log(`  ⚠ Failed to parse sub-issues for #${issueNumber}: ${err.message}`);
-        return 0;
-    }
+    const children = subData.children || [];
+    const results = await Promise.all(
+        children.map(sub => assignToBranch(sub.number || sub, branch, useCurrent))
+    );
+    return results.filter(Boolean).length;
 }
 
 async function main() {
@@ -552,10 +593,12 @@ module.exports = {
     getIssuesByStatus,
     assignToBranch,
     assignSubIssuesToBranch,
+    hasBranchAssigned,
     main,
     // Export helpers for testing
     execSyncSafe,
     execAsyncSafe,
+    safeJsonParse,
     startTimer,
     endTimer,
     // Export configuration constants

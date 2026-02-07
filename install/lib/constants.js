@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.37.2
+ * @framework-script 0.38.0
  * constants.js - Configuration data for IDPF Framework Installer
  * @module install/lib/constants
  */
@@ -119,6 +119,8 @@ const INSTALLED_FILES_MANIFEST = {
       (config) => config?.enableGitHubWorkflow ? 'add-story.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'split-story.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'pivot.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'work.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'done.md' : null,
     ],
   },
   scripts: {

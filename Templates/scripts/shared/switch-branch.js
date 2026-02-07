@@ -1,13 +1,10 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.37.2
+ * @framework-script 0.38.0
  * switch-branch.js
  *
- * Switch between branch and sprint contexts.
+ * Switch between branch contexts.
  * Used by /switch-branch slash command.
- *
- * Implements: REQ-009 (Sprint-Release Integration)
- * Source: PRD/PRD-Release-and-Sprint-Workflow.md
  *
  * Usage:
  *   node switch-branch.js                    # Interactive mode
@@ -26,25 +23,24 @@ function exec(cmd) {
 
 function getOpenBranches() {
     try {
-        const result = exec('gh pmu branch list --open --json');
+        // Note: gh pmu branch list has no JSON support, parse text output
+        // Format: "VERSION      CODENAME        TRACKER    STATUS"
+        const result = exec('gh pmu branch list');
         if (result) {
-            const data = JSON.parse(result);
-            return data.branches || data.items || data || [];
-        }
-    } catch {
-        // Intentionally ignored
-    }
-    return [];
-}
-
-function getSprints(_release) {
-    try {
-        const result = exec('gh pmu microsprint list --json');
-        if (result) {
-            const data = JSON.parse(result);
-            const sprints = data.sprints || data.items || data || [];
-            // Filter to sprints for this release (if release field exists)
-            return sprints;
+            const lines = result.split('\n').slice(2); // Skip header rows
+            const branches = [];
+            for (const line of lines) {
+                if (!line.trim()) continue;
+                const parts = line.trim().split(/\s+/);
+                if (parts.length >= 4) {
+                    const name = parts[0];
+                    const status = parts[parts.length - 1];
+                    if (status === 'Active') {
+                        branches.push({ name, status });
+                    }
+                }
+            }
+            return branches;
         }
     } catch {
         // Intentionally ignored
@@ -121,22 +117,6 @@ function main() {
             console.log('✗ Failed to switch branch. Check for uncommitted changes.');
             return;
         }
-    }
-
-    // Step 3: Show available sprints
-    console.log('\n--- Sprint Context ---');
-    const sprints = getSprints(release);
-
-    if (sprints.length === 0) {
-        console.log('No active sprints for this release.');
-        console.log('\nStart one with: gh pmu microsprint start --name "sprint-name"');
-    } else {
-        console.log('Active sprints:');
-        sprints.forEach((s, i) => {
-            const name = s.name || s;
-            console.log(`  [${i + 1}] ${name}`);
-        });
-        console.log('\nJoin a sprint with: gh pmu microsprint current');
     }
 
     console.log('\n✓ Context switched to branch: ' + release);

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.37.2
+ * @framework-script 0.38.0
  * IDPF Existing Project Installer
  * Adds IDPF integration to an existing codebase.
  *
@@ -116,7 +116,7 @@ function createSymlink(target, linkPath) {
 
     fs.symlinkSync(target, linkPath, linkType);
     return true;
-  } catch (err) {
+  } catch (_err) {
     return false;
   }
 }
@@ -353,7 +353,7 @@ function handleExistingClaude(projectPath) {
           fs.rmSync(commandsPath, { recursive: true, force: true });
         }
         // If it's a real directory, leave it (extensions will be preserved)
-      } catch (err) {
+      } catch (_err) {
         // Ignore stat errors
       }
     }

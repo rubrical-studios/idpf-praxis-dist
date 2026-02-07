@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.37.2
+ * @framework-script 0.38.0
  * IDPF Hub Installer
  * Creates a central IDPF installation that can serve multiple projects.
  *
@@ -288,26 +288,6 @@ function generateHubRules(hubPath, version) {
 }
 
 /**
- * Find the best source path for a hub component
- * Checks Templates/ first (dist repo), falls back to .claude/ (dev repo)
- */
-function findComponentSource(hubPath, component) {
-  // Dist repo structure: Templates/commands, Templates/hooks, etc.
-  const templatePath = path.join(hubPath, 'Templates', component);
-  if (fs.existsSync(templatePath)) {
-    return templatePath;
-  }
-
-  // Dev repo structure: .claude/commands, .claude/hooks, etc.
-  const claudePath = path.join(hubPath, '.claude', component);
-  if (fs.existsSync(claudePath)) {
-    return claudePath;
-  }
-
-  return null;
-}
-
-/**
  * Setup .claude/ structure with symlinks for project installers
  * Creates:
  *   .claude/commands/  -> Templates/commands/ or preserves existing
@@ -318,7 +298,7 @@ function findComponentSource(hubPath, component) {
  * Handles both dist repo (Templates/) and dev repo (.claude/) structures
  */
 function setupClaudeStructure(hubPath, version) {
-  const results = { commands: false, hooks: false, scripts: false, skills: 0, rules: [] };
+  const results = { commands: false, hooks: false, scripts: false, skills: 0, metadata: false, rules: [] };
 
   // Create .claude directory if needed
   const claudeDir = path.join(hubPath, '.claude');
@@ -399,6 +379,24 @@ function setupClaudeStructure(hubPath, version) {
         results.skills++;
       }
     }
+  }
+
+  // Metadata: Copy registry files (.claude/metadata/)
+  const metadataDir = path.join(claudeDir, 'metadata');
+  const metadataSource = path.join(hubPath, '.claude', 'metadata');
+  if (fs.existsSync(metadataSource)) {
+    try {
+      if (fs.existsSync(metadataDir)) {
+        fs.rmSync(metadataDir, { recursive: true, force: true });
+      }
+      copyDir(metadataSource, metadataDir);
+      results.metadata = true;
+    } catch (err) {
+      logError(`    Failed to copy metadata: ${err.message}`);
+      results.metadata = false;
+    }
+  } else {
+    results.metadata = false;
   }
 
   // Generate rules (always regenerate to ensure consistency)
@@ -611,6 +609,12 @@ function installHub(sourcePath, targetPath) {
     logSuccess(`    ✓ .claude/skills/ (${claudeResults.skills} skills extracted)`);
   } else {
     logWarning('    ⊘ .claude/skills/ (no skills extracted)');
+  }
+
+  if (claudeResults.metadata) {
+    logSuccess('    ✓ .claude/metadata/ (registry files copied)');
+  } else {
+    logWarning('    ⊘ .claude/metadata/ (no registry files found)');
   }
 
   if (claudeResults.rules.length > 0) {

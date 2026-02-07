@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.37.2
+ * @framework-script 0.38.0
  * IDPF New Project Installer
  * Creates a new project directory with full IDPF integration.
  *

@@ -1,0 +1,470 @@
+{
+  "generatedAt": "2026-02-07T22:27:23.968Z",
+  "version": "1.0.0",
+  "commandCount": 14,
+  "extensionPointCount": 63,
+  "commands": {
+    "bug": {
+      "type": "EXTENSIBLE",
+      "description": "Create a bug issue with standard template (project)",
+      "extensionPoints": [
+        {
+          "name": "pre-create",
+          "location": "Before issue creation",
+          "purpose": "Duplicate detection, template customization",
+          "hasContent": false
+        },
+        {
+          "name": "post-create",
+          "location": "After issue created",
+          "purpose": "Notifications, auto-assignment to branch",
+          "hasContent": false
+        }
+      ]
+    },
+    "create-branch": {
+      "type": "EXTENSIBLE",
+      "description": "Create a branch with tracker issue (project)",
+      "extensionPoints": [
+        {
+          "name": "pre-create",
+          "location": "Before branch creation",
+          "purpose": "Custom validation, environment checks",
+          "hasContent": true
+        },
+        {
+          "name": "post-create",
+          "location": "After branch created",
+          "purpose": "Notifications, setup scripts, CI triggers",
+          "hasContent": false
+        }
+      ]
+    },
+    "create-prd": {
+      "type": "EXTENSIBLE",
+      "description": "Transform proposal into Agile PRD",
+      "extensionPoints": [
+        {
+          "name": "pre-analysis",
+          "location": "Before proposal analysis",
+          "purpose": "Custom validation, preprocessing",
+          "hasContent": false
+        },
+        {
+          "name": "post-analysis",
+          "location": "After gap analysis",
+          "purpose": "Custom analysis steps",
+          "hasContent": false
+        },
+        {
+          "name": "pre-transform",
+          "location": "Before story transformation",
+          "purpose": "Pre-transformation hooks",
+          "hasContent": false
+        },
+        {
+          "name": "post-transform",
+          "location": "After story transformation",
+          "purpose": "Story validation, enrichment",
+          "hasContent": false
+        },
+        {
+          "name": "pre-diagram",
+          "location": "Before diagram generation",
+          "purpose": "Diagram setup",
+          "hasContent": false
+        },
+        {
+          "name": "diagram-generator",
+          "location": "Custom diagram generation",
+          "purpose": "Replace default draw.io generator",
+          "hasContent": false
+        },
+        {
+          "name": "post-diagram",
+          "location": "After diagram generation",
+          "purpose": "Diagram post-processing",
+          "hasContent": false
+        },
+        {
+          "name": "pre-generation",
+          "location": "Before PRD generation",
+          "purpose": "Template customization",
+          "hasContent": false
+        },
+        {
+          "name": "post-generation",
+          "location": "After PRD generation",
+          "purpose": "Custom finalization",
+          "hasContent": false
+        },
+        {
+          "name": "quality-checklist",
+          "location": "Custom quality checks",
+          "purpose": "Additional validation rules",
+          "hasContent": false
+        }
+      ]
+    },
+    "destroy-branch": {
+      "type": "EXTENSIBLE",
+      "description": "Safely delete branch with confirmation (project)",
+      "extensionPoints": [
+        {
+          "name": "pre-destroy",
+          "location": "Before confirmation",
+          "purpose": "Pre-destruction validation",
+          "hasContent": false
+        },
+        {
+          "name": "post-confirm",
+          "location": "After confirmation",
+          "purpose": "Actions before deletion",
+          "hasContent": false
+        },
+        {
+          "name": "post-destroy",
+          "location": "After deletion",
+          "purpose": "Cleanup, notifications",
+          "hasContent": false
+        }
+      ]
+    },
+    "done": {
+      "type": "EXTENSIBLE",
+      "description": "Complete issues with criteria verification and status transitions (project)",
+      "extensionPoints": [
+        {
+          "name": "pre-done",
+          "location": "Before moving to done",
+          "purpose": "Tests, lint, build verification",
+          "hasContent": false
+        },
+        {
+          "name": "post-done",
+          "location": "After moving to done",
+          "purpose": "Deploy trigger, time tracking stop",
+          "hasContent": false
+        }
+      ]
+    },
+    "enhancement": {
+      "type": "EXTENSIBLE",
+      "description": "Create an enhancement issue with standard template (project)",
+      "extensionPoints": [
+        {
+          "name": "pre-create",
+          "location": "Before issue creation",
+          "purpose": "Duplicate detection, template customization",
+          "hasContent": false
+        },
+        {
+          "name": "post-create",
+          "location": "After issue created",
+          "purpose": "Notifications, auto-assignment to branch",
+          "hasContent": false
+        }
+      ]
+    },
+    "merge-branch": {
+      "type": "EXTENSIBLE",
+      "description": "Merge branch to main with gated checks (project)",
+      "extensionPoints": [
+        {
+          "name": "pre-gate",
+          "location": "Before gates",
+          "purpose": "Setup, environment preparation",
+          "hasContent": false
+        },
+        {
+          "name": "gates",
+          "location": "Gate checks",
+          "purpose": "**Custom validation gates**",
+          "hasContent": false
+        },
+        {
+          "name": "post-gate",
+          "location": "After gates pass",
+          "purpose": "Pre-merge actions",
+          "hasContent": false
+        },
+        {
+          "name": "post-pr-create",
+          "location": "After PR creation",
+          "purpose": "CI wait, PR validation",
+          "hasContent": false
+        },
+        {
+          "name": "post-merge",
+          "location": "After PR merged",
+          "purpose": "Post-merge actions",
+          "hasContent": false
+        },
+        {
+          "name": "post-close",
+          "location": "After cleanup",
+          "purpose": "Notifications, announcements",
+          "hasContent": false
+        }
+      ]
+    },
+    "prepare-beta": {
+      "type": "EXTENSIBLE",
+      "description": "Tag beta from feature branch (no merge to main)",
+      "extensionPoints": [
+        {
+          "name": "post-analysis",
+          "location": "After Phase 1",
+          "purpose": "Commit analysis",
+          "hasContent": false
+        },
+        {
+          "name": "pre-validation",
+          "location": "Before Phase 2",
+          "purpose": "Setup test environment",
+          "hasContent": true
+        },
+        {
+          "name": "post-validation",
+          "location": "After Phase 2",
+          "purpose": "Beta validation",
+          "hasContent": true
+        },
+        {
+          "name": "post-prepare",
+          "location": "After Phase 3",
+          "purpose": "Additional updates",
+          "hasContent": false
+        },
+        {
+          "name": "pre-commit",
+          "location": "Before Phase 4 commit",
+          "purpose": "Generate beta artifacts",
+          "hasContent": true
+        },
+        {
+          "name": "pre-tag",
+          "location": "Before Phase 4 tagging",
+          "purpose": "Final gate",
+          "hasContent": false
+        },
+        {
+          "name": "post-tag",
+          "location": "After Phase 4",
+          "purpose": "Beta monitoring",
+          "hasContent": false
+        },
+        {
+          "name": "checklist-before-tag",
+          "location": "Summary Checklist",
+          "purpose": "Pre-tag verification items",
+          "hasContent": true
+        },
+        {
+          "name": "checklist-after-tag",
+          "location": "Summary Checklist",
+          "purpose": "Post-tag verification items",
+          "hasContent": true
+        }
+      ]
+    },
+    "prepare-release": {
+      "type": "EXTENSIBLE",
+      "description": "Prepare release with PR, merge to main, and tag",
+      "extensionPoints": [
+        {
+          "name": "post-analysis",
+          "location": "After Phase 1",
+          "purpose": "Commit analysis, version recommendation",
+          "hasContent": false
+        },
+        {
+          "name": "pre-validation",
+          "location": "Before Phase 2",
+          "purpose": "Setup, fixtures, containers",
+          "hasContent": true
+        },
+        {
+          "name": "post-validation",
+          "location": "After Phase 2",
+          "purpose": "Coverage gates, build verification",
+          "hasContent": true
+        },
+        {
+          "name": "pre-commit",
+          "location": "Before Phase 3 commit",
+          "purpose": "Generate release artifacts",
+          "hasContent": true
+        },
+        {
+          "name": "post-prepare",
+          "location": "After Phase 3",
+          "purpose": "Documentation updates",
+          "hasContent": true
+        },
+        {
+          "name": "post-pr-create",
+          "location": "After PR creation",
+          "purpose": "CI wait, PR validation",
+          "hasContent": true
+        },
+        {
+          "name": "pre-tag",
+          "location": "Before Phase 4 tagging",
+          "purpose": "Final gate, sign-off",
+          "hasContent": false
+        },
+        {
+          "name": "post-tag",
+          "location": "After Phase 4",
+          "purpose": "Release monitoring, asset verification",
+          "hasContent": false
+        },
+        {
+          "name": "checklist-before-tag",
+          "location": "Summary Checklist",
+          "purpose": "Pre-tag verification items",
+          "hasContent": true
+        },
+        {
+          "name": "checklist-after-tag",
+          "location": "Summary Checklist",
+          "purpose": "Post-tag verification items",
+          "hasContent": true
+        },
+        {
+          "name": "pre-close",
+          "location": "Before Phase 5",
+          "purpose": "Pre-close validation, notifications",
+          "hasContent": false
+        },
+        {
+          "name": "post-close",
+          "location": "After Phase 5",
+          "purpose": "Post-release actions, announcements",
+          "hasContent": false
+        },
+        {
+          "name": "checklist-close",
+          "location": "Summary Checklist",
+          "purpose": "Close verification items",
+          "hasContent": true
+        }
+      ]
+    },
+    "proposal": {
+      "type": "EXTENSIBLE",
+      "description": "Create a proposal document and tracking issue (project)",
+      "extensionPoints": [
+        {
+          "name": "pre-create",
+          "location": "Before proposal creation",
+          "purpose": "Duplicate detection, template customization",
+          "hasContent": false
+        },
+        {
+          "name": "post-create",
+          "location": "After proposal and issue created",
+          "purpose": "Notifications, auto-assignment to branch",
+          "hasContent": false
+        }
+      ]
+    },
+    "review-issue": {
+      "type": "EXTENSIBLE",
+      "description": "Review issues with type-specific criteria (project)",
+      "extensionPoints": [
+        {
+          "name": "pre-review",
+          "location": "Before review begins",
+          "purpose": "Custom criteria setup, compliance checks",
+          "hasContent": false
+        },
+        {
+          "name": "criteria-customize",
+          "location": "During criteria evaluation",
+          "purpose": "Project-specific review criteria injection",
+          "hasContent": false
+        },
+        {
+          "name": "post-review",
+          "location": "After review findings prepared",
+          "purpose": "Notifications, logging, escalation",
+          "hasContent": false
+        }
+      ]
+    },
+    "review-prd": {
+      "type": "EXTENSIBLE",
+      "description": "Review a PRD with tracked history (project)",
+      "extensionPoints": [
+        {
+          "name": "pre-review",
+          "location": "Before review begins",
+          "purpose": "Custom criteria setup, compliance checks",
+          "hasContent": false
+        },
+        {
+          "name": "criteria-customize",
+          "location": "During criteria evaluation",
+          "purpose": "Project-specific review criteria injection",
+          "hasContent": false
+        },
+        {
+          "name": "post-review",
+          "location": "After review findings prepared",
+          "purpose": "Notifications, logging, escalation",
+          "hasContent": false
+        }
+      ]
+    },
+    "review-proposal": {
+      "type": "EXTENSIBLE",
+      "description": "Review a proposal with tracked history (project)",
+      "extensionPoints": [
+        {
+          "name": "pre-review",
+          "location": "Before review begins",
+          "purpose": "Custom criteria setup, compliance checks",
+          "hasContent": false
+        },
+        {
+          "name": "criteria-customize",
+          "location": "During criteria evaluation",
+          "purpose": "Project-specific review criteria injection",
+          "hasContent": false
+        },
+        {
+          "name": "post-review",
+          "location": "After review findings prepared",
+          "purpose": "Notifications, logging, escalation",
+          "hasContent": false
+        }
+      ]
+    },
+    "work": {
+      "type": "EXTENSIBLE",
+      "description": "Start working on issues with validation and auto-TODO (project)",
+      "extensionPoints": [
+        {
+          "name": "pre-work",
+          "location": "Before any work begins",
+          "purpose": "Environment setup, dependency check",
+          "hasContent": false
+        },
+        {
+          "name": "post-work-start",
+          "location": "After issue moved to in_progress",
+          "purpose": "Notifications, time tracking",
+          "hasContent": false
+        },
+        {
+          "name": "pre-framework-dispatch",
+          "location": "Before loading framework methodology",
+          "purpose": "Custom methodology injection",
+          "hasContent": false
+        }
+      ]
+    }
+  }
+}

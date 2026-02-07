@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Core
-**Version:** v0.37.2
+**Version:** v0.38.0
 **Module:** Core (loaded at session startup)
 ---
 ## Terminology
@@ -18,9 +18,9 @@ Product Backlog Creation → Story Selection (from Ready) → Story Development 
 * **"Create-Backlog"** - Create GitHub epics/stories from PRD
 * **"Add-Story"** - Create new story issue with epic auto-detection
 * **"Prioritize-Backlog"** - Update Priority field (P0/P1/P2) for issues
-### Story Workflow (via Triggers)
-* **`work #N`** - Begin development on a story (per GitHub-Workflow.md)
-* **`done`** - Mark story as done (per GitHub-Workflow.md)
+### Story Workflow (via Commands)
+* **`/work #N`** - Begin development on a story (validates branch, extracts auto-TODO, dispatches TDD)
+* **`/done`** - Close story (in_review → done only; `/work` handles in_progress → in_review)
 ### Development Commands
 * **"Run-Tests"** - Execute full test suite
 * **"Show-Coverage"** - Display test coverage report
@@ -52,18 +52,17 @@ Each task follows **RED-GREEN-REFACTOR** autonomously:
 - `tdd-failure-recovery`: When tests behave unexpectedly
 ---
 ## Story Development Flow
-When User says **`work #N`** (per GitHub-Workflow.md):
-1. Update status: `gh pmu move [#N] --status in_progress`
-2. Assign to first available assignee
-3. Display story details with acceptance criteria
+When User says **`work #N`** (or `/work #N`):
+1. `/work` command validates issue, branch assignment, and issue type
+2. Moves to in_progress, extracts auto-TODO from acceptance criteria
+3. Dispatches to TDD methodology (this file)
 4. Break down into testable behaviors
 5. Begin TDD cycles
-When User says **`done`** (per GitHub-Workflow.md):
-1. Verify all acceptance criteria met
-2. Run full test suite (no regressions)
-3. Update status: `gh pmu move [#N] --status done`
-4. Unassign the issue
-5. Commit with story reference
+When User says **`done`** (or `/done`):
+1. `/done` confirms issue is in `in_review` status (rejects `in_progress`)
+2. STOP boundary → user confirms → moves to `done`
+3. Offers to document design decisions
+**Note:** AC verification and the `in_progress → in_review` transition are handled by `/work`, not `/done`.
 ---
 ## User Story Format
 ```markdown

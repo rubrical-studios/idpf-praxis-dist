@@ -1,5 +1,5 @@
 # IDPF-Contract-Testing Framework
-**Version:** v0.37.2
+**Version:** v0.38.0
 **Extends:** IDPF-Testing-Core
 ## Overview
 Framework for API contract tests using Pact, Spring Cloud Contract, Specmatic.
