@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-07T22:27:23.968Z",
+  "generatedAt": "2026-02-08T16:51:15.505Z",
   "version": "1.0.0",
   "commandCount": 14,
   "extensionPointCount": 63,
@@ -11,14 +11,12 @@
         {
           "name": "pre-create",
           "location": "Before issue creation",
-          "purpose": "Duplicate detection, template customization",
-          "hasContent": false
+          "purpose": "Duplicate detection, template customization"
         },
         {
           "name": "post-create",
           "location": "After issue created",
-          "purpose": "Notifications, auto-assignment to branch",
-          "hasContent": false
+          "purpose": "Notifications, auto-assignment to branch"
         }
       ]
     },
@@ -29,14 +27,12 @@
         {
           "name": "pre-create",
           "location": "Before branch creation",
-          "purpose": "Custom validation, environment checks",
-          "hasContent": true
+          "purpose": "Custom validation, environment checks"
         },
         {
           "name": "post-create",
           "location": "After branch created",
-          "purpose": "Notifications, setup scripts, CI triggers",
-          "hasContent": false
+          "purpose": "Notifications, setup scripts, CI triggers"
         }
       ]
     },
@@ -47,62 +43,52 @@
         {
           "name": "pre-analysis",
           "location": "Before proposal analysis",
-          "purpose": "Custom validation, preprocessing",
-          "hasContent": false
+          "purpose": "Custom validation, preprocessing"
         },
         {
           "name": "post-analysis",
           "location": "After gap analysis",
-          "purpose": "Custom analysis steps",
-          "hasContent": false
+          "purpose": "Custom analysis steps"
         },
         {
           "name": "pre-transform",
           "location": "Before story transformation",
-          "purpose": "Pre-transformation hooks",
-          "hasContent": false
+          "purpose": "Pre-transformation hooks"
         },
         {
           "name": "post-transform",
           "location": "After story transformation",
-          "purpose": "Story validation, enrichment",
-          "hasContent": false
+          "purpose": "Story validation, enrichment"
         },
         {
           "name": "pre-diagram",
           "location": "Before diagram generation",
-          "purpose": "Diagram setup",
-          "hasContent": false
+          "purpose": "Diagram setup"
         },
         {
           "name": "diagram-generator",
           "location": "Custom diagram generation",
-          "purpose": "Replace default draw.io generator",
-          "hasContent": false
+          "purpose": "Replace default draw.io generator"
         },
         {
           "name": "post-diagram",
           "location": "After diagram generation",
-          "purpose": "Diagram post-processing",
-          "hasContent": false
+          "purpose": "Diagram post-processing"
         },
         {
           "name": "pre-generation",
           "location": "Before PRD generation",
-          "purpose": "Template customization",
-          "hasContent": false
+          "purpose": "Template customization"
         },
         {
           "name": "post-generation",
           "location": "After PRD generation",
-          "purpose": "Custom finalization",
-          "hasContent": false
+          "purpose": "Custom finalization"
         },
         {
           "name": "quality-checklist",
           "location": "Custom quality checks",
-          "purpose": "Additional validation rules",
-          "hasContent": false
+          "purpose": "Additional validation rules"
         }
       ]
     },
@@ -113,20 +99,17 @@
         {
           "name": "pre-destroy",
           "location": "Before confirmation",
-          "purpose": "Pre-destruction validation",
-          "hasContent": false
+          "purpose": "Pre-destruction validation"
         },
         {
           "name": "post-confirm",
           "location": "After confirmation",
-          "purpose": "Actions before deletion",
-          "hasContent": false
+          "purpose": "Actions before deletion"
         },
         {
           "name": "post-destroy",
           "location": "After deletion",
-          "purpose": "Cleanup, notifications",
-          "hasContent": false
+          "purpose": "Cleanup, notifications"
         }
       ]
     },
@@ -137,14 +120,12 @@
         {
           "name": "pre-done",
           "location": "Before moving to done",
-          "purpose": "Tests, lint, build verification",
-          "hasContent": false
+          "purpose": "Tests, lint, build verification"
         },
         {
           "name": "post-done",
           "location": "After moving to done",
-          "purpose": "Deploy trigger, time tracking stop",
-          "hasContent": false
+          "purpose": "Deploy trigger, time tracking stop"
         }
       ]
     },
@@ -155,14 +136,12 @@
         {
           "name": "pre-create",
           "location": "Before issue creation",
-          "purpose": "Duplicate detection, template customization",
-          "hasContent": false
+          "purpose": "Duplicate detection, template customization"
         },
         {
           "name": "post-create",
           "location": "After issue created",
-          "purpose": "Notifications, auto-assignment to branch",
-          "hasContent": false
+          "purpose": "Notifications, auto-assignment to branch"
         }
       ]
     },
@@ -173,38 +152,32 @@
         {
           "name": "pre-gate",
           "location": "Before gates",
-          "purpose": "Setup, environment preparation",
-          "hasContent": false
+          "purpose": "Setup, environment preparation"
         },
         {
           "name": "gates",
           "location": "Gate checks",
-          "purpose": "**Custom validation gates**",
-          "hasContent": false
+          "purpose": "**Custom validation gates**"
         },
         {
           "name": "post-gate",
           "location": "After gates pass",
-          "purpose": "Pre-merge actions",
-          "hasContent": false
+          "purpose": "Pre-merge actions"
         },
         {
           "name": "post-pr-create",
           "location": "After PR creation",
-          "purpose": "CI wait, PR validation",
-          "hasContent": false
+          "purpose": "CI wait, PR validation"
         },
         {
           "name": "post-merge",
           "location": "After PR merged",
-          "purpose": "Post-merge actions",
-          "hasContent": false
+          "purpose": "Post-merge actions"
         },
         {
           "name": "post-close",
           "location": "After cleanup",
-          "purpose": "Notifications, announcements",
-          "hasContent": false
+          "purpose": "Notifications, announcements"
         }
       ]
     },
@@ -215,56 +188,47 @@
         {
           "name": "post-analysis",
           "location": "After Phase 1",
-          "purpose": "Commit analysis",
-          "hasContent": false
+          "purpose": "Commit analysis"
         },
         {
           "name": "pre-validation",
           "location": "Before Phase 2",
-          "purpose": "Setup test environment",
-          "hasContent": true
+          "purpose": "Setup test environment"
         },
         {
           "name": "post-validation",
           "location": "After Phase 2",
-          "purpose": "Beta validation",
-          "hasContent": true
+          "purpose": "Beta validation"
         },
         {
           "name": "post-prepare",
           "location": "After Phase 3",
-          "purpose": "Additional updates",
-          "hasContent": false
+          "purpose": "Additional updates"
         },
         {
           "name": "pre-commit",
           "location": "Before Phase 4 commit",
-          "purpose": "Generate beta artifacts",
-          "hasContent": true
+          "purpose": "Generate beta artifacts"
         },
         {
           "name": "pre-tag",
           "location": "Before Phase 4 tagging",
-          "purpose": "Final gate",
-          "hasContent": false
+          "purpose": "Final gate"
         },
         {
           "name": "post-tag",
           "location": "After Phase 4",
-          "purpose": "Beta monitoring",
-          "hasContent": false
+          "purpose": "Beta monitoring"
         },
         {
           "name": "checklist-before-tag",
           "location": "Summary Checklist",
-          "purpose": "Pre-tag verification items",
-          "hasContent": true
+          "purpose": "Pre-tag verification items"
         },
         {
           "name": "checklist-after-tag",
           "location": "Summary Checklist",
-          "purpose": "Post-tag verification items",
-          "hasContent": true
+          "purpose": "Post-tag verification items"
         }
       ]
     },
@@ -275,80 +239,67 @@
         {
           "name": "post-analysis",
           "location": "After Phase 1",
-          "purpose": "Commit analysis, version recommendation",
-          "hasContent": false
+          "purpose": "Commit analysis, version recommendation"
         },
         {
           "name": "pre-validation",
           "location": "Before Phase 2",
-          "purpose": "Setup, fixtures, containers",
-          "hasContent": true
+          "purpose": "Setup, fixtures, containers"
         },
         {
           "name": "post-validation",
           "location": "After Phase 2",
-          "purpose": "Coverage gates, build verification",
-          "hasContent": true
+          "purpose": "Coverage gates, build verification"
         },
         {
           "name": "pre-commit",
           "location": "Before Phase 3 commit",
-          "purpose": "Generate release artifacts",
-          "hasContent": true
+          "purpose": "Generate release artifacts"
         },
         {
           "name": "post-prepare",
           "location": "After Phase 3",
-          "purpose": "Documentation updates",
-          "hasContent": true
+          "purpose": "Documentation updates"
         },
         {
           "name": "post-pr-create",
           "location": "After PR creation",
-          "purpose": "CI wait, PR validation",
-          "hasContent": true
+          "purpose": "CI wait, PR validation"
         },
         {
           "name": "pre-tag",
           "location": "Before Phase 4 tagging",
-          "purpose": "Final gate, sign-off",
-          "hasContent": false
+          "purpose": "Final gate, sign-off"
         },
         {
           "name": "post-tag",
           "location": "After Phase 4",
-          "purpose": "Release monitoring, asset verification",
-          "hasContent": false
+          "purpose": "Release monitoring, asset verification"
         },
         {
           "name": "checklist-before-tag",
           "location": "Summary Checklist",
-          "purpose": "Pre-tag verification items",
-          "hasContent": true
+          "purpose": "Pre-tag verification items"
         },
         {
           "name": "checklist-after-tag",
           "location": "Summary Checklist",
-          "purpose": "Post-tag verification items",
-          "hasContent": true
+          "purpose": "Post-tag verification items"
         },
         {
           "name": "pre-close",
           "location": "Before Phase 5",
-          "purpose": "Pre-close validation, notifications",
-          "hasContent": false
+          "purpose": "Pre-close validation, notifications"
         },
         {
           "name": "post-close",
           "location": "After Phase 5",
-          "purpose": "Post-release actions, announcements",
-          "hasContent": false
+          "purpose": "Post-release actions, announcements"
         },
         {
           "name": "checklist-close",
           "location": "Summary Checklist",
-          "purpose": "Close verification items",
-          "hasContent": true
+          "purpose": "Close verification items"
         }
       ]
     },
@@ -359,14 +310,12 @@
         {
           "name": "pre-create",
           "location": "Before proposal creation",
-          "purpose": "Duplicate detection, template customization",
-          "hasContent": false
+          "purpose": "Duplicate detection, template customization"
         },
         {
           "name": "post-create",
           "location": "After proposal and issue created",
-          "purpose": "Notifications, auto-assignment to branch",
-          "hasContent": false
+          "purpose": "Notifications, auto-assignment to branch"
         }
       ]
     },
@@ -377,20 +326,17 @@
         {
           "name": "pre-review",
           "location": "Before review begins",
-          "purpose": "Custom criteria setup, compliance checks",
-          "hasContent": false
+          "purpose": "Custom criteria setup, compliance checks"
         },
         {
           "name": "criteria-customize",
           "location": "During criteria evaluation",
-          "purpose": "Project-specific review criteria injection",
-          "hasContent": false
+          "purpose": "Project-specific review criteria injection"
         },
         {
           "name": "post-review",
           "location": "After review findings prepared",
-          "purpose": "Notifications, logging, escalation",
-          "hasContent": false
+          "purpose": "Notifications, logging, escalation"
         }
       ]
     },
@@ -401,20 +347,17 @@
         {
           "name": "pre-review",
           "location": "Before review begins",
-          "purpose": "Custom criteria setup, compliance checks",
-          "hasContent": false
+          "purpose": "Custom criteria setup, compliance checks"
         },
         {
           "name": "criteria-customize",
           "location": "During criteria evaluation",
-          "purpose": "Project-specific review criteria injection",
-          "hasContent": false
+          "purpose": "Project-specific review criteria injection"
         },
         {
           "name": "post-review",
           "location": "After review findings prepared",
-          "purpose": "Notifications, logging, escalation",
-          "hasContent": false
+          "purpose": "Notifications, logging, escalation"
         }
       ]
     },
@@ -425,20 +368,17 @@
         {
           "name": "pre-review",
           "location": "Before review begins",
-          "purpose": "Custom criteria setup, compliance checks",
-          "hasContent": false
+          "purpose": "Custom criteria setup, compliance checks"
         },
         {
           "name": "criteria-customize",
           "location": "During criteria evaluation",
-          "purpose": "Project-specific review criteria injection",
-          "hasContent": false
+          "purpose": "Project-specific review criteria injection"
         },
         {
           "name": "post-review",
           "location": "After review findings prepared",
-          "purpose": "Notifications, logging, escalation",
-          "hasContent": false
+          "purpose": "Notifications, logging, escalation"
         }
       ]
     },
@@ -449,20 +389,17 @@
         {
           "name": "pre-work",
           "location": "Before any work begins",
-          "purpose": "Environment setup, dependency check",
-          "hasContent": false
+          "purpose": "Environment setup, dependency check"
         },
         {
           "name": "post-work-start",
           "location": "After issue moved to in_progress",
-          "purpose": "Notifications, time tracking",
-          "hasContent": false
+          "purpose": "Notifications, time tracking"
         },
         {
           "name": "pre-framework-dispatch",
           "location": "Before loading framework methodology",
-          "purpose": "Custom methodology injection",
-          "hasContent": false
+          "purpose": "Custom methodology injection"
         }
       ]
     }

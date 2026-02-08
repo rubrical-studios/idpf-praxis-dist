@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.38.0",
+  "version": "0.39.0",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -74,6 +74,7 @@
           "analyze-commits.js",
           "assign-branch.js",
           "cleanup-release-assets.js",
+          "extensions-cli.js",
           "generate-changelog.js",
           "install-skill.js",
           "recommend-version.js",

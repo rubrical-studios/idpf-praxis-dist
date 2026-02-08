@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.38.0
+ * @framework-script 0.39.0
  * constants.js - Configuration data for IDPF Framework Installer
  * @module install/lib/constants
  */
@@ -130,6 +130,7 @@ const INSTALLED_FILES_MANIFEST = {
       (config) => config?.enableGitHubWorkflow ? 'analyze-commits.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'assign-branch.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'cleanup-release-assets.js' : null,
+      (config) => config?.enableGitHubWorkflow ? 'extensions-cli.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'generate-changelog.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'generate-test-plan.js' : null,
       (config) => config?.enableGitHubWorkflow ? 'recommend-version.js' : null,

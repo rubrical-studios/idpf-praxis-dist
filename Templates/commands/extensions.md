@@ -1,5 +1,5 @@
 ---
-version: "v0.38.0"
+version: "v0.39.0"
 description: Discover, view, and manage extension points in release commands
 argument-hint: "list|view|edit|validate|matrix|recipes [args]"
 ---
@@ -19,82 +19,69 @@ Unified management of extension points across release commands.
 | `recipes <category>` | Show recipes for specific category |
 ---
 ## Target Commands
-| Command | Path |
-|---------|------|
-| `/create-branch` | `.claude/commands/create-branch.md` |
-| `/prepare-release` | `.claude/commands/prepare-release.md` |
-| `/merge-branch` | `.claude/commands/merge-branch.md` |
-| `/destroy-branch` | `.claude/commands/destroy-branch.md` |
-| `/prepare-beta` | `.claude/commands/prepare-beta.md` |
-**Note:** Scan `.claude/commands/` for project commands.
+Target commands are listed in `.claude/metadata/extension-points.json` (the extension registry).
+**Registry path:** `.claude/metadata/extension-points.json`
+**Command files:** `.claude/commands/*.md` (for `edit` subcommand)
+### Fallback: Registry Missing
+If `extension-points.json` does not exist or cannot be parsed:
+1. **Warn:** `Extension registry not found. Scanning command files directly (slower).`
+2. **Fallback:** Scan `.claude/commands/*.md` for EXTENSIBLE markers and USER-EXTENSION-START/END blocks
+3. **Suggest:** `Run: node .claude/scripts/framework/build-extension-registry.js`
 ---
-## list
-**Usage:** `/extensions list [--command <name>]`
-1. Parse extension points using marker pattern:
-   ```
-   <!-- USER-EXTENSION-START: {name} -->
-   <!-- USER-EXTENSION-END: {name} -->
-   ```
-2. Detect content (non-whitespace between markers)
-3. Output format:
-   ```
-   /command-name
-     ├── point-name : Description [HAS CONTENT]
-     └── other-point : Description
-   Total: N extension points (X with content, Y empty)
-   ```
-4. Filter by `--command` if specified
+## Script Delegation
+Read-only subcommands (`list`, `view`, `validate`, `matrix`, `recipes`, `help`) are handled by the extensions-cli.js script. Run the script and display its stdout output directly.
+**Script path:** `node .claude/scripts/shared/extensions-cli.js`
+### Delegated Subcommands
+| Subcommand | Script Command |
+|------------|---------------|
+| `list [--command X]` | `node .claude/scripts/shared/extensions-cli.js list [--command X]` |
+| `view X:Y` | `node .claude/scripts/shared/extensions-cli.js view X:Y` |
+| `validate` | `node .claude/scripts/shared/extensions-cli.js validate` |
+| `matrix` | `node .claude/scripts/shared/extensions-cli.js matrix` |
+| `recipes [category]` | `node .claude/scripts/shared/extensions-cli.js recipes [category]` |
+| `help` | `node .claude/scripts/shared/extensions-cli.js help` |
+### How to Dispatch
+1. Parse the user's subcommand and arguments
+2. Run the corresponding script command via Bash
+3. Display the script's stdout output directly to the user
+4. If exit code is non-zero (1 = validation failures, 2 = fatal error), report the error
+**Do NOT** re-interpret or reformat the script output — display it as-is.
 ---
-## view
-**Usage:** `/extensions view <command>:<point>`
-1. Parse `command:point` from argument
-2. Find `USER-EXTENSION-START: {point}` marker
-3. Return content between START and END markers
-4. Show location (file:lines) and content
----
-## edit
+## Subcommand: edit
 **Usage:** `/extensions edit <command>:<point>`
-1. Locate extension block (same as view)
-2. Present current content
-3. **ASK USER** for new content
-4. Replace content between markers
-5. Confirm change
----
-## validate
-**Usage:** `/extensions validate`
-Checks:
-| Check | Description |
-|-------|-------------|
-| Matching pairs | Every START has matching END |
-| Valid names | Pattern `[a-z][a-z0-9-]*` |
-| No nesting | Extension blocks not nested |
-| Documented | Point appears in extension table |
-Output: `✓ point: valid` or `✗ point: error message`
----
-## matrix
-**Usage:** `/extensions matrix`
-Build cross-command comparison:
+**Example:** `/extensions edit prepare-release:post-validation`
+The `edit` subcommand is spec-driven (not delegated to the script) because it requires interactive user input and file modification.
+### Step 1: Locate Extension Block
+Read the live command file (`.claude/commands/{command}.md`). `edit` reads and modifies the command file directly.
+### Step 2: Present Current Content
+Show the current content of the extension block.
+### Step 3: ASK USER for New Content
+Prompt user for the new content to replace the extension block.
+### Step 4: Update Command File
+Replace the content between START and END markers with the new content in the command file.
+### Step 5: Confirm Change and Rebuild Registry
+Report the updated extension block. Then regenerate the registry:
+```bash
+node .claude/scripts/framework/build-extension-registry.js
 ```
-Point           | create | prepare | beta |
-----------------|--------|---------|------|
-pre-create      |   ●    |    -    |  -   |
-post-validation |   -    |    ●    |  ●   |
-Legend: ● = has content, ○ = empty, - = N/A
-```
+This ensures `extension-points.json` reflects the updated `hasContent` state.
 ---
-## recipes
-**Usage:** `/extensions recipes [category]`
-1. Load from `.claude/metadata/extension-recipes.json`
-2. No category: show category list (ci, coverage, notifications, docs, security)
-3. With category: show recipes with template, prerequisites, apply-to commands
----
-## Naming Convention
+## Extension Point Naming Convention
 | Pattern | Purpose |
 |---------|---------|
-| `pre-*` | Before workflow phase |
-| `post-*` | After workflow phase |
+| `pre-*` | Before a workflow phase |
+| `post-*` | After a workflow phase |
+| `pre-commit` | Generate artifacts before commit |
 | `checklist` | Single verification checklist |
-| `checklist-before-*` | Pre-action verification |
-| `checklist-after-*` | Post-action verification |
+| `checklist-before-*` | Pre-action verification items |
+| `checklist-after-*` | Post-action verification items |
+---
+## Help
+**Usage:** `/extensions --help` or `/extensions`
+When invoked with `--help` or with no subcommand, delegate to the script:
+```bash
+node .claude/scripts/shared/extensions-cli.js help
+```
+Display the script's stdout output directly to the user.
 ---
 **End of Extensions Command**

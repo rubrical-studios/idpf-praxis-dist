@@ -8,7 +8,6 @@
 const {
   parseCommandHeader,
   extractExtensionBlocks,
-  restoreBlocks,
   normalizeEmptyMarkers
 } = require('../lib/extensibility');
 
@@ -17,7 +16,7 @@ describe('extensibility.js', () => {
     describe('versionless tags (v0.24+)', () => {
       test('recognizes <!-- EXTENSIBLE --> without version', () => {
         const content = `---
-version: "0.38.0"
+version: "0.39.0"
 ---
 
 <!-- EXTENSIBLE -->
@@ -32,7 +31,7 @@ version: "0.38.0"
 
       test('recognizes <!-- MANAGED --> without version', () => {
         const content = `---
-version: "0.38.0"
+version: "0.39.0"
 ---
 
 <!-- MANAGED -->
@@ -152,7 +151,7 @@ No tags here.
     describe('real-world command files', () => {
       test('parses full EXTENSIBLE command file', () => {
         const content = `---
-version: "0.38.0"
+version: "0.39.0"
 description: Create a branch with tracker issue
 argument-hint: <branch-name>
 ---
@@ -178,7 +177,7 @@ Creates a new branch and associated tracker issue.
 
       test('parses full MANAGED command file', () => {
         const content = `---
-version: "0.38.0"
+version: "0.39.0"
 allowed-tools: Bash
 description: Run sprint retrospective
 ---
@@ -432,7 +431,7 @@ describe('deployExtensibleCommand with rogue edit archiving', () => {
   test('archives file when rogue edits detected', () => {
     // Create template
     const templateContent = `---
-version: "0.38.0"
+version: "0.39.0"
 ---
 
 <!-- EXTENSIBLE -->
@@ -481,7 +480,7 @@ User's custom content (this is fine)
     // Create template - use multi-line extension block format
     // Note: We use the same version in both to avoid false positive from version mismatch
     const templateContent = `---
-version: "0.38.0"
+version: "0.39.0"
 ---
 
 <!-- EXTENSIBLE -->
@@ -518,7 +517,6 @@ User's legitimate custom content
     const result = deployExtensibleCommand(srcPath, destPath, '0.31.0', false);
 
     // Verify NO archive was created (warnings should be empty for no rogue edits)
-    const archiveDir = path.join(testDir, '.claude', 'archive', 'commands');
     // If there are no rogue edit warnings, no archive should exist
     const hasRogueEditWarnings = result.warnings.some(w => w.includes('archived to'));
     expect(hasRogueEditWarnings).toBe(false);
@@ -548,7 +546,7 @@ describe('/work command extension point preservation (#1196)', () => {
 
   // Simulates the work.md template (new version from hub)
   const workTemplate = `---
-version: "0.38.0"
+version: "0.39.0"
 description: Start working on issues
 argument-hint: "#issue [#issue...] | all in <status>"
 ---
@@ -679,7 +677,7 @@ Load team-specific methodology from \`.team/methodology.md\` instead.
     fs.writeFileSync(destPath, workWithCustomExtensions);
 
     // Deploy new version over existing
-    const result = deployExtensibleCommand(srcPath, destPath, '0.38.0', false);
+    deployExtensibleCommand(srcPath, destPath, '0.38.0', false);
 
     // Read deployed file
     const deployed = fs.readFileSync(destPath, 'utf8');

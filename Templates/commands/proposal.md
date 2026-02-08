@@ -1,5 +1,5 @@
 ---
-version: "v0.38.0"
+version: "v0.39.0"
 description: Create a proposal document and tracking issue (project)
 argument-hint: "<title>"
 ---

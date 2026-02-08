@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.38.0
+ * @framework-script 0.39.0
  * IDPF New Project Installer
  * Creates a new project directory with full IDPF integration.
  *
@@ -116,7 +116,7 @@ function createSymlink(target, linkPath) {
 
     fs.symlinkSync(target, linkPath, linkType);
     return true;
-  } catch (err) {
+  } catch (_err) {
     return false;
   }
 }

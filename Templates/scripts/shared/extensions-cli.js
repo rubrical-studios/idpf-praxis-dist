@@ -1,0 +1,789 @@
+#!/usr/bin/env node
+/**
+ * @framework-script 0.39.0
+ * extensions-cli.js
+ *
+ * Script-driven CLI for extension point operations.
+ * Replaces AI-interpreted markdown specs for read-only subcommands,
+ * reducing execution from 3-16+ tool calls to 1 Bash call (<1s).
+ *
+ * Usage:
+ *   node extensions-cli.js list [--command X]
+ *   node extensions-cli.js view <command>:<point>
+ *   node extensions-cli.js validate
+ *   node extensions-cli.js matrix
+ *   node extensions-cli.js recipes [category]
+ *   node extensions-cli.js help
+ *
+ * Exit codes:
+ *   0 = success
+ *   1 = validation failures found (validate subcommand)
+ *   2 = fatal error (missing registry, invalid arguments)
+ *
+ * @module .claude/scripts/shared/extensions-cli
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const ROOT = process.cwd();
+const COMMANDS_DIR = path.join(ROOT, '.claude', 'commands');
+const METADATA_DIR = path.join(ROOT, '.claude', 'metadata');
+const REGISTRY_PATH = path.join(METADATA_DIR, 'extension-points.json');
+
+// ============================================================================
+// REGISTRY LOADING
+// ============================================================================
+
+/**
+ * Load the extension points registry.
+ * @returns {{ registry: Object|null, error: string|null }}
+ */
+function loadRegistry() {
+  if (!fs.existsSync(REGISTRY_PATH)) {
+    return {
+      registry: null,
+      error: 'Fatal: .claude/metadata/extension-points.json not found. Run install-project-existing.js to repair.'
+    };
+  }
+
+  try {
+    const content = fs.readFileSync(REGISTRY_PATH, 'utf-8');
+    return { registry: JSON.parse(content), error: null };
+  } catch (e) {
+    return {
+      registry: null,
+      error: `Fatal: Failed to parse extension-points.json: ${e.message}`
+    };
+  }
+}
+
+// ============================================================================
+// hasContent COMPUTATION (runtime, project-local)
+// ============================================================================
+
+/**
+ * Strip fenced code blocks from content to avoid matching patterns inside examples.
+ * @param {string} content - File content
+ * @returns {string} Content with fenced code blocks replaced
+ */
+function stripFencedCodeBlocks(content) {
+  return content.replace(/^[ \t]*```[\s\S]*?^[ \t]*```/gm, '');
+}
+
+/**
+ * Scan a command file for USER-EXTENSION blocks and compute hasContent.
+ * @param {string} content - File content
+ * @returns {Map<string, boolean>} Map of point name → hasContent
+ */
+function scanExtensionBlocks(content) {
+  const result = new Map();
+  const cleaned = stripFencedCodeBlocks(content);
+  const startPattern = /<!--\s*USER-EXTENSION-START:\s*(\S+)\s*-->/g;
+  let match;
+
+  while ((match = startPattern.exec(cleaned)) !== null) {
+    const name = match[1];
+    const startIdx = match.index + match[0].length;
+
+    const endPattern = new RegExp(
+      `<!--\\s*USER-EXTENSION-END:\\s*${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*-->`
+    );
+    const endMatch = cleaned.slice(startIdx).match(endPattern);
+
+    if (endMatch) {
+      const between = cleaned.slice(startIdx, startIdx + endMatch.index).trim();
+      const stripped = between
+        .replace(/<!--[\s\S]*?-->/g, '')
+        .trim();
+      result.set(name, stripped.length > 0);
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Scan all command files for hasContent data.
+ * @returns {Map<string, Map<string, boolean>>} Map of command name → (point name → hasContent)
+ */
+function scanAllCommandFiles() {
+  const result = new Map();
+
+  let entries;
+  try {
+    entries = fs.readdirSync(COMMANDS_DIR, { withFileTypes: true });
+  } catch (_e) {
+    return result;
+  }
+
+  for (const entry of entries) {
+    const isFile = typeof entry.isFile === 'function' ? entry.isFile() : !entry.isDirectory();
+    if (!isFile || !entry.name.endsWith('.md')) continue;
+
+    const cmdName = entry.name.replace(/\.md$/, '');
+    try {
+      const content = fs.readFileSync(path.join(COMMANDS_DIR, entry.name), 'utf-8');
+      result.set(cmdName, scanExtensionBlocks(content));
+    } catch (_e) {
+      // File unreadable — skip (command still appears with no blocks)
+      result.set(cmdName, new Map());
+    }
+  }
+
+  return result;
+}
+
+// ============================================================================
+// LIST SUBCOMMAND
+// ============================================================================
+
+/**
+ * Run the list subcommand.
+ * @param {{ command: string|null }} opts - Options
+ * @returns {{ exitCode: number, output: string }}
+ */
+function runList(opts) {
+  const { registry, error } = loadRegistry();
+  if (error) {
+    return { exitCode: 2, output: error };
+  }
+
+  const commands = registry.commands || {};
+  let commandNames = Object.keys(commands);
+
+  // Filter by command if specified
+  if (opts.command) {
+    commandNames = commandNames.filter(n => n === opts.command);
+  }
+
+  // Empty registry
+  if (Object.keys(commands).length === 0) {
+    return { exitCode: 0, output: 'No extensible commands found in registry.' };
+  }
+
+  // No match for filter (but registry has commands)
+  if (commandNames.length === 0) {
+    return { exitCode: 0, output: '' };
+  }
+
+  // Scan command files for hasContent
+  const fileData = scanAllCommandFiles();
+
+  // Build tree output
+  const lines = [];
+  lines.push(`Extension Points (${registry.commandCount} commands, ${registry.extensionPointCount} points)`);
+  lines.push('');
+
+  for (const cmdName of commandNames) {
+    const cmd = commands[cmdName];
+    const points = cmd.extensionPoints || [];
+    const cmdBlocks = fileData.get(cmdName) || new Map();
+
+    lines.push(`${cmdName} (${cmd.type}) — ${cmd.description}`);
+
+    if (points.length === 0) {
+      lines.push('  (no extension points)');
+    } else {
+      for (const ep of points) {
+        const hasContent = cmdBlocks.get(ep.name) || false;
+        const marker = hasContent ? ' [HAS CONTENT]' : '';
+        const purpose = ep.purpose ? ` — ${ep.purpose}` : '';
+        lines.push(`  ${ep.name}${marker}${purpose}`);
+      }
+    }
+    lines.push('');
+  }
+
+  return { exitCode: 0, output: lines.join('\n').trim() };
+}
+
+// ============================================================================
+// VIEW SUBCOMMAND
+// ============================================================================
+
+/**
+ * Extract the raw content of a specific extension point from a command file.
+ * @param {string} content - File content
+ * @param {string} pointName - Extension point name
+ * @returns {{ found: boolean, content: string }}
+ */
+function extractPointContent(content, pointName) {
+  const cleaned = stripFencedCodeBlocks(content);
+  const escapedName = pointName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const startPattern = new RegExp(
+    `<!--\\s*USER-EXTENSION-START:\\s*${escapedName}\\s*-->`
+  );
+  const startMatch = cleaned.match(startPattern);
+  if (!startMatch) {
+    return { found: false, content: '' };
+  }
+
+  const startIdx = startMatch.index + startMatch[0].length;
+  const endPattern = new RegExp(
+    `<!--\\s*USER-EXTENSION-END:\\s*${escapedName}\\s*-->`
+  );
+  const endMatch = cleaned.slice(startIdx).match(endPattern);
+  if (!endMatch) {
+    return { found: false, content: '' };
+  }
+
+  const between = cleaned.slice(startIdx, startIdx + endMatch.index).trim();
+  const stripped = between.replace(/<!--[\s\S]*?-->/g, '').trim();
+  return { found: true, content: stripped };
+}
+
+/**
+ * Run the view subcommand.
+ * @param {{ target: string }} opts - Options (target = "command:point")
+ * @returns {{ exitCode: number, output: string }}
+ */
+function runView(opts) {
+  const target = opts.target || '';
+
+  // Validate argument format
+  const colonIdx = target.indexOf(':');
+  if (colonIdx < 0) {
+    return { exitCode: 2, output: 'Usage: extensions-cli.js view <command>:<point>' };
+  }
+
+  const cmdName = target.slice(0, colonIdx).trim();
+  const pointName = target.slice(colonIdx + 1).trim();
+
+  if (!cmdName || !pointName) {
+    return { exitCode: 2, output: 'Usage: extensions-cli.js view <command>:<point>' };
+  }
+
+  // Load registry to validate command exists
+  const { registry, error } = loadRegistry();
+  if (error) {
+    return { exitCode: 2, output: error };
+  }
+
+  const commands = registry.commands || {};
+  if (!commands[cmdName]) {
+    return { exitCode: 2, output: `Command '${cmdName}' not found in registry.` };
+  }
+
+  // Read the command file
+  const filePath = path.join(COMMANDS_DIR, `${cmdName}.md`);
+  let content;
+  try {
+    content = fs.readFileSync(filePath, 'utf-8');
+  } catch (_e) {
+    return { exitCode: 2, output: `Command file '${cmdName}.md' not found on disk.` };
+  }
+
+  // Extract the specific point
+  const { found, content: pointContent } = extractPointContent(content, pointName);
+  if (!found) {
+    return { exitCode: 2, output: `Extension point '${pointName}' not found in command '${cmdName}'.` };
+  }
+
+  if (pointContent.length === 0) {
+    return { exitCode: 0, output: `${cmdName}:${pointName}\n\n(Empty)` };
+  }
+
+  return { exitCode: 0, output: `${cmdName}:${pointName}\n\n${pointContent}` };
+}
+
+// ============================================================================
+// VALIDATE SUBCOMMAND
+// ============================================================================
+
+const MANIFEST_PATH = path.join(ROOT, 'framework-manifest.json');
+
+/**
+ * Scan raw content for START markers (without stripping code blocks, to detect all).
+ * Returns array of { name, startIdx, endIdx, hasEnd }.
+ * @param {string} content - File content
+ * @returns {Array<{ name: string, startIdx: number, endIdx: number|null, hasEnd: boolean }>}
+ */
+function scanRawBlocks(content) {
+  const blocks = [];
+  const cleaned = stripFencedCodeBlocks(content);
+  const startPattern = /<!--\s*USER-EXTENSION-START:\s*(\S+)\s*-->/g;
+  let match;
+
+  while ((match = startPattern.exec(cleaned)) !== null) {
+    const name = match[1];
+    const startIdx = match.index + match[0].length;
+    const endPattern = new RegExp(
+      `<!--\\s*USER-EXTENSION-END:\\s*${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*-->`
+    );
+    const endMatch = cleaned.slice(startIdx).match(endPattern);
+    blocks.push({
+      name,
+      startIdx: match.index,
+      endIdx: endMatch ? startIdx + endMatch.index + endMatch[0].length : null,
+      hasEnd: !!endMatch
+    });
+  }
+
+  return blocks;
+}
+
+/**
+ * Run the validate subcommand.
+ * Performs 7 checks across 3 categories.
+ * @returns {{ exitCode: number, output: string }}
+ */
+function runValidate() {
+  // Load registry
+  const { registry, error } = loadRegistry();
+  if (error) {
+    return { exitCode: 2, output: error };
+  }
+
+  // Load manifest
+  let manifest;
+  try {
+    const manifestContent = fs.readFileSync(MANIFEST_PATH, 'utf-8');
+    manifest = JSON.parse(manifestContent);
+  } catch (e) {
+    return { exitCode: 2, output: `Fatal: Failed to load framework-manifest.json: ${e.message}` };
+  }
+
+  const commands = registry.commands || {};
+  const extensibleCommands = manifest.extensibleCommands || [];
+
+  // Scan all command files
+  const fileData = scanAllCommandFiles();
+
+  // Collect per-command raw blocks for structural checks
+  const rawBlocksByCommand = new Map();
+  let entries;
+  try {
+    entries = fs.readdirSync(COMMANDS_DIR, { withFileTypes: true });
+  } catch (_e) {
+    entries = [];
+  }
+  for (const entry of entries) {
+    const isFile = typeof entry.isFile === 'function' ? entry.isFile() : !entry.isDirectory();
+    if (!isFile || !entry.name.endsWith('.md')) continue;
+    const cmdName = entry.name.replace(/\.md$/, '');
+    try {
+      const content = fs.readFileSync(path.join(COMMANDS_DIR, entry.name), 'utf-8');
+      rawBlocksByCommand.set(cmdName, scanRawBlocks(content));
+    } catch (_e) {
+      rawBlocksByCommand.set(cmdName, []);
+    }
+  }
+
+  const checks = [];
+  let passed = 0;
+  let failed = 0;
+
+  // ---- STRUCTURAL CHECKS ----
+
+  // Check 1: Matching START/END pairs
+  {
+    const failures = [];
+    for (const [cmdName, blocks] of rawBlocksByCommand) {
+      for (const block of blocks) {
+        if (!block.hasEnd) {
+          failures.push(`${cmdName}: '${block.name}' has START but no END`);
+        }
+      }
+    }
+    if (failures.length === 0) {
+      checks.push('Matching START/END pairs: PASS');
+      passed++;
+    } else {
+      checks.push(`Matching START/END pairs: FAIL\n${failures.map(f => `  - ${f}`).join('\n')}`);
+      failed++;
+    }
+  }
+
+  // Check 2: Valid names [a-z][a-z0-9-]*
+  {
+    const namePattern = /^[a-z][a-z0-9-]*$/;
+    const failures = [];
+    for (const [cmdName, blocks] of rawBlocksByCommand) {
+      for (const block of blocks) {
+        if (!namePattern.test(block.name)) {
+          failures.push(`${cmdName}: '${block.name}' is not valid (must match [a-z][a-z0-9-]*)`);
+        }
+      }
+    }
+    if (failures.length === 0) {
+      checks.push('Valid extension point names: PASS');
+      passed++;
+    } else {
+      checks.push(`Valid extension point names: FAIL\n${failures.map(f => `  - ${f}`).join('\n')}`);
+      failed++;
+    }
+  }
+
+  // Check 3: No nested blocks
+  {
+    const failures = [];
+    for (const [cmdName, blocks] of rawBlocksByCommand) {
+      for (let i = 0; i < blocks.length; i++) {
+        if (!blocks[i].hasEnd || blocks[i].endIdx === null) continue;
+        for (let j = 0; j < blocks.length; j++) {
+          if (i === j) continue;
+          if (blocks[j].startIdx > blocks[i].startIdx && blocks[j].startIdx < blocks[i].endIdx) {
+            failures.push(`${cmdName}: '${blocks[j].name}' is nested inside '${blocks[i].name}'`);
+          }
+        }
+      }
+    }
+    if (failures.length === 0) {
+      checks.push('No nested extension blocks: PASS');
+      passed++;
+    } else {
+      checks.push(`No nested extension blocks: FAIL\n${failures.map(f => `  - ${f}`).join('\n')}`);
+      failed++;
+    }
+  }
+
+  // ---- SYNCHRONIZATION CHECKS ----
+
+  // Check 4: Registry to files — every registry point exists as a block in the command file
+  {
+    const failures = [];
+    for (const [cmdName, cmd] of Object.entries(commands)) {
+      const cmdBlocks = fileData.get(cmdName) || new Map();
+      for (const ep of cmd.extensionPoints || []) {
+        if (!cmdBlocks.has(ep.name)) {
+          failures.push(`${cmdName}: registry point '${ep.name}' missing from file`);
+        }
+      }
+    }
+    if (failures.length === 0) {
+      checks.push('Registry to files sync: PASS');
+      passed++;
+    } else {
+      checks.push(`Registry to files sync: FAIL\n${failures.map(f => `  - ${f}`).join('\n')}`);
+      failed++;
+    }
+  }
+
+  // Check 5: Files to registry — every block in command files exists in registry
+  {
+    const failures = [];
+    for (const [cmdName, cmdBlocks] of fileData) {
+      const cmd = commands[cmdName];
+      if (!cmd) continue; // Not an extensible command
+      const registryNames = new Set((cmd.extensionPoints || []).map(ep => ep.name));
+      for (const blockName of cmdBlocks.keys()) {
+        if (!registryNames.has(blockName)) {
+          failures.push(`${cmdName}: file block '${blockName}' not in registry`);
+        }
+      }
+    }
+    if (failures.length === 0) {
+      checks.push('Files to registry sync: PASS');
+      passed++;
+    } else {
+      checks.push(`Files to registry sync: FAIL\n${failures.map(f => `  - ${f}`).join('\n')}`);
+      failed++;
+    }
+  }
+
+  // ---- MANIFEST CHECKS ----
+
+  // Check 6: Manifest to registry — all extensibleCommands in manifest have registry entries
+  {
+    const failures = [];
+    for (const cmdName of extensibleCommands) {
+      if (!commands[cmdName]) {
+        failures.push(`manifest lists '${cmdName}' but not found in registry`);
+      }
+    }
+    if (failures.length === 0) {
+      checks.push('Manifest to registry sync: PASS');
+      passed++;
+    } else {
+      checks.push(`Manifest to registry sync: FAIL\n${failures.map(f => `  - ${f}`).join('\n')}`);
+      failed++;
+    }
+  }
+
+  // Check 7: Registry to manifest — all registry commands appear in manifest
+  {
+    const failures = [];
+    const manifestSet = new Set(extensibleCommands);
+    for (const cmdName of Object.keys(commands)) {
+      if (!manifestSet.has(cmdName)) {
+        failures.push(`registry has '${cmdName}' but not in manifest extensibleCommands`);
+      }
+    }
+    if (failures.length === 0) {
+      checks.push('Registry to manifest sync: PASS');
+      passed++;
+    } else {
+      checks.push(`Registry to manifest sync: FAIL\n${failures.map(f => `  - ${f}`).join('\n')}`);
+      failed++;
+    }
+  }
+
+  const lines = ['Extension Point Validation', ''];
+  lines.push(...checks.map(c => `  ${c}`));
+  lines.push('');
+  lines.push(`${passed} checks passed, ${failed} failed`);
+
+  return {
+    exitCode: failed > 0 ? 1 : 0,
+    output: lines.join('\n')
+  };
+}
+
+// ============================================================================
+// MATRIX SUBCOMMAND
+// ============================================================================
+
+/**
+ * Run the matrix subcommand.
+ * Builds a cross-command comparison table showing extension point status.
+ * @returns {{ exitCode: number, output: string }}
+ */
+function runMatrix() {
+  const { registry, error } = loadRegistry();
+  if (error) {
+    return { exitCode: 2, output: error };
+  }
+
+  const commands = registry.commands || {};
+  const commandNames = Object.keys(commands);
+
+  if (commandNames.length === 0) {
+    return { exitCode: 0, output: 'No extensible commands found in registry.' };
+  }
+
+  // Scan command files for hasContent
+  const fileData = scanAllCommandFiles();
+
+  // Collect all unique extension point names across all commands
+  const allPointNames = new Set();
+  for (const cmd of Object.values(commands)) {
+    for (const ep of cmd.extensionPoints || []) {
+      allPointNames.add(ep.name);
+    }
+  }
+
+  const pointNames = Array.from(allPointNames).sort();
+
+  // Compute column widths
+  const cmdColWidth = Math.max(7, ...commandNames.map(n => n.length));
+  const pointColWidths = pointNames.map(p => Math.max(p.length, 3));
+
+  // Build header
+  const header = [
+    'Command'.padEnd(cmdColWidth),
+    ...pointNames.map((p, i) => p.padEnd(pointColWidths[i]))
+  ].join(' | ');
+
+  const separator = [
+    '-'.repeat(cmdColWidth),
+    ...pointColWidths.map(w => '-'.repeat(w))
+  ].join('-+-');
+
+  // Build data rows
+  const rows = [];
+  for (const cmdName of commandNames) {
+    const cmd = commands[cmdName];
+    const cmdBlocks = fileData.get(cmdName) || new Map();
+    const registryPoints = new Set((cmd.extensionPoints || []).map(ep => ep.name));
+
+    const cells = pointNames.map((pName, i) => {
+      if (!registryPoints.has(pName)) {
+        return '-'.padEnd(pointColWidths[i]);
+      }
+      const hasContent = cmdBlocks.get(pName) || false;
+      return (hasContent ? 'X' : '.').padEnd(pointColWidths[i]);
+    });
+
+    rows.push([cmdName.padEnd(cmdColWidth), ...cells].join(' | '));
+  }
+
+  const lines = [
+    'Extension Point Matrix',
+    `Legend: X = has content, . = empty, - = not applicable`,
+    '',
+    header,
+    separator,
+    ...rows
+  ];
+
+  return { exitCode: 0, output: lines.join('\n') };
+}
+
+// ============================================================================
+// RECIPES SUBCOMMAND
+// ============================================================================
+
+const RECIPES_PATH = path.join(METADATA_DIR, 'extension-recipes.json');
+
+/**
+ * Run the recipes subcommand.
+ * @param {{ category: string|null }} opts - Options
+ * @returns {{ exitCode: number, output: string }}
+ */
+function runRecipes(opts) {
+  if (!fs.existsSync(RECIPES_PATH)) {
+    return { exitCode: 2, output: 'Extension recipes file not found: .claude/metadata/extension-recipes.json' };
+  }
+
+  let recipes;
+  try {
+    const content = fs.readFileSync(RECIPES_PATH, 'utf-8');
+    recipes = JSON.parse(content);
+  } catch (e) {
+    return { exitCode: 2, output: `Failed to parse extension-recipes.json: ${e.message}` };
+  }
+
+  const categories = recipes.categories || {};
+  const categoryKeys = Object.keys(categories);
+
+  // Filter by category if specified
+  if (opts.category) {
+    if (!categories[opts.category]) {
+      return { exitCode: 0, output: `No recipes found for category '${opts.category}'.` };
+    }
+    const cat = categories[opts.category];
+    const lines = [`${cat.name} — ${cat.description}`, ''];
+    for (const recipe of cat.recipes || []) {
+      lines.push(`  ${recipe.name} — ${recipe.description}`);
+      if (recipe.extensionPoints && recipe.extensionPoints.length > 0) {
+        lines.push(`    Points: ${recipe.extensionPoints.join(', ')}`);
+      }
+    }
+    return { exitCode: 0, output: lines.join('\n') };
+  }
+
+  // Show all categories
+  if (categoryKeys.length === 0) {
+    return { exitCode: 0, output: 'No recipe categories found.' };
+  }
+
+  const lines = ['Extension Recipes', ''];
+  for (const key of categoryKeys) {
+    const cat = categories[key];
+    lines.push(`${cat.name} — ${cat.description}`);
+    for (const recipe of cat.recipes || []) {
+      lines.push(`  ${recipe.name} — ${recipe.description}`);
+    }
+    lines.push('');
+  }
+
+  return { exitCode: 0, output: lines.join('\n').trim() };
+}
+
+// ============================================================================
+// HELP SUBCOMMAND
+// ============================================================================
+
+/**
+ * Run the help subcommand.
+ * @returns {{ exitCode: number, output: string }}
+ */
+function runHelp() {
+  const text = [
+    'Usage: node extensions-cli.js <subcommand> [options]',
+    '',
+    'Subcommands:',
+    '  list [--command X]       List all extension points (optionally filter by command)',
+    '  view <command>:<point>   View content of a specific extension point',
+    '  validate                 Validate extension point integrity (7 checks)',
+    '  matrix                   Cross-command comparison table',
+    '  recipes [category]       Browse extension recipes by category',
+    '  help                     Show this help message',
+    '',
+    'Exit codes:',
+    '  0 = success',
+    '  1 = validation failures found (validate subcommand)',
+    '  2 = fatal error (missing registry, invalid arguments)'
+  ];
+
+  return { exitCode: 0, output: text.join('\n') };
+}
+
+// ============================================================================
+// ARGUMENT PARSING & MAIN
+// ============================================================================
+
+/**
+ * Parse command-line arguments.
+ * @param {string[]} args - process.argv.slice(2)
+ * @returns {{ subcommand: string, args: string[], options: Object }}
+ */
+function parseArgs(args) {
+  const subcommand = args[0] || 'help';
+  const rest = args.slice(1);
+  const options = {};
+  const positional = [];
+
+  for (let i = 0; i < rest.length; i++) {
+    if (rest[i] === '--command' && i + 1 < rest.length) {
+      options.command = rest[i + 1];
+      i++;
+    } else if (rest[i] === '--help') {
+      options.help = true;
+    } else if (!rest[i].startsWith('--')) {
+      positional.push(rest[i]);
+    }
+  }
+
+  return { subcommand, args: positional, options };
+}
+
+/**
+ * Main entry point.
+ */
+function main() {
+  const { subcommand, args: posArgs, options } = parseArgs(process.argv.slice(2));
+
+  let result;
+
+  switch (subcommand) {
+    case 'list':
+      result = runList({ command: options.command || null });
+      break;
+    case 'view':
+      result = runView({ target: posArgs[0] || '' });
+      break;
+    case 'validate':
+      result = runValidate();
+      break;
+    case 'matrix':
+      result = runMatrix();
+      break;
+    case 'recipes':
+      result = runRecipes({ category: posArgs[0] || null });
+      break;
+    case 'help':
+      result = runHelp();
+      break;
+    default:
+      result = { exitCode: 2, output: `Unknown subcommand: ${subcommand}\nRun: node extensions-cli.js help` };
+      break;
+  }
+
+  if (result.output) {
+    console.log(result.output);
+  }
+  process.exit(result.exitCode);
+}
+
+// Export for testing
+module.exports = {
+  loadRegistry,
+  stripFencedCodeBlocks,
+  scanExtensionBlocks,
+  scanAllCommandFiles,
+  extractPointContent,
+  runList,
+  runView,
+  runValidate,
+  runMatrix,
+  runRecipes,
+  runHelp,
+  parseArgs
+};
+
+// Run main only when executed directly
+if (require.main === module) {
+  main();
+}

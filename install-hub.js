@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.38.0
+ * @framework-script 0.39.0
  * IDPF Hub Installer
  * Creates a central IDPF installation that can serve multiple projects.
  *
@@ -296,8 +296,12 @@ function generateHubRules(hubPath, version) {
  *   .claude/rules/     (generated from source files)
  *
  * Handles both dist repo (Templates/) and dev repo (.claude/) structures
+ *
+ * @param {string} hubPath - Target hub directory
+ * @param {string} version - Framework version string
+ * @param {string} [sourcePath] - Source directory for metadata files (defaults to hubPath for backward compat)
  */
-function setupClaudeStructure(hubPath, version) {
+function setupClaudeStructure(hubPath, version, sourcePath) {
   const results = { commands: false, hooks: false, scripts: false, skills: 0, metadata: false, rules: [] };
 
   // Create .claude directory if needed
@@ -381,9 +385,10 @@ function setupClaudeStructure(hubPath, version) {
     }
   }
 
-  // Metadata: Copy registry files (.claude/metadata/)
+  // Metadata: Copy registry files from source (.claude/metadata/)
   const metadataDir = path.join(claudeDir, 'metadata');
-  const metadataSource = path.join(hubPath, '.claude', 'metadata');
+  const metadataSrc = sourcePath || hubPath;
+  const metadataSource = path.join(metadataSrc, '.claude', 'metadata');
   if (fs.existsSync(metadataSource)) {
     try {
       if (fs.existsSync(metadataDir)) {
@@ -585,7 +590,7 @@ function installHub(sourcePath, targetPath) {
   // Step 7: Setup .claude/ structure for project symlinks
   log();
   log(colors.dim('  Setting up .claude/ structure for project symlinks...'));
-  const claudeResults = setupClaudeStructure(targetPath, version);
+  const claudeResults = setupClaudeStructure(targetPath, version, sourcePath);
 
   if (claudeResults.commands) {
     logSuccess('    ✓ .claude/commands/ (copied from Templates/)');
@@ -699,4 +704,9 @@ function main() {
   }
 }
 
-main();
+// Run main only when executed directly (not when require'd for testing)
+if (require.main === module) {
+  main();
+}
+
+module.exports = { setupClaudeStructure };
