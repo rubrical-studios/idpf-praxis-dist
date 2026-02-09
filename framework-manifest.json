@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.39.0",
+  "version": "0.40.0",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -63,7 +63,15 @@
         "split-story.md",
         "pivot.md",
         "work.md",
-        "done.md"
+        "done.md",
+        "bug.md",
+        "enhancement.md",
+        "proposal.md",
+        "resolve-review.md",
+        "review-issue.md",
+        "review-prd.md",
+        "review-proposal.md",
+        "review-test-plan.md"
       ]
     },
     "scripts": {
@@ -77,6 +85,7 @@
           "extensions-cli.js",
           "generate-changelog.js",
           "install-skill.js",
+          "generate-test-plan.js",
           "recommend-version.js",
           "switch-branch.js",
           "transfer-issue.js",
@@ -135,6 +144,21 @@
           "name": "extension-points",
           "source": ".claude/metadata/extension-points.json",
           "description": "Extension point registry for command introspection"
+        },
+        {
+          "name": "review-extensions",
+          "source": ".claude/metadata/review-extensions.json",
+          "description": "Review command domain extension criteria registry"
+        },
+        {
+          "name": "skill-keywords",
+          "source": ".claude/metadata/skill-keywords.json",
+          "description": "Keyword-to-skill mappings for /create-backlog and /add-story"
+        },
+        {
+          "name": "recipe-tech-mapping",
+          "source": ".claude/metadata/recipe-tech-mapping.json",
+          "description": "Tech stack to recipe mappings for /charter suggestions"
         }
       ]
     }
@@ -161,6 +185,8 @@
     "transfer-issue",
     "charter",
     "extensions",
-    "install-skill"
+    "install-skill",
+    "resolve-review",
+    "review-test-plan"
   ]
 }

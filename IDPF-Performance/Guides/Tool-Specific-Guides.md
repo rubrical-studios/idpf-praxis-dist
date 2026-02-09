@@ -1,5 +1,5 @@
 # Performance Testing Tool Guides
-**Version:** v0.39.0
+**Version:** v0.40.0
 
 **Framework:** IDPF-Performance
 

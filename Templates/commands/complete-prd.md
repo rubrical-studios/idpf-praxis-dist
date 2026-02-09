@@ -1,5 +1,5 @@
 ---
-version: "v0.39.0"
+version: "v0.40.0"
 description: Verify and close PRD tracker (project)
 argument-hint: "<issue-number> (e.g., 151)"
 ---

@@ -1,0 +1,36 @@
+{
+  "version": "1.0.0",
+  "description": "Review command domain extensions — maps extension IDs to criteria file paths",
+  "extensions": {
+    "security": {
+      "source": "IDPF-Testing/review-criteria/security.md",
+      "framework": "IDPF-Security",
+      "description": "OWASP-based security review criteria for proposals, PRDs, and issues"
+    },
+    "accessibility": {
+      "source": "IDPF-Testing/review-criteria/accessibility.md",
+      "framework": "IDPF-Accessibility",
+      "description": "WCAG-based accessibility review criteria for proposals, PRDs, and issues"
+    },
+    "performance": {
+      "source": "IDPF-Testing/review-criteria/performance.md",
+      "framework": "IDPF-Performance",
+      "description": "Threshold and load-profile review criteria for proposals, PRDs, and issues"
+    },
+    "chaos": {
+      "source": "IDPF-Testing/review-criteria/chaos.md",
+      "framework": "IDPF-Chaos",
+      "description": "Resilience and failure-mode review criteria for proposals, PRDs, and issues"
+    },
+    "contract": {
+      "source": "IDPF-Testing/review-criteria/contract-testing.md",
+      "framework": "IDPF-Contract-Testing",
+      "description": "Consumer/provider contract review criteria for proposals, PRDs, and issues"
+    },
+    "qa": {
+      "source": "IDPF-Testing/review-criteria/qa-automation.md",
+      "framework": "IDPF-QA-Automation",
+      "description": "Coverage and automation review criteria for proposals, PRDs, and issues"
+    }
+  }
+}

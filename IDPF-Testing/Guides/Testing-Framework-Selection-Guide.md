@@ -1,5 +1,5 @@
 # Testing Framework Selection Guide
-**Version:** v0.39.0
+**Version:** v0.40.0
 
 **Purpose:** Help teams select the appropriate IDPF testing framework and development methodology.
 
@@ -165,4 +165,4 @@ Before starting a testing project:
 
 ---
 
-*Guide from IDPF-Testing-Core Framework*
+*Guide from IDPF-Testing Framework*

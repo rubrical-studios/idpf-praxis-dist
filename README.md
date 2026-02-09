@@ -1,6 +1,6 @@
 # IDPF Framework - AI-Assisted Development
 
-**Current Version:** v0.39.0
+**Current Version:** v0.40.0
 
 A comprehensive ecosystem for AI-assisted software development with Claude.
 
@@ -29,7 +29,7 @@ The installer will:
 | **IDPF-Vibe** | Exploration phase, unclear requirements → evolves to Agile |
 
 ### Testing Frameworks
-- IDPF-Testing-Core, IDPF-QA-Automation, IDPF-Performance
+- IDPF-Testing, IDPF-QA-Automation, IDPF-Performance
 - IDPF-Security, IDPF-Accessibility, IDPF-Chaos, IDPF-Contract-Testing
 
 ### Requirements
@@ -37,7 +37,7 @@ The installer will:
 
 ---
 
-## Skills (25)
+## Skills (23)
 
 **TDD:** tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns
 

@@ -1,7 +1,7 @@
 # Test Artifact Management Guide
-**Version:** v0.39.0
+**Version:** v0.40.0
 
-**Framework:** IDPF-Testing-Core
+**Framework:** IDPF-Testing
 
 ---
 
@@ -528,4 +528,4 @@ jobs:
 
 ---
 
-*Guide from IDPF-Testing-Core Framework*
+*Guide from IDPF-Testing Framework*

@@ -1,5 +1,5 @@
 ---
-version: "v0.39.0"
+version: "v0.40.0"
 description: Prepare release with PR, merge to main, and tag
 argument-hint: [version] [--skip-coverage] [--dry-run] [--help]
 ---

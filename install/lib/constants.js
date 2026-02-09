@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.39.0
+ * @framework-script 0.40.0
  * constants.js - Configuration data for IDPF Framework Installer
  * @module install/lib/constants
  */
@@ -121,6 +121,14 @@ const INSTALLED_FILES_MANIFEST = {
       (config) => config?.enableGitHubWorkflow ? 'pivot.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'work.md' : null,
       (config) => config?.enableGitHubWorkflow ? 'done.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'bug.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'enhancement.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'proposal.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'resolve-review.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'review-issue.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'review-prd.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'review-proposal.md' : null,
+      (config) => config?.enableGitHubWorkflow ? 'review-test-plan.md' : null,
     ],
   },
   scripts: {
@@ -159,8 +167,10 @@ const INSTALLED_FILES_MANIFEST = {
     files: [
       'skill-registry.json',      // Pre-generated skill registry for /charter and /create-prd
       'extension-recipes.json',   // Common patterns for /extensions recipes
+      'extension-points.json',    // Extension point registry for command introspection
       'skill-keywords.json',      // Keyword-to-skill mappings for /create-backlog and /add-story
       'recipe-tech-mapping.json', // Tech stack to recipe mappings for /charter suggestions
+      'review-extensions.json',   // Review command domain extension registry
     ],
   },
 };
@@ -177,16 +187,6 @@ const VIBE_VARIANTS = [
   { value: 'vibe-mobile', title: 'Vibe-Mobile', description: 'Mobile applications' },
   { value: 'vibe-game', title: 'Vibe-Game', description: 'Game development' },
   { value: 'vibe-embedded', title: 'Vibe-Embedded', description: 'Embedded systems' },
-];
-
-const TESTING_FRAMEWORKS = [
-  { value: 'IDPF-Testing-Core', title: 'IDPF-Testing-Core', description: 'Foundation testing framework' },
-  { value: 'IDPF-QA-Automation', title: 'IDPF-QA-Automation', description: 'QA automation framework' },
-  { value: 'IDPF-Performance', title: 'IDPF-Performance', description: 'Performance testing framework' },
-  { value: 'IDPF-Security', title: 'IDPF-Security', description: 'Security testing framework' },
-  { value: 'IDPF-Accessibility', title: 'IDPF-Accessibility', description: 'Accessibility testing framework' },
-  { value: 'IDPF-Chaos', title: 'IDPF-Chaos', description: 'Chaos engineering framework' },
-  { value: 'IDPF-Contract-Testing', title: 'IDPF-Contract-Testing', description: 'Contract testing framework' },
 ];
 
 /**
@@ -231,7 +231,6 @@ module.exports = {
   INSTALLED_FILES_MANIFEST,
   PROCESS_FRAMEWORKS,
   VIBE_VARIANTS,
-  TESTING_FRAMEWORKS,
   VALID_TRANSITIONS,
   ALL_SKILLS,
 };

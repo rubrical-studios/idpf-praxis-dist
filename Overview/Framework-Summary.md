@@ -1,11 +1,11 @@
 # Framework Summary
-**Version:** v0.39.0
-**Purpose:** Compact startup reference for framework developers
+**Version:** v0.40.0
+**Source:** Overview/Framework-Summary.md
 ## Quick Reference
 | Component | Count | Location |
 |-----------|-------|----------|
 | Development Frameworks | 2 | IDPF-Agile, IDPF-Vibe (7 variants) |
-| Testing Frameworks | 7 | IDPF-Testing-Core + 6 specialized |
+| Testing Frameworks | 7 | IDPF-Testing (review criteria library) + 6 specialized |
 | Domain Specialists | 22 | 12 Base + 10 Pack |
 | Core Instructions | 2 | Core-Developer-Instructions + Domain-Selection-Guide |
 | Skills | 25 | Skills/ |
@@ -20,13 +20,13 @@
 ### Testing Frameworks
 | Framework | Revision | Extends |
 |-----------|----------|---------|
-| IDPF-Testing-Core | 1 | (Foundation) |
-| IDPF-QA-Automation | 1 | Testing-Core |
-| IDPF-Performance | 1 | Testing-Core |
-| IDPF-Security | 1 | Testing-Core |
-| IDPF-Accessibility | 1 | Testing-Core |
-| IDPF-Chaos | 1 | Testing-Core |
-| IDPF-Contract-Testing | 1 | Testing-Core |
+| IDPF-Testing | 1 | (Review criteria library) |
+| IDPF-QA-Automation | 1 | IDPF-Testing |
+| IDPF-Performance | 1 | IDPF-Testing |
+| IDPF-Security | 1 | IDPF-Testing |
+| IDPF-Accessibility | 1 | IDPF-Testing |
+| IDPF-Chaos | 1 | IDPF-Testing |
+| IDPF-Contract-Testing | 1 | IDPF-Testing |
 ### Skills Registry
 | Skill | Category |
 |-------|----------|
@@ -39,7 +39,6 @@
 | extract-prd | PRD |
 | create-prd | PRD |
 | anti-pattern-analysis | Code Quality |
-| uml-generation | Code Quality |
 | flask-setup | Beginner Setup |
 | sinatra-setup | Beginner Setup |
 | common-errors | Beginner Support |
@@ -60,12 +59,12 @@
 |--------------|---------------|----------------|
 | Evolving requirements, sprints | IDPF-Agile | Terminal |
 | Unclear requirements, exploration | IDPF-Vibe | → Agile |
-| Separate test repository | IDPF-Testing-Core | Use Agile |
+| Separate test repository | IDPF-Testing | Use Agile |
 ## Core Principle
-**System Instructions** define WHO the assistant is
-**Frameworks** define WHAT process to follow
-**Skills** provide reusable capabilities
-**Assistant Guidelines** ensure accuracy and quality
+- **System Instructions** define WHO the assistant is
+- **Frameworks** define WHAT process to follow
+- **Skills** provide reusable capabilities
+- **Assistant Guidelines** ensure accuracy and quality
 ## Valid Framework Transitions
 ```
 VIBE ──► AGILE (Terminal)
@@ -75,9 +74,9 @@ VIBE ──► AGILE (Terminal)
 | File | Content |
 |------|---------|
 | Framework-Development.md | IDPF-Agile, Vibe details, create-prd skill |
-| Framework-Testing.md | Testing-Core + 6 specialized frameworks |
-| Framework-System-Instructions.md | Core + 22 Domain Specialists |
-| Framework-Skills.md | All 25 skills with descriptions |
+| Framework-Testing.md | IDPF-Testing (criteria library) + 6 specialized frameworks |
+| Framework-System-Instructions.md | Core + 22 Domain Specialists (12 Base, 10 Pack) |
+| Framework-Skills.md | All 23 skills with descriptions |
 | Framework-Transitions.md | Transition matrix, diagrams, hybrid usage |
 | Framework-Overview.md | Complete reference (all sections) |
 ---

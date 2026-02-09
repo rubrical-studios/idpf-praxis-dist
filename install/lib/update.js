@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.39.0
+ * @framework-script 0.40.0
  * update.js - Project update logic for IDPF Framework Installer
  * @module install/lib/update
  */

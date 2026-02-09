@@ -16,7 +16,7 @@ describe('extensibility.js', () => {
     describe('versionless tags (v0.24+)', () => {
       test('recognizes <!-- EXTENSIBLE --> without version', () => {
         const content = `---
-version: "0.39.0"
+version: "0.40.0"
 ---
 
 <!-- EXTENSIBLE -->
@@ -31,7 +31,7 @@ version: "0.39.0"
 
       test('recognizes <!-- MANAGED --> without version', () => {
         const content = `---
-version: "0.39.0"
+version: "0.40.0"
 ---
 
 <!-- MANAGED -->
@@ -151,7 +151,7 @@ No tags here.
     describe('real-world command files', () => {
       test('parses full EXTENSIBLE command file', () => {
         const content = `---
-version: "0.39.0"
+version: "0.40.0"
 description: Create a branch with tracker issue
 argument-hint: <branch-name>
 ---
@@ -177,7 +177,7 @@ Creates a new branch and associated tracker issue.
 
       test('parses full MANAGED command file', () => {
         const content = `---
-version: "0.39.0"
+version: "0.40.0"
 allowed-tools: Bash
 description: Run sprint retrospective
 ---
@@ -431,7 +431,7 @@ describe('deployExtensibleCommand with rogue edit archiving', () => {
   test('archives file when rogue edits detected', () => {
     // Create template
     const templateContent = `---
-version: "0.39.0"
+version: "0.40.0"
 ---
 
 <!-- EXTENSIBLE -->
@@ -480,7 +480,7 @@ User's custom content (this is fine)
     // Create template - use multi-line extension block format
     // Note: We use the same version in both to avoid false positive from version mismatch
     const templateContent = `---
-version: "0.39.0"
+version: "0.40.0"
 ---
 
 <!-- EXTENSIBLE -->
@@ -546,7 +546,7 @@ describe('/work command extension point preservation (#1196)', () => {
 
   // Simulates the work.md template (new version from hub)
   const workTemplate = `---
-version: "0.39.0"
+version: "0.40.0"
 description: Start working on issues
 argument-hint: "#issue [#issue...] | all in <status>"
 ---

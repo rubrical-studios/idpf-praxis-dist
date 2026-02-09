@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.39.0
+ * @framework-script 0.40.0
  * IDPF Hub Installer
  * Creates a central IDPF installation that can serve multiple projects.
  *
@@ -428,7 +428,7 @@ const FRAMEWORK_DIRECTORIES = [
   'IDPF-Performance',
   'IDPF-QA-Automation',
   'IDPF-Security',
-  'IDPF-Testing-Core',
+  'IDPF-Testing',
   'Overview',          // Documentation
   'System-Instructions', // Domain specialists
   'Assistant',         // Anti-hallucination rules
