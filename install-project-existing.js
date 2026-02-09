@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.40.0
+ * @framework-script 0.41.0
  * IDPF Existing Project Installer
  * Adds IDPF integration to an existing codebase.
  *
@@ -669,7 +669,7 @@ async function promptConfiguration(rl, defaultName, hubPath) {
 }
 
 // ======================================
-//  Git & GitHub Setup (matches install.js)
+//  Git & GitHub Setup
 // ======================================
 
 /**
@@ -841,7 +841,7 @@ fields:
 }
 
 /**
- * Integrated GitHub setup flow (matches install.js)
+ * Integrated GitHub setup flow
  */
 async function setupGitHubIntegration(rl, projectPath, projectName) {
   const result = { repoUrl: null, projectUrl: null, skipped: false, gitStatus: 'none' };
@@ -1190,7 +1190,7 @@ async function main() {
     log();
     logSuccess('  ✓ .gh-pmu.yml (preserved)');
   } else {
-    // Run integrated GitHub setup (matches install.js)
+    // Run integrated GitHub setup
     githubResult = await setupGitHubIntegration(rl, targetPath, config.name);
   }
 

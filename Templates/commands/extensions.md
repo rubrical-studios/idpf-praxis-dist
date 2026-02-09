@@ -1,5 +1,5 @@
 ---
-version: "v0.40.0"
+version: "v0.41.0"
 description: Discover, view, and manage extension points in release commands
 argument-hint: "list|view|edit|validate|matrix|recipes [args]"
 ---

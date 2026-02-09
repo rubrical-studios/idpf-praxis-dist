@@ -6,7 +6,7 @@
 # This hook ensures version tags (v*) can only be pushed through
 # the /prepare-release process, which creates an authorization marker.
 #
-# Installation: Copied to .git/hooks/pre-push by install.js
+# Installation: Copied to .git/hooks/pre-push by hub installer
 
 # Authorization marker file
 MARKER_FILE=".release-authorized"

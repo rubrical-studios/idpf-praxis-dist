@@ -2,9 +2,9 @@
   "name": "idpf-framework-installer",
   "version": "1.0.0",
   "description": "IDPF Framework Installer - Cross-platform interactive installer",
-  "main": "install.js",
+  "main": "install-hub.js",
   "scripts": {
-    "install-framework": "node install.js",
+    "install-framework": "node install-hub.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "jest",

@@ -1,5 +1,5 @@
 ---
-version: "v0.40.0"
+version: "v0.41.0"
 description: Review issues with type-specific criteria (project)
 argument-hint: "#issue [#issue...]"
 ---
@@ -96,6 +96,8 @@ Evaluate the issue based on its type. Ask subjective questions **one at a time**
 - Are labels correct and complete?
 - Is priority appropriate for the content?
 - Are acceptance criteria present and testable?
+- Are acceptance criteria structured as testable assertions (TDD-compatible)?
+- Does the issue scope support incremental test-driven implementation?
 #### Bug-Specific Criteria
 - Are reproduction steps documented?
 - Is expected vs actual behavior clearly stated?

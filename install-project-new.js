@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.40.0
+ * @framework-script 0.41.0
  * IDPF New Project Installer
  * Creates a new project directory with full IDPF integration.
  *
@@ -552,7 +552,7 @@ async function promptConfiguration(rl, defaultName, hubPath) {
 }
 
 // ======================================
-//  Git & GitHub Setup (matches install.js)
+//  Git & GitHub Setup
 // ======================================
 
 /**
@@ -725,7 +725,7 @@ fields:
 }
 
 /**
- * Integrated GitHub setup flow (matches install.js)
+ * Integrated GitHub setup flow
  */
 async function setupGitHubIntegration(rl, projectPath, projectName) {
   const result = { repoUrl: null, projectUrl: null, skipped: false, gitStatus: 'none' };
@@ -1022,7 +1022,7 @@ async function main() {
     logSuccess('  ✓ Created CHARTER.md template');
   }
 
-  // GitHub integration (single integrated flow matching install.js)
+  // GitHub integration (single integrated flow)
   const githubResult = await setupGitHubIntegration(rl, targetPath, config.name);
 
   // Close readline interface

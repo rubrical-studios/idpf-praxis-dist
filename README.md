@@ -1,6 +1,6 @@
 # IDPF Framework - AI-Assisted Development
 
-**Current Version:** v0.40.0
+**Current Version:** v0.41.0
 
 A comprehensive ecosystem for AI-assisted software development with Claude.
 
@@ -8,16 +8,25 @@ A comprehensive ecosystem for AI-assisted software development with Claude.
 
 ## Installation
 
+### Central Hub (recommended)
 ```bash
-# From your project directory
-node path/to/framework/install.js
+# Create central hub installation
+node path/to/framework/install-hub.js
 ```
 
-The installer will:
-- Detect your project type
-- Copy required framework files
-- Configure Claude Code integration
-- Deploy rules to `.claude/rules/` for auto-loading
+### Add to Project
+```bash
+# New project with IDPF integration
+node path/to/framework/install-project-new.js
+
+# Add to existing project
+node path/to/framework/install-project-existing.js
+```
+
+The hub installer will:
+- Create a central hub that serves multiple projects
+- Deploy framework files, commands, rules, and scripts
+- Configure Claude Code integration via symlinks
 
 ---
 
@@ -81,10 +90,10 @@ Rules in `.claude/rules/` load automatically at session start:
 - Rules persist after context compaction
 - ~47% token reduction at startup
 
-### Migration for Existing Projects
+### Adding IDPF to Existing Projects
 
 ```bash
-node [frameworkPath]/install.js --migrate
+node [frameworkPath]/install-project-existing.js
 ```
 
 ---

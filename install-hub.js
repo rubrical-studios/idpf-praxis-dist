@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.40.0
+ * @framework-script 0.41.0
  * IDPF Hub Installer
  * Creates a central IDPF installation that can serve multiple projects.
  *
@@ -16,7 +16,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 // ======================================
-//  Console UI (reused from install/lib/ui.js)
+//  Console UI
 // ======================================
 
 const colors = {
@@ -496,6 +496,41 @@ function createProjectsRegistry(hubPath) {
 }
 
 /**
+ * Remove IDPF-* directories in target that no longer exist in source.
+ * Comparison-driven: scans for IDPF-* dirs rather than using a hardcoded list.
+ * Non-IDPF directories (user customizations) are never removed.
+ *
+ * @param {string} sourceDir - Source framework directory
+ * @param {string} targetDir - Target hub directory
+ * @returns {string[]} Names of removed directories
+ */
+function cleanOrphanedDirectories(sourceDir, targetDir) {
+  const removed = [];
+
+  if (!fs.existsSync(targetDir)) {
+    return removed;
+  }
+
+  // Get IDPF-* directories in source
+  const sourceDirs = new Set(
+    fs.readdirSync(sourceDir, { withFileTypes: true })
+      .filter(e => e.isDirectory() && e.name.startsWith('IDPF-'))
+      .map(e => e.name)
+  );
+
+  // Find IDPF-* directories in target that are not in source
+  const targetEntries = fs.readdirSync(targetDir, { withFileTypes: true });
+  for (const entry of targetEntries) {
+    if (entry.isDirectory() && entry.name.startsWith('IDPF-') && !sourceDirs.has(entry.name)) {
+      removeDir(path.join(targetDir, entry.name));
+      removed.push(entry.name);
+    }
+  }
+
+  return removed;
+}
+
+/**
  * Main hub installation function
  */
 function installHub(sourcePath, targetPath) {
@@ -550,6 +585,16 @@ function installHub(sourcePath, targetPath) {
       installedDirs++;
     } else {
       logWarning(`    ⊘ ${dir}/ (not found in source)`);
+    }
+  }
+
+  // Step 4b: Clean orphaned IDPF-* directories (renamed/removed in source)
+  const orphans = cleanOrphanedDirectories(sourcePath, targetPath);
+  if (orphans.length > 0) {
+    log();
+    log(colors.dim('  Cleaning orphaned directories...'));
+    for (const name of orphans) {
+      logWarning(`    ✗ ${name}/ (removed — no longer in source)`);
     }
   }
 
@@ -709,4 +754,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { setupClaudeStructure };
+module.exports = { setupClaudeStructure, cleanOrphanedDirectories };
