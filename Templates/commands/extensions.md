@@ -1,5 +1,5 @@
 ---
-version: "v0.41.0"
+version: "v0.41.1"
 description: Discover, view, and manage extension points in release commands
 argument-hint: "list|view|edit|validate|matrix|recipes [args]"
 ---
@@ -26,7 +26,6 @@ Target commands are listed in `.claude/metadata/extension-points.json` (the exte
 If `extension-points.json` does not exist or cannot be parsed:
 1. **Warn:** `Extension registry not found. Scanning command files directly (slower).`
 2. **Fallback:** Scan `.claude/commands/*.md` for EXTENSIBLE markers and USER-EXTENSION-START/END blocks
-3. **Suggest:** `Run: node .claude/scripts/framework/build-extension-registry.js`
 ---
 ## Script Delegation
 Read-only subcommands (`list`, `view`, `validate`, `matrix`, `recipes`, `help`) are handled by the extensions-cli.js script. Run the script and display its stdout output directly.
@@ -53,18 +52,28 @@ Read-only subcommands (`list`, `view`, `validate`, `matrix`, `recipes`, `help`) 
 The `edit` subcommand is spec-driven (not delegated to the script) because it requires interactive user input and file modification.
 ### Step 1: Locate Extension Block
 Read the live command file (`.claude/commands/{command}.md`). `edit` reads and modifies the command file directly.
+Find the `USER-EXTENSION-START:{point}` and `USER-EXTENSION-END:{point}` markers. If not found, report error and **STOP**.
 ### Step 2: Present Current Content
-Show the current content of the extension block.
-### Step 3: ASK USER for New Content
-Prompt user for the new content to replace the extension block.
-### Step 4: Update Command File
-Replace the content between START and END markers with the new content in the command file.
-### Step 5: Confirm Change and Rebuild Registry
-Report the updated extension block. Then regenerate the registry:
-```bash
-node .claude/scripts/framework/build-extension-registry.js
-```
-This ensures `extension-points.json` reflects the updated `hasContent` state.
+Show the current content between the START and END markers.
+- If empty: `"Extension point '{command}:{point}' is currently empty."`
+- If has content: Display the content in a fenced code block
+### Step 3: Ask User What They Want Changed (Intent-Based)
+**Do NOT ask the user to provide raw replacement text.** Instead, ask what they want:
+- If empty: `"What would you like to add to this extension point?"`
+- If has content: `"What changes would you like to make?"`
+The user describes their intent in natural language (e.g., "add a line that says X", "remove the git status check").
+### Step 4: Implement the Edit Directly
+The assistant implements the change using the **Edit tool** on the command file. This preserves surrounding formatting exactly.
+**Rules:**
+- Only modify content between the START and END markers
+- Preserve the START and END comment markers exactly
+- Preserve all formatting outside the extension block
+- For "add" intents: insert the new content between markers
+- For "remove" intents: remove the specified content, leave markers (block may become empty)
+- For "replace" intents: replace the specified content between markers
+### Step 5: Confirm Change
+Report the updated extension block content. Show a before/after summary.
+**Do NOT rebuild the extension registry.** The registry is a static framework build artifact. The `hasContent` state is computed at runtime by scanning command files.
 ---
 ## Extension Point Naming Convention
 | Pattern | Purpose |

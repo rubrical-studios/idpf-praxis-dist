@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.41.0
+ * @framework-script 0.41.1
  * IDPF New Project Installer
  * Creates a new project directory with full IDPF integration.
  *
@@ -438,23 +438,37 @@ function copyLauncherScripts(projectPath, hubPath) {
 // ======================================
 
 /**
+ * Compare two paths for equality, case-insensitive on Windows/macOS.
+ * @param {string} a - First path
+ * @param {string} b - Second path
+ * @returns {boolean}
+ */
+function pathsEqual(a, b) {
+  if (process.platform === 'win32' || process.platform === 'darwin') {
+    return a.toLowerCase() === b.toLowerCase();
+  }
+  return a === b;
+}
+
+/**
  * Register project in hub's projects.json
  */
 function registerProject(hubPath, projectPath, config) {
   const registryPath = path.join(hubPath, '.projects', 'projects.json');
+  const normalizedPath = path.resolve(projectPath);
 
   let registry = { version: '1.0', projects: [] };
   if (fs.existsSync(registryPath)) {
     registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
   }
 
-  // Remove existing entry for this path (if any)
-  registry.projects = registry.projects.filter(p => p.path !== projectPath);
+  // Remove existing entry for this path (case-insensitive on Windows/macOS)
+  registry.projects = registry.projects.filter(p => !pathsEqual(p.path, normalizedPath));
 
-  // Add new entry
+  // Add new entry with normalized path
   registry.projects.push({
     name: config.name,
-    path: projectPath,
+    path: normalizedPath,
     framework: config.framework,
     domainSpecialist: config.domainSpecialist,
     registeredAt: new Date().toISOString(),
@@ -915,6 +929,20 @@ async function main() {
     process.exit(1);
   }
 
+  // Guard: hub and target must not be the same directory (#1281)
+  if (pathsEqual(hubPath, targetPath)) {
+    logError('ERROR: Hub and target paths are the same directory');
+    logError(`  Hub:    ${hubPath}`);
+    logError(`  Target: ${targetPath}`);
+    logError('');
+    logError('Cannot install a project into the hub itself. This would create');
+    logError('circular symlinks and corrupt the hub installation.');
+    logError('');
+    logError('Run this command from your project directory instead:');
+    logError(`  node install-project-new.js --hub "${hubPath}" --target <project-path>`);
+    process.exit(1);
+  }
+
   const version = readFrameworkVersion(hubPath);
 
   log();
@@ -1051,7 +1079,13 @@ async function main() {
   log();
 }
 
-main().catch(err => {
-  logError(`Error: ${err.message}`);
-  process.exit(1);
-});
+// Export for testing
+module.exports = { registerProject, pathsEqual };
+
+// Run main only when executed directly
+if (require.main === module) {
+  main().catch(err => {
+    logError(`Error: ${err.message}`);
+    process.exit(1);
+  });
+}
