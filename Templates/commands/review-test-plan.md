@@ -1,5 +1,5 @@
 ---
-version: "v0.41.1"
+version: "v0.42.0"
 description: Review a test plan against its PRD (project)
 argument-hint: "#issue"
 ---
@@ -63,32 +63,76 @@ PRD file not found: `{path}`. Check the path in issue #$ISSUE?
 ```
 → **STOP**
 ### Step 2: Perform Review
-Evaluate the test plan across these dimensions:
-#### Coverage Completeness (P0)
-Systematically cross-reference the PRD against the test plan:
+
+Evaluate the test plan using a two-phase approach: **auto-evaluate objective criteria** by reading the test plan and PRD files, then **ask the user only about subjective criteria** via `AskUserQuestion`.
+
+**Step 2a: Auto-Evaluate Objective Criteria**
+
+Systematically analyze the test plan and PRD without user input:
+
+**Coverage Analysis (P0):**
 1. **Extract all acceptance criteria** from every user story in the PRD (all `- [ ]` items)
 2. **For each acceptance criterion**, verify a corresponding test case exists in the test plan
 3. **Report coverage status** for each story:
    - Full coverage: all ACs have test cases
    - Partial coverage: some ACs missing test cases
    - No coverage: story has no test cases at all
-#### Edge Cases and Error Conditions
-- Are error scenarios identified for each story?
-- Are boundary conditions tested?
-- Are failure modes covered?
-#### Integration Test Points
-- Are integration points between epics/stories mapped?
-- Do integration tests verify component interactions?
-- Are data flow boundaries tested?
-#### E2E Scenarios
-- Do E2E scenarios cover critical user journeys from the PRD?
-- Are happy paths and error paths both represented?
-- Do scenarios map back to PRD requirements?
-#### Test Strategy Alignment
-- Is the test framework specified?
-- Is the framework consistent with `Inception/Test-Strategy.md` (if it exists)?
-- Are coverage targets realistic for the project type?
-- Are test levels (unit, integration, E2E) appropriate for the content?
+
+**Structural Checks:**
+
+| Criterion | Auto-Check Method |
+|-----------|-------------------|
+| AC coverage | Cross-reference PRD `- [ ]` items against test plan test cases — report coverage % |
+| Test framework specified | Check for framework/tooling section (e.g., Jest, Playwright, pytest) |
+| Test levels defined | Check for unit/integration/E2E level categorization |
+| Story-to-test mapping | Verify each PRD story has a corresponding test section |
+| Error scenarios present | Check for negative/error test cases per story |
+| Boundary conditions tested | Check for boundary value tests (empty inputs, max values, off-by-one, null/undefined) |
+| Failure modes covered | Check for failure mode tests (network errors, invalid data, timeouts, permission denied) |
+| Integration points mapped | Check for integration test cases covering interactions between components, epics, or stories |
+| Component interactions verified | Check that integration tests cover data flow between components (not just individual units) |
+| Data flow boundaries tested | Check for tests at data transformation points (input parsing, output formatting, cross-system boundaries) |
+| E2E scenarios cover critical journeys | Check for end-to-end test cases mapping to the PRD's primary user workflows |
+| E2E happy paths and error paths | Verify E2E section includes both success and failure scenarios |
+| E2E scenarios map to PRD requirements | Cross-reference E2E test cases against PRD requirements for traceability |
+| Framework consistent with test strategy | If `Inception/Test-Strategy.md` exists, verify test plan aligns with its guidance |
+| Coverage targets realistic | Compare stated coverage targets to project scope — flag unrealistically high (100%) or low (<60%) targets |
+
+Present the coverage summary to the user before asking subjective questions.
+
+**Step 2b: Ask Subjective Criteria**
+
+Ask the user only about criteria requiring human judgment:
+
+```javascript
+AskUserQuestion({
+  questions: [
+    {
+      question: "Are the edge cases and error scenarios thorough enough for the project's risk profile?",
+      header: "Edge Cases",
+      options: [
+        { label: "Thorough", description: "Error scenarios, boundary conditions, and failure modes well covered" },
+        { label: "Minor gaps", description: "Most error cases covered but some stories missing boundary tests" },
+        { label: "Significant gaps", description: "Many stories lack error scenarios or failure mode testing" }
+      ],
+      multiSelect: false
+    },
+    {
+      question: "Is the overall test strategy appropriate for this project's scope and complexity?",
+      header: "Strategy",
+      options: [
+        { label: "Appropriate", description: "Coverage targets realistic, test level balance makes sense for the scope" },
+        { label: "Needs refinement", description: "Strategy exists but coverage targets or level balance could improve" },
+        { label: "Inappropriate", description: "Strategy misaligned with project scope or missing key considerations" }
+      ],
+      multiSelect: false
+    }
+  ]
+});
+```
+
+**Conditional follow-up:** If user selects a warning or failure option for any subjective criterion, ask conversationally for specifics.
+
 Collect findings into structured categories: **Strengths**, **Concerns**, **Recommendations**.
 **Coverage gaps are reported as bullet-point concerns** (not tables) for `/resolve-review` parser compatibility.
 Example concern format:
@@ -139,6 +183,14 @@ Post a structured review comment to the GitHub issue:
 
 ### Findings
 
+#### Auto-Evaluated
+- ✅ [Criterion] — [evidence]
+- ❌ [Criterion] — [what's missing]
+
+#### User-Evaluated
+- ✅ [Criterion] — [user assessment]
+- ⚠️ [Criterion] — [user concern]
+
 **Strengths:**
 - [Strength 1]
 
@@ -152,6 +204,8 @@ Post a structured review comment to the GitHub issue:
 
 [Ready for approval | Ready with minor gaps | Needs revision | Needs major rework]
 ```
+
+**Backwards compatibility:** The `### Findings` section header and emoji markers remain unchanged for `/resolve-review` parser compatibility. The `#### Auto-Evaluated` and `#### User-Evaluated` subsections are additive.
 ```bash
 gh issue comment $ISSUE -F .tmp-review-comment.md
 rm .tmp-review-comment.md

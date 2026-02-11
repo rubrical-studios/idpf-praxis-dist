@@ -1,0 +1,105 @@
+{
+  "modes": {
+    "solo": {
+      "name": "Solo Developer",
+      "description": "Single developer working alone",
+      "focus": "Implementation-ready, clear requirements, testability"
+    },
+    "team": {
+      "name": "Team",
+      "description": "2-10 developers collaborating",
+      "focus": "Above + story sizing, priorities, dependencies"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "description": "Large teams with formal processes",
+      "focus": "Above + effort estimation, risk assessment, compliance"
+    }
+  },
+  "criteria": {
+    "title-clear": {
+      "name": "Title clear?",
+      "modes": ["solo", "team", "enterprise"],
+      "type": "objective",
+      "autoCheck": "Verify title is specific (>3 words), contains actionable context, not generic like 'Fix bug' or 'Update code'",
+      "description": "Issue title is clear and descriptive"
+    },
+    "description-sufficient": {
+      "name": "Description sufficient?",
+      "modes": ["solo", "team", "enterprise"],
+      "type": "subjective",
+      "description": "Issue description provides enough context"
+    },
+    "ac-present-testable": {
+      "name": "AC present and testable?",
+      "modes": ["solo", "team", "enterprise"],
+      "type": "objective",
+      "autoCheck": "Check for `- [ ]` checkbox items in issue body; verify each contains a measurable/verifiable statement",
+      "description": "Acceptance criteria exist and are testable"
+    },
+    "labels-correct": {
+      "name": "Labels correct?",
+      "modes": ["solo", "team", "enterprise"],
+      "type": "objective",
+      "autoCheck": "Verify issue has at least one type label (bug/enhancement/story/epic) matching its content",
+      "description": "Issue has appropriate labels"
+    },
+    "story-sizing": {
+      "name": "Story sized appropriately?",
+      "modes": ["team", "enterprise"],
+      "type": "subjective",
+      "description": "Story points or size estimate is appropriate"
+    },
+    "priority-set": {
+      "name": "Priority set?",
+      "modes": ["team", "enterprise"],
+      "type": "objective",
+      "autoCheck": "Check if priority field is set in project board via `gh pmu view --json=priority`",
+      "description": "Priority level is assigned (P0/P1/P2)"
+    },
+    "dependencies-identified": {
+      "name": "Dependencies identified?",
+      "modes": ["team", "enterprise"],
+      "type": "objective",
+      "autoCheck": "Check for `Refs #`, `Depends on #`, `Blocks #`, or `**Refs:**` patterns in body; verify referenced issues exist",
+      "description": "Dependencies on other issues are documented"
+    },
+    "effort-estimate": {
+      "name": "Effort estimate present?",
+      "modes": ["enterprise"],
+      "type": "objective",
+      "autoCheck": "Check for estimate/effort section or field in body (e.g., `**Estimate:**`, story points, time estimate)",
+      "description": "Time/effort estimation is documented"
+    },
+    "risk-assessment": {
+      "name": "Risk assessment documented?",
+      "modes": ["enterprise"],
+      "type": "subjective",
+      "description": "Technical and business risks are identified"
+    },
+    "scope-boundaries": {
+      "name": "Scope boundaries defined?",
+      "modes": ["solo", "team", "enterprise"],
+      "type": "objective",
+      "autoCheck": "Check for in-scope / out-of-scope sections or explicit boundary statements",
+      "description": "Issue or document defines what is and is not in scope"
+    },
+    "success-criteria-measurable": {
+      "name": "Success criteria measurable?",
+      "modes": ["solo", "team", "enterprise"],
+      "type": "objective",
+      "autoCheck": "Check for quantitative language, thresholds, or verifiable outcomes in AC or success criteria",
+      "description": "Success criteria contain measurable, verifiable statements"
+    },
+    "actionable": {
+      "name": "Issue actionable?",
+      "modes": ["solo", "team", "enterprise"],
+      "type": "objective",
+      "autoCheck": "Check for concrete next steps, clear requirements, or defined acceptance criteria",
+      "description": "Issue contains enough information to begin work"
+    }
+  },
+  "_meta": {
+    "note": "This file tracks cross-cutting criteria filtered by reviewMode. Type-specific criteria (bug repro steps, story format, epic sub-issues, etc.) are defined inline in each command spec (review-issue.md, review-prd.md, review-proposal.md, review-test-plan.md) and are always evaluated regardless of reviewMode."
+  }
+}

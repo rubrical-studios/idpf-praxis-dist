@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-02-09T17:48:21.214Z",
+  "generatedAt": "2026-02-11T20:47:24.814Z",
   "version": "1.0.0",
-  "commandCount": 14,
-  "extensionPointCount": 63,
+  "commandCount": 15,
+  "extensionPointCount": 68,
   "commands": {
     "bug": {
       "type": "EXTENSIBLE",
@@ -17,6 +17,37 @@
           "name": "post-create",
           "location": "After issue created",
           "purpose": "Notifications, auto-assignment to branch"
+        }
+      ]
+    },
+    "ci": {
+      "type": "EXTENSIBLE",
+      "description": "Manage GitHub Actions CI workflows interactively (project)",
+      "extensionPoints": [
+        {
+          "name": "pre-add",
+          "location": "",
+          "purpose": ""
+        },
+        {
+          "name": "post-add",
+          "location": "",
+          "purpose": ""
+        },
+        {
+          "name": "pre-recommend",
+          "location": "",
+          "purpose": ""
+        },
+        {
+          "name": "post-recommend",
+          "location": "",
+          "purpose": ""
+        },
+        {
+          "name": "custom-subcommands",
+          "location": "",
+          "purpose": ""
         }
       ]
     },

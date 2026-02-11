@@ -1,5 +1,5 @@
 ---
-version: "v0.41.1"
+version: "v0.42.0"
 description: Review a proposal with tracked history (project)
 argument-hint: "#issue"
 ---
@@ -75,37 +75,98 @@ Proposal file not found: `{path}`. Check the path in issue #$ISSUE?
 - **All criteria files missing:** `"No review criteria files found. Running standard review only."` → fall back to standard review only
 **If `--with` is not specified:** Skip extension loading (standard review only).
 ### Step 2: Perform Review
-Evaluate the proposal across four dimensions. Ask subjective questions **one at a time** (not batched). Each answer can inform the next question. Partial reviews are valid — the user may stop at any point.
+
+Evaluate the proposal using a two-phase approach: **auto-evaluate objective criteria** by reading the proposal file, then **ask the user only about subjective criteria** via `AskUserQuestion`.
+
+**Step 2a: Load reviewMode**
+
+```javascript
+const { getReviewMode } = require('./.claude/scripts/shared/lib/review-mode.js');
+const mode = getReviewMode();
+```
 
 <!-- USER-EXTENSION-START: criteria-customize -->
 <!-- USER-EXTENSION-END: criteria-customize -->
 
-#### Completeness
-- Does the proposal clearly state the problem being solved?
-- Is the proposed solution described with enough detail to implement?
-- Are implementation criteria or acceptance criteria defined?
-- Are alternatives considered and documented?
-- Is impact assessment present (scope, risk, effort)?
-#### Consistency
-- Does the proposal align with existing framework architecture?
-- Are there contradictions between sections?
-- Do implementation criteria match the proposed solution?
-#### Feasibility
-- Is the proposed solution technically achievable?
-- Are dependencies or prerequisites identified?
-- Is the effort estimate reasonable for the scope?
-#### Quality
-- Is the writing clear and unambiguous?
-- Are edge cases and error handling addressed?
-- Is the proposal self-contained (a reader can understand it without external context)?
-Collect findings into structured categories: **Strengths**, **Concerns**, **Recommendations**.
+**Step 2b: Auto-Evaluate Objective Criteria**
+
+Read the proposal file and auto-evaluate structural/factual criteria. Do NOT ask the user about these.
+
+| Criterion | Auto-Check Method |
+|-----------|-------------------|
+| Required sections present | Check for: Problem Statement, Proposed Solution, Acceptance Criteria, Out of Scope sections |
+| Status field present | Check for `**Status:**` metadata field |
+| Cross-references valid | Verify any file paths mentioned in the proposal exist on disk |
+| Acceptance criteria defined | Check for `- [ ]` checkbox items or numbered criteria list |
+| Prerequisites documented | Check for prerequisites/dependencies section if applicable |
+| No internal contradictions | Verify solution addresses the stated problem; out-of-scope items not duplicated in solution |
+| Solution detail sufficient for implementation | Check for named files, APIs, data structures, or implementation steps (not just high-level prose) |
+| Alternatives considered | Check for alternatives/tradeoffs section documenting at least one rejected approach |
+| Impact assessment present | Check for impact/risk/effort section covering scope, risk, and estimated effort |
+| Implementation criteria match solution | Cross-reference AC items against the proposed solution — each AC should map to a solution element |
+| Edge cases and error handling addressed | Check for error handling, edge case, or failure mode sections |
+| Proposal self-contained | Check if external references (URLs, other repos, tools) are explained inline without requiring context |
+| Writing clear and unambiguous | Evaluate prose for vague language ("should work", "might need", "probably"), undefined terms, or ambiguous scope |
+
+**Present auto-evaluation results:**
+```
+Auto-evaluated (objective criteria):
+  ✅ Required sections present — Problem Statement, Proposed Solution, AC, Out of Scope all found
+  ✅ Status field present — "Draft"
+  ✅ Cross-references valid — all 3 file paths verified
+  ❌ Acceptance criteria not checkboxed — criteria listed as prose, not testable `- [ ]` items
+  ⚠️ Prerequisites section missing — no dependencies documented
+```
+
+**Step 2c: Ask Subjective Criteria**
+
+Ask the user only about criteria requiring human judgment:
+
+```javascript
+AskUserQuestion({
+  questions: [
+    {
+      question: "Is the proposed solution technically feasible and well-designed?",
+      header: "Feasibility",
+      options: [
+        { label: "Feasible ✅", description: "Technically achievable, approach is sound, edge cases addressed" },
+        { label: "Concerns ⚠️", description: "Generally feasible but some technical uncertainties" },
+        { label: "Not feasible ❌", description: "Significant technical barriers or flawed approach" }
+      ],
+      multiSelect: false
+    },
+    {
+      question: "Is the scope appropriate — neither too broad nor too narrow?",
+      header: "Scope",
+      options: [
+        { label: "Appropriate ✅", description: "Scope is well-bounded, achievable, and addresses the core problem" },
+        { label: "Needs adjustment ⚠️", description: "Slightly too broad or missing a key aspect" },
+        { label: "Problematic ❌", description: "Scope is too large, too vague, or misses the core problem" }
+      ],
+      multiSelect: false
+    }
+  ]
+});
+```
+
+**Conditional follow-up:** If user selects ⚠️ or ❌ for any subjective criterion, ask conversationally for specifics.
+
+**Partial reviews are valid** — the user may stop the review at any point. If they decline to answer a subjective question, record it as "⊘ Skipped" and continue.
+
+**Step 2d: Extension Criteria** (if `--with` specified)
+
+For each loaded extension domain, evaluate the proposal against the extension's Proposal Review Questions. Auto-evaluate objective extension criteria; ask the user about subjective ones.
+
+**Step 2e: Collect All Findings**
+
+Merge auto-evaluated and user-evaluated findings into structured categories: **Strengths**, **Concerns**, **Recommendations**.
 Determine a recommendation:
 - **Ready for implementation** — No blocking concerns
 - **Ready with minor revisions** — Small issues that don't block
 - **Needs revision** — Significant concerns that should be addressed first
 - **Needs major rework** — Fundamental issues with problem statement or approach
 **If extensions were loaded (Step 1b):**
-For each loaded extension, evaluate the proposal against the extension's Proposal Review Questions. Present findings as a separate section:
+For each loaded extension, present findings as a separate section:
 ```markdown
 ### Security Review (IDPF-Security)
 - [Finding 1]
@@ -147,6 +208,14 @@ Post a structured review comment to the GitHub issue:
 
 ### Findings
 
+#### Auto-Evaluated
+- ✅ [Criterion] — [evidence]
+- ❌ [Criterion] — [what's missing]
+
+#### User-Evaluated
+- ✅ [Criterion] — [user assessment]
+- ⚠️ [Criterion] — [user concern]
+
 **Strengths:**
 - [Strength 1]
 
@@ -160,6 +229,8 @@ Post a structured review comment to the GitHub issue:
 
 [Ready for implementation | Ready with minor revisions | Needs revision | Needs major rework]
 ```
+
+**Backwards compatibility:** The `### Findings` section header and emoji markers (✅ ⚠️ ❌) remain unchanged for `/resolve-review` parser compatibility. The `#### Auto-Evaluated` and `#### User-Evaluated` subsections are additive.
 ```bash
 gh issue comment $ISSUE -F .tmp-review-comment.md
 rm .tmp-review-comment.md

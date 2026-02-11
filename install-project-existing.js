@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.41.1
+ * @framework-script 0.42.0
  * IDPF Existing Project Installer
  * Adds IDPF integration to an existing codebase.
  *
@@ -1164,13 +1164,16 @@ async function main() {
   // Create or update framework-config.json with TDD skills
   const frameworkConfigPath = path.join(targetPath, 'framework-config.json');
   if (fs.existsSync(frameworkConfigPath)) {
-    // Update existing config - merge TDD skills with existing projectSkills
+    // Update existing config - merge TDD skills and refresh version fields
     const existingConfig = JSON.parse(fs.readFileSync(frameworkConfigPath, 'utf8'));
     const existingSkills = existingConfig.projectSkills || [];
     const mergedSkills = [...new Set([...existingSkills, ...TDD_SKILLS])].sort();
+    existingConfig.frameworkVersion = readFrameworkVersion(hubPath);
+    existingConfig.installedDate = new Date().toISOString().split('T')[0];
+    existingConfig.frameworkPath = config.hub;
     existingConfig.projectSkills = mergedSkills;
     fs.writeFileSync(frameworkConfigPath, JSON.stringify(existingConfig, null, 2) + '\n');
-    logSuccess('  ✓ framework-config.json (merged TDD skills)');
+    logSuccess('  ✓ framework-config.json (updated version fields, merged TDD skills)');
   } else {
     // Create new framework-config.json
     const frameworkConfig = {

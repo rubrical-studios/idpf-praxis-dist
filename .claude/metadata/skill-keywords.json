@@ -58,6 +58,15 @@
       "error message",
       "debugging guide"
     ],
+    "drawio-generation": [
+      "drawio",
+      "diagram",
+      "architecture diagram",
+      "flowchart",
+      "sequence diagram",
+      "xml diagram",
+      "draw.io"
+    ],
     "electron-development": [
       "electron",
       "desktop app",

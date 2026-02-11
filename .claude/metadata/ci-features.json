@@ -1,0 +1,156 @@
+{
+  "cross-os-testing": {
+    "id": "cross-os-testing",
+    "name": "Cross-OS Testing",
+    "description": "Test across multiple operating systems (Ubuntu, Windows, macOS)",
+    "tier": "v1",
+    "category": "testing",
+    "languages": ["*"],
+    "detectionPatterns": {
+      "yaml": ["strategy.matrix.os", "runs-on.*\\[.*ubuntu.*windows.*macos", "runs-on.*\\[.*macos.*windows.*ubuntu"]
+    },
+    "template": {
+      "yaml": "strategy:\n  matrix:\n    os:\n      - ubuntu-latest\n      - windows-latest\n      - macos-latest"
+    }
+  },
+  "multi-node-versions": {
+    "id": "multi-node-versions",
+    "name": "Multi-Node Versions",
+    "description": "Test across multiple Node.js versions",
+    "tier": "v1",
+    "category": "testing",
+    "languages": ["javascript", "typescript"],
+    "detectionPatterns": {
+      "yaml": ["strategy.matrix.node-version", "strategy.matrix.node_version", "setup-node.*matrix"]
+    },
+    "template": {
+      "yaml": "strategy:\n  matrix:\n    node-version:\n      - 18\n      - 20\n      - 22"
+    }
+  },
+  "paths-ignore": {
+    "id": "paths-ignore",
+    "name": "Paths Ignore",
+    "description": "Skip CI runs for documentation-only changes",
+    "tier": "v1",
+    "category": "efficiency",
+    "languages": ["*"],
+    "detectionPatterns": {
+      "yaml": ["on.*.paths-ignore", "on.*.paths_ignore", "paths-ignore:", "paths_ignore:"]
+    },
+    "template": {
+      "yaml": "on:\n  push:\n    paths-ignore:\n      - '**.md'\n      - 'docs/**'\n  pull_request:\n    paths-ignore:\n      - '**.md'\n      - 'docs/**'"
+    }
+  },
+  "concurrency-groups": {
+    "id": "concurrency-groups",
+    "name": "Concurrency Groups",
+    "description": "Cancel superseded workflow runs automatically",
+    "tier": "v1",
+    "category": "efficiency",
+    "languages": ["*"],
+    "detectionPatterns": {
+      "yaml": ["concurrency:", "concurrency.group", "cancel-in-progress"]
+    },
+    "template": {
+      "yaml": "concurrency:\n  group: ${{ github.workflow }}-${{ github.ref }}\n  cancel-in-progress: true"
+    }
+  },
+  "dependency-caching": {
+    "id": "dependency-caching",
+    "name": "Dependency Caching",
+    "description": "Cache dependencies to speed up builds",
+    "tier": "v1",
+    "category": "performance",
+    "languages": ["javascript", "typescript", "python", "rust", "go", "java"],
+    "detectionPatterns": {
+      "yaml": ["actions/cache@", "cache:", "cache-dependency-path"]
+    },
+    "template": {
+      "yaml": "- uses: actions/cache@v4\n  with:\n    path: ~/.npm\n    key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}\n    restore-keys: |\n      ${{ runner.os }}-node-"
+    }
+  },
+  "dependency-audit": {
+    "id": "dependency-audit",
+    "name": "Dependency Audit",
+    "description": "Scan for security vulnerabilities in dependencies",
+    "tier": "v1",
+    "category": "security",
+    "languages": ["javascript", "typescript", "python", "rust"],
+    "detectionPatterns": {
+      "yaml": ["npm audit", "yarn audit", "pip-audit", "cargo audit"]
+    },
+    "template": {
+      "yaml": "- name: Audit dependencies\n  run: npm audit --audit-level=moderate"
+    }
+  },
+  "deploy-on-tag": {
+    "id": "deploy-on-tag",
+    "name": "Deploy on Tag",
+    "description": "Trigger deployment when version tags are pushed",
+    "tier": "v1",
+    "category": "deployment",
+    "languages": ["*"],
+    "detectionPatterns": {
+      "yaml": ["on.push.tags", "on.*.tags.*v\\*", "tags:\\s*-\\s*['\"]v"]
+    },
+    "template": {
+      "yaml": "on:\n  push:\n    tags:\n      - 'v*'"
+    }
+  },
+  "codeql-analysis": {
+    "id": "codeql-analysis",
+    "name": "CodeQL Analysis",
+    "description": "GitHub security scanning for code vulnerabilities",
+    "tier": "v2",
+    "category": "security",
+    "languages": ["javascript", "typescript", "python", "java", "go", "ruby", "csharp", "cpp"],
+    "detectionPatterns": {
+      "yaml": ["github/codeql-action", "codeql-action/init", "codeql-action/analyze"]
+    },
+    "template": {
+      "yaml": "- uses: github/codeql-action/init@v3\n  with:\n    languages: ${{ matrix.language }}\n- uses: github/codeql-action/analyze@v3"
+    }
+  },
+  "coverage-upload": {
+    "id": "coverage-upload",
+    "name": "Coverage Upload",
+    "description": "Upload test coverage to Codecov or Coveralls",
+    "tier": "v2",
+    "category": "quality",
+    "languages": ["*"],
+    "detectionPatterns": {
+      "yaml": ["codecov/codecov-action", "coverallsapp/github-action", "coverage"]
+    },
+    "template": {
+      "yaml": "- uses: codecov/codecov-action@v4\n  with:\n    token: ${{ secrets.CODECOV_TOKEN }}\n    fail_ci_if_error: false"
+    }
+  },
+  "conventional-commits": {
+    "id": "conventional-commits",
+    "name": "Conventional Commits",
+    "description": "Enforce conventional commit message format",
+    "tier": "v2",
+    "category": "quality",
+    "languages": ["*"],
+    "detectionPatterns": {
+      "yaml": ["commitlint", "conventional-changelog", "semantic-release"]
+    },
+    "template": {
+      "yaml": "- name: Lint commit messages\n  uses: wagoid/commitlint-github-action@v5"
+    }
+  },
+  "stale-cleanup": {
+    "id": "stale-cleanup",
+    "name": "Stale Issue Cleanup",
+    "description": "Automatically close inactive issues and PRs",
+    "tier": "v2",
+    "category": "maintenance",
+    "languages": ["*"],
+    "detectionPatterns": {
+      "yaml": ["actions/stale@", "stale:", "schedule.*cron"]
+    },
+    "template": {
+      "yaml": "- uses: actions/stale@v9\n  with:\n    stale-issue-message: 'This issue has been automatically marked as stale.'\n    days-before-stale: 60\n    days-before-close: 7"
+    }
+  }
+}

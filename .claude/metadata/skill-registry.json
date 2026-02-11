@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-02-09T17:48:10.537Z",
+  "generatedAt": "2026-02-11T20:47:57.491Z",
   "version": "1.0.0",
-  "skillCount": 23,
+  "skillCount": 24,
   "skills": [
     {
       "name": "anti-pattern-analysis",
@@ -37,6 +37,20 @@
       "name": "common-errors",
       "description": "Diagnose and solve common beginner programming mistakes in Flask or Sinatra development with detailed explanations",
       "triggers": []
+    },
+    {
+      "name": "drawio-generation",
+      "description": "Generate valid .drawio.svg diagrams with editable mxGraphModel structure",
+      "triggers": [
+        "drawio",
+        "svg",
+        "diagram",
+        "uml",
+        "mxgraph",
+        "activity",
+        "use-case",
+        "sequence"
+      ]
     },
     {
       "name": "electron-development",

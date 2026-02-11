@@ -1,5 +1,5 @@
 ---
-version: "v0.41.1"
+version: "v0.42.0"
 description: Start working on issues with validation and auto-TODO (project)
 argument-hint: "#issue [#issue...] | all in <status>"
 ---
@@ -134,6 +134,7 @@ Read `framework-config.json` for `processFramework` field:
 ### Step 9: Work the Issue
 Perform implementation work according to framework methodology.
 ### Step 10: Verify Acceptance Criteria
+**IMPORTANT — Ground in file state:** Before evaluating each AC, re-read the actual file content using the Read tool. Do NOT evaluate from memory — re-read to confirm the criterion is met in current code. This prevents batch fatigue hallucination.
 After work, verify each AC:
 - **Can verify** → Mark `[x]`, continue
 - **Cannot verify** (manual, external) → **STOP**, report to user, wait for disposition

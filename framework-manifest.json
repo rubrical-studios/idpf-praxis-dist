@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.41.1",
+  "version": "0.42.0",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -81,7 +81,9 @@
         "files": [
           "analyze-commits.js",
           "assign-branch.js",
+          "ci-hints.js",
           "cleanup-release-assets.js",
+          "done-verify.js",
           "extensions-cli.js",
           "generate-changelog.js",
           "install-skill.js",
@@ -90,7 +92,8 @@
           "switch-branch.js",
           "transfer-issue.js",
           "update-release-notes.js",
-          "wait-for-ci.js"
+          "wait-for-ci.js",
+          "ci-watch.js"
         ]
       },
       "shared/lib": {
@@ -99,7 +102,8 @@
         "files": [
           "gh.js",
           "git.js",
-          "output.js"
+          "output.js",
+          "review-mode.js"
         ]
       },
       "hooks": {
@@ -159,12 +163,23 @@
           "name": "recipe-tech-mapping",
           "source": ".claude/metadata/recipe-tech-mapping.json",
           "description": "Tech stack to recipe mappings for /charter suggestions"
+        },
+        {
+          "name": "review-mode-criteria",
+          "source": ".claude/metadata/review-mode-criteria.json",
+          "description": "Review mode criteria mapping for context-aware reviews"
+        },
+        {
+          "name": "ci-features",
+          "source": ".claude/metadata/ci-features.json",
+          "description": "CI feature registry for /ci list and /ci add commands"
         }
       ]
     }
   },
   "extensibleCommands": [
     "bug",
+    "ci",
     "create-branch",
     "create-prd",
     "destroy-branch",

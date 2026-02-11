@@ -1,5 +1,5 @@
 ---
-version: "v0.41.1"
+version: "v0.42.0"
 description: Install skills from the framework to your project
 argument-hint: "<skill-name> | --list [--installed]"
 ---

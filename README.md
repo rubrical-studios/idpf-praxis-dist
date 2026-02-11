@@ -1,8 +1,11 @@
-# IDPF Framework - AI-Assisted Development
+# IDPF — Iterative Development Process Frameworks
 
-**Current Version:** v0.41.1
+[![Version](https://img.shields.io/github/v/release/rubrical-studios/idpf-praxis-dist?label=version&color=blue)](https://github.com/rubrical-studios/idpf-praxis-dist/releases)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Claude%20Code-blueviolet)](https://claude.ai/code)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen)](https://nodejs.org/)
 
-A comprehensive ecosystem for AI-assisted software development with Claude.
+A structured framework for building software with an AI assistant. You define what to build; the AI writes the code. IDPF provides the process — TDD enforcement, story-driven workflows, review checkpoints, and release management — so the AI builds your project methodically. No coding experience required.
 
 ---
 
@@ -46,7 +49,7 @@ The hub installer will:
 
 ---
 
-## Skills (23)
+## Skills (24)
 
 **TDD:** tdd-red-phase, tdd-green-phase, tdd-refactor-phase, tdd-failure-recovery, test-writing-patterns
 
@@ -63,6 +66,8 @@ The hub installer will:
 **Analysis:** anti-pattern-analysis, bdd-writing, codebase-analysis, extract-prd
 
 **DevOps:** ci-cd-pipeline-design
+
+**Diagrams:** drawio-generation
 
 **Desktop:** electron-development, playwright-setup
 
@@ -113,6 +118,6 @@ https://github.com/rubrical-studios/idpf-praxis
 
 ## License
 
-MIT License - Copyright (c) 2025 Rubrical Studios
+Copyright 2025-2026 Rubrical Studios
 
-See [LICENSE](LICENSE) for full text.
+Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for the full text.

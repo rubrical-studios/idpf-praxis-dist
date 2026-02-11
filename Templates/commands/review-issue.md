@@ -1,5 +1,5 @@
 ---
-version: "v0.41.1"
+version: "v0.42.0"
 description: Review issues with type-specific criteria (project)
 argument-hint: "#issue [#issue...]"
 ---
@@ -85,45 +85,64 @@ Continue with generic criteria (non-blocking).
 - **All criteria files missing:** `"No review criteria files found. Running standard review only."` → fall back to standard review only
 **If `--with` is not specified:** Skip extension loading (standard review only).
 ### Step 3: Perform Review
-Evaluate the issue based on its type. Ask subjective questions **one at a time** (not batched).
+Evaluate the issue using a two-phase approach: **auto-evaluate objective criteria** by reading the issue, then **ask the user only about subjective criteria** via `AskUserQuestion`. Filter criteria by `reviewMode` from `framework-config.json`.
+**Step 3a: Load reviewMode Configuration**
+```javascript
+const { getReviewMode, shouldEvaluate, isObjective } = require('./.claude/scripts/shared/lib/review-mode.js');
+const mode = getReviewMode(); // 'solo', 'team', or 'enterprise'
+```
 
 <!-- USER-EXTENSION-START: criteria-customize -->
 <!-- USER-EXTENSION-END: criteria-customize -->
 
-#### All Types (Common Criteria)
-- Is the title clear and descriptive?
-- Is the description sufficient to understand the issue?
-- Are labels correct and complete?
-- Is priority appropriate for the content?
-- Are acceptance criteria present and testable?
-- Are acceptance criteria structured as testable assertions (TDD-compatible)?
-- Does the issue scope support incremental test-driven implementation?
-#### Bug-Specific Criteria
-- Are reproduction steps documented?
-- Is expected vs actual behavior clearly stated?
-- Is environment or browser information included?
-- Is severity proportionate to the impact?
-#### Enhancement-Specific Criteria
-- Is the user value proposition clear?
-- Are scope boundaries defined (in-scope / out-of-scope)?
-- Are success criteria measurable?
-#### Story-Specific Criteria
-- Does it follow user story format ("As a [user] I want [goal] so that [benefit]")?
-- Are acceptance criteria complete and testable?
-- Is the story sized appropriately (not too large for a single iteration)?
-- Does the issue match the **Canonical Story Body Template**? If **NO**, repair.
-#### Epic-Specific Criteria
-- Is the overall scope well-defined?
-- Is the sub-issue breakdown complete?
-- Are dependencies between sub-issues identified?
-- Are success criteria for the epic defined?
-- **MUST HAVE**: Iterate over each sub issue and perform a review for each.
-#### Generic Criteria (Unrecognized Labels)
-- Is the title clear?
-- Is the description complete?
-- Are acceptance criteria present?
-- Is the issue actionable?
-Collect findings using check marks for quick scanning:
+**Step 3b: Auto-Evaluate Objective Criteria**
+For each **objective** criterion applicable to the current reviewMode, evaluate autonomously by reading the issue content. Do NOT ask the user.
+**Common Objective Criteria:**
+| Criterion | Auto-Check Method |
+|-----------|-------------------|
+| `title-clear` | Verify title is specific (>3 words), contains actionable context, not generic |
+| `ac-present-testable` | Check for `- [ ]` checkbox items; verify each contains measurable/verifiable statement |
+| `labels-correct` | Verify issue has at least one type label matching its content |
+| `priority-set` | Check via `gh pmu view $ISSUE --json=priority` |
+| `dependencies-identified` | Check for `Refs #`, `Depends on #`, `Blocks #`, or `**Refs:**` patterns |
+| `effort-estimate` | Check for estimate/effort section or field in body |
+**Type-Specific Objective Checks:**
+**For Bug — auto-check:**
+- Reproduction steps present: look for numbered list or "Steps to Reproduce" section
+- Expected vs actual behavior documented: look for "Expected" and "Actual" sections
+- Environment info present: look for "Environment", browser, OS, version references
+- Severity proportionate to impact: compare severity/priority label to described user impact
+**For Story — auto-check:**
+- User story format: check for "As a ... I want ... So that ..." pattern
+- Acceptance criteria present: check for `- [ ]` items
+- AC structured as testable assertions: verify each `- [ ]` item is measurable/verifiable (TDD-compatible)
+- Scope supports incremental implementation: check if ACs are small, independent, testable units
+- Canonical story body template: compare body structure against expected template. If NOT matching, flag for repair
+**For Epic — auto-check:**
+- Sub-issues exist: run `gh pmu sub list $ISSUE` and verify non-empty result
+- Scope description present: check for description of what the epic covers
+- Success criteria for the epic defined: check for epic-level success criteria or definition of done
+- Dependencies between sub-issues identified: check sub-issue bodies for cross-references
+- **MUST: Iterate over each sub-issue and review** — for each sub-issue, run review criteria recursively
+**For Enhancement — auto-check:**
+- Motivation/rationale present: check for "Motivation", "Why", or rationale section
+- Proposed solution described: check for "Proposed Solution" or solution description
+- Scope boundaries defined: check for in-scope / out-of-scope sections
+- Success criteria measurable: check for quantitative language, thresholds, or verifiable outcomes
+**For Generic — auto-check:**
+- Body is non-empty and contains substantive content
+- Issue is actionable: check for concrete next steps, clear requirements, or defined AC
+Emit ✅ for pass, ⚠️ for partial/uncertain, ❌ for missing/fail. Include brief evidence for each finding.
+**Step 3c: Ask Subjective Criteria**
+For **subjective** criteria applicable to the current reviewMode, use `AskUserQuestion`:
+- `description-sufficient`: "Does the description provide enough context for someone unfamiliar with this area?"
+- `story-sizing` (team/enterprise): "Is this appropriately sized for a single iteration?"
+- `risk-assessment` (enterprise): "Are technical and business risks adequately identified?"
+If no subjective criteria apply (all filtered by reviewMode), skip the question step entirely.
+**Step 3d: Extension Criteria** (if `--with` specified)
+For each loaded extension domain, evaluate the issue against the extension's Issue Review Questions. Auto-evaluate objective; ask user about subjective.
+**Step 3e: Collect All Findings**
+Merge auto-evaluated and user-evaluated findings using check marks:
 - `✅` — Criterion met
 - `⚠️` — Needs attention
 - `❌` — Missing or incorrect
@@ -133,7 +152,7 @@ Determine a recommendation:
 - **Needs revision** — Should be addressed before starting work
 - **Needs major rework** — Fundamental issues with issue definition
 **If extensions were loaded (Step 2b):**
-For each loaded extension, evaluate the issue against the extension's Issue Review Questions. Present findings as a separate section:
+For each loaded extension, present findings as a separate section:
 ```markdown
 ### Security Review (IDPF-Security)
 - [Finding 1]
@@ -165,13 +184,19 @@ Post a structured review comment:
 **Extensions Applied:** {list of applied extensions, or "None"}
 
 ### Findings
-- ✅ [Criterion met]
-- ⚠️ [Needs attention]
-- ❌ [Missing or incorrect]
+
+#### Auto-Evaluated
+- ✅ [Criterion] — [evidence]
+- ❌ [Criterion] — [what's missing]
+
+#### User-Evaluated
+- ✅ [Criterion] — [user assessment]
+- ⚠️ [Criterion] — [user concern]
 
 ### Recommendation
 **[Ready for work | Needs minor revision | Needs revision | Needs major rework]** — [Brief explanation]
 ```
+**Backwards compatibility:** The `### Findings` section header and emoji markers (✅ ⚠️ ❌) remain unchanged for `/resolve-review` parser compatibility. The `#### Auto-Evaluated` and `#### User-Evaluated` subsections are additive.
 ```bash
 gh issue comment $ISSUE -F .tmp-review-comment.md
 rm .tmp-review-comment.md

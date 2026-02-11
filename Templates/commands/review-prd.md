@@ -1,5 +1,5 @@
 ---
-version: "v0.41.1"
+version: "v0.42.0"
 description: Review a PRD with tracked history (project)
 argument-hint: "#issue"
 ---
@@ -74,73 +74,137 @@ Continue with PRD-only review (non-blocking).
 1. Read `.claude/metadata/review-extensions.json`
 2. Parse the `--with` value:
    - `--with all` → load all registered extensions
-   - `--with security,performance` → load specified extensions (trim spaces from comma-separated list)
+   - `--with security,performance` → load specified extensions (trim spaces)
 3. For each requested extension ID:
    - Look up the `source` path in the registry
    - Read the criteria file content
    - Extract the **PRD Review Questions** section
-4. If an extension ID is not found in the registry, warn: `"Unknown extension: {id}. Available: security, accessibility, performance, chaos, contract, qa"`
+4. If extension ID not found: `"Unknown extension: {id}. Available: security, accessibility, performance, chaos, contract, qa"`
 5. Store loaded criteria for use in Step 3
 **Error Handling (Extension Loading):**
 - **Registry not found:** `"Review extensions registry not found. Run hub update or check installation."` → fall back to standard review only
 - **Registry malformed:** `"Review extensions registry is malformed. Run hub update or check installation."` → fall back to standard review only
-- **Criteria file not found:** `"Warning: Review criteria file not found for '{domain}'. Skipping domain. Update hub to resolve."` → continue with remaining domains
+- **Criteria file not found:** `"Warning: Review criteria file not found for '{domain}'. Skipping domain. Update hub to resolve."` → continue with remaining
 - **All criteria files missing:** `"No review criteria files found. Running standard review only."` → fall back to standard review only
 **If `--with` is not specified:** Skip extension loading (standard review only).
 ### Step 3: Perform Review
-Evaluate the PRD across these dimensions. Ask subjective questions **one at a time** (not batched).
+
+Evaluate the PRD using a two-phase approach: **auto-evaluate objective criteria** by reading the PRD and test plan files, then **ask the user only about subjective criteria** via `AskUserQuestion`.
+
+**Step 3a: Load reviewMode**
+
+```javascript
+const { getReviewMode } = require('./.claude/scripts/shared/lib/review-mode.js');
+const mode = getReviewMode();
+```
 
 <!-- USER-EXTENSION-START: criteria-customize -->
 <!-- USER-EXTENSION-END: criteria-customize -->
 
-#### Requirements Completeness
-- Is the problem statement clear and well-defined?
-- Are all functional requirements documented?
-- Are success criteria measurable and verifiable?
-- Are scope boundaries (in-scope / out-of-scope) defined?
-#### User Stories
-- Do user stories follow the standard format (As a / I want / So that)?
-- Does each story have acceptance criteria?
-- Are story priorities assigned?
-- Are stories sized appropriately (not too large)?
-#### Acceptance Criteria
-- Are acceptance criteria specific, measurable, and testable?
-- Do they cover happy paths and error cases?
-- Are edge cases identified?
-#### Non-Functional Requirements (NFRs)
-- Are performance requirements specified?
-- Are security considerations documented?
-- Are scalability or availability requirements present (if applicable)?
-#### Test Plan Alignment (if test plan present)
-- Does the test plan cover all user stories?
-- Are acceptance criteria mapped to test cases?
-- Are integration and E2E test scenarios defined?
-- Is test coverage approach documented?
-Collect findings into structured categories: **Strengths**, **Concerns**, **Recommendations**.
+**Step 3b: Auto-Evaluate Objective Criteria**
+
+Read the PRD file (and test plan if present) and auto-evaluate structural/factual criteria. Do NOT ask the user about these.
+
+| Criterion | Auto-Check Method |
+|-----------|-------------------|
+| Required sections present | Check for: Summary, Problem Statement, Proposed Solution, User Stories, Acceptance Criteria, Out of Scope, NFRs |
+| Scope boundaries defined | Check for explicit in-scope / out-of-scope sections with specific boundary statements |
+| Success criteria measurable | Check for quantitative language, verifiable outcomes, or measurable thresholds |
+| Story format compliance | Verify each user story follows "As a ... I want ... So that ..." pattern |
+| All stories have ACs | Check each story/epic has `- [ ]` checkbox items |
+| Story numbering consistent | Verify epic/story numbering is sequential and cross-referenced correctly |
+| Story priorities assigned | Check if stories have priority indicators (P0/P1/P2) or priority ordering |
+| Stories sized appropriately | Check AC count and scope per story — flag stories with >8 ACs or overly broad scope |
+| AC cover happy paths and error cases | For each story, verify ACs include success scenarios and error/failure handling |
+| Edge cases identified | Check for edge case mentions (boundary conditions, empty inputs, concurrent access, etc.) |
+| Cross-references valid | Verify file paths, issue numbers, and proposal references exist |
+| Performance requirements specified | Check NFR section for performance targets (response time, throughput, resource limits) |
+| Security considerations documented | Check NFR section for security requirements (authentication, authorization, data handling) |
+| Scalability or availability requirements | Check NFR section for scalability limits, availability targets, or capacity planning |
+| Test plan presence | Check if test plan file exists alongside PRD (from Step 2) |
+| AC coverage (if test plan) | Cross-reference each `- [ ]` AC against test plan test cases — report coverage % |
+| Integration test scenarios (if test plan) | Check test plan for integration test cases covering component interactions |
+| E2E test scenarios (if test plan) | Check test plan for end-to-end scenarios covering critical user journeys |
+| Test coverage approach documented | Check test plan for coverage targets and testing strategy section |
+
+**Present auto-evaluation results:**
+```
+Auto-evaluated (objective criteria):
+  ✅ Required sections present — all 7 sections found
+  ✅ Story format compliance — 10/10 stories follow "As a..." format
+  ✅ All stories have ACs — 38 total ACs across 10 stories
+  ⚠️ Story numbering — Epic 2, Story 2.4 referenced but not defined
+  ✅ Cross-references valid — proposal #1187, 3 file paths verified
+  ✅ Test plan present — Test-Plan-DrawIO-Generation-Skill.md found
+  ⚠️ AC coverage — 35/38 ACs mapped to test cases (92% coverage)
+```
+
+**Step 3c: Ask Subjective Criteria**
+
+Ask the user only about criteria requiring human judgment:
+
+```javascript
+AskUserQuestion({
+  questions: [
+    {
+      question: "Are the acceptance criteria specific enough to be independently testable? (Auto-checks verified structure; this asks about semantic quality.)",
+      header: "AC Quality",
+      options: [
+        { label: "Testable ✅", description: "ACs are specific, measurable, and independently verifiable" },
+        { label: "Mostly testable ⚠️", description: "Most ACs are testable but some are vague or overlapping" },
+        { label: "Not testable ❌", description: "ACs are too vague, subjective, or not independently verifiable" }
+      ],
+      multiSelect: false
+    },
+    {
+      question: "Does the PRD adequately decompose the problem — are the epics/stories the right granularity for this scope?",
+      header: "Decomposition",
+      options: [
+        { label: "Well decomposed ✅", description: "Stories are right-sized, epics group logically, nothing missing" },
+        { label: "Minor issues ⚠️", description: "Some stories too large or grouping could improve" },
+        { label: "Needs rework ❌", description: "Stories too coarse, missing key functionality, or poorly grouped" }
+      ],
+      multiSelect: false
+    }
+  ]
+});
+```
+
+**Note:** NFR adequacy is now auto-evaluated (performance, security, scalability checked individually). The subjective question shifted from "are NFRs adequate?" to "is the decomposition right?" — a judgment requiring human context.
+
+**Conditional follow-up:** If user selects warning or fail for any subjective criterion, ask conversationally for specifics.
+
+**Step 3d: Extension Criteria** (if `--with` specified)
+
+For each loaded extension domain, evaluate the PRD against the extension's PRD Review Questions. Auto-evaluate objective extension criteria; ask the user about subjective ones.
+
+**Step 3e: Collect All Findings**
+
+Merge auto-evaluated and user-evaluated findings into structured categories: **Strengths**, **Concerns**, **Recommendations**.
 Determine a recommendation:
 - **Ready for backlog creation** — No blocking concerns
 - **Ready with minor revisions** — Small issues that don't block
 - **Needs revision** — Significant concerns that should be addressed first
 - **Needs major rework** — Fundamental issues with requirements or scope
 **If extensions were loaded (Step 2b):**
-For each loaded extension, evaluate the PRD against the extension's PRD Review Questions. Present findings as a separate section:
+For each loaded extension, present findings as a separate section:
 ```markdown
 ### Security Review (IDPF-Security)
 - [Finding 1]
 - [Finding 2]
 ```
 Extension findings can **escalate** the overall recommendation but cannot downgrade it.
-**Applicability Filtering:** Omit extension domain sections that produce no applicable findings. Only domains with actual findings appear in the output and in the `**Extensions Applied:**` header. If no domains produce findings, fall back to standard-only review with a warning: `"No domain extensions produced findings. Showing standard review only."` At least one domain section must appear when `--with` is used; otherwise the fallback applies.
+**Applicability Filtering:** Omit extension domain sections with no applicable findings. Only domains with actual findings appear in the output and in the `**Extensions Applied:**` header. If no domains produce findings, fall back to standard-only review: `"No domain extensions produced findings. Showing standard review only."` At least one domain section must appear when `--with` is used; otherwise the fallback applies.
 ### Step 4: Update PRD Metadata
 Read the current PRD file content.
 **Update `**Reviews:** N` field:**
 - If `**Reviews:**` field exists: increment the number (e.g., `**Reviews:** 1` → `**Reviews:** 2`)
-- If `**Reviews:**` field does not exist: add `**Reviews:** 1` after the existing metadata fields, before the first `---` separator
+- If not present: add `**Reviews:** 1` after existing metadata fields, before the first `---` separator
 ### Step 5: Update Review Log
 **If `## Review Log` section exists:** Append a new row to the existing table.
 **If `## Review Log` section does not exist:**
 - If `**End of PRD**` marker exists: insert the Review Log section before it
-- If no `**End of PRD**` marker (DD14 fallback): append the Review Log section at the very end of the file
+- If no `**End of PRD**` marker (DD14 fallback): append at the very end of the file
 **Review Log format:**
 ```markdown
 ---
@@ -166,6 +230,14 @@ Post a structured review comment to the GitHub issue:
 
 ### Findings
 
+#### Auto-Evaluated
+- ✅ [Criterion] — [evidence]
+- ❌ [Criterion] — [what's missing]
+
+#### User-Evaluated
+- ✅ [Criterion] — [user assessment]
+- ⚠️ [Criterion] — [user concern]
+
 **Strengths:**
 - [Strength 1]
 
@@ -179,6 +251,8 @@ Post a structured review comment to the GitHub issue:
 
 [Ready for backlog creation | Ready with minor revisions | Needs revision | Needs major rework]
 ```
+
+**Backwards compatibility:** The `### Findings` section header and emoji markers remain unchanged for `/resolve-review` parser compatibility. The `#### Auto-Evaluated` and `#### User-Evaluated` subsections are additive.
 ```bash
 gh issue comment $ISSUE -F .tmp-review-comment.md
 rm .tmp-review-comment.md
