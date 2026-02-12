@@ -1,5 +1,5 @@
 # Auto-Abort Implementation Guide
-**Version:** v0.42.1
+**Version:** v0.42.2
 
 **Framework:** IDPF-Chaos
 

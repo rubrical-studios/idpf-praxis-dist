@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.42.1
+ * @framework-script 0.42.2
  * transfer-issue.js
  *
  * Transfer an issue between branches.

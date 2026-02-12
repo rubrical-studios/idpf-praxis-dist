@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.42.1
+ * @framework-script 0.42.2
  * IDPF New Project Installer
  * Creates a new project directory with full IDPF integration.
  *
@@ -739,6 +739,33 @@ fields:
 }
 
 /**
+ * Run gh pmu init to create .gh-pmu.yml and set up project board labels/fields.
+ * Falls back to generateGhPmuConfig() if gh pmu init is not available.
+ */
+function runGhPmuInit(projectPath, projectTitle, projectNumber, owner, repoName) {
+  // Skip if .gh-pmu.yml already exists
+  if (fs.existsSync(path.join(projectPath, '.gh-pmu.yml'))) {
+    return { success: true, skipped: true, method: 'existing' };
+  }
+
+  try {
+    execSync(
+      `gh pmu init --non-interactive --project ${projectNumber} --repo ${owner}/${repoName} --owner ${owner}`,
+      { cwd: projectPath, stdio: 'pipe' }
+    );
+    return { success: true, skipped: false, method: 'gh-pmu-init' };
+  } catch (err) {
+    // Fallback: generate config file directly (labels/fields won't be created)
+    try {
+      generateGhPmuConfig(projectPath, projectTitle, projectNumber, owner, repoName);
+      return { success: true, skipped: false, method: 'fallback', warning: err.message };
+    } catch (writeErr) {
+      return { success: false, error: writeErr.message };
+    }
+  }
+}
+
+/**
  * Integrated GitHub setup flow
  */
 async function setupGitHubIntegration(rl, projectPath, projectName) {
@@ -874,10 +901,19 @@ async function setupGitHubIntegration(rl, projectPath, projectName) {
       }
     }
 
-    // Generate .gh-pmu.yml
+    // Initialize gh-pmu (creates .gh-pmu.yml + labels + branch field)
     if (projectResult.projectNumber) {
-      generateGhPmuConfig(projectPath, projectTitle, projectResult.projectNumber, ghUsername, repoName);
-      logSuccess('  ✓ Generated .gh-pmu.yml');
+      const initResult = runGhPmuInit(projectPath, projectTitle, projectResult.projectNumber, ghUsername, repoName);
+      if (initResult.success && !initResult.skipped) {
+        if (initResult.method === 'gh-pmu-init') {
+          logSuccess('  ✓ Initialized gh-pmu (config + labels + branch field)');
+        } else if (initResult.method === 'fallback') {
+          logSuccess('  ✓ Generated .gh-pmu.yml (fallback — run gh pmu init manually for labels)');
+          logWarning(`  ⚠ gh pmu init failed: ${initResult.warning}`);
+        }
+      } else if (initResult.skipped) {
+        log(colors.dim('  .gh-pmu.yml already exists — skipping init'));
+      }
 
       // Commit and push config
       try {
