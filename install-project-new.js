@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.42.0
+ * @framework-script 0.42.1
  * IDPF New Project Installer
  * Creates a new project directory with full IDPF integration.
  *
@@ -1019,6 +1019,7 @@ async function main() {
     frameworkVersion: readFrameworkVersion(hubPath),
     installedDate: new Date().toISOString().split('T')[0],
     processFramework: config.framework,
+    reviewMode: 'solo',
     frameworkPath: config.hub,
     projectSkills: [...TDD_SKILLS]
   };

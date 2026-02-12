@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.42.0
+ * @framework-script 0.42.1
  * IDPF Hub Installer
  * Creates a central IDPF installation that can serve multiple projects.
  *
@@ -168,7 +168,7 @@ When starting a new session:
 | Repository | \`basename $(git rev-parse --show-toplevel)\` |
 | Branch | \`git branch --show-current\` + clean/dirty status |
 | Process Framework | \`framework-config.json\` → \`processFramework\` |
-| Framework Version | \`framework-manifest.json\` → \`version\` |
+| Framework Version | \`framework-config.json\` → \`frameworkVersion\` |
 | Active Role | \`framework-config.json\` → \`domainSpecialist\` |
 | Charter Status | \`Active\` or \`Pending\` |
 | GitHub Workflow | \`gh pmu --version\` |
@@ -213,10 +213,12 @@ If Charter Status is Pending, display blocking message and run \`/charter\`.
 
 ## On-Demand Loading
 
+Paths use \`frameworkPath\` from \`framework-config.json\` (resolve relative to project root).
+
 | When Needed | Load From |
 |-------------|-----------|
-| Framework workflow | \`${hubPath}/{framework}/\` |
-| Domain specialist | \`${hubPath}/System-Instructions/Domain/Base/{specialist}.md\` |
+| Framework workflow | \`{frameworkPath}/{framework}/\` |
+| Domain specialist | \`{frameworkPath}/System-Instructions/Domain/Base/{specialist}.md\` |
 | Skill usage | \`.claude/skills/{skill-name}/SKILL.md\` |
 | Charter management | Run \`/charter\` command |
 

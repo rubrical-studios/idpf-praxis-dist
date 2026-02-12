@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
 /**
- * @framework-script 0.42.0
+ * @framework-script 0.42.1
  * CI Watch — Monitor GitHub Actions workflow runs by commit SHA
  *
  * Polls for CI run status and reports structured JSON results.
  * Used by /done (Step 6b) for background monitoring and /ci watch for manual use.
  *
- * Usage: node ci-watch.js --sha <commit> [--timeout <seconds>] [--poll <seconds>]
+ * Usage: node ci-watch.js --sha <commit> [--timeout <seconds>] [--poll <seconds>] [--max-wait <seconds>] [--branch <name>]
  *
  * Exit codes:
  *   0 = all runs passed
@@ -26,10 +26,10 @@ const { execSync } = require('child_process');
 /**
  * Parse CLI arguments
  * @param {string[]} argv - Command line arguments (process.argv.slice(2))
- * @returns {{ sha: string, timeout: number, poll: number, error?: string }}
+ * @returns {{ sha: string, timeout: number, poll: number, maxWait: number, branch: string|null, error?: string }}
  */
 function parseArgs(argv) {
-  const args = { sha: null, timeout: 300, poll: 15 };
+  const args = { sha: null, timeout: 300, poll: 15, maxWait: 60, branch: null };
 
   for (let i = 0; i < argv.length; i++) {
     switch (argv[i]) {
@@ -42,14 +42,59 @@ function parseArgs(argv) {
     case '--poll':
       args.poll = parseInt(argv[++i], 10);
       break;
+    case '--max-wait':
+      args.maxWait = parseInt(argv[++i], 10);
+      break;
+    case '--branch':
+      args.branch = argv[++i];
+      break;
     }
   }
 
   if (!args.sha) {
-    args.error = 'Missing required --sha argument. Usage: node ci-watch.js --sha <commit> [--timeout <seconds>] [--poll <seconds>]';
+    args.error = 'Missing required --sha argument. Usage: node ci-watch.js --sha <commit> [--timeout <seconds>] [--poll <seconds>] [--max-wait <seconds>] [--branch <name>]';
   }
 
   return args;
+}
+
+// --- Command Execution ---
+
+/**
+ * Default command executor
+ * @param {string} cmd - Full command to execute
+ * @returns {string} stdout
+ */
+function defaultExecCmd(cmd) {
+  return execSync(cmd, { encoding: 'utf-8', timeout: 5000 });
+}
+
+/**
+ * Resolve a potentially short SHA to full 40-char SHA
+ * @param {string} sha - Commit SHA (short or full)
+ * @param {Function} [execCmd] - Command executor (injectable for testing)
+ * @returns {string} Full 40-char SHA, or original if resolution fails
+ */
+function resolveSha(sha, execCmd = defaultExecCmd) {
+  if (/^[0-9a-f]{40}$/.test(sha)) return sha;
+  try {
+    return execCmd(`git rev-parse ${sha}`).trim();
+  } catch {
+    return sha;
+  }
+}
+
+/**
+ * Get the current git branch name
+ * @param {Function} [execCmd] - Command executor (injectable for testing)
+ * @returns {string|null} Branch name or null if unavailable
+ */
+function getCurrentBranch(execCmd = defaultExecCmd) {
+  try {
+    return execCmd('git branch --show-current').trim();
+  } catch {
+    return null;
+  }
 }
 
 // --- GitHub CLI Interaction ---
@@ -64,15 +109,26 @@ function defaultRunGh(args) {
 }
 
 /**
- * Find workflow runs for a commit SHA
- * @param {string} sha - Commit SHA
+ * Find workflow runs for a commit SHA, with optional branch-based fallback
+ * @param {string} sha - Commit SHA (should be full 40-char for reliable matching)
  * @param {Function} [runGh] - gh CLI runner (injectable for testing)
+ * @param {Object} [options] - { branch: string } for fallback lookup
  * @returns {Array<Object>} Array of run objects
  */
-function findRuns(sha, runGh = defaultRunGh) {
+function findRuns(sha, runGh = defaultRunGh, { branch } = {}) {
+  // Try commit-based lookup first
   try {
     const output = runGh(`run list --commit ${sha} --json databaseId,name,status,conclusion,headSha,event`);
-    return JSON.parse(output);
+    const runs = JSON.parse(output);
+    if (runs.length > 0) return runs;
+  } catch { /* fall through to branch fallback */ }
+
+  // Branch-based fallback: query by branch, filter by headSha
+  if (!branch) return [];
+  try {
+    const output = runGh(`run list --branch ${branch} --json databaseId,name,status,conclusion,headSha,event`);
+    const runs = JSON.parse(output);
+    return runs.filter(r => r.headSha === sha);
   } catch {
     return [];
   }
@@ -230,15 +286,15 @@ function sleep(ms) {
 
 /**
  * Phase 1: Wait for runs to appear for a commit
- * @param {string} sha - Commit SHA
- * @param {Object} options - { poll, maxWait, runGh }
+ * @param {string} sha - Commit SHA (should be full 40-char)
+ * @param {Object} options - { poll, maxWait, branch, runGh }
  * @returns {Promise<Array<Object>>} Found runs (may be empty)
  */
-async function waitForRuns(sha, { poll = 10, maxWait = 60, runGh = defaultRunGh } = {}) {
+async function waitForRuns(sha, { poll = 10, maxWait = 60, branch, runGh = defaultRunGh } = {}) {
   const deadline = Date.now() + maxWait * 1000;
 
   while (Date.now() < deadline) {
-    const runs = findRuns(sha, runGh);
+    const runs = findRuns(sha, runGh, { branch });
     if (runs.length > 0) {
       return runs;
     }
@@ -301,13 +357,18 @@ function collectResults(run, runGh = defaultRunGh) {
 
 /**
  * Main watch function — orchestrates all three phases for a single commit
- * @param {string} sha - Commit SHA
- * @param {Object} options - { timeout, poll, runGh }
+ * @param {string} sha - Commit SHA (short or full)
+ * @param {Object} options - { timeout, poll, maxWait, branch, runGh, execCmd }
  * @returns {Promise<{ output: string, exitCode: number }>}
  */
-async function watch(sha, { timeout = 300, poll = 15, runGh = defaultRunGh } = {}) {
+async function watch(sha, { timeout = 300, poll = 15, maxWait = 60, branch = null, runGh = defaultRunGh, execCmd = defaultExecCmd } = {}) {
+  // Resolve short SHA to full 40-char for reliable --commit matching
+  const fullSha = resolveSha(sha, execCmd);
+  // Detect branch for fallback if not explicitly provided
+  const effectiveBranch = branch || getCurrentBranch(execCmd);
+
   // Phase 1: Wait for runs to appear
-  const runs = await waitForRuns(sha, { poll: 10, maxWait: 60, runGh });
+  const runs = await waitForRuns(fullSha, { poll: 10, maxWait, branch: effectiveBranch, runGh });
 
   if (runs.length === 0) {
     const result = { found: false, conclusion: 'no-run-found' };
@@ -347,7 +408,7 @@ if (require.main === module) {
     process.exit(1);
   }
 
-  watch(args.sha, { timeout: args.timeout, poll: args.poll })
+  watch(args.sha, { timeout: args.timeout, poll: args.poll, maxWait: args.maxWait, branch: args.branch })
     .then(({ output, exitCode }) => {
       console.log(output);
       process.exit(exitCode);
@@ -362,6 +423,8 @@ if (require.main === module) {
 
 module.exports = {
   parseArgs,
+  resolveSha,
+  getCurrentBranch,
   mapExitCode,
   computeDuration,
   shouldSkipMonitoring,

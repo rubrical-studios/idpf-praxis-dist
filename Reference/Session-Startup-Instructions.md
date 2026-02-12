@@ -1,5 +1,5 @@
 # Session Startup Instructions
-**Version:** v0.42.0
+**Version:** v0.42.1
 **Purpose:** Standard initialization procedure for AI assistant sessions
 ---
 ## Rules Auto-Loading (v2.9+)
@@ -19,7 +19,7 @@ Essential rules auto-load from `.claude/rules/`:
 | Repository | `basename $(git rev-parse --show-toplevel)` |
 | Branch | `git branch --show-current` + clean/dirty status |
 | Process Framework | `framework-config.json` → `processFramework` |
-| Framework Version | `framework-manifest.json` → `version` |
+| Framework Version | `framework-config.json` → `frameworkVersion` |
 | Active Role | `framework-config.json` → `domainSpecialist` |
 | Charter Status | `Active` or `Pending` |
 | GitHub Workflow | `gh pmu --version` |

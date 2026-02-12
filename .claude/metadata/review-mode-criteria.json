@@ -26,7 +26,7 @@
     },
     "description-sufficient": {
       "name": "Description sufficient?",
-      "modes": ["solo", "team", "enterprise"],
+      "modes": ["team", "enterprise"],
       "type": "subjective",
       "description": "Issue description provides enough context"
     },

@@ -1,5 +1,5 @@
 # Visual Testing Integration Guide
-**Version:** v0.42.0
+**Version:** v0.42.1
 
 **Framework:** IDPF-QA-Automation
 
