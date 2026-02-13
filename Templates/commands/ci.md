@@ -1,5 +1,5 @@
 ---
-version: "v0.43.0"
+version: "v0.43.1"
 description: Manage GitHub Actions CI workflows interactively (project)
 argument-hint: "[list|validate|add|recommend|watch] (no args shows status)"
 ---

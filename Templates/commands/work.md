@@ -1,5 +1,5 @@
 ---
-version: "v0.43.0"
+version: "v0.43.1"
 description: Start working on issues with validation and auto-TODO (project)
 argument-hint: "#issue [#issue...] | all in <status>"
 ---
@@ -124,11 +124,11 @@ No acceptance criteria found in issue body. Create todos manually as needed.
 <!-- USER-EXTENSION-END: pre-framework-dispatch -->
 
 ### Step 8: Framework Methodology Dispatch
-Read `framework-config.json` for `processFramework` field:
+Read `framework-config.json` for `processFramework` and `frameworkPath` fields:
 | Framework | Action |
 |-----------|--------|
-| `IDPF-Agile` | Load `.min-mirror/IDPF-Agile/Agile-Core.md` — follow TDD RED-GREEN-REFACTOR cycle |
-| `IDPF-Vibe` | Load `.min-mirror/IDPF-Vibe/Vibe-Core.md` — follow rapid iteration methodology |
+| `IDPF-Agile` | Load `{frameworkPath}/IDPF-Agile/Agile-Core.md` — follow TDD RED-GREEN-REFACTOR cycle |
+| `IDPF-Vibe` | Load `{frameworkPath}/IDPF-Vibe/Vibe-Core.md` — follow rapid iteration methodology |
 | Not set / missing | Skip methodology dispatch — no framework enforced |
 **If framework file not found:** "Warning: Framework {name} not found. Proceeding without methodology." Continue (non-blocking).
 ### Step 9: Work the Issue

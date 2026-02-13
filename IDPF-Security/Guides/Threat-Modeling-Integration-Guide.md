@@ -1,5 +1,5 @@
 # Threat Modeling Integration Guide
-**Version:** v0.43.0
+**Version:** v0.43.1
 
 **Framework:** IDPF-Security
 
