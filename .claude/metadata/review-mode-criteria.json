@@ -97,6 +97,13 @@
       "type": "objective",
       "autoCheck": "Check for concrete next steps, clear requirements, or defined acceptance criteria",
       "description": "Issue contains enough information to begin work"
+    },
+    "test-coverage-proportionate": {
+      "name": "Test coverage proportionate to change scope?",
+      "modes": ["solo", "team", "enterprise"],
+      "type": "objective",
+      "autoCheck": "Read issue body and linked resources to determine change scope. Classify change type (single-path fix, multi-path refactor, new feature, behavior change). Scan ACs for test-related requirements (test, unit test, e2e, coverage, regression test). Compare inferred scope against test ACs and report proportionality with evidence.",
+      "description": "ACs include requirements for new/expanded tests when the change modifies or adds code paths"
     }
   },
   "_meta": {

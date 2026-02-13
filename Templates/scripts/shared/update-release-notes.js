@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.42.2
+ * @framework-script 0.43.0
  * @description Extract CHANGELOG section and update GitHub Release page with formatted notes
  * @checksum sha256:placeholder
  *
@@ -281,7 +281,7 @@ async function main() {
 
         // Extract section for this version including the header (for date)
         const versionPattern = new RegExp(
-            `## \\[${versionNum}\\]\\s*-\\s*(\\d{4}-\\d{2}-\\d{2})\\n([\\s\\S]*?)(?=## \\[|$)`
+            `## \\[${versionNum}\\]\\s*-\\s*(\\d{4}-\\d{2}-\\d{2})\\r?\\n([\\s\\S]*?)(?=## \\[|$)`
         );
         const match = changelog.match(versionPattern);
 
@@ -335,4 +335,18 @@ async function main() {
     }
 }
 
-main();
+// Export for testing
+module.exports = {
+    releaseExists,
+    getPreviousTag,
+    countCategoryItems,
+    generateSummary,
+    transformToReleaseFormat,
+    updateOrCreateRelease,
+    getRepoUrl,
+    main
+};
+
+if (require.main === module) {
+    main();
+}

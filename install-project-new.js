@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.42.2
+ * @framework-script 0.43.0
  * IDPF New Project Installer
  * Creates a new project directory with full IDPF integration.
  *
@@ -766,6 +766,125 @@ function runGhPmuInit(projectPath, projectTitle, projectNumber, owner, repoName)
 }
 
 /**
+ * Configure branch protection on main branch.
+ * Uses gh ruleset (preferred) or falls back to gh api (legacy branch protection).
+ * Idempotent: checks for existing protection before applying.
+ *
+ * @param {object} rl - readline interface for user prompts
+ * @param {string} projectPath - path to the project directory
+ * @param {string} owner - GitHub username/org
+ * @param {string} repoName - repository name
+ * @param {string} visibility - 'public' or 'private'
+ * @returns {object} { success, skipped, method, warning }
+ */
+async function configureBranchProtection(rl, projectPath, owner, repoName, visibility) {
+  // Check if branch protection is available for this repo
+  // GitHub free plan: branch protection only on public repos
+  // GitHub Pro/Team/Enterprise: also private repos
+  if (visibility === 'private') {
+    try {
+      // Check if the user's plan supports rulesets on private repos
+      // Attempt to list rulesets — free plan returns 404 or empty
+      execSync(`gh api repos/${owner}/${repoName}/rulesets`, { stdio: 'pipe' });
+    } catch {
+      logWarning('  ⚠ Branch protection may not be available (free plan + private repo)');
+      log(colors.dim('    Upgrade to GitHub Pro/Team for private repo branch protection.'));
+      log(colors.dim('    Alternatively, make the repo public to use branch protection.'));
+      return { success: false, skipped: true, warning: 'free-plan-private-repo' };
+    }
+  }
+
+  // Prompt user for confirmation
+  log();
+  log('  Would you like to lock down the main branch?');
+  log(colors.dim('  This requires PRs for merging and blocks direct pushes.'));
+  log();
+  const answer = await ask(rl, '  Configure branch protection on main? [y/N]: ');
+  if (answer.toLowerCase() !== 'y') {
+    log(colors.dim('  Branch protection skipped.'));
+    return { success: true, skipped: true };
+  }
+
+  // Check for existing rulesets (idempotent — don't duplicate)
+  try {
+    const existing = execSync(
+      `gh api repos/${owner}/${repoName}/rulesets --jq "[.[] | select(.name == \\"IDPF-Main-Protection\\")] | length"`,
+      { stdio: 'pipe' }
+    ).toString().trim();
+    if (existing !== '0') {
+      logSuccess('  ✓ Branch protection already configured (IDPF-Main-Protection ruleset exists)');
+      return { success: true, skipped: false, method: 'existing' };
+    }
+  } catch {
+    // API call failed — rulesets may not be supported, try legacy approach
+  }
+
+  // Try gh api to create a ruleset (GitHub's newer rulesets API)
+  const rulesetPayload = JSON.stringify({
+    name: 'IDPF-Main-Protection',
+    target: 'branch',
+    enforcement: 'active',
+    conditions: {
+      ref_name: {
+        include: ['refs/heads/main'],
+        exclude: []
+      }
+    },
+    rules: [
+      {
+        type: 'pull_request',
+        parameters: {
+          required_approving_review_count: 0,
+          dismiss_stale_reviews_on_push: false,
+          require_code_owner_review: false,
+          require_last_push_approval: false,
+          required_review_thread_resolution: false
+        }
+      }
+    ]
+  });
+
+  // Write payload to temp file (Windows safety — no inline JSON)
+  const tmpPayload = path.join(projectPath, '.tmp-ruleset.json');
+  fs.writeFileSync(tmpPayload, rulesetPayload);
+
+  try {
+    execSync(
+      `gh api repos/${owner}/${repoName}/rulesets --method POST --input .tmp-ruleset.json`,
+      { cwd: projectPath, stdio: 'pipe' }
+    );
+    logSuccess('  ✓ Branch protection configured (ruleset: IDPF-Main-Protection)');
+    return { success: true, skipped: false, method: 'ruleset' };
+  } catch (rulesetErr) {
+    // Rulesets not supported — fall back to legacy branch protection
+    try {
+      const protectionPayload = JSON.stringify({
+        required_pull_request_reviews: {
+          required_approving_review_count: 0,
+          dismiss_stale_reviews: false
+        },
+        enforce_admins: false,
+        required_status_checks: null,
+        restrictions: null
+      });
+      fs.writeFileSync(tmpPayload, protectionPayload);
+      execSync(
+        `gh api repos/${owner}/${repoName}/branches/main/protection --method PUT --input .tmp-ruleset.json`,
+        { cwd: projectPath, stdio: 'pipe' }
+      );
+      logSuccess('  ✓ Branch protection configured (legacy branch protection)');
+      return { success: true, skipped: false, method: 'legacy' };
+    } catch (legacyErr) {
+      logWarning(`  ⚠ Could not configure branch protection: ${legacyErr.message}`);
+      log(colors.dim('    You can configure it manually: Settings → Branches → Add rule'));
+      return { success: false, skipped: false, warning: legacyErr.message };
+    }
+  } finally {
+    try { fs.unlinkSync(tmpPayload); } catch { /* ignore cleanup failure */ }
+  }
+}
+
+/**
  * Integrated GitHub setup flow
  */
 async function setupGitHubIntegration(rl, projectPath, projectName) {
@@ -928,6 +1047,12 @@ async function setupGitHubIntegration(rl, projectPath, projectName) {
   } else {
     logWarning(`  ⚠ Could not copy project board: ${projectResult.error}`);
     log(colors.dim('    You can create a project board manually and run: gh pmu init'));
+  }
+
+  // Configure branch protection on main (only if repo was created)
+  if (repoResult.success) {
+    const protResult = await configureBranchProtection(rl, projectPath, ghUsername, repoName, visibility);
+    result.branchProtection = protResult;
   }
 
   return result;

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.42.2
+ * @framework-script 0.43.0
  * switch-branch.js
  *
  * Switch between branch contexts.
@@ -13,6 +13,7 @@
  */
 
 const { execSync } = require('child_process');
+const { ensureActiveLabel, getTrackerForBranch } = require('./lib/active-label');
 
 function exec(cmd) {
     try {
@@ -118,6 +119,12 @@ function main() {
     }
 
     console.log('\n✓ Context switched to branch: ' + targetBranch);
+
+    // Update active label on branch tracker
+    const tracker = getTrackerForBranch();
+    if (tracker) {
+        ensureActiveLabel(tracker);
+    }
 }
 
 if (require.main === module) {
