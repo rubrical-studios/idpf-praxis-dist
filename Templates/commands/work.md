@@ -1,5 +1,5 @@
 ---
-version: "v0.43.1"
+version: "v0.43.2"
 description: Start working on issues with validation and auto-TODO (project)
 argument-hint: "#issue [#issue...] | all in <status>"
 ---
@@ -132,7 +132,15 @@ Read `framework-config.json` for `processFramework` and `frameworkPath` fields:
 | Not set / missing | Skip methodology dispatch — no framework enforced |
 **If framework file not found:** "Warning: Framework {name} not found. Proceeding without methodology." Continue (non-blocking).
 ### Step 9: Work the Issue
-Perform implementation work according to framework methodology.
+Iterate through the auto-TODO from Step 7. For each acceptance criterion:
+1. **Mark TODO `in_progress`**
+2. **Execute TDD cycle** (RED → GREEN → REFACTOR) per framework methodology. If no framework loaded, implement directly with appropriate testing.
+3. **Run full test suite** — confirm no regressions
+4. **Mark TODO `completed`**
+5. **Commit** with `Refs #$ISSUE — <brief description>`
+**Commit granularity:** One commit per AC is the default. Closely related ACs may share a commit if separating them would create broken intermediate states. Never combine unrelated ACs.
+**If no auto-TODO was generated:** Work as a single unit and commit with `Refs #$ISSUE`.
+**Post-compaction recovery:** Re-read this spec and check TODO list to determine completed vs pending ACs. Resume from first incomplete AC.
 ### Step 10: Verify Acceptance Criteria
 **IMPORTANT — Ground in file state:** Before evaluating each AC, re-read the actual file content using the Read tool. Do NOT evaluate from memory — re-read to confirm the criterion is met in current code. This prevents batch fatigue hallucination.
 After work, verify each AC:

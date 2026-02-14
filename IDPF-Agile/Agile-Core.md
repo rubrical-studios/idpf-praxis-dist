@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Core
-**Version:** v0.43.1
+**Version:** v0.43.2
 **Module:** Core (loaded at session startup)
 ---
 ## Terminology
@@ -43,8 +43,10 @@ Each task follows **RED-GREEN-REFACTOR** autonomously:
 ### REFACTOR Phase
 1. Analyze code for refactoring opportunities
 2. Refactor while keeping tests passing
-3. Proceed to next behavior or complete story
-**TDD Execution:** Phases execute autonomously. Only workflow checkpoint is story completion (In Review -> Done).
+3. Run full test suite — confirm no regressions
+4. Commit: `Refs #$ISSUE — <what this cycle implements>`
+5. Proceed to next behavior or complete story
+**TDD Execution:** Phases execute autonomously. Commit after each REFACTOR phase to create natural recovery points. Only workflow checkpoint is story completion (In Review -> Done).
 **Skills Available:**
 - `tdd-red-phase`: RED phase guidance
 - `tdd-green-phase`: GREEN phase guidance
