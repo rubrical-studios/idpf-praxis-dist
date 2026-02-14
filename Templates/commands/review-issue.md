@@ -1,5 +1,5 @@
 ---
-version: "v0.43.3"
+version: "v0.43.4"
 description: Review issues with type-specific criteria (project)
 argument-hint: "#issue [#issue...]"
 ---
@@ -191,6 +191,11 @@ If recommendation starts with "Ready for":
 ```bash
 gh issue edit $ISSUE --add-label=reviewed
 ```
+**Epic sub-issue label propagation:** If issue type is `epic`, also apply `reviewed` label to all sub-issues:
+1. Retrieve sub-issues: `gh pmu sub list $ISSUE`
+2. For each sub-issue: `gh issue edit $SUB_ISSUE --add-label=reviewed`
+3. Track count for Step 6 reporting
+If not an epic, only the issue itself is labeled.
 If not "Ready for": skip.
 
 <!-- USER-EXTENSION-START: post-review -->
@@ -203,6 +208,10 @@ Review #N complete for Issue #$ISSUE: $TITLE
   Recommendation: [recommendation]
   Reviews: N (updated)
   Issue comment: [posted | failed]
+```
+**For epic issues with "Ready for" recommendation:** Include sub-issue reviewed label count:
+```
+  Sub-issues labeled 'reviewed': M
 ```
 **For multiple issues:** Report summary for each, then batch summary at end.
 **If `--with` is not specified**, append a discoverability tip:

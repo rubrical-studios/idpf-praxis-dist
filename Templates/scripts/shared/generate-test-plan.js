@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.43.3
+ * @framework-script 0.43.4
  * generate-test-plan.js - Generate test plan skeleton from branch issues
  * @module scripts/shared/generate-test-plan
  *
