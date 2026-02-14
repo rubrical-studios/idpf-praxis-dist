@@ -1,5 +1,5 @@
 ---
-version: "v0.43.2"
+version: "v0.43.3"
 description: Review a PRD with tracked history (project)
 argument-hint: "#issue"
 ---
