@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.43.4
+ * @framework-script 0.43.5
  * audit.js - IDPF Framework Installation Auditor
  *
  * Audits all IDPF Framework installations to detect:
@@ -51,7 +51,7 @@ function computeFileHash(filePath) {
 }
 
 /**
- * Compute hash of content string with 0.43.4 replaced
+ * Compute hash of content string with 0.43.5 replaced
  */
 function computeContentHashWithVersion(content, version) {
   const replaced = content.replace(/\{\{VERSION\}\}/g, version);
@@ -582,7 +582,7 @@ async function main() {
   }
 
   console.log(`IDPF Framework Audit`);
-  console.log(`Version: 0.43.4`);
+  console.log(`Version: 0.43.5`);
   console.log(`Mode: ${fixMode ? 'Fix' : 'Audit'}`);
   console.log(`Projects: ${projectsData.projects.length}`);
 

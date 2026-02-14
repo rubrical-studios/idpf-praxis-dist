@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.43.4
+ * @framework-script 0.43.5
  * done-verify.js - Diff verification for /done command
  *
  * Analyzes commits referencing an issue to detect hallucinated completions.

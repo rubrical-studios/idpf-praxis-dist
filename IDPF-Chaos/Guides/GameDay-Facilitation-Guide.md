@@ -1,5 +1,5 @@
 # GameDay Facilitation Guide
-**Version:** v0.43.4
+**Version:** v0.43.5
 
 **Framework:** IDPF-Chaos
 

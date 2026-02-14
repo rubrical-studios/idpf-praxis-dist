@@ -1,5 +1,5 @@
 ---
-version: "v0.43.4"
+version: "v0.43.5"
 description: Complete issues with criteria verification and status transitions (project)
 argument-hint: "[#issue...] [--no-docs] (optional)"
 ---

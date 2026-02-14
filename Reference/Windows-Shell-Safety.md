@@ -1,5 +1,5 @@
 # Windows Shell Safety for Claude Code
-**Version:** v0.43.4
+**Version:** v0.43.5
 **Source:** Reference/Windows-Shell-Safety.md
 ---
 **MUST READ:** Auto-loaded on Windows at session startup.

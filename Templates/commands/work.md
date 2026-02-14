@@ -1,5 +1,5 @@
 ---
-version: "v0.43.4"
+version: "v0.43.5"
 description: Start working on issues with validation and auto-TODO (project)
 argument-hint: "#issue [#issue...] | all in <status>"
 ---
@@ -134,7 +134,11 @@ Read `framework-config.json` for `processFramework` and `frameworkPath` fields:
 ### Step 9: Work the Issue
 Iterate through the auto-TODO from Step 7. For each acceptance criterion:
 1. **Mark TODO `in_progress`**
-2. **Execute TDD cycle** (RED → GREEN → REFACTOR) per framework methodology. If no framework loaded, implement directly with appropriate testing.
+2. **Execute TDD cycle** (RED → GREEN → REFACTOR) per framework methodology
+   - **RED:** Write failing test, verify it fails
+   - **GREEN:** Write minimal implementation to pass, verify it passes
+   - **REFACTOR:** Analyze for duplication, naming, complexity, structure. Report decision (refactor or skip with reason). If refactoring, keep tests passing.
+   - If no framework loaded, implement directly with appropriate testing
 3. **Run full test suite** — confirm no regressions
 4. **Mark TODO `completed`**
 5. **Commit** with `Refs #$ISSUE — <brief description>`
