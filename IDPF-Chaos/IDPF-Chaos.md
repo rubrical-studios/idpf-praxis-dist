@@ -1,5 +1,5 @@
 # IDPF-Chaos Framework
-**Version:** v0.43.6
+**Version:** v0.43.7
 **Source:** IDPF-Chaos/IDPF-Chaos.md
 **Extends:** IDPF-Testing
 **Framework-Debug:** True

@@ -1,5 +1,5 @@
 # Framework Development Reference
-**Version:** v0.43.6
+**Version:** v0.43.7
 **Purpose:** Reference for IDPF development frameworks (2 frameworks: Agile, Vibe)
 ## PRD Creation (create-prd Skill)
 > **Note:** IDPF-PRD deprecated in v0.24, replaced by `create-prd` skill.

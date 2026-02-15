@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.43.6
+ * @framework-script 0.43.7
  * extensions-cli.js
  *
  * Script-driven CLI for extension point operations.

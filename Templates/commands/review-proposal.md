@@ -1,5 +1,5 @@
 ---
-version: "v0.43.6"
+version: "v0.43.7"
 description: Review a proposal with tracked history (project)
 argument-hint: "#issue"
 ---
@@ -88,6 +88,7 @@ Read proposal file and auto-evaluate. Do NOT ask the user.
 | Writing clear and unambiguous | Check for vague language ("should work", "might need", "probably"), undefined terms |
 | Technical feasibility | Assess technical achievability: complexity/risk factors, dependency availability, scope clarity, effort proportionality. Present concerns with evidence. |
 | Test coverage proportionate | For non-trivial scope, check for testing strategy or test-related ACs. Simple single-file changes: preferred but not required. Report scope vs testing with evidence. |
+| Diagrams verified | If `**Diagrams:**` lists file paths (not "None"), verify each file exists on disk. Missing files → ❌. "None" or absent → skip. |
 **Step 2c: Ask Subjective Criteria**
 **Scope Context Display:** Before asking the scope question, extract the scope section from the proposal:
 1. Search for scope-related sections: `## Scope`, `## In-Scope`, `## Out of Scope`, `**In-Scope:**`, etc.

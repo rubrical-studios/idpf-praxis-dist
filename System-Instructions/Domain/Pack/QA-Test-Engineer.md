@@ -1,5 +1,5 @@
 # System Instructions: QA & Test Engineer
-**Version:** v0.43.6
+**Version:** v0.43.7
 Extends: Core-Developer-Instructions.md
 **Purpose:** Test strategy, automation frameworks, quality assurance processes, ensuring software quality.
 **Load with:** Core-Developer-Instructions.md (required foundation)
