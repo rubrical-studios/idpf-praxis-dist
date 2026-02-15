@@ -1,5 +1,5 @@
 ---
-version: "v0.43.5"
+version: "v0.43.6"
 description: Review a test plan against its PRD (project)
 argument-hint: "#issue"
 ---
@@ -177,6 +177,15 @@ If recommendation starts with "Ready for":
 gh issue edit $ISSUE --add-label=reviewed
 ```
 If not "Ready for": skip.
+### Step 5.6: Approval Gate AC Check-Off (Conditional)
+**Only when recommendation is "Ready for approval":**
+Automatically checks off acceptance criteria on the approval issue that passed review.
+1. Export: `gh pmu view $ISSUE --body-stdout > .tmp-$ISSUE.md`
+2. For each `- [ ]` checkbox: if criterion **passed** (✅): replace with `- [x]`. If **failed or flagged** (❌ or ⚠️): leave unchecked.
+3. Update: `gh pmu edit $ISSUE -F .tmp-$ISSUE.md && rm .tmp-$ISSUE.md`
+4. Move to `in_review`: `gh pmu move $ISSUE --status in_review`
+5. Report: `Approval gate: X/Y criteria checked off. Issue #$ISSUE moved to in_review. Run /done #$ISSUE to close.`
+**If not "Ready for approval":** Skip entirely -- no AC check-off, no status transition.
 ### Step 6: Report Summary
 ```
 Review #N complete for Test Plan: [Title]

@@ -1,5 +1,5 @@
 ---
-version: "v0.43.5"
+version: "v0.43.6"
 description: Review a proposal with tracked history (project)
 argument-hint: "#issue"
 ---
@@ -89,6 +89,16 @@ Read proposal file and auto-evaluate. Do NOT ask the user.
 | Technical feasibility | Assess technical achievability: complexity/risk factors, dependency availability, scope clarity, effort proportionality. Present concerns with evidence. |
 | Test coverage proportionate | For non-trivial scope, check for testing strategy or test-related ACs. Simple single-file changes: preferred but not required. Report scope vs testing with evidence. |
 **Step 2c: Ask Subjective Criteria**
+**Scope Context Display:** Before asking the scope question, extract the scope section from the proposal:
+1. Search for scope-related sections: `## Scope`, `## In-Scope`, `## Out of Scope`, `**In-Scope:**`, etc.
+2. Extract scope content (summarize if >10 lines)
+3. If no scope section found: skip preview, proceed normally
+Display before `AskUserQuestion`:
+```
+Scope preview:
+  In-Scope: [extracted in-scope items]
+  Out-of-Scope: [extracted out-of-scope items]
+```
 ```javascript
 AskUserQuestion({
   questions: [

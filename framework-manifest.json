@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.43.5",
+  "version": "0.43.6",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -104,7 +104,8 @@
           "git.js",
           "output.js",
           "review-mode.js",
-          "active-label.js"
+          "active-label.js",
+          "issue-type.js"
         ]
       },
       "hooks": {

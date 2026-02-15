@@ -1,5 +1,5 @@
 # Anti-Hallucination Rules for Framework Development
-**Version:** v0.43.5
+**Version:** v0.43.6
 
 ## Core Principle
 

@@ -1,5 +1,5 @@
 ---
-version: "v0.43.5"
+version: "v0.43.6"
 description: Review issues with type-specific criteria (project)
 argument-hint: "#issue [#issue...]"
 ---
@@ -38,8 +38,10 @@ gh issue view $ISSUE --json number,title,body,state,labels
 **If not found:** `"Issue #$ISSUE not found."` -> **STOP** (skip to next if batch)
 **If closed:** `"Issue #$ISSUE is closed. Review anyway? (y/n)"` -- proceed only if user confirms.
 ### Step 2: Determine Issue Type
-```bash
-gh issue view $ISSUE --json labels --jq '.labels[].name'
+Use the shared `getIssueType()` utility from `.claude/scripts/shared/lib/issue-type.js` to determine issue type from labels already fetched in Step 1 (no additional API call needed):
+```javascript
+const { getIssueType } = require('./.claude/scripts/shared/lib/issue-type.js');
+const { type, redirect } = getIssueType(issueData); // issueData from Step 1
 ```
 | Label Found | Review Type |
 |-------------|-------------|
@@ -51,7 +53,7 @@ gh issue view $ISSUE --json labels --jq '.labels[].name'
 | `proposal` | **Redirect** -> `/review-proposal #$ISSUE` |
 | `prd` | **Redirect** -> `/review-prd #$ISSUE` |
 | None recognized | Generic review criteria |
-**If redirect label detected** (`test-plan`, `proposal`, `prd`): Invoke appropriate command using Skill tool. -> **STOP**
+**If redirect detected:** Invoke appropriate command using Skill tool. -> **STOP**
 **If multiple recognized labels:** Use first recognized. Redirect labels take precedence.
 **If no recognized labels:** Use generic criteria (non-blocking).
 

@@ -1,5 +1,5 @@
 # IDPF-QA-Automation Framework
-**Version:** v0.43.5
+**Version:** v0.43.6
 **Extends:** IDPF-Testing-Core
 ## Overview
 Framework for automated UI and end-to-end test suites using Selenium, Playwright, Cypress, Appium.

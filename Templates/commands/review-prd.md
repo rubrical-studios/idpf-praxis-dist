@@ -1,5 +1,5 @@
 ---
-version: "v0.43.5"
+version: "v0.43.6"
 description: Review a PRD with tracked history (project)
 argument-hint: "#issue"
 ---
@@ -197,6 +197,15 @@ If recommendation starts with "Ready for":
 gh issue edit $ISSUE --add-label=reviewed
 ```
 If not "Ready for": skip.
+### Step 6.6: AC Check-Off (Conditional)
+**Only when recommendation is "Ready for backlog creation":**
+Automatically checks off acceptance criteria on the PRD issue that passed review.
+1. Export: `gh pmu view $ISSUE --body-stdout > .tmp-$ISSUE.md`
+2. For each `- [ ]` checkbox: if criterion **passed** (✅): replace with `- [x]`. If **failed or flagged** (❌ or ⚠️): leave unchecked.
+3. Update: `gh pmu edit $ISSUE -F .tmp-$ISSUE.md && rm .tmp-$ISSUE.md`
+4. Report: `AC check-off: X/Y criteria checked off on issue #$ISSUE.`
+**No status transition** -- `/create-backlog` owns the `in_progress` transition.
+**If not "Ready for backlog creation":** Skip entirely.
 
 <!-- USER-EXTENSION-START: post-review -->
 <!-- USER-EXTENSION-END: post-review -->
