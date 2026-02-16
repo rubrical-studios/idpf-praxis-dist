@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.43.7
+ * @framework-script 0.44.0
  * IDPF Framework Update Fetcher
  *
  * Updates the framework installation from the distribution repository.

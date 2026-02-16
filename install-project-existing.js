@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.43.7
+ * @framework-script 0.44.0
  * IDPF Existing Project Installer
  * Adds IDPF integration to an existing codebase.
  *

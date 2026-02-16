@@ -1,5 +1,5 @@
 # IDPF-Contract-Testing Framework
-**Version:** v0.43.7
+**Version:** v0.44.0
 **Source:** IDPF-Contract-Testing/IDPF-Contract-Testing.md
 **Extends:** IDPF-Testing
 ## Overview

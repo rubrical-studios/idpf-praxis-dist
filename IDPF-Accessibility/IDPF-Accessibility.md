@@ -1,5 +1,5 @@
 # IDPF-Accessibility Framework
-**Version:** v0.43.7
+**Version:** v0.44.0
 **Source:** IDPF-Accessibility/IDPF-Accessibility.md
 **Date:** 2025-12-01
 **Extends:** IDPF-Testing

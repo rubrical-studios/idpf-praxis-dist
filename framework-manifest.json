@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.43.7",
+  "version": "0.44.0",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -47,6 +47,7 @@
       ],
       "workflow": [
         "assign-branch.md",
+        "bad-test-review.md",
         "switch-branch.md",
         "transfer-issue.md",
         "create-branch.md",
@@ -198,6 +199,7 @@
   ],
   "managedCommands": [
     "assign-branch",
+    "bad-test-review",
     "switch-branch",
     "transfer-issue",
     "charter",

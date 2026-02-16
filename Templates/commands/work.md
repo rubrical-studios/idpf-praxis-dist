@@ -1,5 +1,5 @@
 ---
-version: "v0.43.7"
+version: "v0.44.0"
 description: Start working on issues with validation and auto-TODO (project)
 argument-hint: "#issue [#issue...] | all in <status>"
 ---
@@ -119,6 +119,22 @@ Create a todo list with these issues:
 ```
 No acceptance criteria found in issue body. Create todos manually as needed.
 ```
+### Step 7b: QA Extraction — Manual Test AC Detection
+Scan AC for manual test indicators. If found, offer to extract into tracked QA sub-issues.
+**Detection keywords** (case-insensitive): `manually verify`, `visually confirm`, `visual verification`, `QA:`, `qa-required`, `exploratory test`, `manual test`, `manual check`, `UX walkthrough`
+**If manual test AC detected:**
+1. **Present candidates** — Use `AskUserQuestion` with multiSelect. Include "Skip all" option.
+2. **Create QA sub-issues** — For each confirmed AC:
+   ```bash
+   gh pmu sub create --parent $ISSUE --title "QA: [AC description]" --label qa-required -F .tmp-qa-body.md
+   ```
+   QA sub-issue body contains: test description, parent issue context (`Parent: #$ISSUE — $TITLE`), steps to perform, expected result.
+3. **Annotate parent AC** — Update parent issue body with QA sub-issue reference. AC remains **unchecked**:
+   `- [ ] Manually verify the login flow → QA: #NNN`
+4. **Report** extraction count and sub-issue numbers.
+**Closure path:** Parent stays `in_review` until all QA sub-issues are closed and AC checked off. Only then can `/done` complete the parent.
+**If no manual test AC detected:** Continue silently.
+**If user selects "Skip all":** Continue without extraction.
 
 <!-- USER-EXTENSION-START: pre-framework-dispatch -->
 <!-- USER-EXTENSION-END: pre-framework-dispatch -->

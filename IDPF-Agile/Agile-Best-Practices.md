@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Best Practices
-**Version:** v0.43.7
+**Version:** v0.44.0
 **Module:** Best Practices (loaded on-demand)
 ---
 ## Story Writing

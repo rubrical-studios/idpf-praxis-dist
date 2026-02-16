@@ -1,5 +1,5 @@
 /**
- * @framework-script 0.43.7
+ * @framework-script 0.44.0
  * lib/git.js - Git command utilities
  *
  * Provides functions for interacting with git repositories.
