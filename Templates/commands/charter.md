@@ -1,5 +1,5 @@
 ---
-version: "v0.44.0"
+version: "v0.45.0"
 description: View, create, or manage project charter
 argument-hint: "[update|refresh|validate]"
 ---
@@ -122,16 +122,14 @@ grep -E '\{[a-z][a-z0-9-]*\}' CHARTER.md
 | Possibly out of scope | Ask user to confirm intent |
 | Clearly out of scope | Suggest updating charter or revising work |
 ## Project Skills Selection
-After charter creation, suggest relevant skills based on tech stack:
-**Step 1:** Load `.claude/metadata/skill-registry.json`
-**Step 2:** Match charter content against skill triggers (case-insensitive)
-**Step 3: ASK USER:**
-```
-Based on your charter, these skills may be relevant:
-- electron-development (matched: electron, vite...)
-Include these skills? (yes/no/edit list)
-```
-**Step 4:** Store in framework-config.json `projectSkills` array
+After charter creation, suggest relevant skills based on tech stack using `.claude/metadata/skill-keywords.json`.
+**Step 1:** Load `.claude/metadata/skill-keywords.json` (contains `skillKeywords` and `groupKeywords` sections) and `.claude/metadata/skill-registry.json` (for descriptions)
+**If `skill-keywords.json` is missing:** Warn and skip skill matching (non-blocking).
+**Step 2:** Match tech stack keywords against skillKeywords entries (case-insensitive, whole-word). Also match groupKeywords — if a group keyword matches, add ALL group.skills to candidates. Each candidate must have at least 1 keyword match (no false positives from partial string matching). Deduplicate against existing `projectSkills`.
+**If tech stack unknown:** Skip skill matching. **If zero matches:** Report and continue.
+**Step 3:** Present candidates via `AskUserQuestion` with multi-select. Show skill name and description from registry.
+**Step 3b: Existing Project — Additive Merge:** Read existing `projectSkills`, filter candidates already present (skip silently — do not add duplicates). If all relevant skills already enabled, report and skip. Present only NEW candidates. Merge additively (merge, not replace).
+**Step 4:** Store confirmed skills in `framework-config.json` `projectSkills` array, sorted alphabetically. Additive merge with existing.
 **Step 4b:** Deploy skills via `node .claude/scripts/shared/install-skill.js <skill-names...>`
 **Step 5:** Report installed skills
 ## Extension Recipe Suggestions
@@ -160,6 +158,7 @@ Install? (y/n/select)
 | CHARTER.md | ~150-200 |
 | Charter-Details.md | ~1,200-1,500 |
 | Scope-Boundaries.md | ~500-800 |
+| skill-keywords.json | ~300-500 |
 ## Related Commands
 - `/charter update` - Modify charter sections
 - `/charter refresh` - Sync charter with codebase

@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Templates
-**Version:** v0.44.0
+**Version:** v0.45.0
 **Module:** Templates (loaded on-demand)
 ---
 ## GitHub-Native Backlog

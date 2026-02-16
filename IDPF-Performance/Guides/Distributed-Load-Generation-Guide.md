@@ -1,5 +1,5 @@
 # Distributed Load Generation Patterns Guide
-**Version:** v0.44.0
+**Version:** v0.45.0
 
 **Framework:** IDPF-Performance
 
