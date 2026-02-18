@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.45.0
+ * @framework-script 0.46.0
  * extensions-cli.js
  *
  * Script-driven CLI for extension point operations.
@@ -701,6 +701,57 @@ function runHelp() {
 }
 
 // ============================================================================
+// EDITOR INTEGRATION (Issue #1424)
+// ============================================================================
+
+const os = require('os');
+const { spawnSync } = require('child_process');
+
+/**
+ * Detect the user's preferred editor from environment variables.
+ * Checks $VISUAL first (graphical editors), then $EDITOR (terminal editors).
+ * @returns {string|null} Editor command or null if none configured
+ */
+function detectEditor() {
+  return process.env.VISUAL || process.env.EDITOR || null;
+}
+
+/**
+ * Determine whether a subcommand should open output in an external editor.
+ * Only list and matrix produce output too wide/long for Claude Code display.
+ * @param {string} subcommand - The subcommand name
+ * @param {{ stdout?: boolean }} options - Parsed options
+ * @returns {boolean}
+ */
+function shouldOpenInEditor(subcommand, options) {
+  if (options && options.stdout) return false;
+  return subcommand === 'list' || subcommand === 'matrix';
+}
+
+/**
+ * Write content to a temp file and open it in an editor.
+ * @param {string} content - The content to write
+ * @param {string} label - Label for the temp file name (e.g., 'list', 'matrix')
+ * @param {Function} [spawnFn] - Spawn function (for testing; defaults to spawnSync)
+ * @param {Object} [fsModule] - fs module (for testing; defaults to require('fs'))
+ * @returns {string} Path to the temp file
+ */
+function writeAndOpenEditor(content, label, spawnFn, fsModule) {
+  const _fs = fsModule || fs;
+  const _spawn = spawnFn || spawnSync;
+  const tmpDir = os.tmpdir();
+  const tmpFile = path.join(tmpDir, `extensions-${label}-${Date.now()}.txt`);
+  _fs.writeFileSync(tmpFile, content, 'utf-8');
+
+  const editor = detectEditor();
+  if (editor) {
+    _spawn(editor, [tmpFile], { stdio: 'inherit' });
+  }
+
+  return tmpFile;
+}
+
+// ============================================================================
 // ARGUMENT PARSING & MAIN
 // ============================================================================
 
@@ -719,6 +770,8 @@ function parseArgs(args) {
     if (rest[i] === '--command' && i + 1 < rest.length) {
       options.command = rest[i + 1];
       i++;
+    } else if (rest[i] === '--stdout') {
+      options.stdout = true;
     } else if (rest[i] === '--help') {
       options.help = true;
     } else if (!rest[i].startsWith('--')) {
@@ -762,7 +815,19 @@ function main() {
   }
 
   if (result.output) {
-    console.log(result.output);
+    if (shouldOpenInEditor(subcommand, options) && result.exitCode === 0) {
+      const editor = detectEditor();
+      if (editor) {
+        const tmpFile = writeAndOpenEditor(result.output, subcommand);
+        console.log(`Opened in editor: ${tmpFile}`);
+      } else {
+        console.log('Warning: No editor configured. Set $VISUAL or $EDITOR environment variable.');
+        console.log('See Docs/02-Advanced/Editor-Setup.md for configuration instructions.\n');
+        console.log(result.output);
+      }
+    } else {
+      console.log(result.output);
+    }
   }
   process.exit(result.exitCode);
 }
@@ -780,7 +845,10 @@ module.exports = {
   runMatrix,
   runRecipes,
   runHelp,
-  parseArgs
+  parseArgs,
+  detectEditor,
+  shouldOpenInEditor,
+  writeAndOpenEditor
 };
 
 // Run main only when executed directly

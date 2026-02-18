@@ -1,5 +1,5 @@
 # Session Startup Instructions
-**Version:** v0.45.0
+**Version:** v0.46.0
 **Purpose:** Standard initialization procedure for AI assistant sessions
 ---
 ## Rules Auto-Loading (v2.9+)
@@ -12,17 +12,19 @@ Essential rules auto-load from `.claude/rules/`:
 **Benefits:** No explicit file reads at startup, rules persist after compaction, simplified initialization.
 ---
 ## Startup Sequence
+**Run all startup steps sequentially — never in parallel.** Parallel tool calls cascade: if one fails, all siblings abort.
 ### 1. Gather Session Information
-| Field | Source |
-|-------|--------|
-| Date | Environment/system date |
-| Repository | `basename $(git rev-parse --show-toplevel)` |
-| Branch | `git branch --show-current` + clean/dirty status |
-| Process Framework | `framework-config.json` → `processFramework` |
-| Framework Version | `framework-config.json` → `frameworkVersion` |
-| Active Role | `framework-config.json` → `domainSpecialist` |
-| Charter Status | `Active` or `Pending` |
-| GitHub Workflow | `gh pmu --version` |
+| Field | Source | Tool |
+|-------|--------|------|
+| Date | Current date | `node -e "console.log(new Date().toISOString().slice(0,10))"` or environment date |
+| Repository | Git repo name | `git rev-parse --show-toplevel` (parse last path segment) |
+| Branch | `git branch --show-current` + clean/dirty status | Bash |
+| Process Framework | `framework-config.json` → `processFramework` | Read tool |
+| Framework Version | `framework-config.json` → `frameworkVersion` | Read tool |
+| Active Role | `framework-config.json` → `domainSpecialist` | Read tool |
+| Charter Status | `Active` or `Pending` | Glob tool |
+| GitHub Workflow | `gh pmu --version` | Bash |
+**Do not use shell builtins** (`date`, `basename`, `echo`, `test -f`, `pwd`) — blocked in sandbox.
 ### 2. Read Framework Summary (On-Demand)
 ```
 Overview/Framework-Summary.md

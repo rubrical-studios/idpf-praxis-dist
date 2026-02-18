@@ -1,5 +1,5 @@
 # Vibe-to-Structured Development Framework (Web)
-**Version:** v0.45.0
+**Version:** v0.46.0
 **Type:** Web Application Specialization
 **Extends:** Vibe-to-Structured-Core-Framework.md
 ## Purpose

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.45.0
+ * @framework-script 0.46.0
  * @description Extract CHANGELOG section and update GitHub Release page with formatted notes
  * @checksum sha256:placeholder
  *
  * This script transforms raw CHANGELOG entries into a standardized release page format:
- * - Title: "IDPF Framework vX.Y.Z"
+ * - Title: "{Project Name} vX.Y.Z" (from CHARTER.md, or fallback)
  * - Release date
  * - Auto-generated summary
  * - Category sections (Added, Fixed, Changed, etc.)
@@ -214,9 +214,27 @@ function generateSummary(counts) {
 }
 
 /**
- * Transform CHANGELOG content to release page format
+ * Extract project name from CHARTER.md content
+ * @param {string|null|undefined} charterContent - Raw content of CHARTER.md
+ * @returns {string|null} - Project name or null if not found
  */
-function transformToReleaseFormat(version, date, rawContent, repoUrl, previousTag) {
+function getProjectName(charterContent) {
+    if (!charterContent) return null;
+    const match = charterContent.match(/^# Project Charter:\s*(.+)/m);
+    if (!match) return null;
+    return match[1].trim();
+}
+
+/**
+ * Transform CHANGELOG content to release page format
+ * @param {string} version - Version tag (e.g., v1.0.0)
+ * @param {string} date - Release date (YYYY-MM-DD)
+ * @param {string} rawContent - Raw CHANGELOG section content
+ * @param {string|null} repoUrl - Repository URL for comparison link
+ * @param {string|null} previousTag - Previous version tag for comparison link
+ * @param {string|null} projectName - Project name from CHARTER.md (null = fallback)
+ */
+function transformToReleaseFormat(version, date, rawContent, repoUrl, previousTag, projectName) {
     // Promote heading levels: ### Category -> ## Category
     let content = rawContent.replace(/^### /gm, '## ');
 
@@ -228,7 +246,8 @@ function transformToReleaseFormat(version, date, rawContent, repoUrl, previousTa
     const summary = generateSummary(counts);
 
     // Build formatted release notes
-    let notes = `# IDPF Framework ${version}\n\n`;
+    const titleName = projectName || 'Release';
+    let notes = `# ${titleName} ${version}\n\n`;
     notes += `**Release Date:** ${date}\n\n`;
     notes += `## Summary\n\n${summary}\n\n`;
     notes += content.trim();
@@ -300,8 +319,16 @@ async function main() {
         const repoUrl = getRepoUrl();
         const previousTag = getPreviousTag(version);
 
+        // Read project name from CHARTER.md
+        const charterPath = path.join(process.cwd(), 'CHARTER.md');
+        let projectName = null;
+        if (fs.existsSync(charterPath)) {
+            const charterContent = fs.readFileSync(charterPath, 'utf8');
+            projectName = getProjectName(charterContent);
+        }
+
         // Transform to release format
-        const notes = transformToReleaseFormat(version, date, rawContent, repoUrl, previousTag);
+        const notes = transformToReleaseFormat(version, date, rawContent, repoUrl, previousTag, projectName);
 
         // Update GitHub release
         const notesFile = path.join(process.cwd(), '.tmp-release-notes.md');
@@ -341,6 +368,7 @@ module.exports = {
     getPreviousTag,
     countCategoryItems,
     generateSummary,
+    getProjectName,
     transformToReleaseFormat,
     updateOrCreateRelease,
     getRepoUrl,

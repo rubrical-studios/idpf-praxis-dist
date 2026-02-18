@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.45.0
+ * @framework-script 0.46.0
  * IDPF Existing Project Installer
  * Adds IDPF integration to an existing codebase.
  *
@@ -1211,6 +1211,9 @@ async function main() {
     if (!existingConfig.reviewMode) {
       existingConfig.reviewMode = 'solo';
     }
+    if (!existingConfig.domainSpecialist) {
+      existingConfig.domainSpecialist = config.domainSpecialist;
+    }
     fs.writeFileSync(frameworkConfigPath, JSON.stringify(existingConfig, null, 2) + '\n');
     logSuccess('  ✓ framework-config.json (updated version fields, merged TDD skills)');
   } else {
@@ -1219,6 +1222,7 @@ async function main() {
       frameworkVersion: readFrameworkVersion(hubPath),
       installedDate: new Date().toISOString().split('T')[0],
       processFramework: config.framework,
+      domainSpecialist: config.domainSpecialist,
       reviewMode: 'solo',
       frameworkPath: config.hub,
       projectSkills: [...TDD_SKILLS]

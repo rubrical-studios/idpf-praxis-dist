@@ -1,5 +1,5 @@
 # Windows Shell Safety for Claude Code
-**Version:** v0.45.0
+**Version:** v0.46.0
 **Source:** Reference/Windows-Shell-Safety.md
 ---
 **MUST READ:** Auto-loaded on Windows at session startup.
@@ -23,9 +23,10 @@ Claude Code uses Git Bash on Windows. Most Unix commands work, but these pattern
 ### Pattern Safety
 | Pattern | Safe? | Use Instead |
 |---------|:-----:|-------------|
-| `$(command)` anywhere | ❌ | Write tool + temp file |
+| `$(cmd)` — short, predictable output | ✅ | — |
+| `$(cmd)` — output may contain backticks/quotes/newlines | ❌ | Write tool + temp file |
 | `for x in $(cmd)` | ❌ | Glob patterns or temp file |
-| Nested `$(...)` | ❌ | Sequential commands |
+| Nested `$($(cmd))` | ❌ | Sequential commands |
 | Heredoc with backticks | ❌ | Write tool + temp file |
 | `--body "..."` inline | ❌ | `-F file.md` or `--body-file` |
 | `--flag value` (strings) | ⚠️ | `--flag=value` |
@@ -62,10 +63,21 @@ git commit -F .tmp-msg.txt
 rm .tmp-msg.txt
 ```
 ## Command Substitution
-**ALL `$(...)` patterns are unreliable:** tool arguments, variable assignments, for loops, nested substitution.
+**Rule of thumb:** If the output is short, single-line, and free of backticks/quotes, `$(...)` is safe. If the output could contain markdown, code, or multi-line text, use a temp file.
+### Safe `$(...)` Patterns
 ```bash
-# BAD - unreliable
+# SAFE - short, predictable output
+today=$(date "+%Y-%m-%d")
+branch=$(git branch --show-current)
+sha=$(git rev-parse HEAD)
+ver=$(node -e "console.log(require('./package.json').version)")
+```
+### Unsafe `$(...)` Patterns
+```bash
+# BAD - file content may contain backticks, quotes, newlines
 gh issue create --body "$(cat README.md)"
+# BAD - nested substitution
+dir=$(dirname $(realpath "$file"))
 
 # GOOD - use --body-file flag
 gh issue create --body-file README.md

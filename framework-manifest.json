@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.45.0",
+  "version": "0.46.0",
   "description": "Iterative Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -93,6 +93,7 @@
           "recommend-version.js",
           "switch-branch.js",
           "transfer-issue.js",
+          "praxis-diagram-config.js",
           "update-release-notes.js",
           "wait-for-ci.js",
           "ci-watch.js"
