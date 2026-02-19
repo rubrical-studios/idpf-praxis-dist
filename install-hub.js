@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.46.0
+ * @framework-script 0.46.1
  * IDPF Hub Installer
  * Creates a central IDPF installation that can serve multiple projects.
  *
@@ -151,7 +151,24 @@ function generateHubStartupRules(hubPath, version) {
 
 ---
 
+## Rules Auto-Loading
+
+Essential rules auto-load from \`.claude/rules/\`:
+
+| Rule File | Content |
+|-----------|---------|
+| \`01-anti-hallucination.md\` | Software development quality rules |
+| \`02-github-workflow.md\` | GitHub issue management integration |
+| \`03-startup.md\` | Startup procedure (this file) |
+| \`04-charter-enforcement.md\` | Charter lifecycle enforcement |
+| \`05-windows-shell.md\` | Windows shell safety (Windows only) |
+| \`06-runtime-triggers.md\` | Runtime artifact triggers |
+
+---
+
 ## Startup Sequence
+
+**Run all startup steps sequentially — never in parallel.** Parallel tool calls cascade: if one fails, all siblings abort.
 
 When starting a new session:
 
@@ -162,16 +179,18 @@ When starting a new session:
 
 ### Session Information Sources
 
-| Field | Source |
-|-------|--------|
-| Date | Environment/system date |
-| Repository | \`basename $(git rev-parse --show-toplevel)\` |
-| Branch | \`git branch --show-current\` + clean/dirty status |
-| Process Framework | \`framework-config.json\` → \`processFramework\` |
-| Framework Version | \`framework-config.json\` → \`frameworkVersion\` |
-| Active Role | \`framework-config.json\` → \`domainSpecialist\` |
-| Charter Status | \`Active\` or \`Pending\` |
-| GitHub Workflow | \`gh pmu --version\` |
+| Field | Source | Tool |
+|-------|--------|------|
+| Date | Current date | Bash: \`node -e "console.log(new Date().toISOString().slice(0,10))"\` |
+| Repository | Git repo name | Bash: \`git rev-parse --show-toplevel\` (parse last path segment) |
+| Branch | \`git branch --show-current\` + clean/dirty status | Bash |
+| Process Framework | \`framework-config.json\` → \`processFramework\` | Read tool |
+| Framework Version | \`framework-config.json\` → \`frameworkVersion\` | Read tool |
+| Active Role | \`framework-config.json\` → \`domainSpecialist\` | Read tool |
+| Charter Status | \`Active\` or \`Pending\` | Glob tool |
+| GitHub Workflow | \`gh pmu --version\` | Bash |
+
+**Do not use shell builtins** (\`date\`, \`basename\`, \`echo\`, \`test -f\`, \`pwd\`) — blocked in sandbox.
 
 ---
 
@@ -179,7 +198,7 @@ When starting a new session:
 
 **Charter is mandatory.** Check for project charter at startup:
 
-1. Check CHARTER.md exists: \`test -f CHARTER.md\`
+1. Check CHARTER.md exists using the Glob tool
 2. Check for template placeholders: \`/{[a-z][a-z0-9-]*}/\`
 
 ### Charter Status
@@ -208,6 +227,12 @@ Session Initialized
 \`\`\`
 
 If Charter Status is Pending, display blocking message and run \`/charter\`.
+
+---
+
+## Post-Compact Behavior
+
+**No re-reading required.** Rules in \`.claude/rules/\` auto-reload after compaction.
 
 ---
 
@@ -756,4 +781,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { setupClaudeStructure, cleanOrphanedDirectories };
+module.exports = { setupClaudeStructure, cleanOrphanedDirectories, generateHubStartupRules };
