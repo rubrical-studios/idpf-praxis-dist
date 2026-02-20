@@ -1,4 +1,4 @@
-# IDPF — Iterative Development Process Frameworks
+# IDPF — Interactive Development Process Frameworks
 
 [![Version](https://img.shields.io/github/v/release/rubrical-studios/idpf-praxis-dist?label=version&color=blue)](https://github.com/rubrical-studios/idpf-praxis-dist/releases)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)

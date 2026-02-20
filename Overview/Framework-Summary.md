@@ -1,5 +1,5 @@
 # Framework Summary
-**Version:** v0.46.1
+**Version:** v0.46.2
 **Source:** Overview/Framework-Summary.md
 ## Quick Reference
 | Component | Count | Location |
