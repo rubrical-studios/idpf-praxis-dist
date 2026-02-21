@@ -1,5 +1,5 @@
 # Anti-Hallucination Rules for PRD Work
-**Version:** v0.46.2
+**Version:** v0.47.0
 ## Core Principle
 **Stakeholder truth over helpful invention. Traceability over assumption. Validation over completion.**
 ## Information Source Hierarchy

@@ -1,5 +1,5 @@
 # Agile-Driven Development Framework - Commands
-**Version:** v0.46.2
+**Version:** v0.47.0
 **Module:** Commands (loaded on-demand)
 ---
 ## Backlog Management Commands

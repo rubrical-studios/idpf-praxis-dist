@@ -1,5 +1,5 @@
 # Session Startup Instructions
-**Version:** v0.46.2
+**Version:** v0.47.0
 **Purpose:** Standard initialization procedure for AI assistant sessions
 ---
 ## Rules Auto-Loading (v2.9+)
@@ -22,6 +22,7 @@ Essential rules auto-load from `.claude/rules/`:
 | Process Framework | `framework-config.json` → `processFramework` | Read tool |
 | Framework Version | `framework-config.json` → `frameworkVersion` | Read tool |
 | Active Role | `framework-config.json` → `domainSpecialist` | Read tool |
+| Review Mode | `framework-config.json` → `reviewMode` | Read tool |
 | Charter Status | `Active` or `Pending` | Glob tool |
 | GitHub Workflow | `gh pmu --version` | Bash |
 **Do not use shell builtins** (`date`, `basename`, `echo`, `test -f`, `pwd`) — blocked in sandbox.
@@ -51,6 +52,7 @@ Session Initialized
 - Process Framework: {framework}
 - Framework Version: {version}
 - Active Role: {specialist}
+- Review Mode: {solo|team|enterprise}
 - Charter Status: {Active|Pending}
 - GitHub Workflow: Active via gh pmu {version}
 ```

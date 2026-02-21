@@ -1,5 +1,5 @@
 # GitHub Workflow Integration
-**Version:** v0.46.2
+**Version:** v0.47.0
 ---
 **MUST READ:** At session startup and after compaction.
 **Source:** Reference/GitHub-Workflow.md
@@ -167,7 +167,8 @@ Then ask: "Label parent as 'epic'? (yes/no)"
 If yes: `gh issue edit [parent] --add-label "epic"`, add "story" to sub-issues
 ### 4. Epic Workflow
 **CRITICAL:** Takes precedence when issue has "epic" label. Detection mandatory — check labels before routing.
-Epic flow: `/work` detects epic → in_progress → sub-issues sequentially (each: in_progress → work → AC → in_review → **STOP per sub-issue** → "done" → next). All done → epic AC → in_review → **STOP** → "done" → recursive close.
+Epic flow: `/work` detects epic → loads sub-issues → ascending numeric order (default) or custom `**Processing Order:**` from epic body → skips sub-issues already in `in_review`/`done` → works remaining sequentially (each: in_progress → work → AC → in_review → **STOP per sub-issue** → "done" → next). All sub-issues in `in_review`/`done` → epic AC → in_review → **STOP** → "done" → recursive close.
+**Processing order override:** `**Processing Order:**` section in epic body with ordered `#N` references.
 **Never skip per-sub-issue STOP boundary.**
 See `/work` (Steps 4, 7, 12) and `/done` command specs.
 ### 5. PRD to Issues

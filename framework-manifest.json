@@ -1,6 +1,6 @@
 {
   "name": "IDPF Framework",
-  "version": "0.46.2",
+  "version": "0.47.0",
   "description": "Interactive Development Process Frameworks for AI-assisted software development",
   "created": "2025-11-30",
   "frameworks": [
@@ -64,6 +64,7 @@
         "add-story.md",
         "split-story.md",
         "pivot.md",
+        "plan-workstreams.md",
         "work.md",
         "done.md",
         "bug.md",
@@ -90,13 +91,15 @@
           "generate-changelog.js",
           "install-skill.js",
           "generate-test-plan.js",
+          "plan-workstreams.js",
           "recommend-version.js",
           "switch-branch.js",
           "transfer-issue.js",
           "praxis-diagram-config.js",
           "update-release-notes.js",
           "wait-for-ci.js",
-          "ci-watch.js"
+          "ci-watch.js",
+          "upgrade-check.js"
         ]
       },
       "shared/lib": {
@@ -108,7 +111,8 @@
           "output.js",
           "review-mode.js",
           "active-label.js",
-          "issue-type.js"
+          "issue-type.js",
+          "workstream-utils.js"
         ]
       },
       "hooks": {
@@ -208,6 +212,7 @@
     "charter",
     "extensions",
     "install-skill",
+    "plan-workstreams",
     "resolve-review",
     "review-test-plan"
   ]

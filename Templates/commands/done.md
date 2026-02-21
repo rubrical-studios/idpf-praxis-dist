@@ -1,7 +1,7 @@
 ---
-version: "v0.46.2"
+version: "v0.47.0"
 description: Complete issues with criteria verification and status transitions (project)
-argument-hint: "[#issue...] [--no-docs] (optional)"
+argument-hint: "[#issue...] (optional)"
 ---
 
 <!-- EXTENSIBLE -->
@@ -24,7 +24,6 @@ Complete one or more issues. Moves from `in_review` → `done` with a STOP bound
 | `#issue` | No | Single issue number (e.g., `#42` or `42`) |
 | `#issue #issue...` | | Multiple issue numbers (e.g., `#42 #43 #44`) |
 | *(none)* | | Queries `in_review` issues for selection |
-| `--no-docs` | No | Skip design decisions documentation offer (Step 5) |
 ---
 ## Execution Instructions
 **REQUIRED:** Before executing:
@@ -88,40 +87,12 @@ Report: `Issue #$ISSUE: $TITLE → Done`
 <!-- USER-EXTENSION-START: post-done -->
 <!-- USER-EXTENSION-END: post-done -->
 
-### Step 5: Design Decisions Offer
-**If `--no-docs`:** Skip this step.
-**If the ASSISTANT** is aware of decisions required to complete work, offer:
+### Step 5: Push
+```bash
+git push
 ```
-Would you like me to document the design decisions/issues encountered in Construction/Design-Decisions/?
-```
-**If accepted:**
-1. Check/create `Construction/Design-Decisions/`
-2. Derive `{topic}` from issue title (kebab-case, max 50 chars). If exists, append `-2`, `-3`, etc.
-3. Create `Construction/Design-Decisions/YYYY-MM-DD-{topic}.md`:
-```markdown
-# Design Decision: [Title]
-**Date:** [YYYY-MM-DD]
-**Status:** Accepted
-**Context:** Issue #[N] — [Issue Title]
-## Decision
-[What was decided]
-## Rationale
-[Why this choice was made]
-## Alternatives Considered
-- [Alternative 1]: [Why rejected]
-## Consequences
-- [Positive consequence]
-- [Negative consequence or trade-off]
-## Issues Encountered
-[Any blockers, surprises, or lessons learned]
-```
-4. Reference the issue number in the document
-**If declined:** Proceed without documenting.
-### Step 6: Git Add, Commit and Push
-**Conditional:** Only commit if changes exist. Check `git status --porcelain`.
-**If output is empty:** Push unpushed commits: `git push`. Report: `No new changes to commit. Pushed.`
-**If output is non-empty:** Stage, `git commit -m "docs: add design decision for #$ISSUE"`, and push.
-### Step 6b: Background CI Monitoring
+Report: `Pushed.`
+### Step 5b: Background CI Monitoring
 After push:
 1. Get SHA: `sha=$(git rev-parse HEAD)`
 2. **Pre-check paths-ignore:** Use `ci-watch.js`'s `shouldSkipMonitoring()`. If all files match → skip, report: `"CI skipped (paths-ignore)"`
@@ -139,7 +110,7 @@ After push:
 | 3 | `"No CI run triggered (paths-ignore likely)"` |
 | 4 | `"CI cancelled (superseded by newer push)"` |
 **Multiple workflows:** Report per-workflow from `workflows` array.
-### Step 7: Cleanup
+### Step 6: Cleanup
 **MUST DO:** Clear todo list.
 ---
 ## Error Handling
@@ -151,6 +122,5 @@ After push:
 | Issue in other status | "Move to in_progress first via /work." → STOP |
 | No issues in review | "No issues in review." → STOP |
 | `gh pmu` fails | "Failed to update issue: {error}" → STOP |
-| Construction/ missing | Warn and create |
 ---
 **End of /done Command**

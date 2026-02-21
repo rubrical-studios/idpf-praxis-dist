@@ -1,5 +1,5 @@
 # Windows Shell Safety for Claude Code
-**Version:** v0.46.2
+**Version:** v0.47.0
 **Source:** Reference/Windows-Shell-Safety.md
 ---
 **MUST READ:** Auto-loaded on Windows at session startup.
@@ -194,6 +194,14 @@ rm -rf .vite
 rm -rf out
 rm -rf dist
 ```
+## Symlinked Directories and Glob
+**Glob does NOT follow symlinks.** Files inside symlinked directories are invisible to Glob.
+**Affected:** `.claude/metadata/`, `.claude/rules/`, `.claude/scripts/shared/`, `.claude/skills/` — symlinked to hub.
+**Rules:**
+1. **Known paths → Read tool directly.** Do NOT use Glob to check existence first.
+2. **Discovery in symlinked dirs → Bash `ls`.** Use `ls .claude/metadata/` instead of Glob.
+3. **Non-symlinked dirs → Glob is fine.**
+**Upstream:** anthropics/claude-code#27254
 ## Process Management
 **Use PowerShell for killing processes on Windows Git Bash.**
 Git Bash mangles Windows command flags (interprets `/F` as a path).
