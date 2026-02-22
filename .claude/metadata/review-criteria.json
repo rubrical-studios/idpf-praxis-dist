@@ -1,0 +1,153 @@
+{
+  "typeSpecific": {
+    "bug": {
+      "label": "Bug",
+      "criteria": [
+        {
+          "id": "repro-steps",
+          "name": "Reproduction steps present",
+          "autoCheck": "Look for numbered list or 'Steps to Reproduce' / 'Repro' section"
+        },
+        {
+          "id": "expected-actual",
+          "name": "Expected vs actual behavior documented",
+          "autoCheck": "Look for 'Expected' and 'Actual' sections or descriptions"
+        },
+        {
+          "id": "environment-info",
+          "name": "Environment info present",
+          "autoCheck": "Look for 'Environment', browser, OS, version references"
+        },
+        {
+          "id": "severity-proportionate",
+          "name": "Severity proportionate to impact",
+          "autoCheck": "Compare severity/priority label to described user impact (e.g., P0 for data loss, P2 for cosmetic)"
+        },
+        {
+          "id": "test-coverage-bug",
+          "name": "Test coverage proportionate (bug)",
+          "autoCheck": "Single-path fix: 'existing tests pass' may suffice, but regression test AC preferred. Multi-path refactor: ACs MUST require tests for new pattern (flag if only 'existing tests pass' for changes touching multiple functions/modules)"
+        },
+        {
+          "id": "proposed-fix-described",
+          "name": "Proposed fix described",
+          "autoCheck": "Check for 'Proposed Fix', 'Root Cause Analysis', 'Fix Approach', or solution description section. Treat as missing if section body is under 20 characters or contains placeholder text ('To be documented', 'TBD', '...')"
+        }
+      ]
+    },
+    "story": {
+      "label": "Story",
+      "criteria": [
+        {
+          "id": "user-story-format",
+          "name": "User story format",
+          "autoCheck": "Check for 'As a ... I want ... So that ...' pattern (or close variant)"
+        },
+        {
+          "id": "ac-present",
+          "name": "Acceptance criteria present",
+          "autoCheck": "Check for `- [ ]` items"
+        },
+        {
+          "id": "ac-testable",
+          "name": "AC structured as testable assertions",
+          "autoCheck": "Verify each `- [ ]` item contains a measurable/verifiable statement (TDD-compatible)"
+        },
+        {
+          "id": "incremental-scope",
+          "name": "Scope supports incremental implementation",
+          "autoCheck": "Check if ACs are small, independent, testable units (not monolithic)"
+        },
+        {
+          "id": "canonical-template",
+          "name": "Canonical story body template",
+          "autoCheck": "Compare body structure against expected template (Description, AC, Refs sections). If NOT matching, flag for repair"
+        },
+        {
+          "id": "test-coverage-story",
+          "name": "Test coverage proportionate (story)",
+          "autoCheck": "Infer scope from ACs and description. If story adds or modifies code paths, ACs should include test requirements proportionate to scope"
+        }
+      ]
+    },
+    "epic": {
+      "label": "Epic",
+      "criteria": [
+        {
+          "id": "sub-issues-exist",
+          "name": "Sub-issues exist",
+          "autoCheck": "Run `gh pmu sub list $ISSUE` and verify non-empty result"
+        },
+        {
+          "id": "scope-description",
+          "name": "Scope description present",
+          "autoCheck": "Check for description of what the epic covers"
+        },
+        {
+          "id": "success-criteria",
+          "name": "Success criteria for the epic defined",
+          "autoCheck": "Check for epic-level success criteria or definition of done"
+        },
+        {
+          "id": "sub-issue-dependencies",
+          "name": "Dependencies between sub-issues identified",
+          "autoCheck": "Check sub-issue bodies for cross-references (`Refs #`, `Depends on #`, `Blocks #`)"
+        },
+        {
+          "id": "sub-issue-review",
+          "name": "Iterate and review each sub-issue",
+          "autoCheck": "For each sub-issue from `gh pmu sub list`, run review criteria (Steps 3b-3c) recursively, summarizing per-sub-issue findings in final report"
+        }
+      ]
+    },
+    "enhancement": {
+      "label": "Enhancement",
+      "criteria": [
+        {
+          "id": "motivation-present",
+          "name": "Motivation/rationale present",
+          "autoCheck": "Check for 'Motivation', 'Why', or rationale section"
+        },
+        {
+          "id": "proposed-solution",
+          "name": "Proposed solution described",
+          "autoCheck": "Check for 'Proposed Solution' or solution description"
+        },
+        {
+          "id": "scope-boundaries",
+          "name": "Scope boundaries defined",
+          "autoCheck": "Check for in-scope / out-of-scope sections or boundary statements"
+        },
+        {
+          "id": "success-measurable",
+          "name": "Success criteria measurable",
+          "autoCheck": "Check for quantitative language, thresholds, or verifiable outcomes in AC"
+        },
+        {
+          "id": "test-coverage-enhancement",
+          "name": "Test coverage proportionate (enhancement)",
+          "autoCheck": "New feature: ACs MUST require unit tests for new functionality. Behavior change: ACs MUST require updated tests reflecting changed behavior. Infer scope from keywords ('refactor', 'replace', 'rewrite', 'across N files') and count of affected components"
+        }
+      ]
+    },
+    "generic": {
+      "label": "Generic",
+      "criteria": [
+        {
+          "id": "body-substantive",
+          "name": "Body is non-empty and substantive",
+          "autoCheck": "Verify body contains substantive content (not just a title repeat)"
+        },
+        {
+          "id": "actionable",
+          "name": "Issue is actionable",
+          "autoCheck": "Check for concrete next steps, clear requirements, or defined acceptance criteria"
+        }
+      ]
+    }
+  },
+  "_meta": {
+    "note": "Type-specific review criteria for /review-issue. Common cross-cutting criteria are in review-mode-criteria.json.",
+    "source": "Extracted from .claude/commands/review-issue.md (#1477)"
+  }
+}

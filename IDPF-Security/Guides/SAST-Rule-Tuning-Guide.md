@@ -1,5 +1,5 @@
 # SAST Rule Tuning Guide
-**Version:** v0.47.0
+**Version:** v0.48.0
 
 **Framework:** IDPF-Security
 

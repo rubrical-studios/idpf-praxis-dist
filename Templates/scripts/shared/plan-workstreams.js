@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * @framework-script 0.47.0
+ * @framework-script 0.48.0
  * @description Concurrent workstream planning — argument parsing, analysis, and execution
  * @checksum sha256:placeholder
  *
